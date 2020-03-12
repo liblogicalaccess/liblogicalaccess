@@ -33,7 +33,7 @@ target_link_libraries(osdpreaders
         iso7816readers
         iso7816cards
         logicalaccess
-        CONAN_PKG::OpenSSL)
+        CONAN_PKG::openssl)
 LLA_GENERATE_EXPORTS(LLA_READERS_OSDP)
 
 install(FILES ${include} DESTINATION ${HEADER_RELATIVE_INSTALL_DIR})

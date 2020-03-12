@@ -93,7 +93,7 @@ endif ()
 target_link_libraries(logicalaccess PUBLIC
         llacommon
         logicalaccess-cryptolib
-        CONAN_PKG::OpenSSL
+        CONAN_PKG::openssl
         ${LLA_ADDITIONAL_LIBRARIES_TO_LINK_AGAINST}
         CONAN_PKG::boost
         CONAN_PKG::jsonformoderncpp

@@ -6,22 +6,34 @@
 
 #include "iks.pb.h"
 
+#include <functional>
 #include <grpcpp/impl/codegen/async_generic_service.h>
 #include <grpcpp/impl/codegen/async_stream.h>
 #include <grpcpp/impl/codegen/async_unary_call.h>
-#include <grpcpp/impl/codegen/method_handler_impl.h>
+#include <grpcpp/impl/codegen/client_callback.h>
+#include <grpcpp/impl/codegen/client_context.h>
+#include <grpcpp/impl/codegen/completion_queue.h>
+#include <grpcpp/impl/codegen/method_handler.h>
 #include <grpcpp/impl/codegen/proto_utils.h>
 #include <grpcpp/impl/codegen/rpc_method.h>
+#include <grpcpp/impl/codegen/server_callback.h>
+#include <grpcpp/impl/codegen/server_context.h>
 #include <grpcpp/impl/codegen/service_type.h>
 #include <grpcpp/impl/codegen/status.h>
 #include <grpcpp/impl/codegen/stub_options.h>
 #include <grpcpp/impl/codegen/sync_stream.h>
 
-namespace grpc {
+namespace grpc_impl {
 class CompletionQueue;
-class Channel;
 class ServerCompletionQueue;
 class ServerContext;
+}  // namespace grpc_impl
+
+namespace grpc {
+namespace experimental {
+template <typename RequestT, typename ResponseT>
+class MessageAllocator;
+}  // namespace experimental
 }  // namespace grpc
 
 // The IKSF service, exposed to remote client.
@@ -103,6 +115,55 @@ class IKSService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::SMSG_DesfireChangeKey>> PrepareAsyncDESFireChangeKey(::grpc::ClientContext* context, const ::CMSG_DesfireChangeKey& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::SMSG_DesfireChangeKey>>(PrepareAsyncDESFireChangeKeyRaw(context, request, cq));
     }
+    class experimental_async_interface {
+     public:
+      virtual ~experimental_async_interface() {}
+      // Request random data from the server.
+      virtual void GenRandom(::grpc::ClientContext* context, const ::CMSG_GenRandom* request, ::SMSG_GenRandom* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void GenRandom(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_GenRandom* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void GenRandom(::grpc::ClientContext* context, const ::CMSG_GenRandom* request, ::SMSG_GenRandom* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      virtual void GenRandom(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_GenRandom* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      // Generic AES Encryption routine.
+      // No padding management.
+      virtual void AESEncrypt(::grpc::ClientContext* context, const ::CMSG_AESOperation* request, ::SMSG_AESResult* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void AESEncrypt(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_AESResult* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void AESEncrypt(::grpc::ClientContext* context, const ::CMSG_AESOperation* request, ::SMSG_AESResult* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      virtual void AESEncrypt(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_AESResult* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      // Generic AES Decryption routine.
+      // No padding management.
+      virtual void AESDecrypt(::grpc::ClientContext* context, const ::CMSG_AESOperation* request, ::SMSG_AESResult* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void AESDecrypt(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_AESResult* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void AESDecrypt(::grpc::ClientContext* context, const ::CMSG_AESOperation* request, ::SMSG_AESResult* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      virtual void AESDecrypt(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_AESResult* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      // Desfire ISO Authentication -- Step 1
+      virtual void DESFireISOAuth1(::grpc::ClientContext* context, const ::CMSG_DesfireISOAuth_Step1* request, ::SMSG_DesfireISOAuth_Step1* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void DESFireISOAuth1(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_DesfireISOAuth_Step1* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void DESFireISOAuth1(::grpc::ClientContext* context, const ::CMSG_DesfireISOAuth_Step1* request, ::SMSG_DesfireISOAuth_Step1* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      virtual void DESFireISOAuth1(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_DesfireISOAuth_Step1* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      // Desfire ISO Authentication -- Step 2
+      virtual void DESFireISOAuth2(::grpc::ClientContext* context, const ::CMSG_DesfireAuth_Step2* request, ::SMSG_DesfireAuth_Step2* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void DESFireISOAuth2(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_DesfireAuth_Step2* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void DESFireISOAuth2(::grpc::ClientContext* context, const ::CMSG_DesfireAuth_Step2* request, ::SMSG_DesfireAuth_Step2* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      virtual void DESFireISOAuth2(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_DesfireAuth_Step2* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      // Desfire AES Authentication -- Step 1
+      virtual void DESFireAESAuth1(::grpc::ClientContext* context, const ::CMSG_DesfireAESAuth_Step1* request, ::SMSG_DesfireAESAuth_Step1* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void DESFireAESAuth1(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_DesfireAESAuth_Step1* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void DESFireAESAuth1(::grpc::ClientContext* context, const ::CMSG_DesfireAESAuth_Step1* request, ::SMSG_DesfireAESAuth_Step1* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      virtual void DESFireAESAuth1(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_DesfireAESAuth_Step1* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      // Desfire AES Authentication -- Step 2
+      virtual void DESFireAESAuth2(::grpc::ClientContext* context, const ::CMSG_DesfireAuth_Step2* request, ::SMSG_DesfireAuth_Step2* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void DESFireAESAuth2(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_DesfireAuth_Step2* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void DESFireAESAuth2(::grpc::ClientContext* context, const ::CMSG_DesfireAuth_Step2* request, ::SMSG_DesfireAuth_Step2* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      virtual void DESFireAESAuth2(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_DesfireAuth_Step2* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      // Generate DESFire change-key cryptogram where both keys
+      // are stored by IKS.
+      // This call is forward to IKSD which perform the cryptogram generation.
+      virtual void DESFireChangeKey(::grpc::ClientContext* context, const ::CMSG_DesfireChangeKey* request, ::SMSG_DesfireChangeKey* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void DESFireChangeKey(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_DesfireChangeKey* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void DESFireChangeKey(::grpc::ClientContext* context, const ::CMSG_DesfireChangeKey* request, ::SMSG_DesfireChangeKey* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+      virtual void DESFireChangeKey(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_DesfireChangeKey* response, ::grpc::experimental::ClientUnaryReactor* reactor) = 0;
+    };
+    virtual class experimental_async_interface* experimental_async() { return nullptr; }
   private:
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::SMSG_GenRandom>* AsyncGenRandomRaw(::grpc::ClientContext* context, const ::CMSG_GenRandom& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::SMSG_GenRandom>* PrepareAsyncGenRandomRaw(::grpc::ClientContext* context, const ::CMSG_GenRandom& request, ::grpc::CompletionQueue* cq) = 0;
@@ -180,9 +241,52 @@ class IKSService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::SMSG_DesfireChangeKey>> PrepareAsyncDESFireChangeKey(::grpc::ClientContext* context, const ::CMSG_DesfireChangeKey& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::SMSG_DesfireChangeKey>>(PrepareAsyncDESFireChangeKeyRaw(context, request, cq));
     }
+    class experimental_async final :
+      public StubInterface::experimental_async_interface {
+     public:
+      void GenRandom(::grpc::ClientContext* context, const ::CMSG_GenRandom* request, ::SMSG_GenRandom* response, std::function<void(::grpc::Status)>) override;
+      void GenRandom(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_GenRandom* response, std::function<void(::grpc::Status)>) override;
+      void GenRandom(::grpc::ClientContext* context, const ::CMSG_GenRandom* request, ::SMSG_GenRandom* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      void GenRandom(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_GenRandom* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      void AESEncrypt(::grpc::ClientContext* context, const ::CMSG_AESOperation* request, ::SMSG_AESResult* response, std::function<void(::grpc::Status)>) override;
+      void AESEncrypt(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_AESResult* response, std::function<void(::grpc::Status)>) override;
+      void AESEncrypt(::grpc::ClientContext* context, const ::CMSG_AESOperation* request, ::SMSG_AESResult* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      void AESEncrypt(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_AESResult* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      void AESDecrypt(::grpc::ClientContext* context, const ::CMSG_AESOperation* request, ::SMSG_AESResult* response, std::function<void(::grpc::Status)>) override;
+      void AESDecrypt(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_AESResult* response, std::function<void(::grpc::Status)>) override;
+      void AESDecrypt(::grpc::ClientContext* context, const ::CMSG_AESOperation* request, ::SMSG_AESResult* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      void AESDecrypt(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_AESResult* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      void DESFireISOAuth1(::grpc::ClientContext* context, const ::CMSG_DesfireISOAuth_Step1* request, ::SMSG_DesfireISOAuth_Step1* response, std::function<void(::grpc::Status)>) override;
+      void DESFireISOAuth1(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_DesfireISOAuth_Step1* response, std::function<void(::grpc::Status)>) override;
+      void DESFireISOAuth1(::grpc::ClientContext* context, const ::CMSG_DesfireISOAuth_Step1* request, ::SMSG_DesfireISOAuth_Step1* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      void DESFireISOAuth1(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_DesfireISOAuth_Step1* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      void DESFireISOAuth2(::grpc::ClientContext* context, const ::CMSG_DesfireAuth_Step2* request, ::SMSG_DesfireAuth_Step2* response, std::function<void(::grpc::Status)>) override;
+      void DESFireISOAuth2(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_DesfireAuth_Step2* response, std::function<void(::grpc::Status)>) override;
+      void DESFireISOAuth2(::grpc::ClientContext* context, const ::CMSG_DesfireAuth_Step2* request, ::SMSG_DesfireAuth_Step2* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      void DESFireISOAuth2(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_DesfireAuth_Step2* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      void DESFireAESAuth1(::grpc::ClientContext* context, const ::CMSG_DesfireAESAuth_Step1* request, ::SMSG_DesfireAESAuth_Step1* response, std::function<void(::grpc::Status)>) override;
+      void DESFireAESAuth1(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_DesfireAESAuth_Step1* response, std::function<void(::grpc::Status)>) override;
+      void DESFireAESAuth1(::grpc::ClientContext* context, const ::CMSG_DesfireAESAuth_Step1* request, ::SMSG_DesfireAESAuth_Step1* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      void DESFireAESAuth1(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_DesfireAESAuth_Step1* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      void DESFireAESAuth2(::grpc::ClientContext* context, const ::CMSG_DesfireAuth_Step2* request, ::SMSG_DesfireAuth_Step2* response, std::function<void(::grpc::Status)>) override;
+      void DESFireAESAuth2(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_DesfireAuth_Step2* response, std::function<void(::grpc::Status)>) override;
+      void DESFireAESAuth2(::grpc::ClientContext* context, const ::CMSG_DesfireAuth_Step2* request, ::SMSG_DesfireAuth_Step2* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      void DESFireAESAuth2(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_DesfireAuth_Step2* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      void DESFireChangeKey(::grpc::ClientContext* context, const ::CMSG_DesfireChangeKey* request, ::SMSG_DesfireChangeKey* response, std::function<void(::grpc::Status)>) override;
+      void DESFireChangeKey(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_DesfireChangeKey* response, std::function<void(::grpc::Status)>) override;
+      void DESFireChangeKey(::grpc::ClientContext* context, const ::CMSG_DesfireChangeKey* request, ::SMSG_DesfireChangeKey* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+      void DESFireChangeKey(::grpc::ClientContext* context, const ::grpc::ByteBuffer* request, ::SMSG_DesfireChangeKey* response, ::grpc::experimental::ClientUnaryReactor* reactor) override;
+     private:
+      friend class Stub;
+      explicit experimental_async(Stub* stub): stub_(stub) { }
+      Stub* stub() { return stub_; }
+      Stub* stub_;
+    };
+    class experimental_async_interface* experimental_async() override { return &async_stub_; }
 
    private:
     std::shared_ptr< ::grpc::ChannelInterface> channel_;
+    class experimental_async async_stub_{this};
     ::grpc::ClientAsyncResponseReader< ::SMSG_GenRandom>* AsyncGenRandomRaw(::grpc::ClientContext* context, const ::CMSG_GenRandom& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::SMSG_GenRandom>* PrepareAsyncGenRandomRaw(::grpc::ClientContext* context, const ::CMSG_GenRandom& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::SMSG_AESResult>* AsyncAESEncryptRaw(::grpc::ClientContext* context, const ::CMSG_AESOperation& request, ::grpc::CompletionQueue* cq) override;
@@ -238,7 +342,7 @@ class IKSService final {
   template <class BaseClass>
   class WithAsyncMethod_GenRandom : public BaseClass {
    private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_GenRandom() {
       ::grpc::Service::MarkMethodAsync(0);
@@ -247,7 +351,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status GenRandom(::grpc::ServerContext* context, const ::CMSG_GenRandom* request, ::SMSG_GenRandom* response) override {
+    ::grpc::Status GenRandom(::grpc::ServerContext* /*context*/, const ::CMSG_GenRandom* /*request*/, ::SMSG_GenRandom* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -258,7 +362,7 @@ class IKSService final {
   template <class BaseClass>
   class WithAsyncMethod_AESEncrypt : public BaseClass {
    private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_AESEncrypt() {
       ::grpc::Service::MarkMethodAsync(1);
@@ -267,7 +371,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status AESEncrypt(::grpc::ServerContext* context, const ::CMSG_AESOperation* request, ::SMSG_AESResult* response) override {
+    ::grpc::Status AESEncrypt(::grpc::ServerContext* /*context*/, const ::CMSG_AESOperation* /*request*/, ::SMSG_AESResult* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -278,7 +382,7 @@ class IKSService final {
   template <class BaseClass>
   class WithAsyncMethod_AESDecrypt : public BaseClass {
    private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_AESDecrypt() {
       ::grpc::Service::MarkMethodAsync(2);
@@ -287,7 +391,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status AESDecrypt(::grpc::ServerContext* context, const ::CMSG_AESOperation* request, ::SMSG_AESResult* response) override {
+    ::grpc::Status AESDecrypt(::grpc::ServerContext* /*context*/, const ::CMSG_AESOperation* /*request*/, ::SMSG_AESResult* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -298,7 +402,7 @@ class IKSService final {
   template <class BaseClass>
   class WithAsyncMethod_DESFireISOAuth1 : public BaseClass {
    private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_DESFireISOAuth1() {
       ::grpc::Service::MarkMethodAsync(3);
@@ -307,7 +411,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status DESFireISOAuth1(::grpc::ServerContext* context, const ::CMSG_DesfireISOAuth_Step1* request, ::SMSG_DesfireISOAuth_Step1* response) override {
+    ::grpc::Status DESFireISOAuth1(::grpc::ServerContext* /*context*/, const ::CMSG_DesfireISOAuth_Step1* /*request*/, ::SMSG_DesfireISOAuth_Step1* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -318,7 +422,7 @@ class IKSService final {
   template <class BaseClass>
   class WithAsyncMethod_DESFireISOAuth2 : public BaseClass {
    private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_DESFireISOAuth2() {
       ::grpc::Service::MarkMethodAsync(4);
@@ -327,7 +431,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status DESFireISOAuth2(::grpc::ServerContext* context, const ::CMSG_DesfireAuth_Step2* request, ::SMSG_DesfireAuth_Step2* response) override {
+    ::grpc::Status DESFireISOAuth2(::grpc::ServerContext* /*context*/, const ::CMSG_DesfireAuth_Step2* /*request*/, ::SMSG_DesfireAuth_Step2* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -338,7 +442,7 @@ class IKSService final {
   template <class BaseClass>
   class WithAsyncMethod_DESFireAESAuth1 : public BaseClass {
    private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_DESFireAESAuth1() {
       ::grpc::Service::MarkMethodAsync(5);
@@ -347,7 +451,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status DESFireAESAuth1(::grpc::ServerContext* context, const ::CMSG_DesfireAESAuth_Step1* request, ::SMSG_DesfireAESAuth_Step1* response) override {
+    ::grpc::Status DESFireAESAuth1(::grpc::ServerContext* /*context*/, const ::CMSG_DesfireAESAuth_Step1* /*request*/, ::SMSG_DesfireAESAuth_Step1* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -358,7 +462,7 @@ class IKSService final {
   template <class BaseClass>
   class WithAsyncMethod_DESFireAESAuth2 : public BaseClass {
    private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_DESFireAESAuth2() {
       ::grpc::Service::MarkMethodAsync(6);
@@ -367,7 +471,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status DESFireAESAuth2(::grpc::ServerContext* context, const ::CMSG_DesfireAuth_Step2* request, ::SMSG_DesfireAuth_Step2* response) override {
+    ::grpc::Status DESFireAESAuth2(::grpc::ServerContext* /*context*/, const ::CMSG_DesfireAuth_Step2* /*request*/, ::SMSG_DesfireAuth_Step2* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -378,7 +482,7 @@ class IKSService final {
   template <class BaseClass>
   class WithAsyncMethod_DESFireChangeKey : public BaseClass {
    private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_DESFireChangeKey() {
       ::grpc::Service::MarkMethodAsync(7);
@@ -387,7 +491,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status DESFireChangeKey(::grpc::ServerContext* context, const ::CMSG_DesfireChangeKey* request, ::SMSG_DesfireChangeKey* response) override {
+    ::grpc::Status DESFireChangeKey(::grpc::ServerContext* /*context*/, const ::CMSG_DesfireChangeKey* /*request*/, ::SMSG_DesfireChangeKey* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -397,9 +501,258 @@ class IKSService final {
   };
   typedef WithAsyncMethod_GenRandom<WithAsyncMethod_AESEncrypt<WithAsyncMethod_AESDecrypt<WithAsyncMethod_DESFireISOAuth1<WithAsyncMethod_DESFireISOAuth2<WithAsyncMethod_DESFireAESAuth1<WithAsyncMethod_DESFireAESAuth2<WithAsyncMethod_DESFireChangeKey<Service > > > > > > > > AsyncService;
   template <class BaseClass>
+  class ExperimentalWithCallbackMethod_GenRandom : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    ExperimentalWithCallbackMethod_GenRandom() {
+      ::grpc::Service::experimental().MarkMethodCallback(0,
+        new ::grpc_impl::internal::CallbackUnaryHandler< ::CMSG_GenRandom, ::SMSG_GenRandom>(
+          [this](::grpc::ServerContext* context,
+                 const ::CMSG_GenRandom* request,
+                 ::SMSG_GenRandom* response,
+                 ::grpc::experimental::ServerCallbackRpcController* controller) {
+                   return this->GenRandom(context, request, response, controller);
+                 }));
+    }
+    void SetMessageAllocatorFor_GenRandom(
+        ::grpc::experimental::MessageAllocator< ::CMSG_GenRandom, ::SMSG_GenRandom>* allocator) {
+      static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::CMSG_GenRandom, ::SMSG_GenRandom>*>(
+          ::grpc::Service::experimental().GetHandler(0))
+              ->SetMessageAllocator(allocator);
+    }
+    ~ExperimentalWithCallbackMethod_GenRandom() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GenRandom(::grpc::ServerContext* /*context*/, const ::CMSG_GenRandom* /*request*/, ::SMSG_GenRandom* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual void GenRandom(::grpc::ServerContext* /*context*/, const ::CMSG_GenRandom* /*request*/, ::SMSG_GenRandom* /*response*/, ::grpc::experimental::ServerCallbackRpcController* controller) { controller->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "")); }
+  };
+  template <class BaseClass>
+  class ExperimentalWithCallbackMethod_AESEncrypt : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    ExperimentalWithCallbackMethod_AESEncrypt() {
+      ::grpc::Service::experimental().MarkMethodCallback(1,
+        new ::grpc_impl::internal::CallbackUnaryHandler< ::CMSG_AESOperation, ::SMSG_AESResult>(
+          [this](::grpc::ServerContext* context,
+                 const ::CMSG_AESOperation* request,
+                 ::SMSG_AESResult* response,
+                 ::grpc::experimental::ServerCallbackRpcController* controller) {
+                   return this->AESEncrypt(context, request, response, controller);
+                 }));
+    }
+    void SetMessageAllocatorFor_AESEncrypt(
+        ::grpc::experimental::MessageAllocator< ::CMSG_AESOperation, ::SMSG_AESResult>* allocator) {
+      static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::CMSG_AESOperation, ::SMSG_AESResult>*>(
+          ::grpc::Service::experimental().GetHandler(1))
+              ->SetMessageAllocator(allocator);
+    }
+    ~ExperimentalWithCallbackMethod_AESEncrypt() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status AESEncrypt(::grpc::ServerContext* /*context*/, const ::CMSG_AESOperation* /*request*/, ::SMSG_AESResult* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual void AESEncrypt(::grpc::ServerContext* /*context*/, const ::CMSG_AESOperation* /*request*/, ::SMSG_AESResult* /*response*/, ::grpc::experimental::ServerCallbackRpcController* controller) { controller->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "")); }
+  };
+  template <class BaseClass>
+  class ExperimentalWithCallbackMethod_AESDecrypt : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    ExperimentalWithCallbackMethod_AESDecrypt() {
+      ::grpc::Service::experimental().MarkMethodCallback(2,
+        new ::grpc_impl::internal::CallbackUnaryHandler< ::CMSG_AESOperation, ::SMSG_AESResult>(
+          [this](::grpc::ServerContext* context,
+                 const ::CMSG_AESOperation* request,
+                 ::SMSG_AESResult* response,
+                 ::grpc::experimental::ServerCallbackRpcController* controller) {
+                   return this->AESDecrypt(context, request, response, controller);
+                 }));
+    }
+    void SetMessageAllocatorFor_AESDecrypt(
+        ::grpc::experimental::MessageAllocator< ::CMSG_AESOperation, ::SMSG_AESResult>* allocator) {
+      static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::CMSG_AESOperation, ::SMSG_AESResult>*>(
+          ::grpc::Service::experimental().GetHandler(2))
+              ->SetMessageAllocator(allocator);
+    }
+    ~ExperimentalWithCallbackMethod_AESDecrypt() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status AESDecrypt(::grpc::ServerContext* /*context*/, const ::CMSG_AESOperation* /*request*/, ::SMSG_AESResult* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual void AESDecrypt(::grpc::ServerContext* /*context*/, const ::CMSG_AESOperation* /*request*/, ::SMSG_AESResult* /*response*/, ::grpc::experimental::ServerCallbackRpcController* controller) { controller->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "")); }
+  };
+  template <class BaseClass>
+  class ExperimentalWithCallbackMethod_DESFireISOAuth1 : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    ExperimentalWithCallbackMethod_DESFireISOAuth1() {
+      ::grpc::Service::experimental().MarkMethodCallback(3,
+        new ::grpc_impl::internal::CallbackUnaryHandler< ::CMSG_DesfireISOAuth_Step1, ::SMSG_DesfireISOAuth_Step1>(
+          [this](::grpc::ServerContext* context,
+                 const ::CMSG_DesfireISOAuth_Step1* request,
+                 ::SMSG_DesfireISOAuth_Step1* response,
+                 ::grpc::experimental::ServerCallbackRpcController* controller) {
+                   return this->DESFireISOAuth1(context, request, response, controller);
+                 }));
+    }
+    void SetMessageAllocatorFor_DESFireISOAuth1(
+        ::grpc::experimental::MessageAllocator< ::CMSG_DesfireISOAuth_Step1, ::SMSG_DesfireISOAuth_Step1>* allocator) {
+      static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::CMSG_DesfireISOAuth_Step1, ::SMSG_DesfireISOAuth_Step1>*>(
+          ::grpc::Service::experimental().GetHandler(3))
+              ->SetMessageAllocator(allocator);
+    }
+    ~ExperimentalWithCallbackMethod_DESFireISOAuth1() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status DESFireISOAuth1(::grpc::ServerContext* /*context*/, const ::CMSG_DesfireISOAuth_Step1* /*request*/, ::SMSG_DesfireISOAuth_Step1* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual void DESFireISOAuth1(::grpc::ServerContext* /*context*/, const ::CMSG_DesfireISOAuth_Step1* /*request*/, ::SMSG_DesfireISOAuth_Step1* /*response*/, ::grpc::experimental::ServerCallbackRpcController* controller) { controller->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "")); }
+  };
+  template <class BaseClass>
+  class ExperimentalWithCallbackMethod_DESFireISOAuth2 : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    ExperimentalWithCallbackMethod_DESFireISOAuth2() {
+      ::grpc::Service::experimental().MarkMethodCallback(4,
+        new ::grpc_impl::internal::CallbackUnaryHandler< ::CMSG_DesfireAuth_Step2, ::SMSG_DesfireAuth_Step2>(
+          [this](::grpc::ServerContext* context,
+                 const ::CMSG_DesfireAuth_Step2* request,
+                 ::SMSG_DesfireAuth_Step2* response,
+                 ::grpc::experimental::ServerCallbackRpcController* controller) {
+                   return this->DESFireISOAuth2(context, request, response, controller);
+                 }));
+    }
+    void SetMessageAllocatorFor_DESFireISOAuth2(
+        ::grpc::experimental::MessageAllocator< ::CMSG_DesfireAuth_Step2, ::SMSG_DesfireAuth_Step2>* allocator) {
+      static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::CMSG_DesfireAuth_Step2, ::SMSG_DesfireAuth_Step2>*>(
+          ::grpc::Service::experimental().GetHandler(4))
+              ->SetMessageAllocator(allocator);
+    }
+    ~ExperimentalWithCallbackMethod_DESFireISOAuth2() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status DESFireISOAuth2(::grpc::ServerContext* /*context*/, const ::CMSG_DesfireAuth_Step2* /*request*/, ::SMSG_DesfireAuth_Step2* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual void DESFireISOAuth2(::grpc::ServerContext* /*context*/, const ::CMSG_DesfireAuth_Step2* /*request*/, ::SMSG_DesfireAuth_Step2* /*response*/, ::grpc::experimental::ServerCallbackRpcController* controller) { controller->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "")); }
+  };
+  template <class BaseClass>
+  class ExperimentalWithCallbackMethod_DESFireAESAuth1 : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    ExperimentalWithCallbackMethod_DESFireAESAuth1() {
+      ::grpc::Service::experimental().MarkMethodCallback(5,
+        new ::grpc_impl::internal::CallbackUnaryHandler< ::CMSG_DesfireAESAuth_Step1, ::SMSG_DesfireAESAuth_Step1>(
+          [this](::grpc::ServerContext* context,
+                 const ::CMSG_DesfireAESAuth_Step1* request,
+                 ::SMSG_DesfireAESAuth_Step1* response,
+                 ::grpc::experimental::ServerCallbackRpcController* controller) {
+                   return this->DESFireAESAuth1(context, request, response, controller);
+                 }));
+    }
+    void SetMessageAllocatorFor_DESFireAESAuth1(
+        ::grpc::experimental::MessageAllocator< ::CMSG_DesfireAESAuth_Step1, ::SMSG_DesfireAESAuth_Step1>* allocator) {
+      static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::CMSG_DesfireAESAuth_Step1, ::SMSG_DesfireAESAuth_Step1>*>(
+          ::grpc::Service::experimental().GetHandler(5))
+              ->SetMessageAllocator(allocator);
+    }
+    ~ExperimentalWithCallbackMethod_DESFireAESAuth1() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status DESFireAESAuth1(::grpc::ServerContext* /*context*/, const ::CMSG_DesfireAESAuth_Step1* /*request*/, ::SMSG_DesfireAESAuth_Step1* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual void DESFireAESAuth1(::grpc::ServerContext* /*context*/, const ::CMSG_DesfireAESAuth_Step1* /*request*/, ::SMSG_DesfireAESAuth_Step1* /*response*/, ::grpc::experimental::ServerCallbackRpcController* controller) { controller->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "")); }
+  };
+  template <class BaseClass>
+  class ExperimentalWithCallbackMethod_DESFireAESAuth2 : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    ExperimentalWithCallbackMethod_DESFireAESAuth2() {
+      ::grpc::Service::experimental().MarkMethodCallback(6,
+        new ::grpc_impl::internal::CallbackUnaryHandler< ::CMSG_DesfireAuth_Step2, ::SMSG_DesfireAuth_Step2>(
+          [this](::grpc::ServerContext* context,
+                 const ::CMSG_DesfireAuth_Step2* request,
+                 ::SMSG_DesfireAuth_Step2* response,
+                 ::grpc::experimental::ServerCallbackRpcController* controller) {
+                   return this->DESFireAESAuth2(context, request, response, controller);
+                 }));
+    }
+    void SetMessageAllocatorFor_DESFireAESAuth2(
+        ::grpc::experimental::MessageAllocator< ::CMSG_DesfireAuth_Step2, ::SMSG_DesfireAuth_Step2>* allocator) {
+      static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::CMSG_DesfireAuth_Step2, ::SMSG_DesfireAuth_Step2>*>(
+          ::grpc::Service::experimental().GetHandler(6))
+              ->SetMessageAllocator(allocator);
+    }
+    ~ExperimentalWithCallbackMethod_DESFireAESAuth2() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status DESFireAESAuth2(::grpc::ServerContext* /*context*/, const ::CMSG_DesfireAuth_Step2* /*request*/, ::SMSG_DesfireAuth_Step2* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual void DESFireAESAuth2(::grpc::ServerContext* /*context*/, const ::CMSG_DesfireAuth_Step2* /*request*/, ::SMSG_DesfireAuth_Step2* /*response*/, ::grpc::experimental::ServerCallbackRpcController* controller) { controller->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "")); }
+  };
+  template <class BaseClass>
+  class ExperimentalWithCallbackMethod_DESFireChangeKey : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    ExperimentalWithCallbackMethod_DESFireChangeKey() {
+      ::grpc::Service::experimental().MarkMethodCallback(7,
+        new ::grpc_impl::internal::CallbackUnaryHandler< ::CMSG_DesfireChangeKey, ::SMSG_DesfireChangeKey>(
+          [this](::grpc::ServerContext* context,
+                 const ::CMSG_DesfireChangeKey* request,
+                 ::SMSG_DesfireChangeKey* response,
+                 ::grpc::experimental::ServerCallbackRpcController* controller) {
+                   return this->DESFireChangeKey(context, request, response, controller);
+                 }));
+    }
+    void SetMessageAllocatorFor_DESFireChangeKey(
+        ::grpc::experimental::MessageAllocator< ::CMSG_DesfireChangeKey, ::SMSG_DesfireChangeKey>* allocator) {
+      static_cast<::grpc_impl::internal::CallbackUnaryHandler< ::CMSG_DesfireChangeKey, ::SMSG_DesfireChangeKey>*>(
+          ::grpc::Service::experimental().GetHandler(7))
+              ->SetMessageAllocator(allocator);
+    }
+    ~ExperimentalWithCallbackMethod_DESFireChangeKey() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status DESFireChangeKey(::grpc::ServerContext* /*context*/, const ::CMSG_DesfireChangeKey* /*request*/, ::SMSG_DesfireChangeKey* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual void DESFireChangeKey(::grpc::ServerContext* /*context*/, const ::CMSG_DesfireChangeKey* /*request*/, ::SMSG_DesfireChangeKey* /*response*/, ::grpc::experimental::ServerCallbackRpcController* controller) { controller->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "")); }
+  };
+  typedef ExperimentalWithCallbackMethod_GenRandom<ExperimentalWithCallbackMethod_AESEncrypt<ExperimentalWithCallbackMethod_AESDecrypt<ExperimentalWithCallbackMethod_DESFireISOAuth1<ExperimentalWithCallbackMethod_DESFireISOAuth2<ExperimentalWithCallbackMethod_DESFireAESAuth1<ExperimentalWithCallbackMethod_DESFireAESAuth2<ExperimentalWithCallbackMethod_DESFireChangeKey<Service > > > > > > > > ExperimentalCallbackService;
+  template <class BaseClass>
   class WithGenericMethod_GenRandom : public BaseClass {
    private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_GenRandom() {
       ::grpc::Service::MarkMethodGeneric(0);
@@ -408,7 +761,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status GenRandom(::grpc::ServerContext* context, const ::CMSG_GenRandom* request, ::SMSG_GenRandom* response) override {
+    ::grpc::Status GenRandom(::grpc::ServerContext* /*context*/, const ::CMSG_GenRandom* /*request*/, ::SMSG_GenRandom* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -416,7 +769,7 @@ class IKSService final {
   template <class BaseClass>
   class WithGenericMethod_AESEncrypt : public BaseClass {
    private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_AESEncrypt() {
       ::grpc::Service::MarkMethodGeneric(1);
@@ -425,7 +778,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status AESEncrypt(::grpc::ServerContext* context, const ::CMSG_AESOperation* request, ::SMSG_AESResult* response) override {
+    ::grpc::Status AESEncrypt(::grpc::ServerContext* /*context*/, const ::CMSG_AESOperation* /*request*/, ::SMSG_AESResult* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -433,7 +786,7 @@ class IKSService final {
   template <class BaseClass>
   class WithGenericMethod_AESDecrypt : public BaseClass {
    private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_AESDecrypt() {
       ::grpc::Service::MarkMethodGeneric(2);
@@ -442,7 +795,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status AESDecrypt(::grpc::ServerContext* context, const ::CMSG_AESOperation* request, ::SMSG_AESResult* response) override {
+    ::grpc::Status AESDecrypt(::grpc::ServerContext* /*context*/, const ::CMSG_AESOperation* /*request*/, ::SMSG_AESResult* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -450,7 +803,7 @@ class IKSService final {
   template <class BaseClass>
   class WithGenericMethod_DESFireISOAuth1 : public BaseClass {
    private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_DESFireISOAuth1() {
       ::grpc::Service::MarkMethodGeneric(3);
@@ -459,7 +812,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status DESFireISOAuth1(::grpc::ServerContext* context, const ::CMSG_DesfireISOAuth_Step1* request, ::SMSG_DesfireISOAuth_Step1* response) override {
+    ::grpc::Status DESFireISOAuth1(::grpc::ServerContext* /*context*/, const ::CMSG_DesfireISOAuth_Step1* /*request*/, ::SMSG_DesfireISOAuth_Step1* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -467,7 +820,7 @@ class IKSService final {
   template <class BaseClass>
   class WithGenericMethod_DESFireISOAuth2 : public BaseClass {
    private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_DESFireISOAuth2() {
       ::grpc::Service::MarkMethodGeneric(4);
@@ -476,7 +829,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status DESFireISOAuth2(::grpc::ServerContext* context, const ::CMSG_DesfireAuth_Step2* request, ::SMSG_DesfireAuth_Step2* response) override {
+    ::grpc::Status DESFireISOAuth2(::grpc::ServerContext* /*context*/, const ::CMSG_DesfireAuth_Step2* /*request*/, ::SMSG_DesfireAuth_Step2* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -484,7 +837,7 @@ class IKSService final {
   template <class BaseClass>
   class WithGenericMethod_DESFireAESAuth1 : public BaseClass {
    private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_DESFireAESAuth1() {
       ::grpc::Service::MarkMethodGeneric(5);
@@ -493,7 +846,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status DESFireAESAuth1(::grpc::ServerContext* context, const ::CMSG_DesfireAESAuth_Step1* request, ::SMSG_DesfireAESAuth_Step1* response) override {
+    ::grpc::Status DESFireAESAuth1(::grpc::ServerContext* /*context*/, const ::CMSG_DesfireAESAuth_Step1* /*request*/, ::SMSG_DesfireAESAuth_Step1* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -501,7 +854,7 @@ class IKSService final {
   template <class BaseClass>
   class WithGenericMethod_DESFireAESAuth2 : public BaseClass {
    private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_DESFireAESAuth2() {
       ::grpc::Service::MarkMethodGeneric(6);
@@ -510,7 +863,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status DESFireAESAuth2(::grpc::ServerContext* context, const ::CMSG_DesfireAuth_Step2* request, ::SMSG_DesfireAuth_Step2* response) override {
+    ::grpc::Status DESFireAESAuth2(::grpc::ServerContext* /*context*/, const ::CMSG_DesfireAuth_Step2* /*request*/, ::SMSG_DesfireAuth_Step2* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -518,7 +871,7 @@ class IKSService final {
   template <class BaseClass>
   class WithGenericMethod_DESFireChangeKey : public BaseClass {
    private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_DESFireChangeKey() {
       ::grpc::Service::MarkMethodGeneric(7);
@@ -527,7 +880,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status DESFireChangeKey(::grpc::ServerContext* context, const ::CMSG_DesfireChangeKey* request, ::SMSG_DesfireChangeKey* response) override {
+    ::grpc::Status DESFireChangeKey(::grpc::ServerContext* /*context*/, const ::CMSG_DesfireChangeKey* /*request*/, ::SMSG_DesfireChangeKey* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -535,7 +888,7 @@ class IKSService final {
   template <class BaseClass>
   class WithRawMethod_GenRandom : public BaseClass {
    private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_GenRandom() {
       ::grpc::Service::MarkMethodRaw(0);
@@ -544,7 +897,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status GenRandom(::grpc::ServerContext* context, const ::CMSG_GenRandom* request, ::SMSG_GenRandom* response) override {
+    ::grpc::Status GenRandom(::grpc::ServerContext* /*context*/, const ::CMSG_GenRandom* /*request*/, ::SMSG_GenRandom* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -555,7 +908,7 @@ class IKSService final {
   template <class BaseClass>
   class WithRawMethod_AESEncrypt : public BaseClass {
    private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_AESEncrypt() {
       ::grpc::Service::MarkMethodRaw(1);
@@ -564,7 +917,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status AESEncrypt(::grpc::ServerContext* context, const ::CMSG_AESOperation* request, ::SMSG_AESResult* response) override {
+    ::grpc::Status AESEncrypt(::grpc::ServerContext* /*context*/, const ::CMSG_AESOperation* /*request*/, ::SMSG_AESResult* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -575,7 +928,7 @@ class IKSService final {
   template <class BaseClass>
   class WithRawMethod_AESDecrypt : public BaseClass {
    private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_AESDecrypt() {
       ::grpc::Service::MarkMethodRaw(2);
@@ -584,7 +937,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status AESDecrypt(::grpc::ServerContext* context, const ::CMSG_AESOperation* request, ::SMSG_AESResult* response) override {
+    ::grpc::Status AESDecrypt(::grpc::ServerContext* /*context*/, const ::CMSG_AESOperation* /*request*/, ::SMSG_AESResult* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -595,7 +948,7 @@ class IKSService final {
   template <class BaseClass>
   class WithRawMethod_DESFireISOAuth1 : public BaseClass {
    private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_DESFireISOAuth1() {
       ::grpc::Service::MarkMethodRaw(3);
@@ -604,7 +957,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status DESFireISOAuth1(::grpc::ServerContext* context, const ::CMSG_DesfireISOAuth_Step1* request, ::SMSG_DesfireISOAuth_Step1* response) override {
+    ::grpc::Status DESFireISOAuth1(::grpc::ServerContext* /*context*/, const ::CMSG_DesfireISOAuth_Step1* /*request*/, ::SMSG_DesfireISOAuth_Step1* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -615,7 +968,7 @@ class IKSService final {
   template <class BaseClass>
   class WithRawMethod_DESFireISOAuth2 : public BaseClass {
    private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_DESFireISOAuth2() {
       ::grpc::Service::MarkMethodRaw(4);
@@ -624,7 +977,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status DESFireISOAuth2(::grpc::ServerContext* context, const ::CMSG_DesfireAuth_Step2* request, ::SMSG_DesfireAuth_Step2* response) override {
+    ::grpc::Status DESFireISOAuth2(::grpc::ServerContext* /*context*/, const ::CMSG_DesfireAuth_Step2* /*request*/, ::SMSG_DesfireAuth_Step2* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -635,7 +988,7 @@ class IKSService final {
   template <class BaseClass>
   class WithRawMethod_DESFireAESAuth1 : public BaseClass {
    private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_DESFireAESAuth1() {
       ::grpc::Service::MarkMethodRaw(5);
@@ -644,7 +997,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status DESFireAESAuth1(::grpc::ServerContext* context, const ::CMSG_DesfireAESAuth_Step1* request, ::SMSG_DesfireAESAuth_Step1* response) override {
+    ::grpc::Status DESFireAESAuth1(::grpc::ServerContext* /*context*/, const ::CMSG_DesfireAESAuth_Step1* /*request*/, ::SMSG_DesfireAESAuth_Step1* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -655,7 +1008,7 @@ class IKSService final {
   template <class BaseClass>
   class WithRawMethod_DESFireAESAuth2 : public BaseClass {
    private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_DESFireAESAuth2() {
       ::grpc::Service::MarkMethodRaw(6);
@@ -664,7 +1017,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status DESFireAESAuth2(::grpc::ServerContext* context, const ::CMSG_DesfireAuth_Step2* request, ::SMSG_DesfireAuth_Step2* response) override {
+    ::grpc::Status DESFireAESAuth2(::grpc::ServerContext* /*context*/, const ::CMSG_DesfireAuth_Step2* /*request*/, ::SMSG_DesfireAuth_Step2* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -675,7 +1028,7 @@ class IKSService final {
   template <class BaseClass>
   class WithRawMethod_DESFireChangeKey : public BaseClass {
    private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_DESFireChangeKey() {
       ::grpc::Service::MarkMethodRaw(7);
@@ -684,7 +1037,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status DESFireChangeKey(::grpc::ServerContext* context, const ::CMSG_DesfireChangeKey* request, ::SMSG_DesfireChangeKey* response) override {
+    ::grpc::Status DESFireChangeKey(::grpc::ServerContext* /*context*/, const ::CMSG_DesfireChangeKey* /*request*/, ::SMSG_DesfireChangeKey* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -693,9 +1046,209 @@ class IKSService final {
     }
   };
   template <class BaseClass>
+  class ExperimentalWithRawCallbackMethod_GenRandom : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    ExperimentalWithRawCallbackMethod_GenRandom() {
+      ::grpc::Service::experimental().MarkMethodRawCallback(0,
+        new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+          [this](::grpc::ServerContext* context,
+                 const ::grpc::ByteBuffer* request,
+                 ::grpc::ByteBuffer* response,
+                 ::grpc::experimental::ServerCallbackRpcController* controller) {
+                   this->GenRandom(context, request, response, controller);
+                 }));
+    }
+    ~ExperimentalWithRawCallbackMethod_GenRandom() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status GenRandom(::grpc::ServerContext* /*context*/, const ::CMSG_GenRandom* /*request*/, ::SMSG_GenRandom* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual void GenRandom(::grpc::ServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/, ::grpc::experimental::ServerCallbackRpcController* controller) { controller->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "")); }
+  };
+  template <class BaseClass>
+  class ExperimentalWithRawCallbackMethod_AESEncrypt : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    ExperimentalWithRawCallbackMethod_AESEncrypt() {
+      ::grpc::Service::experimental().MarkMethodRawCallback(1,
+        new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+          [this](::grpc::ServerContext* context,
+                 const ::grpc::ByteBuffer* request,
+                 ::grpc::ByteBuffer* response,
+                 ::grpc::experimental::ServerCallbackRpcController* controller) {
+                   this->AESEncrypt(context, request, response, controller);
+                 }));
+    }
+    ~ExperimentalWithRawCallbackMethod_AESEncrypt() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status AESEncrypt(::grpc::ServerContext* /*context*/, const ::CMSG_AESOperation* /*request*/, ::SMSG_AESResult* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual void AESEncrypt(::grpc::ServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/, ::grpc::experimental::ServerCallbackRpcController* controller) { controller->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "")); }
+  };
+  template <class BaseClass>
+  class ExperimentalWithRawCallbackMethod_AESDecrypt : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    ExperimentalWithRawCallbackMethod_AESDecrypt() {
+      ::grpc::Service::experimental().MarkMethodRawCallback(2,
+        new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+          [this](::grpc::ServerContext* context,
+                 const ::grpc::ByteBuffer* request,
+                 ::grpc::ByteBuffer* response,
+                 ::grpc::experimental::ServerCallbackRpcController* controller) {
+                   this->AESDecrypt(context, request, response, controller);
+                 }));
+    }
+    ~ExperimentalWithRawCallbackMethod_AESDecrypt() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status AESDecrypt(::grpc::ServerContext* /*context*/, const ::CMSG_AESOperation* /*request*/, ::SMSG_AESResult* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual void AESDecrypt(::grpc::ServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/, ::grpc::experimental::ServerCallbackRpcController* controller) { controller->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "")); }
+  };
+  template <class BaseClass>
+  class ExperimentalWithRawCallbackMethod_DESFireISOAuth1 : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    ExperimentalWithRawCallbackMethod_DESFireISOAuth1() {
+      ::grpc::Service::experimental().MarkMethodRawCallback(3,
+        new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+          [this](::grpc::ServerContext* context,
+                 const ::grpc::ByteBuffer* request,
+                 ::grpc::ByteBuffer* response,
+                 ::grpc::experimental::ServerCallbackRpcController* controller) {
+                   this->DESFireISOAuth1(context, request, response, controller);
+                 }));
+    }
+    ~ExperimentalWithRawCallbackMethod_DESFireISOAuth1() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status DESFireISOAuth1(::grpc::ServerContext* /*context*/, const ::CMSG_DesfireISOAuth_Step1* /*request*/, ::SMSG_DesfireISOAuth_Step1* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual void DESFireISOAuth1(::grpc::ServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/, ::grpc::experimental::ServerCallbackRpcController* controller) { controller->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "")); }
+  };
+  template <class BaseClass>
+  class ExperimentalWithRawCallbackMethod_DESFireISOAuth2 : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    ExperimentalWithRawCallbackMethod_DESFireISOAuth2() {
+      ::grpc::Service::experimental().MarkMethodRawCallback(4,
+        new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+          [this](::grpc::ServerContext* context,
+                 const ::grpc::ByteBuffer* request,
+                 ::grpc::ByteBuffer* response,
+                 ::grpc::experimental::ServerCallbackRpcController* controller) {
+                   this->DESFireISOAuth2(context, request, response, controller);
+                 }));
+    }
+    ~ExperimentalWithRawCallbackMethod_DESFireISOAuth2() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status DESFireISOAuth2(::grpc::ServerContext* /*context*/, const ::CMSG_DesfireAuth_Step2* /*request*/, ::SMSG_DesfireAuth_Step2* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual void DESFireISOAuth2(::grpc::ServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/, ::grpc::experimental::ServerCallbackRpcController* controller) { controller->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "")); }
+  };
+  template <class BaseClass>
+  class ExperimentalWithRawCallbackMethod_DESFireAESAuth1 : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    ExperimentalWithRawCallbackMethod_DESFireAESAuth1() {
+      ::grpc::Service::experimental().MarkMethodRawCallback(5,
+        new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+          [this](::grpc::ServerContext* context,
+                 const ::grpc::ByteBuffer* request,
+                 ::grpc::ByteBuffer* response,
+                 ::grpc::experimental::ServerCallbackRpcController* controller) {
+                   this->DESFireAESAuth1(context, request, response, controller);
+                 }));
+    }
+    ~ExperimentalWithRawCallbackMethod_DESFireAESAuth1() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status DESFireAESAuth1(::grpc::ServerContext* /*context*/, const ::CMSG_DesfireAESAuth_Step1* /*request*/, ::SMSG_DesfireAESAuth_Step1* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual void DESFireAESAuth1(::grpc::ServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/, ::grpc::experimental::ServerCallbackRpcController* controller) { controller->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "")); }
+  };
+  template <class BaseClass>
+  class ExperimentalWithRawCallbackMethod_DESFireAESAuth2 : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    ExperimentalWithRawCallbackMethod_DESFireAESAuth2() {
+      ::grpc::Service::experimental().MarkMethodRawCallback(6,
+        new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+          [this](::grpc::ServerContext* context,
+                 const ::grpc::ByteBuffer* request,
+                 ::grpc::ByteBuffer* response,
+                 ::grpc::experimental::ServerCallbackRpcController* controller) {
+                   this->DESFireAESAuth2(context, request, response, controller);
+                 }));
+    }
+    ~ExperimentalWithRawCallbackMethod_DESFireAESAuth2() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status DESFireAESAuth2(::grpc::ServerContext* /*context*/, const ::CMSG_DesfireAuth_Step2* /*request*/, ::SMSG_DesfireAuth_Step2* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual void DESFireAESAuth2(::grpc::ServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/, ::grpc::experimental::ServerCallbackRpcController* controller) { controller->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "")); }
+  };
+  template <class BaseClass>
+  class ExperimentalWithRawCallbackMethod_DESFireChangeKey : public BaseClass {
+   private:
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
+   public:
+    ExperimentalWithRawCallbackMethod_DESFireChangeKey() {
+      ::grpc::Service::experimental().MarkMethodRawCallback(7,
+        new ::grpc_impl::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+          [this](::grpc::ServerContext* context,
+                 const ::grpc::ByteBuffer* request,
+                 ::grpc::ByteBuffer* response,
+                 ::grpc::experimental::ServerCallbackRpcController* controller) {
+                   this->DESFireChangeKey(context, request, response, controller);
+                 }));
+    }
+    ~ExperimentalWithRawCallbackMethod_DESFireChangeKey() override {
+      BaseClassMustBeDerivedFromService(this);
+    }
+    // disable synchronous version of this method
+    ::grpc::Status DESFireChangeKey(::grpc::ServerContext* /*context*/, const ::CMSG_DesfireChangeKey* /*request*/, ::SMSG_DesfireChangeKey* /*response*/) override {
+      abort();
+      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+    }
+    virtual void DESFireChangeKey(::grpc::ServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/, ::grpc::experimental::ServerCallbackRpcController* controller) { controller->Finish(::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "")); }
+  };
+  template <class BaseClass>
   class WithStreamedUnaryMethod_GenRandom : public BaseClass {
    private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_GenRandom() {
       ::grpc::Service::MarkMethodStreamed(0,
@@ -705,7 +1258,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status GenRandom(::grpc::ServerContext* context, const ::CMSG_GenRandom* request, ::SMSG_GenRandom* response) override {
+    ::grpc::Status GenRandom(::grpc::ServerContext* /*context*/, const ::CMSG_GenRandom* /*request*/, ::SMSG_GenRandom* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -715,7 +1268,7 @@ class IKSService final {
   template <class BaseClass>
   class WithStreamedUnaryMethod_AESEncrypt : public BaseClass {
    private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_AESEncrypt() {
       ::grpc::Service::MarkMethodStreamed(1,
@@ -725,7 +1278,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status AESEncrypt(::grpc::ServerContext* context, const ::CMSG_AESOperation* request, ::SMSG_AESResult* response) override {
+    ::grpc::Status AESEncrypt(::grpc::ServerContext* /*context*/, const ::CMSG_AESOperation* /*request*/, ::SMSG_AESResult* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -735,7 +1288,7 @@ class IKSService final {
   template <class BaseClass>
   class WithStreamedUnaryMethod_AESDecrypt : public BaseClass {
    private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_AESDecrypt() {
       ::grpc::Service::MarkMethodStreamed(2,
@@ -745,7 +1298,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status AESDecrypt(::grpc::ServerContext* context, const ::CMSG_AESOperation* request, ::SMSG_AESResult* response) override {
+    ::grpc::Status AESDecrypt(::grpc::ServerContext* /*context*/, const ::CMSG_AESOperation* /*request*/, ::SMSG_AESResult* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -755,7 +1308,7 @@ class IKSService final {
   template <class BaseClass>
   class WithStreamedUnaryMethod_DESFireISOAuth1 : public BaseClass {
    private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_DESFireISOAuth1() {
       ::grpc::Service::MarkMethodStreamed(3,
@@ -765,7 +1318,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status DESFireISOAuth1(::grpc::ServerContext* context, const ::CMSG_DesfireISOAuth_Step1* request, ::SMSG_DesfireISOAuth_Step1* response) override {
+    ::grpc::Status DESFireISOAuth1(::grpc::ServerContext* /*context*/, const ::CMSG_DesfireISOAuth_Step1* /*request*/, ::SMSG_DesfireISOAuth_Step1* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -775,7 +1328,7 @@ class IKSService final {
   template <class BaseClass>
   class WithStreamedUnaryMethod_DESFireISOAuth2 : public BaseClass {
    private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_DESFireISOAuth2() {
       ::grpc::Service::MarkMethodStreamed(4,
@@ -785,7 +1338,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status DESFireISOAuth2(::grpc::ServerContext* context, const ::CMSG_DesfireAuth_Step2* request, ::SMSG_DesfireAuth_Step2* response) override {
+    ::grpc::Status DESFireISOAuth2(::grpc::ServerContext* /*context*/, const ::CMSG_DesfireAuth_Step2* /*request*/, ::SMSG_DesfireAuth_Step2* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -795,7 +1348,7 @@ class IKSService final {
   template <class BaseClass>
   class WithStreamedUnaryMethod_DESFireAESAuth1 : public BaseClass {
    private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_DESFireAESAuth1() {
       ::grpc::Service::MarkMethodStreamed(5,
@@ -805,7 +1358,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status DESFireAESAuth1(::grpc::ServerContext* context, const ::CMSG_DesfireAESAuth_Step1* request, ::SMSG_DesfireAESAuth_Step1* response) override {
+    ::grpc::Status DESFireAESAuth1(::grpc::ServerContext* /*context*/, const ::CMSG_DesfireAESAuth_Step1* /*request*/, ::SMSG_DesfireAESAuth_Step1* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -815,7 +1368,7 @@ class IKSService final {
   template <class BaseClass>
   class WithStreamedUnaryMethod_DESFireAESAuth2 : public BaseClass {
    private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_DESFireAESAuth2() {
       ::grpc::Service::MarkMethodStreamed(6,
@@ -825,7 +1378,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status DESFireAESAuth2(::grpc::ServerContext* context, const ::CMSG_DesfireAuth_Step2* request, ::SMSG_DesfireAuth_Step2* response) override {
+    ::grpc::Status DESFireAESAuth2(::grpc::ServerContext* /*context*/, const ::CMSG_DesfireAuth_Step2* /*request*/, ::SMSG_DesfireAuth_Step2* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -835,7 +1388,7 @@ class IKSService final {
   template <class BaseClass>
   class WithStreamedUnaryMethod_DESFireChangeKey : public BaseClass {
    private:
-    void BaseClassMustBeDerivedFromService(const Service *service) {}
+    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_DESFireChangeKey() {
       ::grpc::Service::MarkMethodStreamed(7,
@@ -845,7 +1398,7 @@ class IKSService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status DESFireChangeKey(::grpc::ServerContext* context, const ::CMSG_DesfireChangeKey* request, ::SMSG_DesfireChangeKey* response) override {
+    ::grpc::Status DESFireChangeKey(::grpc::ServerContext* /*context*/, const ::CMSG_DesfireChangeKey* /*request*/, ::SMSG_DesfireChangeKey* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }

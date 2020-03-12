@@ -2,12 +2,12 @@ from conans import ConanFile, CMake, tools
 
 class LLAConan(ConanFile):
     name = "LogicalAccess"
-    version = "2.2.0"
-    license = "https://github.com/islog/liblogicalaccess/blob/master/LICENSE.LibLogicalAccess.txt"
+    version = "2.2.1"
+    license = "https://github.com/islog/liblogicalaccess/blob/develop/LICENSE"
     url = "https://github.com/islog/liblogicalaccess"
     description = "ISLOG RFID library"
     settings = "os", "compiler", "build_type", "arch"
-    requires = 'boost/1.68.0@conan/stable', 'OpenSSL/1.0.2r@conan/stable', 'jsonformoderncpp/3.6.1@vthiery/stable'
+    requires = 'boost/1.68.0@conan/stable', 'openssl/1.0.2t', 'jsonformoderncpp/3.6.1@vthiery/stable'
     generators = "cmake"
     options = {'LLA_BUILD_IKS': [True, False],
                'LLA_BUILD_PKCS': [True, False],
@@ -18,7 +18,7 @@ class LLAConan(ConanFile):
     
     if tools.os_info.is_windows:
         default_options = '''
-        OpenSSL:shared=True
+        openssl:shared=True
         boost:shared=False
         gtest:shared=True
         LLA_BUILD_IKS=False
@@ -27,7 +27,7 @@ class LLAConan(ConanFile):
         LLA_BUILD_UNITTEST=False'''
     else:
         default_options = '''
-        OpenSSL:shared=True
+        openssl:shared=True
         boost:shared=True
         gtest:shared=True
         LLA_BUILD_IKS=False
@@ -43,7 +43,7 @@ class LLAConan(ConanFile):
         if tools.os_info.is_windows and self.options.LLA_BUILD_RFIDEAS:
             self.requires('rfideas/7.1.5@islog/stable')
         if self.options.LLA_BUILD_IKS:
-            self.requires('grpc/1.14.1@inexorgame/stable')
+            self.requires('grpc/1.25.0@inexorgame/stable')
         if self.options.LLA_BUILD_UNITTEST:
             self.requires('gtest/1.8.1@bincrafters/stable')
         if self.options.LLA_BUILD_PKCS:
@@ -177,4 +177,4 @@ class LLAConan(ConanFile):
 
     def package_id(self):
         self.info.requires["boost"].full_package_mode()
-        self.info.requires["OpenSSL"].full_package_mode()
+        self.info.requires["openssl"].full_package_mode()
