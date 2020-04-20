@@ -40,7 +40,7 @@ class LLAConan(ConanFile):
             del self.options.LLA_BUILD_RFIDEAS
        
     def requirements(self):
-        if self.settings.os != 'Windows' and self.options.LLA_BUILD_RFIDEAS:
+        if self.settings.os == 'Windows' and self.options.LLA_BUILD_RFIDEAS:
             self.requires('rfideas/7.1.5@islog/stable')
         if self.options.LLA_BUILD_IKS:
             self.requires('grpc/1.25.0@inexorgame/stable')
