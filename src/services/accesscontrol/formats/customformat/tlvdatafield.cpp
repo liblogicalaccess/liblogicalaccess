@@ -84,7 +84,7 @@ void TLVDataField::setLinearData(const ByteVector &data)
     BitsetStream _data;
     _data.concat(data);
 
-    if (_data.getBitSize() < (d_length + getPosition()))
+    if ((_data.getBitSize() - getPosition()) < 16)
     {
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                  "The data length is too short.");
