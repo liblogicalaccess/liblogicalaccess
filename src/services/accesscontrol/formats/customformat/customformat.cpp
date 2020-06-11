@@ -37,10 +37,11 @@ unsigned int CustomFormat::getDataLength() const
     for (std::list<std::shared_ptr<DataField>>::const_iterator i = d_fieldList.cbegin();
          i != d_fieldList.cend(); ++i)
     {
-		unsigned int pos = (*i)->getPosition();
-		if (pos == UNKNOWN_FIELD_POSITION) {
-			pos = dataLength;
-		}
+        unsigned int pos = (*i)->getPosition();
+        if (pos == UNKNOWN_FIELD_POSITION)
+        {
+            pos = dataLength;
+        }
         unsigned int maxLength = pos + (*i)->getDataLength();
         if (maxLength > dataLength)
         {
@@ -66,19 +67,20 @@ ByteVector CustomFormat::getLinearData() const
     BitsetStream data(getDataLength());
     std::list<std::shared_ptr<DataField>> sortedFieldList = d_fieldList;
     sortedFieldList.sort(FieldSortPredicate);
-	unsigned int lastpos = 0;
+    unsigned int lastpos = 0;
     for (std::list<std::shared_ptr<DataField>>::const_iterator i =
              sortedFieldList.begin();
          i != sortedFieldList.end(); ++i)
     {
         auto tmp         = (*i)->getLinearData(data);
         unsigned int pos = (*i)->getPosition();
-		if (pos == UNKNOWN_FIELD_POSITION) {
-			pos = lastpos;
-		}
-		data.writeAt(pos, tmp.getData(), 0, tmp.getBitSize());
-		
-		lastpos = pos + tmp.getBitSize();
+        if (pos == UNKNOWN_FIELD_POSITION)
+        {
+            pos = lastpos;
+        }
+        data.writeAt(pos, tmp.getData(), 0, tmp.getBitSize());
+
+        lastpos = pos + tmp.getBitSize();
     }
     return data.getData();
 }
@@ -87,22 +89,23 @@ void CustomFormat::setLinearData(const ByteVector &data)
 {
     std::list<std::shared_ptr<DataField>> sortedFieldList = d_fieldList;
     sortedFieldList.sort(FieldSortPredicate);
-	unsigned int lastpos = 0;
+    unsigned int lastpos = 0;
     for (std::list<std::shared_ptr<DataField>>::iterator i = sortedFieldList.begin();
          i != sortedFieldList.end(); ++i)
     {
-		unsigned int pos = (*i)->getPosition();
-		if (pos == UNKNOWN_FIELD_POSITION) {
-			(*i)->setPosition(lastpos);
-		}
+        unsigned int pos = (*i)->getPosition();
+        if (pos == UNKNOWN_FIELD_POSITION)
+        {
+            (*i)->setPosition(lastpos);
+        }
         (*i)->setLinearData(data);
-		if (pos == UNKNOWN_FIELD_POSITION) 
-			// Reset position to the unknown flag
-			(*i)->setPosition(UNKNOWN_FIELD_POSITION);
-			pos = lastpos;
-		}
-		lastpos = pos + (*i)->getDataLength();
+        if (pos == UNKNOWN_FIELD_POSITION)
+            // Reset position to the unknown flag
+            (*i)->setPosition(UNKNOWN_FIELD_POSITION);
+        pos = lastpos;
     }
+    lastpos = pos + (*i)->getDataLength();
+}
 }
 
 void CustomFormat::serialize(boost::property_tree::ptree &parentNode)
