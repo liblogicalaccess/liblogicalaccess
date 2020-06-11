@@ -103,9 +103,8 @@ void CustomFormat::setLinearData(const ByteVector &data)
             // Reset position to the unknown flag
             (*i)->setPosition(UNKNOWN_FIELD_POSITION);
         pos = lastpos;
+        lastpos = pos + (*i)->getDataLength();
     }
-    lastpos = pos + (*i)->getDataLength();
-}
 }
 
 void CustomFormat::serialize(boost::property_tree::ptree &parentNode)
