@@ -62,6 +62,10 @@ DESFireISO7816ResultChecker::DESFireISO7816ResultChecker()
                          "internal backup/rollback mechanism activated");
     AddCheck(0x91, 0xF0, "Specified file number does not exist");
     AddCheck(0x91, 0xF1, "Unrecoverable error within file, file will be disabled");
+
+    AddCheck(0x91, 0x0B,
+             "Unexpected command / DESFireEV2 Mandatory Proximity Check enabled but not yet performed",
+             CardException::FUNCTION_NOT_SUPPORTED);
 }
 
 DESFireISO7816ResultChecker::~DESFireISO7816ResultChecker()

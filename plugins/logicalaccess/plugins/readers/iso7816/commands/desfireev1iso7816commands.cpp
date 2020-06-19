@@ -922,6 +922,8 @@ void DESFireEV1ISO7816Commands::authenticateAES(unsigned char keyno)
     crypto->d_mac_size    = 8;
     crypto->d_lastIV.clear();
     crypto->d_lastIV.resize(crypto->d_cipher->getBlockSize(), 0x00);
+
+    onAuthenticated();
 }
 
 ISO7816Response DESFireEV1ISO7816Commands::handleReadCmd(unsigned char cmd,

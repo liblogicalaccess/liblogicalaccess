@@ -90,6 +90,17 @@ int PCSCCardProbe::get_desfire_version(std::vector<uint8_t> *uid)
                 *uid = ByteVector(std::begin(cardversion.uid), std::end(cardversion.uid));
             return cardversion.softwareMjVersion;
         }
+        catch (const CardException &e)
+        {
+            if (e.error_code() == CardException::FUNCTION_NOT_SUPPORTED)
+            {
+                // This likely means EV2 with Mandatory Proximity Check.
+                // Note that unfortunately,
+                // this will likely cause some issue with EV3 or something later.
+                return 2;
+            }
+            throw;
+        }
         catch (const std::exception &)
         {
             // Quite often the hardware is not ready or something else happens
@@ -144,7 +155,7 @@ void PCSCCardProbe::reset() const
   auto pcsc_ru = dynamic_cast<PCSCReaderUnit *>(reader_unit_);
   if (pcsc_ru == nullptr)
     THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-      "Card probing failed because reseting the PCSC connection failed.");
+      "Card probing failed because we don't have a PCSCReaderUnit.");
   try
   {
         assert(pcsc_ru);
@@ -162,22 +173,25 @@ void PCSCCardProbe::reset() const
 
 bool PCSCCardProbe::has_desfire_random_uid(ByteVector *uid)
 {
+    // Note that if we are already authenticated against the card
+    // this will not work. This should never be a problem because
+    // PCSCCardProbe is only used at card detection.
     try
     {
+        auto pcsc_ru = dynamic_cast<PCSCReaderUnit *>(reader_unit_);
+        EXCEPTION_ASSERT_WITH_LOG(pcsc_ru != nullptr, LibLogicalAccessException, "No PCSC reader unit");
         auto chip = reader_unit_->createChip("DESFireEV1");
         auto desfire_command =
             std::dynamic_pointer_cast<DESFireCommands>(chip->getCommands());
         assert(desfire_command);
 
-        desfire_command->selectApplication(0x00);
-        DESFireCommands::DESFireCardVersion cardversion = desfire_command->getVersion();
-
-        if (BufferHelper::allZeroes(cardversion.uid))
-        {
+        auto csn = pcsc_ru->getCardSerialNumber();
+        // 0x08 as first byte means random UID.
+        if (csn.at(0) == 0x08) {
             return true;
         }
         if (uid)
-            *uid = ByteVector(std::begin(cardversion.uid), std::end(cardversion.uid));
+            *uid = ByteVector(std::begin(csn), std::end(csn));
         return false;
     }
     catch (const std::exception &)
