@@ -152,6 +152,7 @@ void Settings::LoadSettings()
         DefaultReader = pt.get<std::string>("config.reader.default", "PCSC");
 
         DataTransportTimeout = pt.get<int>("config.dataTransportTimeout", 3000);
+        ProximityCheckResponseTimeMultiplier = pt.get<double>("config.proximityCheckResponseTimeMultiplier", 2);
 
         PluginFolders.clear();
         BOOST_FOREACH (ptree::value_type const &v, pt.get_child("config.PluginFolders"))
