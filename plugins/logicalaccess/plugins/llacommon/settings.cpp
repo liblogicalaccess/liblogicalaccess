@@ -209,6 +209,7 @@ void Settings::SaveSettings() const
         pt.put("config.reader.default", "PCSC");
 
         pt.put("config.dataTransportTimeout", DataTransportTimeout);
+        pt.put("config.proximityCheckResponseTimeMultiplier", ProximityCheckResponseTimeMultiplier);
 
         // Write the property tree to the XML file.
         write_xml((getDllPath() + "/liblogicalaccess.config"), pt);
