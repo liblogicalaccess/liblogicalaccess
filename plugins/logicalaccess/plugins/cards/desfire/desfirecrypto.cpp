@@ -686,8 +686,8 @@ ByteVector DESFireCrypto::changeKey_PICC(uint8_t keyno, ByteVector oldKeyDiversi
                     static_cast<unsigned char>(oldkeydiv[i] ^ newkeydiv[i]));
             }
 
-            if (keysetno != 0 && newkey->getKeyType() == DF_KEY_AES)
-                encCryptogram.push_back(newkey->getKeyVersion()); // ChangeKeyEV2
+            if (newkey->getKeyType() == DF_KEY_AES)
+                encCryptogram.push_back(newkey->getKeyVersion());
             short crc = desfire_crc16(&encCryptogram[0], encCryptogram.size());
             encCryptogram.push_back(static_cast<unsigned char>(crc & 0xff));
             encCryptogram.push_back(static_cast<unsigned char>((crc & 0xff00) >> 8));
