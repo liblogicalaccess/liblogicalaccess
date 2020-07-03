@@ -222,83 +222,16 @@ void MifareNFCTagCardService::writeNFC(std::shared_ptr<NfcData> records, int sec
 
 void MifareNFCTagCardService::writeNFC(std::shared_ptr<NfcData> records, int sector, std::shared_ptr<MifareKey> keyA, std::shared_ptr<MifareKey> keyB, bool useMad)
 {
-    std::shared_ptr<StorageCardService> storage =
-        std::dynamic_pointer_cast<StorageCardService>(
-            getMifareChip()->getService(CST_STORAGE));
-    std::shared_ptr<MifareLocation> location(new MifareLocation());
-    std::shared_ptr<MifareAccessInfo> aiToWrite(new MifareAccessInfo());
-    MifareAccessInfo::SectorAccessBits sab;
-    std::shared_ptr<MifareKey> madKey = std::make_shared<MifareKey>(MAD_KEY);
-    unsigned char mad;
-    ByteVector madSector;
-    std::map<int, ByteVector > mapBuffer;
+    std::shared_ptr<logicalaccess::MifareAccessInfo> aiToWrite(
+        new logicalaccess::MifareAccessInfo());
+    aiToWrite->keyA = keyA;
+    aiToWrite->keyB = keyB;
+    aiToWrite->gpb = 0x40;
+    aiToWrite->madKeyA.reset(new logicalaccess::MifareKey(MAD_KEY));
+    aiToWrite->madKeyB = keyB;
+    aiToWrite->madGPB = 0xC1;
 
-    sab.setAReadBWriteConfiguration();
-    try
-    {
-      madSector = getMifareChip()->getMifareCommands()->readSector(0, 1 ,madKey, keyB, sab, true);
-    }
-    catch (const std::exception &e)
-    {
-      getMifareChip()->getMifareCommands()->changeKeys(KT_KEY_A ,std::make_shared<MifareKey>(EMPTY_SECTOR_KEY), madKey, keyB, 0, &sab, 0xC1);
-      madSector = getMifareChip()->getMifareCommands()->readSector(0, 1 ,madKey, keyB, sab, true);
-    }
-    for (unsigned int i = 2; i + 1 < madSector.size(); i += 2)
-    {
-      if (madSector[i] == 0x03 && madSector[i + 1] == 0xE1)
-      {
-        MifareAccessInfo::SectorAccessBits sab2;
-        sab2.setAReadBWriteConfiguration();
-        ByteVector smallBuffer = getMifareChip()->getMifareCommands()->readSector(i / 2, 0,keyA, std::make_shared<MifareKey>(EMPTY_SECTOR_KEY), sab2);
-        mapBuffer[i / 2] = smallBuffer;
-      }
-    }
-    _memoryList.clear();
-    for (auto it = mapBuffer.begin(); it != mapBuffer.end(); ++it)
-    {
-      if (it->second[0] != 0x03) // if the sector doesn't begin with a ndef message
-        fillMemoryList(it->second);
-    }
-    ByteVector bigBuffer = NfcData::dataToTLV(records);
-    int additionalSectors = bigBuffer.size() / 48;
-    while (additionalSectors >= 0)
-    {
-      madSector[(sector + additionalSectors) * 2] = 0x03;
-      madSector[(sector + additionalSectors) * 2 + 1] = 0xE1;
-      additionalSectors--;
-    }
-    unsigned char *buffer = new unsigned char[madSector.size()];
-    for (unsigned int i = 0; i < madSector.size() - 1; ++i)
-      buffer[i] = madSector[i + 1];
-    buffer[madSector.size() - 1] = 0;
-    mad = getMifareChip()->getMifareCommands()->calculateMADCrc(buffer, madSector.size());
-    delete[] buffer;
-    madSector[0] = mad;
-    getMifareChip()->getMifareCommands()->writeSector(0, 1, madSector, madKey, keyB, sab, true);
-    ByteVector tmpBuffer;
-    int byteAddr = sector * 64;
-    int baseAddr = byteAddr;
-    sab.setNfcConfiguration();
-    for (unsigned int i = 0; i < bigBuffer.size(); i++)
-    {
-      int c = checkForReservedArea(byteAddr);
-      if (c != -1)
-      {
-        writeInfo(baseAddr, keyB, tmpBuffer, useMad, storage);
-        byteAddr += c + 1;
-        int mod = byteAddr % 16;
-        if (mod != 0)
-        {
-          mod = 16 - mod;
-          byteAddr += mod;
-        }
-        baseAddr = byteAddr;
-        tmpBuffer.clear();
-      }
-      tmpBuffer.push_back(bigBuffer[i]);
-      byteAddr++;
-    }
-    writeInfo(baseAddr, keyB, tmpBuffer, useMad, storage);
+    writeNFC(records, sector, aiToWrite);
   }
 
 std::vector<std::shared_ptr<NfcData> > MifareNFCTagCardService::readNFC()
