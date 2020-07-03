@@ -43,10 +43,6 @@ class LLA_CARDS_MIFARE_API MifareNFCTagCardService : public NFCTagCardService
 
     std::shared_ptr<NdefMessage> readNDEF() override;
 
-    void writeNDEF(std::shared_ptr<NdefMessage> records) override;
-
-    void eraseNDEF() override;
-
     void eraseNfc(std::shared_ptr<MifareKey> sectorKeyB = std::make_shared<MifareKey>("ff ff ff ff ff ff"), std::shared_ptr<MifareKey> madKeyB = std::make_shared<MifareKey>("ff ff ff ff ff ff"));
     void eraseNfc(int sector, std::shared_ptr<MifareKey> sectorKeyB = std::make_shared<MifareKey>("ff ff ff ff ff ff"), std::shared_ptr<MifareKey> madKeyB = std::make_shared<MifareKey>("ff ff ff ff ff ff"));
     std::vector<std::shared_ptr<NfcData> > readNFC();
