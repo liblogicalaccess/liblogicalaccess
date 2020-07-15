@@ -8,20 +8,22 @@
 
 namespace logicalaccess
 {
-NFCTagCardService::NFCTagCardService(std::shared_ptr<Chip> chip)
-    : CardService(chip, CST_NFC_TAG)
-{
-}
+	NFCTagCardService::NFCTagCardService(std::shared_ptr<Chip> chip)
+		: CardService(chip, CST_NFC_TAG)
+	{
+	}
 
-NFCTagCardService::~NFCTagCardService()
-{
-}
+	NFCTagCardService::~NFCTagCardService()
+	{
+	}
 
-void NFCTagCardService::writeNDEF(std::shared_ptr<NdefMessage> /*records*/)
-{
-}
+	void NFCTagCardService::writeNDEF(std::shared_ptr<NdefMessage> /*records*/)
+	{
+		throw std::runtime_error("Not Implemented Exception");
+	}
 
-void NFCTagCardService::eraseNDEF()
-{
-}
+	void NFCTagCardService::eraseNDEF()
+	{
+		throw std::runtime_error("Not Implemented Exception");
+	}
 }
