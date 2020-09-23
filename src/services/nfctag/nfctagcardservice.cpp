@@ -19,11 +19,11 @@ namespace logicalaccess
 
 	void NFCTagCardService::writeNDEF(std::shared_ptr<NdefMessage> /*records*/)
 	{
-		throw std::runtime_error("Not Implemented Exception");
+        
 	}
 
 	void NFCTagCardService::eraseNDEF()
 	{
-		throw std::runtime_error("Not Implemented Exception");
+        
 	}
 }
