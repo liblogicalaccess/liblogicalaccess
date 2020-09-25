@@ -28,7 +28,7 @@ void MifareNFCTagCardService::writeNDEF(std::shared_ptr<NdefMessage> records)
         std::dynamic_pointer_cast<logicalaccess::NfcData>(records);
 
     auto key =
-        std::make_shared<logicalaccess::MifareKey>(new MifareKey(EMPTY_SECTOR_KEY));
+        std::make_shared<logicalaccess::MifareKey>(EMPTY_SECTOR_KEY);
 
     writeNFC(data, 2, key, key);
 }
