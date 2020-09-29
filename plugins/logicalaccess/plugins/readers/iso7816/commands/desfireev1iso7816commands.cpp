@@ -355,9 +355,18 @@ void DESFireEV1ISO7816Commands::authenticate(unsigned char keyno,
             break;
 
         case DF_KEY_AES:
-            iso_authenticate(key, DF_ALG_AES, (crypto->d_currentAid == 0 && keyno == 0),
-                             keyno);
+        {
+            // We are using authenticateAES instead of iso_authenticate.
+            // The reason is a firmware bug for EV2 chip in version 2.0 that causes
+            // failure on changeKey command when authenticated through ISO mode.
+            // This bug is fixed in EV2 firmware 2.1 but there seem to have quite
+            // a few of 2.0 in the field already.
+            auto crypto =
+                std::dynamic_pointer_cast<DESFireCrypto>(getDESFireChip()->getCrypto());
+            crypto->setKey(crypto->d_currentAid, 0, keyno, key);
+            authenticateAES(keyno);
             break;
+        }
         }
     }
     onAuthenticated();
@@ -1400,7 +1409,9 @@ int32_t DESFireEV1ISO7816Commands::getValue(unsigned char fileno, EncryptionMode
         size_t offset = 0;
         return BufferHelper::getInt32(data, offset);
     }
-    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "DESFireEV1ISO7816Commands getValue did not return enough data");
+    THROW_EXCEPTION_WITH_LOG(
+        LibLogicalAccessException,
+        "DESFireEV1ISO7816Commands getValue did not return enough data");
 }
 
 void DESFireEV1ISO7816Commands::setConfiguration(bool formatCardEnabled,
