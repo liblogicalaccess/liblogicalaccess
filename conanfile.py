@@ -2,7 +2,7 @@ from conans import ConanFile, CMake, tools
 
 class LLAConan(ConanFile):
     name = "LogicalAccess"
-    version = "2.2.1"
+    version = "2.3.0"
     license = "https://github.com/islog/liblogicalaccess/blob/develop/LICENSE"
     url = "https://github.com/islog/liblogicalaccess"
     description = "ISLOG RFID library"
@@ -14,7 +14,7 @@ class LLAConan(ConanFile):
                'LLA_BUILD_UNITTEST': [True, False],
                'LLA_BUILD_RFIDEAS': [True, False]}
     revision_mode = "scm"
-    exports_sources = "plugins*", "src*", "include*", "CMakeLists.txt", "cmake*", "liblogicalaccess.config", "tests*"
+    exports_sources = "plugins*", "src*", "include*", "CMakeLists.txt", "cmake*", "liblogicalaccess.config", "tests*", "samples*"
     
     if tools.os_info.is_windows:
         default_options = '''
@@ -40,7 +40,7 @@ class LLAConan(ConanFile):
             del self.options.LLA_BUILD_RFIDEAS
        
     def requirements(self):
-        if tools.os_info.is_windows and self.options.LLA_BUILD_RFIDEAS:
+        if self.settings.os == 'Windows' and self.options.LLA_BUILD_RFIDEAS:
             self.requires('rfideas/7.1.5@islog/stable')
         if self.options.LLA_BUILD_IKS:
             self.requires('grpc/1.25.0@inexorgame/stable')

@@ -142,6 +142,8 @@ if (LLA_BUILD_UNITTEST)
     add_subdirectory(tests)
 endif ()
 
+add_subdirectory(samples/basic)
+
 if (NOT DEFINED LIBLOGICALACCESS_CMAKE_CONFIG_DIR)
     set(LIBLOGICALACCESS_CMAKE_CONFIG_DIR lib/${LIB_SUFFIX}/cmake/liblogicalaccess)
 endif ()

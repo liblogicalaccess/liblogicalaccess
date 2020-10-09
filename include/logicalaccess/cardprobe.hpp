@@ -63,7 +63,7 @@ class LLA_CORE_API CardProbe
     virtual bool maybe_mifare_classic() = 0;
 
     /**
-     * Is random UID enable for a DESFire card.
+     * Is random UID enabled for a DESFire card.
      *
      * @param uid The UID in case random UID is DISABLED. Otherwise
      * `*uid` wont be set.

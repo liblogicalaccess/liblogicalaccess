@@ -152,6 +152,7 @@ void Settings::LoadSettings()
         DefaultReader = pt.get<std::string>("config.reader.default", "PCSC");
 
         DataTransportTimeout = pt.get<int>("config.dataTransportTimeout", 3000);
+        ProximityCheckResponseTimeMultiplier = pt.get<double>("config.proximityCheckResponseTimeMultiplier", 2);
 
         PluginFolders.clear();
         BOOST_FOREACH (ptree::value_type const &v, pt.get_child("config.PluginFolders"))
@@ -208,6 +209,7 @@ void Settings::SaveSettings() const
         pt.put("config.reader.default", "PCSC");
 
         pt.put("config.dataTransportTimeout", DataTransportTimeout);
+        pt.put("config.proximityCheckResponseTimeMultiplier", ProximityCheckResponseTimeMultiplier);
 
         // Write the property tree to the XML file.
         write_xml((getDllPath() + "/liblogicalaccess.config"), pt);

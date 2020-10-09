@@ -60,6 +60,12 @@ int main(int, char **)
         readerConfig->setReaderProvider(
             logicalaccess::LibraryManager::getInstance()->getReaderProvider(rpstr));
 
+        if (readerConfig->getReaderProvider() == nullptr)
+        {
+            std::cerr << "No reader provider" << std::endl;
+            return EXIT_FAILURE;
+        }
+
         if (readerConfig->getReaderProvider()->getRPType() == "PCSC" &&
             readerConfig->getReaderProvider()->getReaderList().size() == 0)
         {

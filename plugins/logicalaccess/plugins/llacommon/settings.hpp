@@ -54,6 +54,17 @@ class LLA_COMMON_API Settings
      */
     int DataTransportTimeout;
 
+    /**
+     * EV2 Proximity Check timer.
+     * EV2 Chip send a "expected response time" that let us known
+     * how long the getting a response from card should take.
+     *
+     * However, in PCSC mode we cannot time this, because we can
+     * only time full command/response pair.
+     * By default this multiplier is set to 2.
+     */
+    double ProximityCheckResponseTimeMultiplier;
+
     static std::string getDllPath();
 
   protected:
