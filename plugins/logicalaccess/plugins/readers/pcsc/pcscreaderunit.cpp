@@ -63,6 +63,7 @@
 #include <logicalaccess/plugins/cards/topaz/topazchip.hpp>
 #include <logicalaccess/plugins/cards/generictag/generictagchip.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfireev2chip.hpp>
+#include <logicalaccess/plugins/cards/desfire/desfireev3chip.hpp>
 #include <logicalaccess/plugins/cards/seos/seoschip.hpp>
 
 #include <logicalaccess/plugins/readers/iso7816/commands/samiso7816resultchecker.hpp>
@@ -104,7 +105,6 @@
 #ifdef __linux__
 // Include for SCARD_ATTR_VENDOR_IFD_SERIAL_NO
 #include <reader.h>
-#include <logicalaccess/plugins/cards/desfire/desfireev3chip.hpp>
 #endif
 
 namespace logicalaccess
