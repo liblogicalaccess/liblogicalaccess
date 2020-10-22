@@ -104,6 +104,7 @@
 #ifdef __linux__
 // Include for SCARD_ATTR_VENDOR_IFD_SERIAL_NO
 #include <reader.h>
+#include <logicalaccess/plugins/cards/desfire/desfireev3chip.hpp>
 #endif
 
 namespace logicalaccess
@@ -141,14 +142,14 @@ PCSCReaderUnit::~PCSCReaderUnit()
 
     if (PCSCReaderUnit::isConnected())
     {
-      try
-      {
-        PCSCReaderUnit::disconnect();
-      }
-      catch (std::exception &ex)
-      {
-          LOG(LogLevel::ERRORS) << "Error when disconnecting the reader: " << ex.what();
-      }
+        try
+        {
+            PCSCReaderUnit::disconnect();
+        }
+        catch (std::exception &ex)
+        {
+            LOG(LogLevel::ERRORS) << "Error when disconnecting the reader: " << ex.what();
+        }
     }
 }
 
@@ -1502,13 +1503,18 @@ std::shared_ptr<Chip> PCSCReaderUnit::adjustChip(std::shared_ptr<Chip> c)
     // Adjust cryptographic context.
     if (c->getCardType() == CHIP_DESFIRE && d_card_type == CHIP_UNKNOWN)
     {
+        // We are doing too much work here. We should query once and compare
+        // or something. It works alright but is not very good.
         if (createCardProbe()->is_desfire_ev1())
             c = createChip(CHIP_DESFIRE_EV1);
         else if (createCardProbe()->is_desfire_ev2())
             c = createChip(CHIP_DESFIRE_EV2_PUBLIC);
+        else if (createCardProbe()->is_desfire_ev3())
+            c = createChip(CHIP_DESFIRE_EV3_PUBLIC);
     }
     if (c->getCardType() == CHIP_DESFIRE || c->getCardType() == CHIP_DESFIRE_EV1 ||
-        c->getCardType() == CHIP_DESFIRE_EV2_PUBLIC)
+        c->getCardType() == CHIP_DESFIRE_EV2_PUBLIC ||
+        c->getCardType() == CHIP_DESFIRE_EV3_PUBLIC)
     {
         ByteVector uid;
         if (createCardProbe()->has_desfire_random_uid(&uid))

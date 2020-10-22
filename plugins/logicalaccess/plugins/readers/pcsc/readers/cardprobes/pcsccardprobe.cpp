@@ -125,7 +125,13 @@ bool PCSCCardProbe::is_desfire_ev1(std::vector<uint8_t> *uid)
 bool PCSCCardProbe::is_desfire_ev2(std::vector<uint8_t> *uid)
 {
     LLA_LOG_CTX("Probe::is_desfire_ev2");
-    return get_desfire_version(uid) >= 2;
+    return get_desfire_version(uid) == 2;
+}
+
+bool PCSCCardProbe::is_desfire_ev3(std::vector<uint8_t> *uid)
+{
+    LLA_LOG_CTX("Probe::is_desfire_ev3");
+    return get_desfire_version(uid) == 3;
 }
 
 bool PCSCCardProbe::is_mifare_ultralight_c()

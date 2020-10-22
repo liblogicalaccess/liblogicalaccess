@@ -51,6 +51,14 @@ class LLA_CORE_API CardProbe
     virtual bool is_desfire_ev2(ByteVector *uid = nullptr) = 0;
 
     /**
+    * Test if the card is DESFire EV2 by sending the getversion command.
+    *
+    * The optional `*uid` vector will be populate with the uid retrieve from
+    * the getversion command, unless the command failed.
+    */
+    virtual bool is_desfire_ev3(ByteVector *uid = nullptr) = 0;
+
+    /**
      * Test if the card is Mifare Ultralight C by sending the authenticate command.
      */
     virtual bool is_mifare_ultralight_c() = 0;

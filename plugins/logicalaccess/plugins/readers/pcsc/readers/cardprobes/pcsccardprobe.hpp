@@ -16,6 +16,8 @@ class LLA_READERS_PCSC_API PCSCCardProbe : public CardProbe
 
     bool is_desfire_ev2(ByteVector *uid = nullptr) override;
 
+    bool is_desfire_ev3(ByteVector *uid = nullptr) override;
+
     bool is_mifare_ultralight_c() override;
 
     bool maybe_mifare_classic() override;
