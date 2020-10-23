@@ -741,6 +741,16 @@ std::shared_ptr<Chip> PCSCReaderUnit::createChip(std::string type)
                 getSAMChip());
             resultChecker.reset(new DESFireISO7816ResultChecker());
         }
+        else if (type == CHIP_DESFIRE_EV3_PUBLIC)
+        {
+            commands = LibraryManager::getInstance()->getCommands("DESFireEV3ISO7816");
+            if (!commands)
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                     "Could not load DESFireEV3ISO7816 Commands.");
+            std::dynamic_pointer_cast<DESFireISO7816Commands>(commands)->setSAMChip(
+                getSAMChip());
+            resultChecker.reset(new DESFireISO7816ResultChecker());
+        }
         else if (type == CHIP_DESFIRE_EV1)
         {
             commands.reset(new DESFireEV1ISO7816Commands());
