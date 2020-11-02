@@ -40,6 +40,12 @@ class LLA_CORE_API TLVDataField : public ValueDataField
     {
         return DFT_TLV;
     }
+	
+	/**
+     * \brief Set the field position in bits.
+     * \param position The field position in bits.
+     */
+    virtual void setPosition(unsigned int position) override;
 
     /**
      * \brief Set the field value.
