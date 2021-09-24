@@ -499,15 +499,16 @@ bool PCSCReaderUnit::connect(PCSCShareMode share_mode)
         }
         setup_pcsc_connection(share_mode);
 
-        if (d_insertedChip->getGenericCardType() == CHIP_SAM)
+        if (d_insertedChip && d_insertedChip->getGenericCardType() == CHIP_SAM)
             connection_->setDisposition(SCARD_UNPOWER_CARD);
         else
             connection_->setDisposition(SCARD_LEAVE_CARD);
 
         LOG(LogLevel::INFOS) << "SCardConnect Success !";
-        detect_mifareplus_security_level(d_insertedChip);
-
-        d_insertedChip = adjustChip(d_insertedChip);
+		if (d_insertedChip) {
+			detect_mifareplus_security_level(d_insertedChip);
+			d_insertedChip = adjustChip(d_insertedChip);
+		}
         if (d_proxyReaderUnit)
         {
             d_proxyReaderUnit->setSingleChip(d_insertedChip);
