@@ -5,7 +5,12 @@ add_executable(basic
         basic.cpp)
 
 target_link_libraries(basic
-        logicalaccess)
+        iso7816cards
+        desfirecards
+        logicalaccess
+        iso7816cards
+        iso7816readers
+        )
 
 install(TARGETS basic
         RUNTIME DESTINATION bin

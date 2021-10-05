@@ -19,6 +19,7 @@
 #include "logicalaccess/cards/PKCSkeystorage.hpp"
 #include "logicalaccess/plugins/cards/desfire/desfirekey.hpp"
 #include "logicalaccess/plugins/cards/desfire/desfireev1commands.hpp"
+#include "logicalaccess/plugins/readers/iso7816/commands/desfireiso7816commands.hpp"
 
 /**
  * \brief The application entry point.
@@ -55,7 +56,7 @@ int main(int, char **)
         // PC/SC
         std::string rpstr = "PCSC";
         std::cout << "Please type the reader plug-in to use:" << std::endl;
-        std::cin >> rpstr;
+        //std::cin >> rpstr;
 
         readerConfig->setReaderProvider(
             logicalaccess::LibraryManager::getInstance()->getReaderProvider(rpstr));
@@ -84,7 +85,7 @@ int main(int, char **)
         {
             std::cout << "\t" << i << ". " << readers.at(i)->getName() << std::endl;
         }
-        std::cin >> ruindex;
+     //   std::cin >> ruindex;
 
         if (ruindex < 0 || ruindex >= static_cast<int>(readers.size()))
         {
@@ -100,7 +101,7 @@ int main(int, char **)
             readerConfig->getReaderUnit()->connectToReader();
 
             // Force card type here if you want to
-            // readerConfig->getReaderUnit()->setCardType(CT_DESFIRE_EV1);
+            readerConfig->getReaderUnit()->setCardType("DESFireEV1");
 
             std::cout << "Time start : " << time(NULL) << std::endl;
             if (readerConfig->getReaderUnit()->waitInsertion(15000))
@@ -115,6 +116,11 @@ int main(int, char **)
                     std::shared_ptr<logicalaccess::Chip> chip =
                         readerConfig->getReaderUnit()->getSingleChip();
                     std::cout << "Card type: " << chip->getCardType() << std::endl;
+
+                    auto desfirecmd = std::dynamic_pointer_cast<logicalaccess::DESFireISO7816Commands>(chip->getCommands());
+
+                    auto v = desfirecmd->getVersion();
+                    std::cout << "Desfire version: " << (int )v.hardwareMjVersion << ":" << (int )v.hardwareMnVersion << std::endl;
 
                     std::vector<unsigned char> csn =
                         readerConfig->getReaderUnit()->getNumber(chip);
