@@ -43,7 +43,7 @@ void ISO7816NFCTag4CardService::writeCapabilityContainer(unsigned short isoFID,
     CC.push_back(0x00);                         // read access
     CC.push_back(0x00);                         // write access
 
-    iso7816command->selectFile(isoFID);
+    iso7816command->selectFile(P1_SELECT_MF_DF_EF, P2_FIRST_RECORD, isoFID);
     iso7816command->updateBinary(CC, 0, isoFID);
 }
 
@@ -57,7 +57,7 @@ void ISO7816NFCTag4CardService::writeNDEFFile(ByteVector recordsData,
     data.push_back(static_cast<unsigned char>(recordsData.size() & 0xff)); // NDEF Length
     data.insert(data.end(), recordsData.begin(), recordsData.end());
 
-    iso7816command->selectFile(isoFIDNDEFFile);
+    iso7816command->selectFile(P1_SELECT_MF_DF_EF, P2_FIRST_RECORD, isoFIDNDEFFile);
     iso7816command->updateBinary(data, 0, isoFIDNDEFFile);
 }
 
@@ -75,13 +75,13 @@ ISO7816NFCTag4CardService::readNDEFFile(const ByteVector &appDFName,
 
     size_t length = 0x02;
 
-	iso7816command->selectFile(appDFName);
-	iso7816command->selectFile(isoFIDNDEFFile);
+	iso7816command->selectFile(P1_SELECT_BY_DFNAME, P2_FIRST_RECORD, appDFName);
+	iso7816command->selectFile(P1_SELECT_MF_DF_EF, P2_FIRST_RECORD, isoFIDNDEFFile);
     ByteVector data = iso7816command->readBinary(length, 0, isoFIDNDEFFile);
 
     if (length != 0x02)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                 "Impossible to read NDEF Length");
+                                 "Cannot read NDEF Length");
     length = (data[0] << 8) | data[1];
     data   = iso7816command->readBinary(length, 2, isoFIDNDEFFile);
     return std::make_shared<NdefMessage>(data);
