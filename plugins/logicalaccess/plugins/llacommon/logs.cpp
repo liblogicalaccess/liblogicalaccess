@@ -112,7 +112,10 @@ Logs::~Logs()
         logfile.flush();
 
         if (logToStderr)
+        {
             std::cerr << _stream.str();
+            std::cerr.flush();
+        }
     }
 }
 
