@@ -191,13 +191,16 @@ bool PCSCCardProbe::has_desfire_random_uid(ByteVector *uid)
             std::dynamic_pointer_cast<DESFireCommands>(chip->getCommands());
         assert(desfire_command);
 
-        auto csn = pcsc_ru->getCardSerialNumber();
-        // 0x08 as first byte means random UID.
-        if (csn.at(0) == 0x08) {
-            return true;
-        }
-        if (uid)
-            *uid = ByteVector(std::begin(csn), std::end(csn));
+		if (!pcsc_ru->getPCSCConfiguration()->getSkipCSN())
+		{
+			auto csn = pcsc_ru->getCardSerialNumber();
+			// 0x08 as first byte means random UID.
+			if (csn.at(0) == 0x08) {
+				return true;
+			}
+			if (uid)
+				*uid = ByteVector(std::begin(csn), std::end(csn));
+		}
         return false;
     }
     catch (const std::exception &)

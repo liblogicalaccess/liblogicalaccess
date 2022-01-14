@@ -35,10 +35,12 @@ void ISO7816ReaderUnitConfiguration::resetConfiguration()
     d_keyno_unlock               = 0;
     d_check_sam_reader_available = true;
     d_auto_connect_sam_reader    = true;
+	d_skipCSN                    = false;
 }
 
 void ISO7816ReaderUnitConfiguration::serialize(boost::property_tree::ptree &node)
 {
+	node.put("SkipCSN", d_skipCSN);	
     node.put("SAMType", d_sam_type);
     node.put("SAMReaderName", d_sam_reader_name);
     boost::property_tree::ptree knode;
@@ -54,6 +56,11 @@ void ISO7816ReaderUnitConfiguration::serialize(boost::property_tree::ptree &node
 
 void ISO7816ReaderUnitConfiguration::unSerialize(boost::property_tree::ptree &node)
 {
+	auto skipNode = node.get_child_optional("SkipCSN");
+	if (skipNode)
+	{
+		d_skipCSN = skipNode.get().get_value<bool>();
+	}
     d_sam_type =
         static_cast<std::string>(node.get_child("SAMType").get_value<std::string>());
     d_sam_reader_name = node.get_child("SAMReaderName").get_value<std::string>();

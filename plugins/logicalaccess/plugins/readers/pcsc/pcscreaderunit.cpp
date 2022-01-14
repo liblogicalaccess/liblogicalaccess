@@ -1510,6 +1510,8 @@ bool PCSCReaderUnit::process_insertion(const std::string &cardType, unsigned int
 
 std::shared_ptr<Chip> PCSCReaderUnit::adjustChip(std::shared_ptr<Chip> c)
 {
+	LOG(LogLevel::INFOS) << "Adjusting chip (" << c->getCardType() << ")...";
+	
     // DESFire adjustment. Check maybe it's DESFireEV1 or EV2. Check random uid.
     // Adjust cryptographic context.
     if (c->getCardType() == CHIP_DESFIRE && d_card_type == CHIP_UNKNOWN)
@@ -1577,7 +1579,14 @@ std::shared_ptr<Chip> PCSCReaderUnit::adjustChip(std::shared_ptr<Chip> c)
             }
             else
             {
-                c->setChipIdentifier(getCardSerialNumber());
+				if (!getPCSCConfiguration()->getSkipCSN())
+				{
+					c->setChipIdentifier(getCardSerialNumber());
+				}
+				else
+				{
+					LOG(LogLevel::INFOS) << "Reading CSN skipped.";
+				}
             }
         }
         catch (LibLogicalAccessException &e)
