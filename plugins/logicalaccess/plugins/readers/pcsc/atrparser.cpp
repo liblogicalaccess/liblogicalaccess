@@ -43,6 +43,8 @@ ATRParser::ATRParser(const ByteVector &atr)
                            "SAM_AV2");
     register_hardcoded_atr("3BDF18FF81F1FE43001F034D494641524520506C75732053414D98",
                            "SAM_AV2");
+    register_hardcoded_atr("3BDF18FF81F1FE43003F07834D49464152452053414D204156333011",
+                           "SAMAV3");
     // SEOS or Electronic Passport / Spanish passport (2012)
     register_hardcoded_atr("3B80800101", "Seos");
     register_hardcoded_atr("3B959680B1FE551FC7477261636513", "SEProcessor");

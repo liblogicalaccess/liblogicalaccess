@@ -17,7 +17,7 @@ class Chip;
 /**
  * \brief The base commands class for all card commands.
  */
-class LLA_CORE_API Commands : public ICommands
+class LLA_CORE_API Commands : public virtual ICommands
 {
   public:
     /**
@@ -91,6 +91,7 @@ class LLA_CORE_API Commands : public ICommands
     {
     }
 
+  private:
     /**
      * \brief The reader/card adapter.
      */

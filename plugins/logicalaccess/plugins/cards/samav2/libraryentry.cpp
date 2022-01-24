@@ -3,6 +3,7 @@
 #include <logicalaccess/readerproviders/readerprovider.hpp>
 #include <logicalaccess/plugins/cards/samav2/samav1chip.hpp>
 #include <logicalaccess/plugins/cards/samav2/samav2chip.hpp>
+#include "samav3chip.hpp"
 
 extern "C" {
 LLA_CARDS_SAMAV2_API char *getLibraryName()
@@ -26,6 +27,14 @@ LLA_CARDS_SAMAV2_API void getSAM_AV2Chip(std::shared_ptr<logicalaccess::Chip> *c
     }
 }
 
+LLA_CARDS_SAMAV2_API void getSAMAV3Chip(std::shared_ptr<logicalaccess::Chip> *chip)
+{
+    if (chip != nullptr)
+    {
+        *chip = std::make_shared<logicalaccess::SAMAV3Chip>();
+    }
+}
+
 LLA_CARDS_SAMAV2_API bool getChipInfoAt(unsigned int index, char *chipname,
                                         size_t chipnamelen, void **getterfct)
 {
@@ -45,6 +54,13 @@ LLA_CARDS_SAMAV2_API bool getChipInfoAt(unsigned int index, char *chipname,
         {
             *getterfct = (void *)&getSAM_AV2Chip;
             sprintf(chipname, CHIP_SAMAV2);
+            ret = true;
+        }
+        break;
+        case 2:
+        {
+            *getterfct = (void *)&getSAMAV3Chip;
+            sprintf(chipname, CHIP_SAMAV3);
             ret = true;
         }
         break;

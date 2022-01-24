@@ -72,7 +72,7 @@ class DESFireEV1Chip;
 /**
  * \brief The DESFire EV1 base commands class.
  */
-class LLA_CARDS_DESFIRE_API DESFireEV1Commands : public ICommands
+class LLA_CARDS_DESFIRE_API DESFireEV1Commands : public virtual ICommands
 {
   public:
     DESFireEV1Commands() = default;

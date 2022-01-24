@@ -30,8 +30,8 @@ SAMAV2ISO7816Commands::SAMAV2ISO7816Commands()
 }
 
 SAMAV2ISO7816Commands::SAMAV2ISO7816Commands(std::string ct)
-    : SAMISO7816Commands<KeyEntryAV2Information, SETAV2>(ct)
-    , d_cmdCtr(0)
+    :    SAMISO7816Commands<KeyEntryAV2Information, SETAV2>(ct),
+     d_cmdCtr(0)
 {
     d_lastMacIV.resize(16);
 }

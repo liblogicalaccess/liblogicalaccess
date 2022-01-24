@@ -44,18 +44,39 @@ namespace logicalaccess
 %template(SAMKeyEntrySETAV2Commands) SAMCommands<KeyEntryAV2Information, SETAV2>;
 #endif
 
+using HackFixTypedef_SAMCommand_Av1 = SAMCommands<KeyEntryAV1Information, SETAV1>;
+using HackFixTypedef_SAMCommand_Av2 = SAMCommands<KeyEntryAV2Information, SETAV2>;
+
 /**
  * \brief The SAMISO7816 commands class.
  */
 template <typename T, typename S>
-class LLA_READERS_ISO7816_API SAMISO7816Commands : public SAMCommands<T, S>
+class LLA_READERS_ISO7816_API SAMISO7816Commands : public Commands,
+                                                   public virtual SAMCommands<T, S>
 {
   public:
+    std::shared_ptr<SAMKeyEntry<T, S>> getKeyEntry(unsigned char keyno) override
+    {
+        return std::shared_ptr<SAMKeyEntry<T, S>>();
+    }
+
+    std::shared_ptr<SAMKucEntry> getKUCEntry(unsigned char keyno) override
+    {
+        return std::shared_ptr<SAMKucEntry>();
+    }
+     void changeKeyEntry(unsigned char keyno,
+                                std::shared_ptr<SAMKeyEntry<T, S>> keyentry,
+                                std::shared_ptr<DESFireKey> key)override {}
+    void changeKUCEntry(unsigned char keyno,
+                                std::shared_ptr<SAMKucEntry> keyentry,
+                                std::shared_ptr<DESFireKey> key)override{}
+    void authenticateHost(std::shared_ptr<DESFireKey> key,
+                                  unsigned char keyno) override {}
     /**
      * \brief Constructor.
      */
     SAMISO7816Commands()
-        : SAMCommands<T, S>(CMD_SAMISO7816)
+        : Commands(CMD_SAMISO7816)
     {
         /*
         # Only one active MIFARE authentication at a time is supported by SAM AV2, so
@@ -104,7 +125,7 @@ class LLA_READERS_ISO7816_API SAMISO7816Commands : public SAMCommands<T, S>
     }
 
     explicit SAMISO7816Commands(std::string ct)
-        : SAMCommands<T, S>(ct)
+        : Commands(ct)
     {
         d_cla = DEFAULT_SAM_CLA;
         d_LastSessionIV.resize(16);
@@ -141,6 +162,7 @@ class LLA_READERS_ISO7816_API SAMISO7816Commands : public SAMCommands<T, S>
 
     SAMVersion getVersion() override
     {
+        LOG(ERRORS) << "HELLO IN GET VERSION";
         unsigned char cmd[] = {d_cla, 0x60, 0x00, 0x00, 0x00};
         ByteVector cmd_vector(cmd, cmd + 5);
         SAMVersion info;

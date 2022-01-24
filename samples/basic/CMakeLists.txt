@@ -8,6 +8,7 @@ target_link_libraries(basic
         iso7816cards
         desfirecards
         logicalaccess
+        samav2cards
         iso7816cards
         iso7816readers
         )

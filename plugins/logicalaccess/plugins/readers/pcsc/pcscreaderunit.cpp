@@ -105,6 +105,8 @@
 #ifdef __linux__
 // Include for SCARD_ATTR_VENDOR_IFD_SERIAL_NO
 #include <reader.h>
+#include "logicalaccess/plugins/cards/samav2/samav3chip.hpp"
+#include "logicalaccess/plugins/readers/iso7816/commands/samav3iso7816commands.hpp"
 #endif
 
 namespace logicalaccess
@@ -822,6 +824,13 @@ std::shared_ptr<Chip> PCSCReaderUnit::createChip(std::string type)
         else if (type == CHIP_SAMAV2)
         {
             commands.reset(new SAMAV2ISO7816Commands());
+            std::shared_ptr<SAMDESfireCrypto> samcrypto(new SAMDESfireCrypto());
+            std::dynamic_pointer_cast<SAMAV2ISO7816Commands>(commands)->setCrypto(
+                samcrypto);
+            resultChecker.reset(new SAMISO7816ResultChecker());
+        }
+        else if (type == CHIP_SAMAV3) {
+            commands.reset(new SAMAV3ISO7816Commands());
             std::shared_ptr<SAMDESfireCrypto> samcrypto(new SAMDESfireCrypto());
             std::dynamic_pointer_cast<SAMAV2ISO7816Commands>(commands)->setCrypto(
                 samcrypto);

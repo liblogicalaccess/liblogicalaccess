@@ -168,7 +168,6 @@ class LLAConan(ConanFile):
         self.cpp_info.libs.append('smartframecards')
         self.cpp_info.libs.append('smartidreaders')
         self.cpp_info.libs.append('stidprgreaders')
-        self.cpp_info.libs.append('stidstrreaders')
         self.cpp_info.libs.append('stmlri512cards')
         self.cpp_info.libs.append('tagitcards')
         self.cpp_info.libs.append('topazcards')

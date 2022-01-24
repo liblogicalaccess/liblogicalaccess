@@ -7,10 +7,17 @@
 #ifndef LOGICALACCESS_SAMCOMMANDS_HPP
 #define LOGICALACCESS_SAMCOMMANDS_HPP
 
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/cards/location.hpp>
 #include <logicalaccess/cards/commands.hpp>
 #include <logicalaccess/plugins/cards/samav2/samkeyentry.hpp>
 #include <logicalaccess/plugins/cards/samav2/samkucentry.hpp>
+#include <array>
+
+#ifdef SWIG
+%include <std_array.i>
+    %template(arrayu_int8_t_7) std::array<uint8_t, 7>;
+#endif
 
 namespace logicalaccess
 {
@@ -18,7 +25,7 @@ namespace logicalaccess
 
 typedef struct s_SAMManufactureInformation
 {
-    unsigned char uniqueserialnumber[7];
+    std::array<uint8_t, 7> uniqueserialnumber;
     unsigned char productionbatchnumber[5];
     unsigned char dayofproduction;
     unsigned char monthofproduction;
@@ -57,17 +64,10 @@ class DESFireKey;
 
 // todo: We removed export macro to fix link issue. need to investigate more.
 template <typename T, typename S>
-class SAMCommands : public Commands
+class SAMCommands : public virtual ICommands
 {
+  protected:
   public:
-    SAMCommands()
-        : Commands(CMD_SAM)
-    {
-    }
-    explicit SAMCommands(std::string ct)
-        : Commands(ct)
-    {
-    }
     virtual SAMVersion getVersion() = 0;
     virtual std::shared_ptr<SAMKeyEntry<T, S>> getKeyEntry(unsigned char keyno) = 0;
     virtual std::shared_ptr<SAMKucEntry> getKUCEntry(unsigned char keyno) = 0;
