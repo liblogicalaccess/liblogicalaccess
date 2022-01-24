@@ -3,6 +3,7 @@
 //
 
 #include "samav3iso7816commands.hpp"
+#include "samiso7816resultchecker.hpp"
 
 namespace logicalaccess
 {
@@ -38,8 +39,42 @@ bool SAMAV3ISO7816Commands::ext_IsActivated()
     }
 }
 
+class ActivateSAMResultChecker : public SAMISO7816ResultChecker
+{
+  public:
+    ActivateSAMResultChecker()
+    {
+        AddCheck(0x69, 0x85, "SAM is already activated",
+                 CardException::CONDITIONS_OF_USE_NOT_SATISFIED);
+    }
+};
+
+// RAII class to temporarily push a resultchecker to a command adapter.
+class ResultCheckerGuard
+{
+  public:
+    ResultCheckerGuard(std::shared_ptr<ReaderCardAdapter> rca,
+                       std::shared_ptr<ResultChecker> rc)
+        : rca_(rca)
+    {
+        oldrc_ = rca->getResultChecker();
+        rca->setResultChecker(rc);
+    }
+
+    ~ResultCheckerGuard()
+    {
+        rca_->setResultChecker(oldrc_);
+    }
+
+  private:
+    std::shared_ptr<ReaderCardAdapter> rca_;
+    std::shared_ptr<ResultChecker> oldrc_;
+};
+
 void SAMAV3ISO7816Commands::ext_ActivateSAM()
 {
+    ResultCheckerGuard rcg(getReaderCardAdapter(),
+                           std::make_shared<ActivateSAMResultChecker>());
     auto desfire_key = std::make_shared<DESFireKey>();
     desfire_key->setKeyType(DESFireKeyType::DF_KEY_AES);
     lockUnlock(desfire_key, SAMLockUnlock::ActivateSAMAv3, 0, 0, 0);
