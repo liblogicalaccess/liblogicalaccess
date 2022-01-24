@@ -15,6 +15,10 @@ class LLA_READERS_ISO7816_API SAMAV3ISO7816Commands
 {
   public:
     SAMAV3ISO7816Commands();
+    bool ext_IsActivated() override;
+    void ext_ActivateSAM() override;
+
+    std::vector<uint8_t> getRandom(uint8_t random_size) override;
 
     using KeyEntryT = SAMKeyEntry<KeyEntryAV2Information, SETAV2>;
     void yes_swig_we_are_abstract() override;

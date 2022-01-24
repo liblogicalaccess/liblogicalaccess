@@ -162,7 +162,6 @@ class LLA_READERS_ISO7816_API SAMISO7816Commands : public Commands,
 
     SAMVersion getVersion() override
     {
-        LOG(ERRORS) << "HELLO IN GET VERSION";
         unsigned char cmd[] = {d_cla, 0x60, 0x00, 0x00, 0x00};
         ByteVector cmd_vector(cmd, cmd + 5);
         SAMVersion info;

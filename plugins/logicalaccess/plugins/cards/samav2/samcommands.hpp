@@ -26,7 +26,7 @@ namespace logicalaccess
 typedef struct s_SAMManufactureInformation
 {
     std::array<uint8_t, 7> uniqueserialnumber;
-    unsigned char productionbatchnumber[5];
+    std::array<uint8_t, 5> productionbatchnumber;
     unsigned char dayofproduction;
     unsigned char monthofproduction;
     unsigned char yearofproduction;
@@ -57,7 +57,12 @@ enum SAMLockUnlock
     Unlock                   = 0x00,
     LockWithoutSpecifyingKey = 0x01,
     LockWithSpecifyingKey    = 0x02,
-    SwitchAV2Mode            = 0x03
+    SwitchAV2Mode            = 0x03,
+    /**
+     * Activate the SAM Av3. Same value that SwitchAV2Mode -- the command
+     * is compatible.
+     */
+    ActivateSAMAv3 = 0x03
 };
 
 class DESFireKey;

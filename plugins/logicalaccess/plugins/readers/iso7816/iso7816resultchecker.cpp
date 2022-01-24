@@ -33,7 +33,7 @@ ISO7816ResultChecker::ISO7816ResultChecker()
              CardException::AUTHENTICATION_FAILURE);
     AddCheck(0x69, 0x84, "Reference key not useable",
              CardException::REFERENCE_KEY_UNUSABLE);
-    AddCheck(0x69, 0x85, "Conditions of use not satisfied");
+    AddCheck(0x69, 0x85, "Conditions of use not satisfied", CardException::CONDITIONS_OF_USE_NOT_SATISFIED);
     AddCheck(0x69, 0x86, "Command not allowed", CardException::COMMAND_NOT_ALLOWED);
     AddCheck(0x69, 0x87, "Expected secure messaging data objects missing");
     AddCheck(0x69, 0x88, "Key number not valid / Incorrect secure messaging data objects",
