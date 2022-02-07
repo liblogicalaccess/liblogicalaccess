@@ -96,7 +96,7 @@ target_link_libraries(logicalaccess PUBLIC
         CONAN_PKG::openssl
         ${LLA_ADDITIONAL_LIBRARIES_TO_LINK_AGAINST}
         CONAN_PKG::boost
-        CONAN_PKG::jsonformoderncpp
+        CONAN_PKG::nlohmann_json
         )
 
 # Wrong, fix /plugins/
