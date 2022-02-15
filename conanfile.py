@@ -45,7 +45,7 @@ class LLAConan(ConanFile):
         if self.options.LLA_BUILD_IKS:
             self.requires('grpc/1.39.1')
         if self.options.LLA_BUILD_UNITTEST:
-            self.requires('gtest/1.8.1@bincrafters/stable')
+            self.requires('gtest/1.8.1')
         if self.options.LLA_BUILD_PKCS:
             self.requires('cppkcs11/1.1')
 
