@@ -12,8 +12,8 @@
 Welcome to the LibLogicalAccess project web page, an open source RFID library developed in C++ for Linux / Windows, also available on C#, Delphi, WinDev… for who are using the Microsoft operating system (using a COM wrapper).
 
 
-  * Stable branch: master [![Build Status](https://github.com/aberod/liblogicalaccess/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/aberod/liblogicalaccess/actions/workflows/build.yml)
-  * Development branch: develop [![Build Status](https://github.com/aberod/liblogicalaccess/actions/workflows/build.yml/badge.svg?branch=develop)](https://github.com/aberod/liblogicalaccess/actions/workflows/build.yml)
+  * Stable branch: master [![Build Status](https://github.com/islog/liblogicalaccess/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/islog/liblogicalaccess/actions/workflows/build.yml)
+  * Development branch: develop [![Build Status](https://github.com/islog/liblogicalaccess/actions/workflows/build.yml/badge.svg?branch=develop)](https://github.com/islog/liblogicalaccess/actions/workflows/build.yml)
   * Features branches: feature-*
 
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/2286/badge.svg)](https://scan.coverity.com/projects/2286)
