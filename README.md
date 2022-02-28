@@ -12,8 +12,8 @@
 Welcome to the LibLogicalAccess project web page, an open source RFID library developed in C++ for Linux / Windows, also available on C#, Delphi, WinDev… for who are using the Microsoft operating system (using a COM wrapper).
 
 
-  * Stable branch: master [![Build Status](https://img.shields.io/travis/islog/liblogicalaccess/master.svg?label=Travis-CI)](https://travis-ci.org/islog/liblogicalaccess) [![Build status](https://img.shields.io/appveyor/ci/Liryna/liblogicalaccess/master.svg?label=AppVeyor)](https://ci.appveyor.com/project/Liryna/liblogicalaccess/branch/master)
-  * Development branch: develop [![Build Status](https://img.shields.io/travis/islog/liblogicalaccess/develop.svg?label=Travis-CI)](https://travis-ci.org/islog/liblogicalaccess) [![Build status](https://img.shields.io/appveyor/ci/Liryna/liblogicalaccess/develop.svg?label=AppVeyor)](https://ci.appveyor.com/project/Liryna/liblogicalaccess/branch/develop)
+  * Stable branch: master [![Build Status](https://github.com/islog/liblogicalaccess/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/islog/liblogicalaccess/actions/workflows/build.yml)
+  * Development branch: develop [![Build Status](https://github.com/islog/liblogicalaccess/actions/workflows/build.yml/badge.svg?branch=develop)](https://github.com/islog/liblogicalaccess/actions/workflows/build.yml)
   * Features branches: feature-*
 
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/2286/badge.svg)](https://scan.coverity.com/projects/2286)

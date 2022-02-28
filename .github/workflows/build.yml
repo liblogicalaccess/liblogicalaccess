@@ -1,0 +1,71 @@
+name: Build
+on:
+  pull_request:
+    branches:
+      - master
+      - develop
+  push:
+    branches:
+      - master
+      - develop
+jobs:
+  build-gcc:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Setup"
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libpcsclite-dev
+          pip3 install conan
+      - uses: actions/checkout@v2
+      - name: "Build"
+        run: |
+          mkdir build
+          cd build
+          conan install .. -o LLA_BUILD_UNITTEST=True --build=missing
+          conan build ..
+      - name: "Test"
+        run: |
+          cd build
+          ctest -V
+
+  build-clang:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Setup"
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libpcsclite-dev
+          pip3 install conan
+      - uses: actions/checkout@v2
+      - name: "Build with clang"
+        env:
+          CC: /usr/bin/clang
+          CXX: /usr/bin/clang++
+        run: |
+          mkdir build
+          cd build
+          conan install .. -o LLA_BUILD_UNITTEST=True --build=missing
+          conan build ..
+      - name: "Test"
+        run: |
+          cd build
+          ctest -V
+
+  build-windows:
+    runs-on: windows-2019
+    steps:
+      - name: "Setup"
+        run: |
+          pip3 install conan
+      - uses: actions/checkout@v2
+      - name: "Build"
+        run: |
+          mkdir build
+          cd build
+          conan install .. -o LLA_BUILD_UNITTEST=True --build=missing
+          conan build ..
+      - name: "Test"
+        run: |
+          cd build
+          ctest -V -C Release
