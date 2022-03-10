@@ -15,7 +15,7 @@ set(LLA_BUILD_UNITTEST FALSE CACHE BOOL "Build unittests")
 
 include(GenerateExportHeader)
 # Perform Conan basic setup to import targets etc
-include(${CMAKE_CURRENT_BINARY_DIR}/conanbuildinfo.cmake)
+include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup(TARGETS)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
@@ -144,21 +144,10 @@ endif ()
 
 add_subdirectory(samples/basic)
 
-if (NOT DEFINED LIBLOGICALACCESS_CMAKE_CONFIG_DIR)
-    set(LIBLOGICALACCESS_CMAKE_CONFIG_DIR lib/${LIB_SUFFIX}/cmake/liblogicalaccess)
-endif ()
-
-set(LIBLOGICALACCESS_USE_FILE ${CMAKE_INSTALL_PREFIX}/${LIBLOGICALACCESS_CMAKE_CONFIG_DIR}/UseLibLogicalAccess.cmake)
-set(LIBLOGICALACCESS_ROOT_DIR ${CMAKE_INSTALL_PREFIX})
-configure_file(cmake/LibLogicalAccessConfig.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/LibLogicalAccessConfig.cmake @ONLY)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/LibLogicalAccessConfig.cmake cmake/UseLibLogicalAccess.cmake
-        DESTINATION ${LIBLOGICALACCESS_CMAKE_CONFIG_DIR}
-        )
-
 if (NOT DEFINED SYSCONF_INSTALL_DIR)
-    set(SYSCONF_INSTALL_DIR etc)
+    set(SYSCONF_INSTALL_DIR res)
 endif ()
 install(FILES liblogicalaccess.config DESTINATION ${SYSCONF_INSTALL_DIR})
 
 # This perform the "real installation" of header files.
-install(DIRECTORY ${CMAKE_SOURCE_DIR}/include/logicalaccess DESTINATION include/)
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/logicalaccess DESTINATION include/)
