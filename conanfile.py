@@ -118,9 +118,9 @@ class LLAConan(ConanFile):
 
         if self.settings.os == 'Windows':
             # Those are some windows specific stuff.
+            self.cpp_info.libs.append('keyboardreaders')
             if self.options.LLA_BUILD_RFIDEAS:
                 self.cpp_info.libs.append('rfideasreaders')
-                self.cpp_info.libs.append('keyboardreaders')
             if self.settings.arch == 'x86_64':
                 self.cpp_info.libs.append('islogkbdhooklib64')
             else:
@@ -164,6 +164,7 @@ class LLAConan(ConanFile):
         self.cpp_info.libs.append('topazcards')
         self.cpp_info.libs.append('twiccards')
         self.cpp_info.libs.append('epasscards')
+        self.cpp_info.libs.append('yubikey5cards')
 
     def package_id(self):
         self.info.requires["boost"].full_package_mode()
