@@ -164,7 +164,7 @@ class LLAConan(ConanFile):
         self.cpp_info.libs.append('topazcards')
         self.cpp_info.libs.append('twiccards')
         self.cpp_info.libs.append('epasscards')
-        self.cpp_info.libs.append('yubikey5cards')
+        self.cpp_info.libs.append('yubikeycards')
 
     def package_id(self):
         self.info.requires["boost"].full_package_mode()
