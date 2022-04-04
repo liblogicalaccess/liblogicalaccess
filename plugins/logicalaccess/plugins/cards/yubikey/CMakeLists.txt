@@ -14,7 +14,9 @@ set(SOURCE_FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/libraryentry.cpp)
 
 set(HEADER_FILES
-        ${CMAKE_CURRENT_SOURCE_DIR}/yubikeychip.hpp)
+        ${CMAKE_CURRENT_SOURCE_DIR}/yubikeychip.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/yubikeychallengecardservice.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/yubikeycommands.hpp)
 
 add_library(yubikeycards SHARED
         ${SOURCE_FILES} ${HEADER_FILES}
