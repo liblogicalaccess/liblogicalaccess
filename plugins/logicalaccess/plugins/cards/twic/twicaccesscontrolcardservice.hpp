@@ -12,8 +12,6 @@
 
 namespace logicalaccess
 {
-class TwicCardProvider;
-
 #define TWIC_ACCESSCONTROL_CARDSERVICE "TwicAccessControl"
 
 /**

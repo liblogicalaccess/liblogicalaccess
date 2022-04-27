@@ -69,6 +69,7 @@ if (UNIX)
             topazcards
             generictagcards
             seoscards
+			yubikeycards
             logicalaccess
             PCSCLite::PCSCLite
             CONAN_PKG::boost
@@ -90,6 +91,7 @@ else ()
             topazcards
             generictagcards
             seoscards
+			yubikeycards
 			winscard
             logicalaccess
             CONAN_PKG::boost)

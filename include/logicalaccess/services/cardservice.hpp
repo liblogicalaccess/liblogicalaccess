@@ -33,13 +33,14 @@ class Chip;
  */
 enum CardServiceType
 {
-    CST_UNDEFINED      = 0x0000, /**< Undefined card service type */
-    CST_ACCESS_CONTROL = 0x0001, /**< The access control card service type */
-    CST_NFC_TAG        = 0x0002, /**< The NFC Tag card service type */
-    CST_STORAGE        = 0x0003, /**< The storage card service type */
-    CST_UID_CHANGER    = 0x0004, /**< Service to change the UID of a card */
-    CST_IDENTITY       = 0x0005, /**< Service to query identity information (EPassport) */
-    CST_JSON_DUMP      = 0x0006, /**< Service to dump a card content in JSON */
+    CST_UNDEFINED           = 0x0000, /**< Undefined card service type */
+    CST_ACCESS_CONTROL      = 0x0001, /**< The access control card service type */
+    CST_NFC_TAG             = 0x0002, /**< The NFC Tag card service type */
+    CST_STORAGE             = 0x0003, /**< The storage card service type */
+    CST_UID_CHANGER         = 0x0004, /**< Service to change the UID of a card */
+    CST_IDENTITY            = 0x0005, /**< Service to query identity information (EPassport) */
+    CST_JSON_DUMP      		= 0x0006, /**< Service to dump a card content in JSON */
+    CST_CHALLENGE_RESPONSE  = 0x0007, /**< Service to handle challenge/response */
 };
 
 /**
