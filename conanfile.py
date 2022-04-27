@@ -12,7 +12,8 @@ class LLAConan(ConanFile):
     options = {'LLA_BUILD_IKS': [True, False],
                'LLA_BUILD_PKCS': [True, False],
                'LLA_BUILD_UNITTEST': [True, False],
-               'LLA_BUILD_RFIDEAS': [True, False]}
+               'LLA_BUILD_RFIDEAS': [True, False],
+               'LLA_BUILD_LIBUSB': [True, False]}
     revision_mode = "scm"
     exports_sources = "plugins*", "src*", "include*", "CMakeLists.txt", "cmake*", "liblogicalaccess.config", "tests*", "samples*"
     
@@ -24,7 +25,8 @@ class LLAConan(ConanFile):
         LLA_BUILD_IKS=False
         LLA_BUILD_PKCS=False
         LLA_BUILD_RFIDEAS=False
-        LLA_BUILD_UNITTEST=False'''
+        LLA_BUILD_UNITTEST=False
+        LLA_BUILD_LIBUSB=False'''
     else:
         default_options = '''
         openssl:shared=True
@@ -32,7 +34,8 @@ class LLAConan(ConanFile):
         gtest:shared=True
         LLA_BUILD_IKS=False
         LLA_BUILD_PKCS=False
-        LLA_BUILD_UNITTEST=False'''
+        LLA_BUILD_UNITTEST=False
+        LLA_BUILD_LIBUSB=False'''
 
     def configure(self):
         if self.settings.os != 'Windows':
@@ -48,6 +51,8 @@ class LLAConan(ConanFile):
             self.requires('gtest/1.8.1')
         if self.options.LLA_BUILD_PKCS:
             self.requires('cppkcs11/1.1')
+        if self.options.LLA_BUILD_LIBUSB:
+            self.requires('libusb/1.0.24')
 
     def imports(self):
         if tools.os_info.is_windows:
@@ -80,6 +85,11 @@ class LLAConan(ConanFile):
             cmake.definitions['LLA_BUILD_RFIDEAS'] = True
         else:
             cmake.definitions['LLA_BUILD_RFIDEAS'] = False
+            
+        if self.options.LLA_BUILD_LIBUSB:
+            cmake.definitions['LLA_BUILD_LIBUSB'] = True
+        else:
+            cmake.definitions['LLA_BUILD_LIBUSB'] = False
 
         cmake.definitions['LIBLOGICALACCESS_VERSION_STRING'] = self.version
         cmake.definitions['LIBLOGICALACCESS_WINDOWS_VERSION'] = self.version.replace('.', ',') + ',0'
@@ -145,6 +155,8 @@ class LLAConan(ConanFile):
         self.cpp_info.libs.append('iso7816cards')
         self.cpp_info.libs.append('iso7816readers')
         self.cpp_info.libs.append('legicprimecards')
+        if self.options.LLA_BUILD_LIBUSB:
+            self.cpp_info.libs.append('libusbreaders')
         self.cpp_info.libs.append('logicalaccess')
         self.cpp_info.libs.append('mifarecards')
         self.cpp_info.libs.append('mifarepluscards')

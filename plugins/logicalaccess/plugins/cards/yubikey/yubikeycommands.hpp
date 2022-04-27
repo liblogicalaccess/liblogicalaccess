@@ -112,7 +112,7 @@ typedef struct s_YubikeyListItem
 /**
  * \brief The Yubikey commands class.
  */
-class LOGICALACCESS_YUBIKEYCOMMANDS_HPP YubikeyCommands : public Commands
+class LLA_CARDS_YUBIKEY_API YubikeyCommands : public Commands
 {
   public:
   
