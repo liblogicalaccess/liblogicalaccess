@@ -1,8 +1,8 @@
 #include <string>
 #include <memory>
 #include <logicalaccess/readerproviders/readerprovider.hpp>
-#include <logicalaccess/plugins/cards/yubikey5/yubikey5chip.hpp>
-#include <logicalaccess/plugins/cards/yubikey5/lla_cards_yubikey5_api.hpp>
+#include <logicalaccess/plugins/cards/yubikey/yubikeychip.hpp>
+#include <logicalaccess/plugins/cards/yubikey/lla_cards_yubikey_api.hpp>
 
 #ifndef DISABLE_PRAGMA_WARNING
 #define DISABLE_PRAGMA_WARNING /**< \brief winsmcrd.h was modified to support this       \
@@ -10,20 +10,20 @@
 #endif
 
 extern "C" {
-LLA_CARDS_YUBIKEY5_API char *getLibraryName()
+LLA_CARDS_YUBIKEY_API char *getLibraryName()
 {
-    return (char *)"Yubikey5";
+    return (char *)"Yubikey";
 }
 
-LLA_CARDS_YUBIKEY5_API void getYubikey5Chip(std::shared_ptr<logicalaccess::Chip> *chip)
+LLA_CARDS_YUBIKEY_API void getYubikeyChip(std::shared_ptr<logicalaccess::Chip> *chip)
 {
     if (chip != nullptr)
     {
-        *chip = std::make_shared<logicalaccess::Yubikey5Chip>();
+        *chip = std::make_shared<logicalaccess::YubikeyChip>();
     }
 }
 
-LLA_CARDS_YUBIKEY5_API bool getChipInfoAt(unsigned int index, char *chipname,
+LLA_CARDS_YUBIKEY_API bool getChipInfoAt(unsigned int index, char *chipname,
                                       size_t chipnamelen, void **getterfct)
 {
     bool ret = false;
@@ -33,8 +33,8 @@ LLA_CARDS_YUBIKEY5_API bool getChipInfoAt(unsigned int index, char *chipname,
         {
         case 0:
         {
-            *getterfct = (void *)&getYubikey5Chip;
-            sprintf(chipname, CHIP_YUBIKEY5);
+            *getterfct = (void *)&getYubikeyChip;
+            sprintf(chipname, CHIP_YUBIKEY);
             ret = true;
         }
         break;

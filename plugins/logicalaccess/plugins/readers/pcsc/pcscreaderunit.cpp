@@ -19,6 +19,7 @@
 #include <logicalaccess/plugins/readers/iso7816/commands/samav2iso7816commands.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/desfireev1iso7816commands.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/epassiso7816commands.hpp>
+#include <logicalaccess/plugins/readers/iso7816/commands/yubikeyiso7816commands.hpp>
 #include <logicalaccess/plugins/readers/pcsc/commands/mifarepcsccommands.hpp>
 #include <logicalaccess/plugins/readers/pcsc/commands/mifarescmcommands.hpp>
 #include <logicalaccess/plugins/readers/pcsc/commands/mifare_acr1222L_commands.hpp>
@@ -65,6 +66,7 @@
 #include <logicalaccess/plugins/cards/desfire/desfireev2chip.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfireev3chip.hpp>
 #include <logicalaccess/plugins/cards/seos/seoschip.hpp>
+#include <logicalaccess/plugins/cards/yubikey/yubikeychip.hpp>
 
 #include <logicalaccess/plugins/readers/iso7816/commands/samiso7816resultchecker.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/desfireiso7816resultchecker.hpp>
@@ -866,6 +868,10 @@ std::shared_ptr<Chip> PCSCReaderUnit::createChip(std::string type)
             commands = std::make_shared<EPassISO7816Commands>();
             rca      = std::make_shared<ISO7816ReaderCardAdapter>();
             rca->setDataTransport(getDefaultReaderCardAdapter()->getDataTransport());
+        }
+        else if (type == CHIP_YUBIKEY)
+        {
+            commands = std::make_shared<YubikeyISO7816Commands>();
         }
         else if (type == CHIP_TOPAZ)
         {
