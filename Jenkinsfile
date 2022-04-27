@@ -10,7 +10,7 @@ pipeline {
     }
 
     environment {
-        LINUX_DOCKER_IMAGE_NAME = 'artifacts.linq.hidglobal.com:5000/conan-recipes-support:latest'
+        LINUX_DOCKER_IMAGE_NAME = 'artifacts.linq.hidglobal.com:5000/debian_build:latest'
         ANDROID_DOCKER_IMAGE_NAME = 'artifacts.linq.hidglobal.com:5000/conan-recipes-support-android:latest'
         PACKAGE_NAME = "LogicalAccess/2.4.0@islog/${BRANCH_NAME}"
 
@@ -82,10 +82,10 @@ pipeline {
                     }
                     if (params.BUILD_LINUX) {
                         if (params.BUILD_DEBUG) {
-                            lst += 'lla/x64_gcc6_debug_min'
+                            lst += 'lla/x64_gcc10_debug_min'
                         }
                         if (params.BUILD_RELEASE) {
-                            lst += 'lla/x64_gcc6_release_min'
+                            lst += 'lla/x64_gcc10_release_min'
                         }
                     }
                     lla.startJobForProfiles(lst)
@@ -113,10 +113,10 @@ pipeline {
                     }
                     if (params.BUILD_LINUX) {
                         if (params.BUILD_DEBUG) {
-                            lst += 'lla/x64_gcc6_debug_full'
+                            lst += 'lla/x64_gcc10_debug_full'
                         }
                         if (params.BUILD_RELEASE) {
-                            lst += 'lla/x64_gcc6_release_full'
+                            lst += 'lla/x64_gcc10_release_full'
                         }
                     }
                     lla.startJobForProfiles(lst)
