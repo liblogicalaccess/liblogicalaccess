@@ -21,7 +21,6 @@ class LLAConan(ConanFile):
         openssl:shared=True
         boost:shared=False
         gtest:shared=True
-        gtest:build_gmock=False
         LLA_BUILD_IKS=False
         LLA_BUILD_PKCS=False
         LLA_BUILD_RFIDEAS=False
