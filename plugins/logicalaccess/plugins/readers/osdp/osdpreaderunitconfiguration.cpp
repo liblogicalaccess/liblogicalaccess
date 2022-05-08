@@ -15,7 +15,7 @@
 namespace logicalaccess
 {
 OSDPReaderUnitConfiguration::OSDPReaderUnitConfiguration()
-    : ReaderUnitConfiguration(READER_OSDP)
+    : ReaderUnitConfiguration(READER_OSDP), d_visualFeedback(false)
 {
     OSDPReaderUnitConfiguration::resetConfiguration();
 
@@ -33,6 +33,7 @@ OSDPReaderUnitConfiguration::~OSDPReaderUnitConfiguration()
 void OSDPReaderUnitConfiguration::resetConfiguration()
 {
     d_rs485Address = 0;
+    d_visualFeedback = true;
     d_master_key_aes.reset(new AES128Key(""));
     d_scbk_d_key_aes.reset(new AES128Key(""));
     d_scbk_key_aes.reset(new AES128Key(""));
@@ -43,6 +44,7 @@ void OSDPReaderUnitConfiguration::serialize(boost::property_tree::ptree &parentN
     boost::property_tree::ptree node;
 
     node.put("RS485Address", d_rs485Address);
+    node.put("VisualFeedback", d_visualFeedback);
     d_scbk_d_key_aes->serialize(node);
     d_scbk_key_aes->serialize(node);
     d_master_key_aes->serialize(node);
@@ -54,6 +56,7 @@ void OSDPReaderUnitConfiguration::unSerialize(boost::property_tree::ptree &node)
     LOG(LogLevel::INFOS) << "Unserializing reader unit configuration...";
 
     d_rs485Address = node.get_child("RS485Address").get_value<unsigned char>();
+    d_visualFeedback = node.get_child("VisualFeedback").get_value<bool>();
     d_scbk_d_key_aes->unSerialize(
         node.get_child(d_scbk_d_key_aes->getDefaultXmlNodeName()));
     d_scbk_key_aes->unSerialize(node.get_child(d_scbk_key_aes->getDefaultXmlNodeName()));
@@ -78,6 +81,16 @@ void OSDPReaderUnitConfiguration::setRS485Address(unsigned char address)
     LOG(LogLevel::INFOS) << "RS485 Address {0x" << std::hex << address << std::dec << "("
                          << address << ")}";
     d_rs485Address = address;
+}
+
+bool OSDPReaderUnitConfiguration::getVisualFeedback() const
+{
+    return d_visualFeedback;
+}
+
+void OSDPReaderUnitConfiguration::setVisualFeedback(bool enabled)
+{
+    d_visualFeedback = enabled;
 }
 
 std::shared_ptr<AES128Key> OSDPReaderUnitConfiguration::getMasterKey() const

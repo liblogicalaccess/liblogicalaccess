@@ -30,7 +30,7 @@ ByteVector OSDPReaderCardAdapter::sendCommand(const ByteVector &command, long /*
         channel->setSecurityBlockType(SCS_17); // Enable MAC and Data Security
     }
 
-    channel->setCommandsType(XWR);
+    channel->setCommandsType(OSDP_XWR);
     osdpCommand.push_back(0x01); // XRW_PROFILE 0x01
     osdpCommand.push_back(0x01); // XRW_PCMND 0x01
     osdpCommand.push_back(m_address);
@@ -40,20 +40,20 @@ ByteVector OSDPReaderCardAdapter::sendCommand(const ByteVector &command, long /*
     // Transparent Content Send Request
     std::shared_ptr<OSDPChannel> result = m_commands->transmit();
 
-    if (result->getCommandsType() == NAK)
+    if (result->getCommandsType() == OSDP_NAK)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                  "NAK: Impossible to send Transparent Content");
 
-    if (result->getCommandsType() == ACK)
+    if (result->getCommandsType() == OSDP_ACK)
     {
-        LOG(LogLevel::INFOS) << "OSDP: No XRD recieve, try to send poll";
+        LOG(LogLevel::INFOS) << "OSDP: No XRD receive, try to send poll";
         result = m_commands->poll();
     }
 
     ByteVector &data = result->getData();
 
-    if (result->getCommandsType() != XRD ||
-        (result->getCommandsType() == XRD &&
+    if (result->getCommandsType() != OSDP_XRD ||
+        (result->getCommandsType() == OSDP_XRD &&
          data[0x01] != 0x02)) // is Not APDU answer - osdp_PR01SCREP = 0x02
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                  "Impossible to send Transparent Content");
@@ -73,5 +73,15 @@ OSDPReaderCardAdapter::~OSDPReaderCardAdapter()
     /*std::shared_ptr<OSDPChannel> result = m_commands->setProfile(0x00);
     if (result->getCommandsType() != OSDPCommandsType::ACK)
             LOG(LogLevel::ERRORS) << "Impossible to restore Profile 0x00";*/
+}
+
+std::shared_ptr<OSDPCommands> OSDPReaderCardAdapter::getOSDPCommands() const
+{
+    return m_commands;
+}
+
+unsigned char OSDPReaderCardAdapter::getRS485Address() const
+{
+    return m_address;
 }
 }

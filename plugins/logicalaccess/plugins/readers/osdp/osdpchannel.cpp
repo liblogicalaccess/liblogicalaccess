@@ -17,7 +17,7 @@ OSDPChannel::OSDPChannel()
     , m_address(0)
     , m_sequenceNumber(0)
     , m_data(ByteVector())
-    , m_reply_type(NOCMD)
+    , m_reply_type(OSDP_NOCMD)
     , m_securityBlockType(NOSCS)
     , m_securityBlockData(ByteVector())
 {

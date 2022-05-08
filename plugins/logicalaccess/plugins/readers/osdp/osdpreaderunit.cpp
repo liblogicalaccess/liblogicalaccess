@@ -24,11 +24,13 @@
 #include <logicalaccess/plugins/readers/iso7816/commands/desfireiso7816resultchecker.hpp>
 
 #include <logicalaccess/plugins/readers/osdp/osdpcommands.hpp>
+#include <logicalaccess/plugins/readers/osdp/osdpledbuzzerdisplay.hpp>
+#include <logicalaccess/plugins/readers/osdp/osdplcddisplay.hpp>
 
 namespace logicalaccess
 {
 OSDPReaderUnit::OSDPReaderUnit()
-    : ReaderUnit(READER_OSDP), m_tamperStatus(false)
+    : ReaderUnit(READER_OSDP), m_tamperStatus(false), m_inserted(false)
 {
     d_readerUnitConfig.reset(new OSDPReaderUnitConfiguration());
 
@@ -85,6 +87,11 @@ std::shared_ptr<Chip> OSDPReaderUnit::createChip(std::string type)
         LOG(LogLevel::INFOS) << "Chip created successfully !";
         std::shared_ptr<ReaderCardAdapter> rca;
         std::shared_ptr<Commands> commands;
+        
+        if (m_current_csn.size() > 0)
+        {
+            chip->setChipIdentifier(m_current_csn);
+        }
 
         if (type == "DESFire" || type == "DESFireEV1")
         {
@@ -116,102 +123,78 @@ std::shared_ptr<Chip> OSDPReaderUnit::createChip(std::string type)
 bool OSDPReaderUnit::waitInsertion(unsigned int maxwait)
 {
     unsigned int currentWait = 0;
-    bool inserted            = false;
 
     do
     {
         std::shared_ptr<OSDPChannel> poll = m_commands->poll();
-
-        LOG(LogLevel::INFOS) << "Reader poll command: " << std::hex
-                             << poll->getCommandsType();
-
-        if (poll->getCommandsType() == XRD)
+        if (!m_inserted)
         {
-            ByteVector &data = poll->getData();
-            if (data.size() > 2 && data[0x01] == 0x01) // osdp_PRES
-                inserted = true;
-        }
-        else
-        {
-            if (poll->getCommandsType() == LSTATR && poll->getData().size() > 1)
-            {
-                LOG(LogLevel::INFOS) << "Tamper status changed to: "
-                                     << static_cast<bool>(poll->getData()[0x00] != 0);
-                m_tamperStatus = static_cast<bool>(poll->getData()[0x00] != 0);
-            }
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
             currentWait += 100;
         }
-    } while (!inserted && (maxwait == 0 || currentWait < maxwait));
+    } while (!m_inserted && (maxwait == 0 || currentWait < maxwait));
 
-    if (inserted)
+    if (m_inserted)
     {
-        s_led_cmd osdp_LED_cmd = {0,
-                                  0,
-                                  TemporaryControleCode::SetTemporaryState,
-                                  5,
-                                  5,
-                                  OSDPColor::Green,
-                                  OSDPColor::Black,
-                                  30,
-                                  0,
-                                  PermanentControlCode::SetPermanentState,
-                                  1,
-                                  0,
-                                  OSDPColor::Red,
-                                  OSDPColor::Black};
-        m_commands->led(osdp_LED_cmd);
+        if (getOSDPConfiguration()->getVisualFeedback())
+        {
+            s_led_cmd osdp_LED_cmd = {0,
+                                      0,
+                                      TemporaryControleCode::SetTemporaryState,
+                                      5,
+                                      5,
+                                      OSDPColor::Green,
+                                      OSDPColor::Black,
+                                      30,
+                                      0,
+                                      PermanentControlCode::SetPermanentState,
+                                      1,
+                                      0,
+                                      OSDPColor::Red,
+                                      OSDPColor::Black};
+            m_commands->led(osdp_LED_cmd);
 
-        s_buz_cmd osdp_BUZ_cmd = {0, 2, 1, 1, 3};
-        m_commands->buz(osdp_BUZ_cmd);
+            s_buz_cmd osdp_BUZ_cmd = {0, 2, 1, 1, 3};
+            m_commands->buz(osdp_BUZ_cmd);
+        }
 
         d_insertedChip = createChip(d_card_type);
     }
 
-    return inserted;
+    return m_inserted;
 }
 
 bool OSDPReaderUnit::waitRemoval(unsigned int maxwait)
 {
     unsigned int currentWait = 0;
-    bool removed             = false;
-    bool disconnected        = false;
 
     do
     {
         std::shared_ptr<OSDPChannel> poll = m_commands->poll();
 
-        LOG(LogLevel::INFOS) << "Reader poll command: " << std::hex
-                             << poll->getCommandsType();
-
-        if (poll->getCommandsType() == XRD && poll->getData().size() > 2 &&
-            poll->getData()[0x01] == 0x01) // osdp_PRES
-        {
-            m_commands->disconnectFromSmartcard();
-            disconnected = true;
-        }
-        else if (!disconnected)
-        {
-            removed = true;
-        }
-        else
-        {
-            if (poll->getCommandsType() == LSTATR && poll->getData().size() > 1)
-            {
-                LOG(LogLevel::INFOS) << "Tamper status changed to: "
-                                     << static_cast<bool>(poll->getData()[0x00] != 0);
-                m_tamperStatus = static_cast<bool>(poll->getData()[0x00] != 0);
-            }
-            else
-                disconnected = false;
-        }
-
-        if (!removed)
+        if (m_inserted)
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
         currentWait += 100;
-    } while (!removed && (maxwait == 0 || currentWait < maxwait));
+    } while (m_inserted && (maxwait == 0 || currentWait < maxwait));
 
-    return removed;
+    return !m_inserted;
+}
+
+bool OSDPReaderUnit::waitKeypadInputs(unsigned int maxwait)
+{
+    unsigned int currentWait = 0;
+
+    m_last_keypad.clear();
+    do
+    {
+        std::shared_ptr<OSDPChannel> poll = m_commands->poll();
+
+        if (m_last_keypad.size() == 0)
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
+        currentWait += 100;
+    } while (m_last_keypad.size() == 0 && (maxwait == 0 || currentWait < maxwait));
+
+    return (m_last_keypad.size() > 0);
 }
 
 bool OSDPReaderUnit::connect()
@@ -255,20 +238,66 @@ bool OSDPReaderUnit::connectToReader()
         crypt->isSCB = true;
 
         std::shared_ptr<OSDPChannel> result = m_commands->getProfile();
-        if (result->getCommandsType() == XRD)
+        if (result->getCommandsType() == OSDP_XRD)
         {
             ByteVector &data = result->getData();
             if (data.size() > 2 && data[0x03] != 0x01)
             {
                 result = m_commands->setProfile(0x01);
-                if (result->getCommandsType() != ACK)
+                if (result->getCommandsType() != OSDP_ACK)
                     THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                              "Impossible to set Profile 0x01");
             }
         }
+        
+        m_commands->setCardEventHandler(std::bind(&OSDPReaderUnit::onCardEvent, this, std::placeholders::_1, std::placeholders::_2));
+        m_commands->setKeypadEventHandler(std::bind(&OSDPReaderUnit::onKeypadEvent, this, std::placeholders::_1, std::placeholders::_2));
+        m_commands->setTamperEventHandler(std::bind(&OSDPReaderUnit::onTamperEvent, this, std::placeholders::_1, std::placeholders::_2));
     }
 
     return ret;
+}
+
+void OSDPReaderUnit::onCardEvent(uint8_t readerAddress, ByteVector data)
+{
+    if (readerAddress == getOSDPConfiguration()->getRS485Address())
+    {
+        // If the card wasn't marked as inserted before or if we get card identifier, we consider it inserted now
+        if (!m_inserted || data.size() > 0)
+        {
+            m_inserted = true;
+            m_current_csn = data;
+        }
+        else if (m_inserted)
+        {
+            m_inserted = false;
+            m_current_csn.clear();
+        }
+    }
+    else
+    {
+         LOG(LogLevel::INFOS) << "Skipping card event from reader address "
+                              << readerAddress;
+    }
+}
+
+void OSDPReaderUnit::onKeypadEvent(uint8_t readerAddress, ByteVector data)
+{
+    if (readerAddress == getOSDPConfiguration()->getRS485Address())
+    {
+        m_last_keypad = data;
+    }
+    else
+    {
+         LOG(LogLevel::INFOS) << "Skipping keypad event from reader address "
+                              << readerAddress;
+    }
+}
+
+void OSDPReaderUnit::onTamperEvent(bool tamperStatus, bool /*powerFailure*/)
+{
+    LOG(LogLevel::INFOS) << "Tamper status changed to: " << tamperStatus;
+    m_tamperStatus = tamperStatus;
 }
 
 void OSDPReaderUnit::disconnectFromReader()
@@ -301,6 +330,20 @@ std::string OSDPReaderUnit::getReaderSerialNumber()
 bool OSDPReaderUnit::isConnected()
 {
     return true;
+}
+
+std::shared_ptr<LCDDisplay> OSDPReaderUnit::getLCDDisplay()
+{
+    auto lcd = std::make_shared<OSDPLCDDisplay>();
+    lcd->setReaderCardAdapter(getDefaultReaderCardAdapter());
+    return lcd;
+}
+
+std::shared_ptr<LEDBuzzerDisplay> OSDPReaderUnit::getLEDBuzzerDisplay()
+{
+    auto ledbuzzer = std::make_shared<OSDPLEDBuzzerDisplay>();
+    ledbuzzer->setReaderCardAdapter(getDefaultReaderCardAdapter());
+    return ledbuzzer;
 }
 
 void OSDPReaderUnit::serialize(boost::property_tree::ptree &parentNode)
