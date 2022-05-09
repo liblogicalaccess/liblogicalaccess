@@ -22,23 +22,7 @@ OSDPReaderCardAdapter::OSDPReaderCardAdapter(
 
 ByteVector OSDPReaderCardAdapter::sendCommand(const ByteVector &command, long /*timeout*/)
 {
-    ByteVector osdpCommand;
-    std::shared_ptr<OSDPChannel> channel = m_commands->getChannel();
-    if (channel->isSCB)
-    {
-        channel->setSecurityBlockData(ByteVector(2));
-        channel->setSecurityBlockType(SCS_17); // Enable MAC and Data Security
-    }
-
-    channel->setCommandsType(OSDP_XWR);
-    osdpCommand.push_back(0x01); // XRW_PROFILE 0x01
-    osdpCommand.push_back(0x01); // XRW_PCMND 0x01
-    osdpCommand.push_back(m_address);
-    osdpCommand.insert(osdpCommand.end(), command.begin(), command.end());
-    LOG(LogLevel::INFOS) << "OSDP Cmd: " << BufferHelper::getHex(osdpCommand);
-    channel->setData(osdpCommand);
-    // Transparent Content Send Request
-    std::shared_ptr<OSDPChannel> result = m_commands->transmit();
+    auto result = m_commands->sendTransparentCommand(command);
 
     if (result->getCommandsType() == OSDP_NAK)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,

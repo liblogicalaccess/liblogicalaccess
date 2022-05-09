@@ -75,6 +75,18 @@ class LLA_READERS_OSDP_API OSDPReaderUnitConfiguration : public ReaderUnitConfig
      * \param enabled True to enable visual feedback, false otherwise.
      */
     void setVisualFeedback(bool enabled);
+    
+    /**
+     * \brief Get if install mode is enabled.
+     * \param enabled True if install mode is enabled, false otherwise.
+     */
+    bool getInstallMode() const;
+    
+    /**
+     * \brief Set the install mode.
+     * \param installMode True to enable install mode, false otherwise.
+     */
+    void setInstallMode(bool installMode);
 
 
     /**
@@ -102,6 +114,11 @@ class LLA_READERS_OSDP_API OSDPReaderUnitConfiguration : public ReaderUnitConfig
      * \brief The reader RS485 address (if communication type RS485 used).
      */
     unsigned char d_rs485Address;
+    
+    /**
+     * \brief Install mode, true/false for install mode (= communication encryption not mandatory).
+     */
+    bool d_installMode;
     
     /**
      * \brief The visual feedback, true/false for enabled/disabled.

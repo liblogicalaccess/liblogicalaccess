@@ -229,6 +229,15 @@ typedef struct t_biomatchr
     uint8_t score;
 } s_biomatchr;
 
+typedef struct t_pivdata
+{
+    uint8_t objectId1;
+    uint8_t objectId2;
+    uint8_t objectId3;
+    uint8_t elementId;
+    uint8_t dataOffset;
+} s_pivdata;
+
 typedef std::function<void(uint8_t, ByteVector)> OsdpReaderEvent;
 typedef std::function<void(s_bioreadr&)> OsdpBioReadEvent;
 typedef std::function<void(s_biomatchr&)> OsdpBioMatchEvent;
@@ -256,13 +265,15 @@ class LLA_READERS_OSDP_API OSDPCommands : public Commands
     {
     }
 
-    void initCommands(unsigned char address = 0);
+    void initCommands(unsigned char address = 0, bool installMode = false);
 
     std::shared_ptr<OSDPChannel> poll() const;
 
     std::shared_ptr<OSDPChannel> challenge() const;
 
     std::shared_ptr<OSDPChannel> sCrypt() const;
+    
+    std::shared_ptr<OSDPChannel> keySet(const ByteVector& key) const;
 
     std::shared_ptr<OSDPChannel> led(s_led_cmd &led) const;
 
@@ -305,6 +316,10 @@ class LLA_READERS_OSDP_API OSDPCommands : public Commands
     std::shared_ptr<OSDPChannel> bioRead(BiometricType type, BiometricFormat format, uint8_t quality) const;
     
     std::shared_ptr<OSDPChannel> bioMatch(BiometricType type, BiometricFormat format, uint8_t quality, ByteVector& bioTemplate) const;
+    
+    std::shared_ptr<OSDPChannel> getPIVData(s_pivdata& data) const;
+    
+    std::shared_ptr<OSDPChannel> sendTransparentCommand(const ByteVector &command) const;
 
     std::shared_ptr<OSDPChannel> disconnectFromSmartcard() const;
 
@@ -317,10 +332,6 @@ class LLA_READERS_OSDP_API OSDPCommands : public Commands
     {
         return m_channel;
     }
-
-    std::shared_ptr<OSDPChannel> stransmit() const;
-    
-    std::shared_ptr<OSDPChannel> transmit() const;
     
     void setCardEventHandler(OsdpReaderEvent cardHandler)
     {
@@ -343,6 +354,11 @@ class LLA_READERS_OSDP_API OSDPCommands : public Commands
     }
 
   private:
+  
+    std::shared_ptr<OSDPChannel> stransmit() const;
+    
+    std::shared_ptr<OSDPChannel> transmit() const;
+  
     std::shared_ptr<OSDPChannel> m_channel;
     
     OsdpReaderEvent handleCardEvent;

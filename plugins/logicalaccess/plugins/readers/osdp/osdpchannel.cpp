@@ -14,6 +14,7 @@ namespace logicalaccess
 {
 OSDPChannel::OSDPChannel()
     : isSCB(false)
+    , m_installMode(false)
     , m_address(0)
     , m_sequenceNumber(0)
     , m_data(ByteVector())

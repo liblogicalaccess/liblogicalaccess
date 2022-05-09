@@ -225,10 +225,10 @@ bool OSDPReaderUnit::connectToReader()
     bool ret = getDataTransport()->connect();
     if (ret)
     {
-        m_commands->initCommands(getOSDPConfiguration()->getRS485Address());
+        m_commands->initCommands(getOSDPConfiguration()->getRS485Address(), getOSDPConfiguration()->getInstallMode());
 
         // Test if can read
-        m_commands->poll();
+        //m_commands->poll();
 
         // Start Secure Channel
         std::shared_ptr<OSDPChannel> challenge = m_commands->challenge();

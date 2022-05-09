@@ -54,10 +54,15 @@ enum OSDPCommandsType
     OSDP_FTSTAT          = 0x7a, /* File transfer status */
     OSDP_ACURXSIZE       = 0x7b, /* Maximum Acceptable Reply Size */
     OSDP_FILETRANSFER    = 0x7c, /* File transfer Command */
-    OSDP_MFG             = 0x80, /* Manufacturer Specific Command */
+    OSDP_MFG             = 0x80, /* Manufacturer Specific Command / PIV Data Response */
+    OSDP_GENAUTHR        = 0x81, /* Authentication response */
+    OSDP_CRAUTHR         = 0x82, /* Response to challenge */
     OSDP_MFGREP          = 0x90, /* Manufacturer Specific Reply */
     OSDP_XWR             = 0xa1, /* Extended R/W commands */
     OSDP_ABORT           = 0xa2, /* Stop Multi Part Message */
+    OSDP_PIVDATA         = 0xa3, /* Get PIV Data - Not fully implemented yet */
+    OSDP_GENAUTH         = 0xa4, /* General Authenticate Fragment - Not implemented */
+    OSDP_CRAUTH          = 0xa5, /* Authentication Challenge Fragment - Not implemented */
     OSDP_KEEPACTIVE      = 0xa7, /* Keep secure channel active */
     OSDP_XRD             = 0xb1  /* Extended R/W commands Reply */
 };
@@ -147,6 +152,16 @@ class LLA_READERS_OSDP_API OSDPChannel
     {
         return m_securityBlockData;
     }
+    
+    void setInstallMode(bool installMode)
+    {
+        m_installMode = installMode;
+    }
+
+    bool getInstallMode() const
+    {
+        return m_installMode;
+    }
 
     std::shared_ptr<OSDPSecureChannel> getSecureChannel() const
     {
@@ -170,6 +185,8 @@ class LLA_READERS_OSDP_API OSDPChannel
     OSDPSecureChannelType m_securityBlockType;
 
     ByteVector m_securityBlockData;
+    
+    bool m_installMode;
 
     std::shared_ptr<OSDPSecureChannel> m_secureChannel;
 };

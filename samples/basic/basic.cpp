@@ -58,7 +58,7 @@ int main(int, char **)
         // PC/SC
         std::string rpstr = "PCSC";
         std::cout << "Please type the reader plug-in to use:" << std::endl;
-        //std::cin >> rpstr;
+        std::cin >> rpstr;
 
         readerConfig->setReaderProvider(
             logicalaccess::LibraryManager::getInstance()->getReaderProvider(rpstr));
@@ -87,7 +87,7 @@ int main(int, char **)
         {
             std::cout << "\t" << i << ". " << readers.at(i)->getName() << std::endl;
         }
-     //   std::cin >> ruindex;
+        std::cin >> ruindex;
 
         if (ruindex < 0 || ruindex >= static_cast<int>(readers.size()))
         {
@@ -124,10 +124,10 @@ int main(int, char **)
                     std::cout << "Card Serial Number : "
                               << logicalaccess::BufferHelper::getHex(csn) << std::endl;
 
-                    auto ykcmd = std::dynamic_pointer_cast<logicalaccess::YubikeyCommands>(chip->getCommands());
+                    /*auto ykcmd = std::dynamic_pointer_cast<logicalaccess::YubikeyCommands>(chip->getCommands());
                     auto selectresp = ykcmd->selectYubikeyOATH();
                     std::cout << "Name: " << logicalaccess::BufferHelper::getHex(selectresp.name) << std::endl;
-                    std::cout << "Challenge: " << logicalaccess::BufferHelper::getHex(selectresp.challenge) << std::endl;
+                    std::cout << "Challenge: " << logicalaccess::BufferHelper::getHex(selectresp.challenge) << std::endl;*/
 
                     readerConfig->getReaderUnit()->disconnect();
                 }

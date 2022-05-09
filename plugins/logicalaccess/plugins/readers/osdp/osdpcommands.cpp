@@ -13,10 +13,11 @@
 
 namespace logicalaccess
 {
-void OSDPCommands::initCommands(unsigned char address)
+void OSDPCommands::initCommands(unsigned char address, bool installMode)
 {
     m_channel.reset(new OSDPChannel());
     m_channel->setAddress(address);
+    m_channel->setInstallMode(installMode);
 }
 
 std::shared_ptr<OSDPChannel> OSDPCommands::poll() const
@@ -229,6 +230,30 @@ std::shared_ptr<OSDPChannel> OSDPCommands::sCrypt() const
     m_channel->getSecureChannel()->setRMAC(data);
 
     return m_channel;
+}
+
+std::shared_ptr<OSDPChannel> OSDPCommands::keySet(const ByteVector& key) const
+{
+    ByteVector osdpCommand;
+    
+    m_channel->setCommandsType(OSDP_KEYSET);
+    osdpCommand.push_back(0x01); // Secure Channel Base Key
+    osdpCommand.push_back(static_cast<uint8_t>(key.size()));
+    osdpCommand.insert(osdpCommand.end(), key.begin(), key.end());
+    m_channel->setData(osdpCommand);
+    auto channel = stransmit();
+    if (channel->getCommandsType() == OSDP_NAK)
+    {
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "OSDP_KEYSET failed with NAK.");
+    }
+    else if (channel->getCommandsType() != OSDP_ACK)
+    {
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "Unexpected response of OSDP_KEYSET command.");
+    }
+    
+    return channel;
 }
 
 std::shared_ptr<OSDPChannel> OSDPCommands::led(s_led_cmd &led) const
@@ -594,6 +619,31 @@ std::shared_ptr<OSDPChannel> OSDPCommands::bioMatch(BiometricType type, Biometri
     return stransmit();
 }
 
+std::shared_ptr<OSDPChannel> OSDPCommands::getPIVData(s_pivdata& data) const
+{
+    ByteVector osdpCommand;
+
+    m_channel->setCommandsType(OSDP_PIVDATA);
+    osdpCommand.insert(osdpCommand.end(), reinterpret_cast<uint8_t*>(&data), reinterpret_cast<uint8_t*>(&data) + sizeof(data));
+    
+    m_channel->setData(osdpCommand);
+    return stransmit();
+}
+
+std::shared_ptr<OSDPChannel> OSDPCommands::sendTransparentCommand(const ByteVector &command) const
+{
+    ByteVector osdpCommand;
+    
+    m_channel->setCommandsType(OSDP_XWR);
+    osdpCommand.push_back(0x01); // XRW_PROFILE 0x01
+    osdpCommand.push_back(0x01); // XRW_PCMND 0x01
+    osdpCommand.push_back(m_channel->getAddress());
+    osdpCommand.insert(osdpCommand.end(), command.begin(), command.end());
+    
+    m_channel->setData(osdpCommand);
+    return stransmit();
+}
+
 std::shared_ptr<OSDPChannel> OSDPCommands::disconnectFromSmartcard() const
 {
     ByteVector osdpCommand;
@@ -601,7 +651,7 @@ std::shared_ptr<OSDPChannel> OSDPCommands::disconnectFromSmartcard() const
     m_channel->setCommandsType(OSDP_XWR);
     osdpCommand.push_back(0x01);                    // XRW_PROFILE 0x01
     osdpCommand.push_back(0x02);                    // XRW_PCMND 0x02 Connection Done
-    osdpCommand.push_back(m_channel->getAddress()); // Set profile
+    osdpCommand.push_back(m_channel->getAddress());
     m_channel->setData(osdpCommand);
     return stransmit();
 }
@@ -612,6 +662,12 @@ std::shared_ptr<OSDPChannel> OSDPCommands::stransmit() const
     {
         m_channel->setSecurityBlockData(ByteVector(2));
         m_channel->setSecurityBlockType(SCS_17); // Enable MAC and Data Security
+    }
+    else
+    {
+        EXCEPTION_ASSERT_WITH_LOG(m_channel->getInstallMode(),
+                              std::exception,
+                              "Encrypted communication is enforced. Otherwise please set to install mode.");
     }
     return transmit();
 }
