@@ -10,6 +10,7 @@
 #include <logicalaccess/readerproviders/lcddisplay.hpp>
 #include <logicalaccess/plugins/readers/osdp/readercardadapters/osdpreadercardadapter.hpp>
 
+#include <cstring>
 #include <string>
 #include <vector>
 

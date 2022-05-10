@@ -10,6 +10,7 @@
 #include <openssl/rand.h>
 #include <thread>
 #include <ctime>
+#include <algorithm>
 
 namespace logicalaccess
 {
@@ -666,7 +667,7 @@ std::shared_ptr<OSDPChannel> OSDPCommands::stransmit() const
     else
     {
         EXCEPTION_ASSERT_WITH_LOG(m_channel->getInstallMode(),
-                              std::exception,
+                              LibLogicalAccessException,
                               "Encrypted communication is enforced. Otherwise please set to install mode.");
     }
     return transmit();
