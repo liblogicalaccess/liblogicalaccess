@@ -19,13 +19,13 @@ jobs:
           pip3 install conan
       - name: "Checkout LLA"
         uses: actions/checkout@v2
-          with:
-            path: lla
+        with:
+          path: lla
       - name: "Checkout cppkcs11"
         uses: actions/checkout@v2
-          with:
-            repository: islog/cppkcs11
-            path: cppkcs
+        with:
+          repository: islog/cppkcs11
+          path: cppkcs
       - name: "Setup cppkcs11"
         run: |
           conan export .
@@ -53,13 +53,13 @@ jobs:
           pip3 install conan
       - name: "Checkout LLA"
         uses: actions/checkout@v2
-          with:
-            path: lla
+        with:
+          path: lla
       - name: "Checkout cppkcs11"
         uses: actions/checkout@v2
-          with:
-            repository: islog/cppkcs11
-            path: cppkcs
+        with:
+          repository: islog/cppkcs11
+          path: cppkcs
       - name: "Build with clang"
         env:
           CC: /usr/bin/clang
@@ -84,13 +84,13 @@ jobs:
           pip3 install conan
       - name: "Checkout LLA"
         uses: actions/checkout@v2
-          with:
-            path: lla
+        with:
+          path: lla
       - name: "Checkout cppkcs11"
         uses: actions/checkout@v2
-          with:
-            repository: islog/cppkcs11
-            path: cppkcs
+        with:
+          repository: islog/cppkcs11
+          path: cppkcs
       - name: "Build"
         run: |
           mkdir build
