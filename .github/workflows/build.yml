@@ -17,17 +17,31 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libpcsclite-dev
           pip3 install conan
-      - uses: actions/checkout@v2
+      - name: "Checkout LLA"
+        uses: actions/checkout@v2
+          with:
+            path: lla
+      - name: "Checkout cppkcs11"
+        uses: actions/checkout@v2
+          with:
+            repository: islog/cppkcs11
+            path: cppkcs
+      - name: "Setup cppkcs11"
+        run: |
+          conan export .
+        working-directory: cppkcs
       - name: "Build"
         run: |
           mkdir build
           cd build
           conan install .. -o LLA_BUILD_UNITTEST=True --build=missing
           conan build ..
+        working-directory: lla
       - name: "Test"
         run: |
           cd build
           ctest -V
+        working-directory: lla
 
   build-clang:
     runs-on: ubuntu-latest
@@ -37,7 +51,15 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libpcsclite-dev
           pip3 install conan
-      - uses: actions/checkout@v2
+      - name: "Checkout LLA"
+        uses: actions/checkout@v2
+          with:
+            path: lla
+      - name: "Checkout cppkcs11"
+        uses: actions/checkout@v2
+          with:
+            repository: islog/cppkcs11
+            path: cppkcs
       - name: "Build with clang"
         env:
           CC: /usr/bin/clang
@@ -47,10 +69,12 @@ jobs:
           cd build
           conan install .. -o LLA_BUILD_UNITTEST=True --build=missing
           conan build ..
+        working-directory: lla
       - name: "Test"
         run: |
           cd build
           ctest -V
+        working-directory: lla
 
   build-windows:
     runs-on: windows-2019
@@ -58,14 +82,24 @@ jobs:
       - name: "Setup"
         run: |
           pip3 install conan
-      - uses: actions/checkout@v2
+      - name: "Checkout LLA"
+        uses: actions/checkout@v2
+          with:
+            path: lla
+      - name: "Checkout cppkcs11"
+        uses: actions/checkout@v2
+          with:
+            repository: islog/cppkcs11
+            path: cppkcs
       - name: "Build"
         run: |
           mkdir build
           cd build
           conan install .. -o LLA_BUILD_UNITTEST=True --build=missing
           conan build ..
+        working-directory: lla
       - name: "Test"
         run: |
           cd build
           ctest -V -C Release
+        working-directory: lla

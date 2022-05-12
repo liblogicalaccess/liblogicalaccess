@@ -23,7 +23,7 @@ class LLAConan(ConanFile):
         boost:shared=False
         gtest:shared=True
         LLA_BUILD_IKS=False
-        LLA_BUILD_PKCS=False
+        LLA_BUILD_PKCS=True
         LLA_BUILD_RFIDEAS=False
         LLA_BUILD_UNITTEST=False
         LLA_BUILD_LIBUSB=False'''
@@ -33,7 +33,7 @@ class LLAConan(ConanFile):
         boost:shared=True
         gtest:shared=True
         LLA_BUILD_IKS=False
-        LLA_BUILD_PKCS=False
+        LLA_BUILD_PKCS=True
         LLA_BUILD_UNITTEST=False
         LLA_BUILD_LIBUSB=False'''
 
