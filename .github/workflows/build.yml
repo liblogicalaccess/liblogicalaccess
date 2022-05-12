@@ -60,6 +60,10 @@ jobs:
         with:
           repository: islog/cppkcs11
           path: cppkcs
+      - name: "Setup cppkcs11"
+        run: |
+          conan export .
+        working-directory: cppkcs
       - name: "Build with clang"
         env:
           CC: /usr/bin/clang
@@ -91,6 +95,10 @@ jobs:
         with:
           repository: islog/cppkcs11
           path: cppkcs
+      - name: "Setup cppkcs11"
+        run: |
+          conan export .
+        working-directory: cppkcs
       - name: "Build"
         run: |
           mkdir build
