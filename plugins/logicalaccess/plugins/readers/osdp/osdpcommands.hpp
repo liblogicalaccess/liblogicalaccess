@@ -238,7 +238,7 @@ typedef struct t_pivdata
     uint8_t dataOffset;
 } s_pivdata;
 
-typedef std::function<void(uint8_t, ByteVector)> OsdpReaderEvent;
+typedef std::function<void(uint8_t, ByteVector, uint16_t)> OsdpReaderEvent;
 typedef std::function<void(s_bioreadr&)> OsdpBioReadEvent;
 typedef std::function<void(s_biomatchr&)> OsdpBioMatchEvent;
 typedef std::function<void(bool, bool)> OsdpTamperEvent;

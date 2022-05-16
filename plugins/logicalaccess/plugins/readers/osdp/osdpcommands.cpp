@@ -39,7 +39,7 @@ std::shared_ptr<OSDPChannel> OSDPCommands::poll() const
         {
             if (handleCardEvent != nullptr)
             {
-                handleCardEvent(data[2], ByteVector());
+                handleCardEvent(data[2], ByteVector(), 0);
             }
         }
         else if (data.size() >= 5 && data[1] == 0x02) // osdp_PR00CIRR
@@ -50,7 +50,7 @@ std::shared_ptr<OSDPChannel> OSDPCommands::poll() const
             }
             if (handleCardEvent != nullptr)
             {
-                handleCardEvent(data[2], tmp_csn);
+                handleCardEvent(data[2], tmp_csn, static_cast<uint16_t>(tmp_csn.size() * 8));
             }
         }
     }
@@ -61,12 +61,16 @@ std::shared_ptr<OSDPChannel> OSDPCommands::poll() const
             s_carddata_raw carddata;
             memcpy(&carddata, &data[0], data.size());
             
-            if (carddata.bitCount > 0 && carddata.bitCount <= OSDP_EVENT_MAX_LEN)
+            if (carddata.bitCount > 0)
             {
-                ByteVector tmp_csn(carddata.data, carddata.data + carddata.bitCount);
-                if (handleCardEvent != nullptr)
+                uint16_t byteCount = (carddata.bitCount + 7) / 8;
+                if (byteCount <= OSDP_EVENT_MAX_LEN)
                 {
-                    handleCardEvent(carddata.readerNumber, tmp_csn);
+                    ByteVector tmp_csn(carddata.data, carddata.data + byteCount);
+                    if (handleCardEvent != nullptr)
+                    {
+                        handleCardEvent(carddata.readerNumber, tmp_csn, carddata.bitCount);
+                    }
                 }
             }
         }
@@ -91,7 +95,7 @@ std::shared_ptr<OSDPChannel> OSDPCommands::poll() const
                 }
                 if (handleCardEvent != nullptr)
                 {
-                    handleCardEvent(carddata.readerNumber, tmp_csn);
+                    handleCardEvent(carddata.readerNumber, tmp_csn, static_cast<uint16_t>(tmp_csn.size() * 8));
                 }
             }
         }
@@ -118,7 +122,10 @@ std::shared_ptr<OSDPChannel> OSDPCommands::poll() const
             {
                 if (handleKeypadEvent != nullptr)
                 {
-                    handleKeypadEvent(keypad.readerNumber, ByteVector(keypad.data, keypad.data + keypad.digitCount));
+                    handleKeypadEvent(
+                        keypad.readerNumber,
+                        ByteVector(keypad.data, keypad.data + keypad.digitCount),
+                        static_cast<uint16_t>(keypad.digitCount * 8));
                 }
             }
         }
@@ -404,6 +411,7 @@ std::shared_ptr<OSDPChannel> OSDPCommands::setProfile(unsigned char profile) con
     osdpCommand.push_back(0x00);    // XRW_PROFILE 0x00
     osdpCommand.push_back(0x02);    // XRW_PCMND 0x01 Set Profile Setting
     osdpCommand.push_back(profile); // Set profile
+    //osdpCommand.push_back(0x01);    // Enable Read Card Info Report on Mode-00
     m_channel->setData(osdpCommand);
     return stransmit();
 }

@@ -103,7 +103,7 @@ int main(int, char **)
             readerConfig->getReaderUnit()->connectToReader();
 
             // Force card type here if you want to
-            //readerConfig->getReaderUnit()->setCardType("DESFireEV1");
+            readerConfig->getReaderUnit()->setCardType("DESFireEV1");
 
             std::cout << "Time start : " << time(NULL) << std::endl;
             if (readerConfig->getReaderUnit()->waitInsertion(15000))

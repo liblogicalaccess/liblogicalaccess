@@ -88,6 +88,18 @@ class LLA_READERS_OSDP_API OSDPReaderUnitConfiguration : public ReaderUnitConfig
      */
     void setInstallMode(bool installMode);
 
+    /**
+     * \brief Get if using transparent mode, false otherwise.
+     * \param enabled True if transparent mode is enabled, false otherwise.
+     */
+    bool getTransparentMode() const;
+
+    /**
+     * \brief Set if using transparent mode, false otherwise.
+     * \param transparentMode True to enable transparent mode, false otherwise.
+     */
+    void setTransparentMode(bool transparentMode);
+
 
     /**
      * \brief Get the key used for AES enciphering.
@@ -119,6 +131,11 @@ class LLA_READERS_OSDP_API OSDPReaderUnitConfiguration : public ReaderUnitConfig
      * \brief Install mode, true/false for install mode (= communication encryption not mandatory).
      */
     bool d_installMode;
+
+    /**
+     * \brief Transparent mode, true (Mode-01) or false (Mode-00).
+     */
+    bool d_transparentMode;
     
     /**
      * \brief The visual feedback, true/false for enabled/disabled.

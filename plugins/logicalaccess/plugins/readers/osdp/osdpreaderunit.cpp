@@ -173,8 +173,10 @@ bool OSDPReaderUnit::waitRemoval(unsigned int maxwait)
         std::shared_ptr<OSDPChannel> poll = m_commands->poll();
 
         if (m_inserted)
+        {
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
-        currentWait += 100;
+            currentWait += 100;
+        }
     } while (m_inserted && (maxwait == 0 || currentWait < maxwait));
 
     return !m_inserted;
@@ -204,11 +206,17 @@ bool OSDPReaderUnit::connect()
 
 void OSDPReaderUnit::disconnect()
 {
-    //		std::shared_ptr<OSDPChannel> result =
-    // m_commands->disconnectFromSmartcard();
-    //		if (result->getCommandsType() != OSDPCommandsType::ACK)
-    //		    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Impossible to
-    // disconnect from card");
+    if (getOSDPConfiguration()->getTransparentMode())
+    {
+        std::shared_ptr<OSDPChannel> result = m_commands->disconnectFromSmartcard();
+        if (result->getCommandsType() != OSDPCommandsType::OSDP_ACK)
+        {
+            LOG(LogLevel::ERRORS) << "Impossible to disconnect from card";
+        }
+    }
+
+    m_inserted = false;
+    m_current_csn.clear();
 }
 
 void OSDPReaderUnit::checkPDAuthentication(std::shared_ptr<OSDPChannel> challenge)
@@ -241,37 +249,34 @@ bool OSDPReaderUnit::connectToReader()
         if (result->getCommandsType() == OSDP_XRD)
         {
             ByteVector &data = result->getData();
-            if (data.size() > 2 && data[0x03] != 0x01)
+            uint8_t mode     = getOSDPConfiguration()->getTransparentMode() ? 0x01 : 0x00;
+            if (data.size() > 2 && data[0x03] != mode)
             {
-                result = m_commands->setProfile(0x01);
+                result = m_commands->setProfile(mode);
                 if (result->getCommandsType() != OSDP_ACK)
                     THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                             "Impossible to set Profile 0x01");
+                                             "Impossible to set Profile");
             }
         }
         
-        m_commands->setCardEventHandler(std::bind(&OSDPReaderUnit::onCardEvent, this, std::placeholders::_1, std::placeholders::_2));
-        m_commands->setKeypadEventHandler(std::bind(&OSDPReaderUnit::onKeypadEvent, this, std::placeholders::_1, std::placeholders::_2));
+        m_commands->setCardEventHandler(
+            std::bind(&OSDPReaderUnit::onCardEvent, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+        m_commands->setKeypadEventHandler(
+            std::bind(&OSDPReaderUnit::onKeypadEvent, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
         m_commands->setTamperEventHandler(std::bind(&OSDPReaderUnit::onTamperEvent, this, std::placeholders::_1, std::placeholders::_2));
     }
 
     return ret;
 }
 
-void OSDPReaderUnit::onCardEvent(uint8_t readerAddress, ByteVector data)
+void OSDPReaderUnit::onCardEvent(uint8_t readerAddress, ByteVector data, uint16_t bitCount)
 {
     if (readerAddress == getOSDPConfiguration()->getRS485Address())
     {
-        // If the card wasn't marked as inserted before or if we get card identifier, we consider it inserted now
-        if (!m_inserted || data.size() > 0)
+        m_inserted = true;
+        if (data.size() > 0)
         {
-            m_inserted = true;
             m_current_csn = data;
-        }
-        else if (m_inserted)
-        {
-            m_inserted = false;
-            m_current_csn.clear();
         }
     }
     else
@@ -281,7 +286,7 @@ void OSDPReaderUnit::onCardEvent(uint8_t readerAddress, ByteVector data)
     }
 }
 
-void OSDPReaderUnit::onKeypadEvent(uint8_t readerAddress, ByteVector data)
+void OSDPReaderUnit::onKeypadEvent(uint8_t readerAddress, ByteVector data, uint16_t bitCount)
 {
     if (readerAddress == getOSDPConfiguration()->getRS485Address())
     {

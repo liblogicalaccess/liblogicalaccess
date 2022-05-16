@@ -167,9 +167,9 @@ class LLA_READERS_OSDP_API OSDPReaderUnit : public ReaderUnit
         return m_commands;
     }
     
-    void onCardEvent(uint8_t readerAddress, ByteVector data);
+    void onCardEvent(uint8_t readerAddress, ByteVector data, uint16_t bitCount);
     
-    void onKeypadEvent(uint8_t readerAddress, ByteVector data);
+    void onKeypadEvent(uint8_t readerAddress, ByteVector data, uint16_t bitCount);
     
     void onTamperEvent(bool tamperStatus, bool powerFailure);
 
