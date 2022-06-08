@@ -100,8 +100,7 @@ std::shared_ptr<ReaderUnit> PCSCReaderProvider::createReaderUnit()
 std::shared_ptr<ISO7816ReaderUnit>
 PCSCReaderProvider::createReaderUnit(std::string readerunitname)
 {
-    std::shared_ptr<PCSCReaderUnit> ret;
-    ret.reset(new PCSCReaderUnit(readerunitname));
+    std::shared_ptr<PCSCReaderUnit> ret = PCSCReaderUnit::createPCSCReaderUnit(readerunitname);
     ret->setReaderProvider(std::weak_ptr<ReaderProvider>(shared_from_this()));
 
     return ret;

@@ -10,7 +10,6 @@ function(create_test file)
                 CONAN_PKG::gtest
                 CONAN_PKG::boost
                 pcscreaders
-                stidprgreaders
                 epasscards
                 logicalaccess)
     else ()
@@ -19,7 +18,6 @@ function(create_test file)
                 CONAN_PKG::boost
                 pthread
                 pcscreaders
-                stidprgreaders
                 epasscards
                 logicalaccess)
     endif ()
@@ -35,7 +33,6 @@ add_gtest_test(test_atrparser.cpp)
 add_gtest_test(test_elapsed_time_counter.cpp)
 add_gtest_test(test_epass_utils.cpp)
 add_gtest_test(test_manchester.cpp)
-add_gtest_test(test_stid_prg_utils.cpp)
 add_gtest_test(test_key_storage.cpp)
 add_gtest_test(test_cl1356plus_utils.cpp)
 add_gtest_test(test_format.cpp)

@@ -125,7 +125,13 @@ bool PCSCCardProbe::is_desfire_ev1(std::vector<uint8_t> *uid)
 bool PCSCCardProbe::is_desfire_ev2(std::vector<uint8_t> *uid)
 {
     LLA_LOG_CTX("Probe::is_desfire_ev2");
-    return get_desfire_version(uid) >= 2;
+    return get_desfire_version(uid) == 2;
+}
+
+bool PCSCCardProbe::is_desfire_ev3(std::vector<uint8_t> *uid)
+{
+    LLA_LOG_CTX("Probe::is_desfire_ev3");
+    return get_desfire_version(uid) == 3;
 }
 
 bool PCSCCardProbe::is_mifare_ultralight_c()
@@ -185,13 +191,16 @@ bool PCSCCardProbe::has_desfire_random_uid(ByteVector *uid)
             std::dynamic_pointer_cast<DESFireCommands>(chip->getCommands());
         assert(desfire_command);
 
-        auto csn = pcsc_ru->getCardSerialNumber();
-        // 0x08 as first byte means random UID.
-        if (csn.at(0) == 0x08) {
-            return true;
-        }
-        if (uid)
-            *uid = ByteVector(std::begin(csn), std::end(csn));
+		if (!pcsc_ru->getPCSCConfiguration()->getSkipCSN())
+		{
+			auto csn = pcsc_ru->getCardSerialNumber();
+			// 0x08 as first byte means random UID.
+			if (csn.at(0) == 0x08) {
+				return true;
+			}
+			if (uid)
+				*uid = ByteVector(std::begin(csn), std::end(csn));
+		}
         return false;
     }
     catch (const std::exception &)

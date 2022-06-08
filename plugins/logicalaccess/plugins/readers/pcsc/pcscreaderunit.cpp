@@ -19,6 +19,7 @@
 #include <logicalaccess/plugins/readers/iso7816/commands/samav2iso7816commands.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/desfireev1iso7816commands.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/epassiso7816commands.hpp>
+#include <logicalaccess/plugins/readers/iso7816/commands/yubikeyiso7816commands.hpp>
 #include <logicalaccess/plugins/readers/pcsc/commands/mifarepcsccommands.hpp>
 #include <logicalaccess/plugins/readers/pcsc/commands/mifarescmcommands.hpp>
 #include <logicalaccess/plugins/readers/pcsc/commands/mifare_acr1222L_commands.hpp>
@@ -63,7 +64,9 @@
 #include <logicalaccess/plugins/cards/topaz/topazchip.hpp>
 #include <logicalaccess/plugins/cards/generictag/generictagchip.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfireev2chip.hpp>
+#include <logicalaccess/plugins/cards/desfire/desfireev3chip.hpp>
 #include <logicalaccess/plugins/cards/seos/seoschip.hpp>
+#include <logicalaccess/plugins/cards/yubikey/yubikeychip.hpp>
 
 #include <logicalaccess/plugins/readers/iso7816/commands/samiso7816resultchecker.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/desfireiso7816resultchecker.hpp>
@@ -141,14 +144,14 @@ PCSCReaderUnit::~PCSCReaderUnit()
 
     if (PCSCReaderUnit::isConnected())
     {
-      try
-      {
-        PCSCReaderUnit::disconnect();
-      }
-      catch (std::exception &ex)
-      {
-          LOG(LogLevel::ERRORS) << "Error when disconnecting the reader: " << ex.what();
-      }
+        try
+        {
+            PCSCReaderUnit::disconnect();
+        }
+        catch (std::exception &ex)
+        {
+            LOG(LogLevel::ERRORS) << "Error when disconnecting the reader: " << ex.what();
+        }
     }
 }
 
@@ -498,15 +501,16 @@ bool PCSCReaderUnit::connect(PCSCShareMode share_mode)
         }
         setup_pcsc_connection(share_mode);
 
-        if (d_insertedChip->getGenericCardType() == CHIP_SAM)
+        if (d_insertedChip && d_insertedChip->getGenericCardType() == CHIP_SAM)
             connection_->setDisposition(SCARD_UNPOWER_CARD);
         else
             connection_->setDisposition(SCARD_LEAVE_CARD);
 
         LOG(LogLevel::INFOS) << "SCardConnect Success !";
-        detect_mifareplus_security_level(d_insertedChip);
-
-        d_insertedChip = adjustChip(d_insertedChip);
+		if (d_insertedChip) {
+			detect_mifareplus_security_level(d_insertedChip);
+			d_insertedChip = adjustChip(d_insertedChip);
+		}
         if (d_proxyReaderUnit)
         {
             d_proxyReaderUnit->setSingleChip(d_insertedChip);
@@ -740,6 +744,16 @@ std::shared_ptr<Chip> PCSCReaderUnit::createChip(std::string type)
                 getSAMChip());
             resultChecker.reset(new DESFireISO7816ResultChecker());
         }
+        else if (type == CHIP_DESFIRE_EV3_PUBLIC)
+        {
+            commands = LibraryManager::getInstance()->getCommands("DESFireEV3ISO7816");
+            if (!commands)
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                     "Could not load DESFireEV3ISO7816 Commands.");
+            std::dynamic_pointer_cast<DESFireISO7816Commands>(commands)->setSAMChip(
+                getSAMChip());
+            resultChecker.reset(new DESFireISO7816ResultChecker());
+        }
         else if (type == CHIP_DESFIRE_EV1)
         {
             commands.reset(new DESFireEV1ISO7816Commands());
@@ -854,6 +868,10 @@ std::shared_ptr<Chip> PCSCReaderUnit::createChip(std::string type)
             commands = std::make_shared<EPassISO7816Commands>();
             rca      = std::make_shared<ISO7816ReaderCardAdapter>();
             rca->setDataTransport(getDefaultReaderCardAdapter()->getDataTransport());
+        }
+        else if (type == CHIP_YUBIKEY)
+        {
+            commands = std::make_shared<YubikeyISO7816Commands>();
         }
         else if (type == CHIP_TOPAZ)
         {
@@ -1498,17 +1516,24 @@ bool PCSCReaderUnit::process_insertion(const std::string &cardType, unsigned int
 
 std::shared_ptr<Chip> PCSCReaderUnit::adjustChip(std::shared_ptr<Chip> c)
 {
+	LOG(LogLevel::INFOS) << "Adjusting chip (" << c->getCardType() << ")...";
+	
     // DESFire adjustment. Check maybe it's DESFireEV1 or EV2. Check random uid.
     // Adjust cryptographic context.
     if (c->getCardType() == CHIP_DESFIRE && d_card_type == CHIP_UNKNOWN)
     {
+        // We are doing too much work here. We should query once and compare
+        // or something. It works alright but is not very good.
         if (createCardProbe()->is_desfire_ev1())
             c = createChip(CHIP_DESFIRE_EV1);
         else if (createCardProbe()->is_desfire_ev2())
             c = createChip(CHIP_DESFIRE_EV2_PUBLIC);
+        else if (createCardProbe()->is_desfire_ev3())
+            c = createChip(CHIP_DESFIRE_EV3_PUBLIC);
     }
     if (c->getCardType() == CHIP_DESFIRE || c->getCardType() == CHIP_DESFIRE_EV1 ||
-        c->getCardType() == CHIP_DESFIRE_EV2_PUBLIC)
+        c->getCardType() == CHIP_DESFIRE_EV2_PUBLIC ||
+        c->getCardType() == CHIP_DESFIRE_EV3_PUBLIC)
     {
         ByteVector uid;
         if (createCardProbe()->has_desfire_random_uid(&uid))
@@ -1560,7 +1585,14 @@ std::shared_ptr<Chip> PCSCReaderUnit::adjustChip(std::shared_ptr<Chip> c)
             }
             else
             {
-                c->setChipIdentifier(getCardSerialNumber());
+				if (!getPCSCConfiguration()->getSkipCSN())
+				{
+					c->setChipIdentifier(getCardSerialNumber());
+				}
+				else
+				{
+					LOG(LogLevel::INFOS) << "Reading CSN skipped.";
+				}
             }
         }
         catch (LibLogicalAccessException &e)

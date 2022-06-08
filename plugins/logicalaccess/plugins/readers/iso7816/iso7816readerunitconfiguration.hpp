@@ -129,6 +129,16 @@ class LLA_READERS_ISO7816_API ISO7816ReaderUnitConfiguration
     {
         d_auto_connect_sam_reader = auto_connect;
     }
+	
+	bool getSkipCSN() const
+	{
+		return d_skipCSN;
+	}
+	
+	void setSkipCSN(bool skipCSN)
+	{
+		d_skipCSN = skipCSN;
+	}
 
   protected:
     /**
@@ -161,6 +171,11 @@ class LLA_READERS_ISO7816_API ISO7816ReaderUnitConfiguration
     * \brief Auto-connect to SAM reader at reader connection.
     */
     bool d_auto_connect_sam_reader;
+	
+	/**
+	 * \brief Skip to get CSN
+	 */
+	bool d_skipCSN;
 };
 }
 

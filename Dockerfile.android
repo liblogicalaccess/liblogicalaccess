@@ -1,0 +1,27 @@
+# Docker container with Conan environement
+# Download SDK
+FROM debian:bullseye AS AndroidNDKSDKDownloader
+RUN apt-get update
+RUN apt-get install -y wget unzip
+
+# Android NDK
+RUN wget -O /opt/ndk.zip https://dl.google.com/android/repository/android-ndk-r23b-linux.zip
+RUN unzip /opt/ndk.zip -d /opt/android-ndk
+
+# Android stuff
+RUN wget -O /opt/sdk.zip https://dl.google.com/android/repository/commandlinetools-linux-8092744_latest.zip
+RUN mkdir /opt/android-sdk-linux
+RUN unzip /opt/sdk.zip -d /opt/android-sdk-linux
+
+FROM lla
+COPY --from=AndroidNDKSDKDownloader /opt/android-ndk /opt/android-ndk
+COPY --from=AndroidNDKSDKDownloader /opt/android-sdk-linux /opt/android-sdk-linux
+
+RUN apt-get update
+RUN apt-get install -y default-jdk-headless
+
+RUN mkdir /opt/android-sdk-linux/cmdline-tools/latest
+RUN mv /opt/android-sdk-linux/cmdline-tools/* /opt/android-sdk-linux/cmdline-tools/latest/ || true
+RUN yes | /opt/android-sdk-linux/cmdline-tools/latest/bin/sdkmanager --licenses
+RUN /opt/android-sdk-linux/cmdline-tools/latest/bin/sdkmanager --update
+RUN yes | /opt/android-sdk-linux/cmdline-tools/latest/bin/sdkmanager --licenses

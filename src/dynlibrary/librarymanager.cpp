@@ -119,10 +119,12 @@ std::shared_ptr<Commands> LibraryManager::getCommands(const std::string &extende
     std::shared_ptr<Commands> ret;
     std::string fctname = "get" + extendedtype + "Commands";
 
+    LOG(LogLevel::INFOS) << "Trying to find commands: " << extendedtype;
     getcommands getcommandsfct;
     *(void **)(&getcommandsfct) = getFctFromName(fctname, READERS_TYPE);
     if (getcommandsfct)
     {
+        LOG(LogLevel::INFOS) << "Found command " << extendedtype;
         getcommandsfct(&ret);
     }
 

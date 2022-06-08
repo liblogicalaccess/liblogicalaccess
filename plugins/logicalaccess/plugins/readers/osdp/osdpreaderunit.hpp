@@ -71,6 +71,14 @@ class LLA_READERS_OSDP_API OSDPReaderUnit : public ReaderUnit
      * getReader().
      */
     bool waitRemoval(unsigned int maxwait) override;
+    
+    /**
+     * \brief Wait for keypad inputs.
+     * \param maxwait The maximum time to wait for, in milliseconds. If maxwait is zero,
+     * then the call never times out.
+     * \return True if keypad inputs are catch, false otherwise.
+     */
+    bool waitKeypadInputs(unsigned int maxwait);
 
     /**
      * \brief Get the first and/or most accurate chip found.
@@ -149,19 +157,40 @@ class LLA_READERS_OSDP_API OSDPReaderUnit : public ReaderUnit
 
 
     void checkPDAuthentication(std::shared_ptr<OSDPChannel> challenge);
+    
+    std::shared_ptr<LCDDisplay> getLCDDisplay() override;
+
+    std::shared_ptr<LEDBuzzerDisplay> getLEDBuzzerDisplay() override;
 
     std::shared_ptr<OSDPCommands> &getOSDPCommands()
     {
         return m_commands;
     }
+    
+    void onCardEvent(uint8_t readerAddress, ByteVector data, uint16_t bitCount);
+    
+    void onKeypadEvent(uint8_t readerAddress, ByteVector data, uint16_t bitCount);
+    
+    void onTamperEvent(bool tamperStatus, bool powerFailure);
 
     bool getTamperStatus() const
     {
         return m_tamperStatus;
     }
+    
+    ByteVector getLastKeypadInputs() const
+    {
+        return m_last_keypad;
+    }
 
   private:
     std::shared_ptr<OSDPCommands> m_commands;
+    
+    bool m_inserted;
+    
+    ByteVector m_current_csn;
+    
+    ByteVector m_last_keypad;
 
     bool m_tamperStatus;
 };

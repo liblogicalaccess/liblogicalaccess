@@ -44,6 +44,16 @@ ByteVector TLV::value() const
     return value_;
 }
 
+uint8_t TLV::value_u1() const
+{
+    if (value_.size() != 1)
+    {
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "TLV value must be exactly one-byte long.");
+    }
+    return value_.at(0);
+}
+
 void TLV::value(bool v)
 {
     value(static_cast<unsigned char>(v ? 0x01 : 0x00));
@@ -182,6 +192,17 @@ std::vector<TLVPtr> TLV::parse_tlvs(const ByteVector &bytes, bool strict)
     return tlv;
 }
 
+ByteVector TLV::value_tlvs(std::vector<TLVPtr> tlvs)
+{
+    ByteVector res;
+    for (auto it = tlvs.cbegin(); it != tlvs.cend(); ++it)
+    {
+        auto v = (*it)->compute();
+        res.insert(res.end(), v.begin(), v.end());
+    }
+    return res;
+}
+
 TLVPtr TLV::get_child(uint8_t tag) const
 {
     auto tlvs = subTLVs_;
@@ -193,7 +214,12 @@ TLVPtr TLV::get_child(uint8_t tag) const
 	return get_child(tlvs, tag);
 }
 
-TLVPtr TLV::get_child(std::vector<TLVPtr> tlvs, uint8_t tag)
+std::vector<TLVPtr> TLV::get_childs() const
+{
+    return subTLVs_;
+}
+
+TLVPtr TLV::get_child(std::vector<TLVPtr> tlvs, uint8_t tag, bool required)
 {
     for (auto it = tlvs.cbegin(); it != tlvs.cend(); ++it)
     {
@@ -201,7 +227,12 @@ TLVPtr TLV::get_child(std::vector<TLVPtr> tlvs, uint8_t tag)
             return *it;
     }
 
-    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                             "Cannout found expected child TLV.");
+    if (required)
+    {
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                "Cannot found expected child TLV.");
+    }
+    
+    return nullptr;
 }
 }

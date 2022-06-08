@@ -28,6 +28,12 @@ TLVDataField::TLVDataField(unsigned char tag)
 
 TLVDataField::~TLVDataField() {}
 
+void TLVDataField::setPosition(unsigned int /*position*/)
+{
+	// Force position to UNKNOWN
+    d_position = UNKNOWN_FIELD_POSITION;
+}
+
 void TLVDataField::setTag(unsigned char tag)
 {
     d_tag = tag;

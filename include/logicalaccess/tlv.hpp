@@ -42,6 +42,12 @@ class LLA_CORE_API TLV
      * If this TLV wraps an other TLV, returns the `compute()` version of the sub TLV.
      */
     ByteVector value() const;
+    
+    /**
+     * Return the "value" of this TLV as uint8_t.
+     * Throw if the value size is not exactly one byte.
+     */
+    uint8_t value_u1() const;
 
     /**
      * Set the value.
@@ -75,17 +81,20 @@ class LLA_CORE_API TLV
     ByteVector compute() const;
 
     TLVPtr get_child(uint8_t tag) const;
+    
+    std::vector<TLVPtr> get_childs() const;
 
     uint8_t getSizeTag() const;
     void setSizeTag(uint8_t tag);
     ByteVector getSizeVector() const;
     void setSizeVector(ByteVector size);
     ByteVector getCompletTLV() const;
-    static TLVPtr get_child(std::vector<TLVPtr> tlvs, uint8_t tag);
+    static TLVPtr get_child(std::vector<TLVPtr> tlvs, uint8_t tag, bool required = true);
 
     static std::vector<TLVPtr> parse_tlvs(const ByteVector &bytes,
                                           size_t &bytes_consumed);
     static std::vector<TLVPtr> parse_tlvs(const ByteVector &bytes, bool strict = false);
+    static ByteVector value_tlvs(std::vector<TLVPtr> tlvs);
 
   private:
     ByteVector sizeVector_;

@@ -96,6 +96,8 @@ void DESFireEV1NFCTag4CardService::eraseNDEF()
 {
     std::shared_ptr<DESFireCommands> desfirecommand(
         std::dynamic_pointer_cast<DESFireCommands>(getChip()->getCommands()));
+    desfirecommand->selectApplication(0);
+    desfirecommand->authenticate(0);
     desfirecommand->erase();
 }
 

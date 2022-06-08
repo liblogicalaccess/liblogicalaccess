@@ -6,23 +6,20 @@
 
 #include <logicalaccess/readerproviders/readerprovider.hpp>
 #include <logicalaccess/dynlibrary/idynlibrary.hpp>
-#include <boost/filesystem.hpp>
 #include <map>
 #include <time.h>
 #include <logicalaccess/dynlibrary/librarymanager.hpp>
 #include <logicalaccess/plugins/llacommon/logs.hpp>
-
+#include <vector>
+#include <string>
+#include <algorithm>
 #include <thread>
 
 namespace logicalaccess
 {
-ReaderProvider::ReaderProvider()
-{
-}
+ReaderProvider::ReaderProvider() {}
 
-ReaderProvider::~ReaderProvider()
-{
-}
+ReaderProvider::~ReaderProvider() {}
 
 std::shared_ptr<ReaderProvider>
 ReaderProvider::getReaderProviderFromRPType(std::string rpt)
@@ -49,11 +46,13 @@ const ReaderList ReaderProvider::waitForReaders(std::vector<std::string> readers
 
         refreshReaderList();
         ReaderList rl = getReaderList();
-        for (ReaderList::iterator it = rl.begin(); it != rl.end(); ++it)
+        for (const auto &it : rl)
         {
-            if (std::find(readers.begin(), readers.end(), (*it)->getName()) !=
+            if (std::find(readers.begin(), readers.end(), it->getName()) !=
                 readers.end())
-                ret.push_back(*it);
+            {
+                ret.push_back(it);
+            }
         }
 
         if ((all == false && ret.size() != 0) ||

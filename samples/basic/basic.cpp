@@ -9,6 +9,7 @@
 #include <logicalaccess/readerproviders/readerconfiguration.hpp>
 #include <logicalaccess/services/storage/storagecardservice.hpp>
 #include <logicalaccess/services/nfctag/nfctagcardservice.hpp>
+#include <logicalaccess/services/challenge/challengecardservice.hpp>
 #include <logicalaccess/cards/locationnode.hpp>
 
 #include <iostream>
@@ -19,6 +20,8 @@
 #include "logicalaccess/cards/PKCSkeystorage.hpp"
 #include "logicalaccess/plugins/cards/desfire/desfirekey.hpp"
 #include "logicalaccess/plugins/cards/desfire/desfireev1commands.hpp"
+#include "logicalaccess/plugins/readers/iso7816/commands/desfireiso7816commands.hpp"
+#include "logicalaccess/plugins/cards/yubikey/yubikeycommands.hpp"
 
 /**
  * \brief The application entry point.
@@ -100,7 +103,7 @@ int main(int, char **)
             readerConfig->getReaderUnit()->connectToReader();
 
             // Force card type here if you want to
-            // readerConfig->getReaderUnit()->setCardType(CT_DESFIRE_EV1);
+            readerConfig->getReaderUnit()->setCardType("DESFireEV1");
 
             std::cout << "Time start : " << time(NULL) << std::endl;
             if (readerConfig->getReaderUnit()->waitInsertion(15000))
@@ -121,36 +124,16 @@ int main(int, char **)
                     std::cout << "Card Serial Number : "
                               << logicalaccess::BufferHelper::getHex(csn) << std::endl;
 
-                    std::shared_ptr<logicalaccess::LocationNode> node =
-                        chip->getRootLocationNode();
-                    if (node)
-                    {
-                        std::cout << "Root Location Node : " << node->getName()
-                                  << std::endl;
-                    }
-
-                    std::cout << "Complete chip list:" << std::endl;
-                    std::vector<std::shared_ptr<logicalaccess::Chip>> chipList =
-                        readerConfig->getReaderUnit()->getChipList();
-                    for (std::vector<std::shared_ptr<logicalaccess::Chip>>::iterator i =
-                             chipList.begin();
-                         i != chipList.end(); ++i)
-                    {
-                        std::cout << "\t"
-                                  << logicalaccess::BufferHelper::getHex(
-                                         readerConfig->getReaderUnit()->getNumber((*i)))
-                                  << std::endl;
-                    }
-
-                    // DO SOMETHING HERE
-                    // DO SOMETHING HERE
-                    // DO SOMETHING HERE
+                    /*auto ykcmd = std::dynamic_pointer_cast<logicalaccess::YubikeyCommands>(chip->getCommands());
+                    auto selectresp = ykcmd->selectYubikeyOATH();
+                    std::cout << "Name: " << logicalaccess::BufferHelper::getHex(selectresp.name) << std::endl;
+                    std::cout << "Challenge: " << logicalaccess::BufferHelper::getHex(selectresp.challenge) << std::endl;*/
 
                     readerConfig->getReaderUnit()->disconnect();
                 }
                 else
                 {
-                    std::cout << "Error: cannot connect to the card." << std::endl;
+                    std::cerr << "Cannot connect to the card." << std::endl;
                 }
 
                 std::cout << "Logical automatic card removal in 15 seconds..."
@@ -171,7 +154,7 @@ int main(int, char **)
     }
     catch (std::exception &ex)
     {
-        std::cout << ex.what() << std::endl;
+        std::cerr << "ERROR: " << ex.what() << std::endl;
     }
 
     return EXIT_SUCCESS;

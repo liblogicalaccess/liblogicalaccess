@@ -26,6 +26,10 @@ class LLA_READERS_OSDP_API OSDPReaderCardAdapter : public ISO7816ReaderCardAdapt
     ~OSDPReaderCardAdapter();
 
     ByteVector sendCommand(const ByteVector &command, long timeout = -1) override;
+    
+    std::shared_ptr<OSDPCommands> getOSDPCommands() const;
+    
+    unsigned char getRS485Address() const;
 
   protected:
     std::shared_ptr<DataTransport> d_dataTransport;
