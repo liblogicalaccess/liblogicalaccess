@@ -62,7 +62,7 @@ jobs:
       - name: Run build-wrapper
         run: |
           cd build
-          build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} conan build ..
+          build-wrapper-linux-x86-64 --out-dir ../${{ env.BUILD_WRAPPER_OUT_DIR }} conan build ..
         working-directory: lla
       - name: Run sonar-scanner
         env:
