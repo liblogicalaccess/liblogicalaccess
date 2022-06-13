@@ -18,7 +18,7 @@ Welcome to the LibLogicalAccess project web page, an open source RFID library de
 
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/2286/badge.svg)](https://scan.coverity.com/projects/2286)
 [![Sonarcloud Status](https://sonarcloud.io/api/project_badges/measure?project=islog_liblogicalaccess&metric=alert_status)](https://sonarcloud.io/dashboard?id=islog_liblogicalaccess)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/e5546aa698214fe981729710f48269a5)](https://www.codacy.com/app/ISLOG/liblogicalaccess)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/e5546aa698214fe981729710f48269a5)](https://www.codacy.com/gh/islog/liblogicalaccess/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=islog/liblogicalaccess&amp;utm_campaign=Badge_Grade)
 
 How to install?
 ----------------
