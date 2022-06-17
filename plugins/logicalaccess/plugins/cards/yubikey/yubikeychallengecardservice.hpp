@@ -12,7 +12,7 @@
 
 namespace logicalaccess
 {
-#define YUBIKEY_CHALLENGE_CARDSERVICE "Yubikey"
+#define YUBIKEY_CHALLENGE_CARDSERVICE "YubikeyChallenge"
 
 /**
  * \brief The Yubikey challenge-response card service class.
