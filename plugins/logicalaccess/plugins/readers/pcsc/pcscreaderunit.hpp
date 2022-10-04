@@ -74,7 +74,7 @@ class LLA_READERS_PCSC_API PCSCReaderUnit : public ISO7816ReaderUnit
      * getReader().
      * \warning If the card is already connected, then the method always fail.
      */
-    bool waitInsertion(unsigned int maxwait) override final;
+    bool waitInsertion(unsigned int maxwait) override;
 
     /**
      * \brief Wait for a card removal.
