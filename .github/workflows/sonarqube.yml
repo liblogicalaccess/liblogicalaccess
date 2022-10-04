@@ -46,9 +46,9 @@ jobs:
           unzip -o $HOME/.sonar/build-wrapper-linux-x86.zip -d $HOME/.sonar/
           echo "$HOME/.sonar/build-wrapper-linux-x86" >> $GITHUB_PATH
       - run: |
-        sudo apt-get update 
-        sudo apt-get install -y libpcsclite-dev
-        pip3 install conan
+          sudo apt-get update 
+          sudo apt-get install -y libpcsclite-dev
+          pip3 install conan
       - name: "Setup cppkcs11"
         run: |
           conan export .
@@ -62,7 +62,7 @@ jobs:
       - name: Run build-wrapper
         run: |
           cd build
-          build-wrapper-linux-x86-64 --out-dir ${{ env.BUILD_WRAPPER_OUT_DIR }} conan build ..
+          build-wrapper-linux-x86-64 --out-dir ../${{ env.BUILD_WRAPPER_OUT_DIR }} conan build ..
         working-directory: lla
       - name: Run sonar-scanner
         env:
@@ -70,3 +70,4 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           sonar-scanner --define sonar.host.url="${{ env.SONAR_SERVER_URL }}" --define sonar.cfamily.build-wrapper-output="${{ env.BUILD_WRAPPER_OUT_DIR }}"
+        working-directory: lla

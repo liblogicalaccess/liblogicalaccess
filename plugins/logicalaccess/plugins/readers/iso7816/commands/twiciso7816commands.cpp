@@ -49,7 +49,7 @@ void TwicISO7816Commands::selectTWICApplication()
 
     ByteVector dfname;
     dfname.insert(dfname.begin(), rid, rid + sizeof(rid));
-    dfname.insert(dfname.end(), pix, rid + 4);
+    dfname.insert(dfname.end(), pix, pix + 4);
 
 	auto isocmd = getISO7816Commands();
     try
