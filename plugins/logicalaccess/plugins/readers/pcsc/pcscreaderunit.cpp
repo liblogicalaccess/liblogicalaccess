@@ -170,6 +170,8 @@ void PCSCReaderUnit::setName(const std::string &name)
         d_proxyReaderUnit->makeProxy(
             std::dynamic_pointer_cast<PCSCReaderUnit>(shared_from_this()),
             getPCSCConfiguration());
+        d_proxyReaderUnit->d_sam_chip       = d_sam_chip;
+        d_proxyReaderUnit->d_sam_readerunit = d_sam_readerunit;
     }
 }
 
