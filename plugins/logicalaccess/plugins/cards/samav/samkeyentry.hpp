@@ -9,7 +9,7 @@
 
 #include <cstring>
 #include <logicalaccess/key.hpp>
-#include <logicalaccess/plugins/cards/samav2/sambasickeyentry.hpp>
+#include <logicalaccess/plugins/cards/samav/sambasickeyentry.hpp>
 
 namespace logicalaccess
 {
@@ -86,7 +86,7 @@ typedef struct s_KeyEntryAV2Information
  * \brief A SAMKeyEntry class.
  */
 template <typename T, typename S>
-class LLA_CARDS_SAMAV2_API SAMKeyEntry : public SAMBasicKeyEntry
+class LLA_CARDS_SAMAV_API SAMKeyEntry : public SAMBasicKeyEntry
 {
   public:
     SAMKeyEntry()

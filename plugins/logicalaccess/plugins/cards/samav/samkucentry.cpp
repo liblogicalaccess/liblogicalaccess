@@ -1,10 +1,10 @@
 /**
- * \file desfirekey.cpp
- * \author Maxime C. <maxime-dev@islog.com>
- * \brief DESFire Key.
+ * \file samkucentry.cpp
+ * \author Maxime C. <maxime@leosac.com>
+ * \brief SAM KUC Entry source.
  */
 
-#include <logicalaccess/plugins/cards/samav2/samkucentry.hpp>
+#include <logicalaccess/plugins/cards/samav/samkucentry.hpp>
 
 namespace logicalaccess
 {

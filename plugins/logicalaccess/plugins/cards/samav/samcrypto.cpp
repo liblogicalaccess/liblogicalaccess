@@ -4,7 +4,7 @@
  * \brief SAMDESfireCrypto source.
  */
 
-#include <logicalaccess/plugins/cards/samav2/samcrypto.hpp>
+#include <logicalaccess/plugins/cards/samav/samcrypto.hpp>
 #include <logicalaccess/plugins/crypto/tomcrypt.h>
 #include <ctime>
 #include <cstdlib>

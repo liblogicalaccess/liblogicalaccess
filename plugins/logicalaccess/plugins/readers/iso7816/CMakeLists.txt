@@ -32,7 +32,7 @@ target_link_libraries(iso7816readers
         logicalaccess-cryptolib
         desfirecards
         iso7816cards
-        samav2cards
+        samavcards
         twiccards
         epasscards
 		yubikeycards

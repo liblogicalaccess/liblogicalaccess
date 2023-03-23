@@ -1,7 +1,7 @@
 /**
- * \file desfirekey.hpp
- * \author Maxime C. <maxime-dev@islog.com>
- * \brief DESFire key.
+ * \file samkucentry.hpp
+ * \author Maxime C. <maxime@leosac.com>
+ * \brief SAM KUC Entry.
  */
 
 #ifndef LOGICALACCESS_SAMKUCENTRY_HPP
@@ -9,7 +9,7 @@
 
 #include <cstring>
 #include <logicalaccess/key.hpp>
-#include <logicalaccess/plugins/cards/samav2/lla_cards_samav2_api.hpp>
+#include <logicalaccess/plugins/cards/samav/lla_cards_samav_api.hpp>
 
 namespace logicalaccess
 {
@@ -32,7 +32,7 @@ typedef struct s_SAMKUCEntry
 /**
  * \brief A DESFire Key class.
  */
-class LLA_CARDS_SAMAV2_API SAMKucEntry
+class LLA_CARDS_SAMAV_API SAMKucEntry
 {
   public:
     /**

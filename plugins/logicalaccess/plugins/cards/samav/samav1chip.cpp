@@ -4,7 +4,7 @@
  * \brief SAMAV1Chip source.
  */
 
-#include <logicalaccess/plugins/cards/samav2/samav1chip.hpp>
+#include <logicalaccess/plugins/cards/samav/samav1chip.hpp>
 
 #include <cstring>
 

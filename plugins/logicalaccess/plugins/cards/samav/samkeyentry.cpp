@@ -4,7 +4,7 @@
  * \brief SAMKeyEntry source.
  */
 
-#include <logicalaccess/plugins/cards/samav2/samkeyentry.hpp>
+#include <logicalaccess/plugins/cards/samav/samkeyentry.hpp>
 
 namespace logicalaccess
 {

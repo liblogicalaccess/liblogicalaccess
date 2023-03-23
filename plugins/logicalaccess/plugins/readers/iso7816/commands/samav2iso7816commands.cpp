@@ -8,9 +8,9 @@
 #include <logicalaccess/plugins/cards/iso7816/readercardadapters/iso7816readercardadapter.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/samav2iso7816commands.hpp>
 #include <logicalaccess/plugins/readers/iso7816/iso7816readerunitconfiguration.hpp>
-#include <logicalaccess/plugins/cards/samav2/samcrypto.hpp>
-#include <logicalaccess/plugins/cards/samav2/samkeyentry.hpp>
-#include <logicalaccess/plugins/cards/samav2/samkucentry.hpp>
+#include <logicalaccess/plugins/cards/samav/samcrypto.hpp>
+#include <logicalaccess/plugins/cards/samav/samkeyentry.hpp>
+#include <logicalaccess/plugins/cards/samav/samkucentry.hpp>
 #include <openssl/rand.h>
 #include <logicalaccess/plugins/crypto/symmetric_key.hpp>
 #include <logicalaccess/plugins/crypto/aes_symmetric_key.hpp>

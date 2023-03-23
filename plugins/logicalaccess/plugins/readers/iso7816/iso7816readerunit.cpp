@@ -15,7 +15,7 @@
 #include <logicalaccess/dynlibrary/librarymanager.hpp>
 #include <logicalaccess/dynlibrary/idynlibrary.hpp>
 
-#include <logicalaccess/plugins/cards/samav2/samav2chip.hpp>
+#include <logicalaccess/plugins/cards/samav/samav2chip.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfirechip.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/samav1iso7816commands.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/samav2iso7816commands.hpp>
@@ -177,7 +177,7 @@ void ISO7816ReaderUnit::connectToSAM()
                     getSAMChip()->getCommands())
                     ->authenticateHost(getISO7816Configuration()->getSAMUnLockKey(),
                                        getISO7816Configuration()->getSAMUnLockkeyNo());
-            else if (ret->getSingleChip()->getCardType() == "SAM_AV2")
+            else if (ret->getSingleChip()->getCardType() == "SAM_AV2" || ret->getSingleChip()->getCardType() == "SAM_AV3")
             {
                 try
                 {
