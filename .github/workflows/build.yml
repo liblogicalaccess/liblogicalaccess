@@ -16,7 +16,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libpcsclite-dev
-          pip3 install conan
+          pip3 install conan==1.59.0
       - name: "Checkout LLA"
         uses: actions/checkout@v2
         with:
