@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_SAMAV2COMMANDS_HPP
 #define LOGICALACCESS_SAMAV2COMMANDS_HPP
 
-#include <logicalaccess/plugins/cards/samav2/samcommands.hpp>
+#include <logicalaccess/plugins/cards/samav/samcommands.hpp>
 
 namespace logicalaccess
 {

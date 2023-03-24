@@ -7,13 +7,13 @@
 #ifndef LOGICALACCESS_SAMISO7816CARDPROVIDER_HPP
 #define LOGICALACCESS_SAMISO7816CARDPROVIDER_HPP
 
-#include <logicalaccess/plugins/cards/samav2/samcommands.hpp>
+#include <logicalaccess/plugins/cards/samav/samcommands.hpp>
 #include <logicalaccess/plugins/cards/iso7816/readercardadapters/iso7816readercardadapter.hpp>
 #include <logicalaccess/plugins/readers/iso7816/iso7816readerunitconfiguration.hpp>
-#include <logicalaccess/plugins/cards/samav2/samcrypto.hpp>
-#include <logicalaccess/plugins/cards/samav2/samkeyentry.hpp>
-#include <logicalaccess/plugins/cards/samav2/samcrypto.hpp>
-#include <logicalaccess/plugins/cards/samav2/samcommands.hpp>
+#include <logicalaccess/plugins/cards/samav/samcrypto.hpp>
+#include <logicalaccess/plugins/cards/samav/samkeyentry.hpp>
+#include <logicalaccess/plugins/cards/samav/samcrypto.hpp>
+#include <logicalaccess/plugins/cards/samav/samcommands.hpp>
 
 #include <openssl/rand.h>
 #include <logicalaccess/plugins/crypto/symmetric_key.hpp>
@@ -260,6 +260,8 @@ class LLA_READERS_ISO7816_API SAMISO7816Commands : public SAMCommands<T, S>
                 return "SAM_AV1";
             if (result[result.size() - 3] == 0xA2)
                 return "SAM_AV2";
+			if (result[result.size() - 3] == 0xA3)
+                return "SAM_AV3";
         }
         return "SAM_NONE";
     }

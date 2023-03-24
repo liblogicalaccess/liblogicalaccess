@@ -6,7 +6,7 @@
 
 #include <logicalaccess/plugins/readers/iso7816/commands/desfireev1iso7816commands.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfirechip.hpp>
-#include <logicalaccess/plugins/cards/samav2/samav2commands.hpp>
+#include <logicalaccess/plugins/cards/samav/samav2commands.hpp>
 #include <openssl/rand.h>
 #include <logicalaccess/iks/IslogKeyServer.hpp>
 #include <logicalaccess/plugins/llacommon/settings.hpp>
@@ -20,10 +20,10 @@
 #include <logicalaccess/plugins/crypto/des_cipher.hpp>
 #include <logicalaccess/plugins/crypto/des_symmetric_key.hpp>
 #include <logicalaccess/plugins/crypto/des_initialization_vector.hpp>
-#include <logicalaccess/plugins/cards/samav2/samav2chip.hpp>
+#include <logicalaccess/plugins/cards/samav/samav2chip.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfireev1location.hpp>
 #include <logicalaccess/cards/samkeystorage.hpp>
-#include <logicalaccess/plugins/cards/samav2/samcommands.hpp>
+#include <logicalaccess/plugins/cards/samav/samcommands.hpp>
 #include <logicalaccess/plugins/cards/desfire/nxpav2keydiversification.hpp>
 #include <logicalaccess/myexception.hpp>
 #include <cassert>
@@ -398,7 +398,7 @@ void DESFireEV1ISO7816Commands::sam_iso_authenticate(std::shared_ptr<DESFireKey>
             LibLogicalAccessException,
             "DESFireKey need a SAMKeyStorage to proceed a SAM ISO Authenticate.");
 
-    if (getSAMChip()->getCardType() == "SAM_AV2" &&
+    if ((getSAMChip()->getCardType() == "SAM_AV2" || getSAMChip()->getCardType() == "SAM_AV3") &&
         !std::dynamic_pointer_cast<NXPAV2KeyDiversification>(
             key->getKeyDiversification()))
     {
@@ -459,7 +459,7 @@ void DESFireEV1ISO7816Commands::sam_iso_authenticate(std::shared_ptr<DESFireKey>
                                  SAMCommands<KeyEntryAV1Information, SETAV1>>(
                                  getSAMChip()->getCommands())
                                  ->transmit(cmd_vector);
-            else if (getSAMChip()->getCardType() == "SAM_AV2")
+            else if (getSAMChip()->getCardType() == "SAM_AV2" || getSAMChip()->getCardType() == "SAM_AV3")
                 apduresult = std::dynamic_pointer_cast<
                                  SAMCommands<KeyEntryAV2Information, SETAV2>>(
                                  getSAMChip()->getCommands())
@@ -515,7 +515,7 @@ void DESFireEV1ISO7816Commands::sam_iso_authenticate(std::shared_ptr<DESFireKey>
                                  SAMCommands<KeyEntryAV1Information, SETAV1>>(
                                  getSAMChip()->getCommands())
                                  ->transmit(cmd_vector);
-            else if (getSAMChip()->getCardType() == "SAM_AV2")
+            else if (getSAMChip()->getCardType() == "SAM_AV2" || getSAMChip()->getCardType() == "SAM_AV3")
                 apduresult = std::dynamic_pointer_cast<
                                  SAMCommands<KeyEntryAV2Information, SETAV2>>(
                                  getSAMChip()->getCommands())
@@ -541,7 +541,7 @@ void DESFireEV1ISO7816Commands::sam_iso_authenticate(std::shared_ptr<DESFireKey>
             std::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1>>(
                 getSAMChip()->getCommands())
                 ->transmit(cmd_vector);
-    else if (getSAMChip()->getCardType() == "SAM_AV2")
+    else if (getSAMChip()->getCardType() == "SAM_AV2" || getSAMChip()->getCardType() == "SAM_AV3")
         apduresult =
             std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(
                 getSAMChip()->getCommands())
@@ -556,7 +556,7 @@ void DESFireEV1ISO7816Commands::sam_iso_authenticate(std::shared_ptr<DESFireKey>
             std::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1>>(
                 getSAMChip()->getCommands())
                 ->dumpSessionKey();
-    else if (getSAMChip()->getCardType() == "SAM_AV2")
+    else if (getSAMChip()->getCardType() == "SAM_AV2" || getSAMChip()->getCardType() == "SAM_AV3")
         crypto->d_sessionKey =
             std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(
                 getSAMChip()->getCommands())

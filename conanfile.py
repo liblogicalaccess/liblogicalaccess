@@ -2,12 +2,12 @@ from conans import ConanFile, CMake, tools
 
 class LLAConan(ConanFile):
     name = "LogicalAccess"
-    version = "2.4.2"
+    version = "2.5.0"
     license = "https://github.com/islog/liblogicalaccess/blob/develop/LICENSE"
     url = "https://github.com/islog/liblogicalaccess"
     description = "ISLOG RFID library"
     settings = "os", "compiler", "build_type", "arch"
-    requires = 'boost/1.79.0', 'openssl/1.1.1n', 'nlohmann_json/3.9.1', 'zlib/1.2.12'
+    requires = 'boost/1.81.0', 'openssl/1.1.1t', 'nlohmann_json/3.11.2', 'zlib/1.2.13'
     generators = "cmake"
     options = {'LLA_BUILD_IKS': [True, False],
                'LLA_BUILD_PKCS': [True, False],
@@ -20,6 +20,7 @@ class LLAConan(ConanFile):
     if tools.os_info.is_windows:
         default_options = '''
         openssl:shared=True
+        openssl:no_asm=True
         boost:shared=False
         gtest:shared=True
         LLA_BUILD_IKS=False
@@ -120,7 +121,7 @@ class LLAConan(ConanFile):
             self.cpp_info.libs.append('desfirecards')
             self.cpp_info.libs.append('mifarecards')
             self.cpp_info.libs.append('iso7816cards')
-            self.cpp_info.libs.append('samav2cards')
+            self.cpp_info.libs.append('samavcards')
             self.cpp_info.libs.append('epasscards')
             self.cpp_info.libs.append('seoscards')
             return
@@ -166,7 +167,7 @@ class LLAConan(ConanFile):
         self.cpp_info.libs.append('pcscreaders')
         self.cpp_info.libs.append('proxcards')
         self.cpp_info.libs.append('proxlitecards')
-        self.cpp_info.libs.append('samav2cards')
+        self.cpp_info.libs.append('samavcards')
         self.cpp_info.libs.append('seoscards')
         self.cpp_info.libs.append('smartframecards')
         self.cpp_info.libs.append('stidstrreaders')

@@ -9,8 +9,8 @@
 
 #include <logicalaccess/cards/location.hpp>
 #include <logicalaccess/cards/commands.hpp>
-#include <logicalaccess/plugins/cards/samav2/samkeyentry.hpp>
-#include <logicalaccess/plugins/cards/samav2/samkucentry.hpp>
+#include <logicalaccess/plugins/cards/samav/samkeyentry.hpp>
+#include <logicalaccess/plugins/cards/samav/samkucentry.hpp>
 
 namespace logicalaccess
 {

@@ -11,7 +11,7 @@
 #include <logicalaccess/plugins/cards/desfire/nxpkeydiversification.hpp>
 #include <logicalaccess/plugins/cards/desfire/nxpav1keydiversification.hpp>
 #include <logicalaccess/plugins/cards/desfire/nxpav2keydiversification.hpp>
-#include <logicalaccess/plugins/cards/samav2/samav2commands.hpp>
+#include <logicalaccess/plugins/cards/samav/samav2commands.hpp>
 
 #include <logicalaccess/iks/IslogKeyServer.hpp>
 #include <logicalaccess/plugins/llacommon/settings.hpp>
@@ -866,10 +866,10 @@ void DESFireISO7816Commands::getKeyFromSAM(std::shared_ptr<DESFireKey> key,
     auto samKeyStorage = std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage());
 
     if (samKeyStorage && samKeyStorage->getDumpKey() &&
-        (!getSAMChip() || getSAMChip()->getCardType() != "SAM_AV2"))
+        (!getSAMChip() || (getSAMChip()->getCardType() != "SAM_AV2" && getSAMChip()->getCardType() != "SAM_AV3")))
         THROW_EXCEPTION_WITH_LOG(
             LibLogicalAccessException,
-            "SAMKeyStorage Dump option can only be used with SAM AV2.");
+            "SAMKeyStorage Dump option can only be used with SAM AV2/AV3.");
 
     if (key->getKeyDiversification() &&
         !std::dynamic_pointer_cast<NXPAV2KeyDiversification>(
@@ -923,7 +923,7 @@ ByteVector DESFireISO7816Commands::sam_authenticate_p1(std::shared_ptr<DESFireKe
                                  SAMCommands<KeyEntryAV1Information, SETAV1>>(
                                  getSAMChip()->getCommands())
                                  ->transmit(cmd_vector);
-            else if (getSAMChip()->getCardType() == "SAM_AV2")
+            else if (getSAMChip()->getCardType() == "SAM_AV2" || getSAMChip()->getCardType() == "SAM_AV3")
                 apduresult = std::dynamic_pointer_cast<
                                  SAMCommands<KeyEntryAV2Information, SETAV2>>(
                                  getSAMChip()->getCommands())
@@ -968,7 +968,7 @@ void DESFireISO7816Commands::sam_authenticate_p2(unsigned char keyno,
             std::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1>>(
                 getSAMChip()->getCommands())
                 ->transmit(cmd_vector);
-    else if (getSAMChip()->getCardType() == "SAM_AV2")
+    else if (getSAMChip()->getCardType() == "SAM_AV2" || getSAMChip()->getCardType() == "SAM_AV3")
         apduresult =
             std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(
                 getSAMChip()->getCommands())
@@ -981,7 +981,7 @@ void DESFireISO7816Commands::sam_authenticate_p2(unsigned char keyno,
             std::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1>>(
                 getSAMChip()->getCommands())
                 ->dumpSessionKey();
-    else if (getSAMChip()->getCardType() == "SAM_AV2")
+    else if (getSAMChip()->getCardType() == "SAM_AV2" || getSAMChip()->getCardType() == "SAM_AV3")
         crypto->d_sessionKey =
             std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(
                 getSAMChip()->getCommands())

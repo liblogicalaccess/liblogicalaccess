@@ -8,7 +8,7 @@
 #define LOGICALACCESS_SAMBASICKEYENTRY_HPP
 
 #include <logicalaccess/key.hpp>
-#include <logicalaccess/plugins/cards/samav2/lla_cards_samav2_api.hpp>
+#include <logicalaccess/plugins/cards/samav/lla_cards_samav_api.hpp>
 
 /**
  * \brief The SAM DES key size
@@ -69,7 +69,7 @@ typedef struct s_changeKeyDiversification
 /**
  * \brief A SAMBasicKeyEntry Key class.
  */
-class LLA_CARDS_SAMAV2_API SAMBasicKeyEntry
+class LLA_CARDS_SAMAV_API SAMBasicKeyEntry
 {
   public:
     /**

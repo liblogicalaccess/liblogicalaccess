@@ -8,7 +8,7 @@
 #define LOGICALACCESS_SAMAV2CHIP_HPP
 
 #include <logicalaccess/cards/samchip.hpp>
-#include <logicalaccess/plugins/cards/samav2/samcommands.hpp>
+#include <logicalaccess/plugins/cards/samav/samcommands.hpp>
 
 namespace logicalaccess
 {
@@ -17,7 +17,7 @@ namespace logicalaccess
 /**
  * \brief The SAM chip class.
  */
-class LLA_CARDS_SAMAV2_API SAMAV2Chip : public SAMChip
+class LLA_CARDS_SAMAV_API SAMAV2Chip : public SAMChip
 {
   public:
     /**

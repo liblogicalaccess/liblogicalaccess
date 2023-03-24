@@ -46,8 +46,9 @@
 #include <logicalaccess/plugins/cards/epass/epasscommands.hpp>
 #include <logicalaccess/plugins/readers/pcsc/commands/dummycommand.hpp>
 
-#include <logicalaccess/plugins/cards/samav2/samav1chip.hpp>
-#include <logicalaccess/plugins/cards/samav2/samav2chip.hpp>
+#include <logicalaccess/plugins/cards/samav/samav1chip.hpp>
+#include <logicalaccess/plugins/cards/samav/samav2chip.hpp>
+#include <logicalaccess/plugins/cards/samav/samav3chip.hpp>
 #include <logicalaccess/plugins/cards/mifareplus/mifarepluschip.hpp>
 #include <logicalaccess/plugins/cards/mifareplus/MifarePlusSL1Chip.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfireev1chip.hpp>
@@ -170,6 +171,8 @@ void PCSCReaderUnit::setName(const std::string &name)
         d_proxyReaderUnit->makeProxy(
             std::dynamic_pointer_cast<PCSCReaderUnit>(shared_from_this()),
             getPCSCConfiguration());
+        d_proxyReaderUnit->d_sam_chip       = d_sam_chip;
+        d_proxyReaderUnit->d_sam_readerunit = d_sam_readerunit;
     }
 }
 
@@ -821,7 +824,7 @@ std::shared_ptr<Chip> PCSCReaderUnit::createChip(std::string type)
                 samcrypto);
             resultChecker.reset(new SAMISO7816ResultChecker());
         }
-        else if (type == CHIP_SAMAV2)
+        else if (type == CHIP_SAMAV2 || type == CHIP_SAMAV3)
         {
             commands.reset(new SAMAV2ISO7816Commands());
             std::shared_ptr<SAMDESfireCrypto> samcrypto(new SAMDESfireCrypto());
@@ -905,7 +908,7 @@ std::shared_ptr<Chip> PCSCReaderUnit::createChip(std::string type)
                     std::dynamic_pointer_cast<SAMAV1ISO7816Commands>(
                         dcmd->getSAMChip()->getCommands())
                         ->setCrypto(samcrypto);
-                else if (dcmd->getSAMChip()->getCardType() == CHIP_SAMAV2)
+                else if (dcmd->getSAMChip()->getCardType() == CHIP_SAMAV2 || dcmd->getSAMChip()->getCardType() == CHIP_SAMAV3)
                     std::dynamic_pointer_cast<SAMAV2ISO7816Commands>(
                         dcmd->getSAMChip()->getCommands())
                         ->setCrypto(samcrypto);

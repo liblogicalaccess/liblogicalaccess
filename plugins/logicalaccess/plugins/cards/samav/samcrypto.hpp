@@ -11,7 +11,7 @@
 #include <logicalaccess/plugins/crypto/des_cipher.hpp>
 #include <logicalaccess/plugins/crypto/aes_cipher.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfirecrypto.hpp>
-#include <logicalaccess/plugins/cards/samav2/lla_cards_samav2_api.hpp>
+#include <logicalaccess/plugins/cards/samav/lla_cards_samav_api.hpp>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -21,7 +21,7 @@ namespace logicalaccess
 /**
  * \brief SAM cryptographic functions.
  */
-class LLA_CARDS_SAMAV2_API SAMDESfireCrypto : public DESFireCrypto
+class LLA_CARDS_SAMAV_API SAMDESfireCrypto : public DESFireCrypto
 {
   public:
     /**

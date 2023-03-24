@@ -6,7 +6,7 @@
 
 #include <cstring>
 #include <boost/property_tree/ptree.hpp>
-#include <logicalaccess/plugins/cards/samav2/sambasickeyentry.hpp>
+#include <logicalaccess/plugins/cards/samav/sambasickeyentry.hpp>
 #include <logicalaccess/myexception.hpp>
 #include <logicalaccess/plugins/llacommon/logs.hpp>
 
