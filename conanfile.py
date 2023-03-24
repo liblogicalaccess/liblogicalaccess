@@ -20,6 +20,7 @@ class LLAConan(ConanFile):
     if tools.os_info.is_windows:
         default_options = '''
         openssl:shared=True
+        openssl:no_asm=True
         boost:shared=False
         gtest:shared=True
         LLA_BUILD_IKS=False
@@ -120,7 +121,7 @@ class LLAConan(ConanFile):
             self.cpp_info.libs.append('desfirecards')
             self.cpp_info.libs.append('mifarecards')
             self.cpp_info.libs.append('iso7816cards')
-            self.cpp_info.libs.append('samav2cards')
+            self.cpp_info.libs.append('samavcards')
             self.cpp_info.libs.append('epasscards')
             self.cpp_info.libs.append('seoscards')
             return
@@ -166,7 +167,7 @@ class LLAConan(ConanFile):
         self.cpp_info.libs.append('pcscreaders')
         self.cpp_info.libs.append('proxcards')
         self.cpp_info.libs.append('proxlitecards')
-        self.cpp_info.libs.append('samav2cards')
+        self.cpp_info.libs.append('samavcards')
         self.cpp_info.libs.append('seoscards')
         self.cpp_info.libs.append('smartframecards')
         self.cpp_info.libs.append('stidstrreaders')
