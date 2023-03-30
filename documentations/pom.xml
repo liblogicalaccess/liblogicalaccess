@@ -3,7 +3,7 @@
 	<groupId>eu.islog.lib.readers</groupId>
 	<artifactId>liblogicalaccess-doc</artifactId>
 	<packaging>pom</packaging>
-	<version>2.0.0-SNAPSHOT</version>
+	<version>2.5.0</version>
 	<name>LibLogicalaccess Documentation</name>
 	
 	<distributionManagement>
@@ -14,7 +14,7 @@
 	</distributionManagement>
 	
 	<properties>		
-		<scmUrl>scm:git:https://github.com/islog/liblogicalaccess.git</scmUrl>
+		<scmUrl>scm:git:https://github.com/liblogicalaccess/liblogicalaccess.git</scmUrl>
 		<relativeScmPath />
 	</properties>
 	
@@ -67,7 +67,7 @@
 					<executable>doxygen</executable>
 				</configuration>
 				<executions>
-					<execution>
+					<!--<execution>
 						<id>versioning-doc</id>
 						<phase>compile</phase>
 						<configuration>
@@ -80,7 +80,7 @@
 						<goals>
 							<goal>exec</goal>
 						</goals>
-					</execution>
+					</execution>-->
 					<execution>
 						<id>doc</id>
 						<phase>compile</phase>
