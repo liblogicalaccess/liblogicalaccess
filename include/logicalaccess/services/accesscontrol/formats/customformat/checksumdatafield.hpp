@@ -1,6 +1,6 @@
 /**
  * \file checksumdatafield.hpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief Checksum data field. The parity is calculate using other fields.
  */
 

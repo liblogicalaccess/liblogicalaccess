@@ -1,7 +1,7 @@
 /**
  * \file aes.cpp
  * \author Julien K. <julien-dev@islog.com>
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief Initialization vector base class.
  */
 

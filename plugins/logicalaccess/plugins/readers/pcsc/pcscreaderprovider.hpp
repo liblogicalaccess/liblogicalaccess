@@ -1,6 +1,6 @@
 /**
  * \file pcscreaderprovider.hpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief PC/SC card reader provider.
  */
 

@@ -1,6 +1,6 @@
 /**
  * \file datatransport.hpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief Data transport for reader/card commands.
  */
 

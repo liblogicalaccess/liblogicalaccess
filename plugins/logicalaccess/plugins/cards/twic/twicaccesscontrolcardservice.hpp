@@ -1,6 +1,6 @@
 /**
  * \file twicaccesscontrolcardservice.hpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief Twic Access Control Card service.
  */
 

@@ -1,6 +1,6 @@
 /**
  * \file iso7816commands.hpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief ISO7816 commands. See
  * http://www.cardwerk.com/smartcards/smartcard_standard_ISO7816-4.aspx
  */

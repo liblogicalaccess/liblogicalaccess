@@ -1,6 +1,6 @@
 /**
  * \file keystorage.hpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief Key storage description.
  */
 
@@ -18,8 +18,7 @@ typedef enum {
     KST_COMPUTER_MEMORY = 0x00, /* Key stored in computer memory */
     KST_READER_MEMORY   = 0x01, /* Key stored in reader memory */
     KST_SAM             = 0x02, /* Key stored in SAM */
-    KST_SERVER          = 0x03, /* Key store in IKS */
-    KST_PKCS            = 0x04  /* Key store in PKCS token */
+    KST_PKCS            = 0x04  /* Key store in PKCS#11 */
 } KeyStorageType;
 
 /**

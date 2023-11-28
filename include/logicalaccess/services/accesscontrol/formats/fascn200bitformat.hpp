@@ -1,6 +1,6 @@
 /**
  * \file fascn200bitformat.hpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief FASCN 200-Bit format.
  */
 

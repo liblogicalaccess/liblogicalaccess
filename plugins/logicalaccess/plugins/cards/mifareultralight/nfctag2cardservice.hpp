@@ -1,6 +1,6 @@
 /**
 * \file nfctag2cardservice.hpp
-* \author Maxime C. <maxime-dev@islog.com>
+* \author Maxime C. <maxime@leosac.com>
 * \brief NFC Tag 2 card service.
 */
 

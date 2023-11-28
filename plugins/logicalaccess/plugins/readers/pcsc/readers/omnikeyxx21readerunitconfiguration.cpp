@@ -1,6 +1,6 @@
 /**
  * \file omnikeyxx21readerunitconfiguration.cpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief Omnikey XX21 reader unit configuration.
  */
 

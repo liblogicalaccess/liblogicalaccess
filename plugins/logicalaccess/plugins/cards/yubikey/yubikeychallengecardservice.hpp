@@ -1,6 +1,6 @@
 /**
  * \file yubikeychallengecardservice.hpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief Yubikey Challenge-Response Card service.
  */
 

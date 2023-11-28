@@ -1,6 +1,6 @@
 /**
  * \file chip.hpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief Chip descriptor.
  */
 

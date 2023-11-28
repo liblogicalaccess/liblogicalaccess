@@ -1,6 +1,6 @@
 /**
  * \file iso7816readerunitconfiguration.cpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief PC/SC reader unit configuration.
  */
 

@@ -1,6 +1,6 @@
 /**
  * \file wiegand37withfacilityrightparity2format.h
- * \author Arnaud H <arnaud-dev@islog.com>, Maxime C. <maxime-dev@islog.com>
+ * \author Arnaud H <arnaud-dev@islog.com>, Maxime C. <maxime@leosac.com>
  * \brief Wiegand37 with facility and Right Parity 2 format class.
  */
 

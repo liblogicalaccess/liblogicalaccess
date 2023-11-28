@@ -1,6 +1,6 @@
 /**
  * \file iso14443breadercommunication.hpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief ISO14443-3B Reader communication.
  */
 

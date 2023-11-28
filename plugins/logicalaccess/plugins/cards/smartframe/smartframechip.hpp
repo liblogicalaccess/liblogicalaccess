@@ -1,6 +1,6 @@
 /**
  * \file smartframechip.hpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief Smart Frame chip.
  */
 

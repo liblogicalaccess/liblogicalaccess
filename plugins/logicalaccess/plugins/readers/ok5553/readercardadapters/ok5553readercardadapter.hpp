@@ -1,6 +1,6 @@
 /**
  * \file ok5553readercardadapter.hpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief Default OK5553 reader/card adapter.
  */
 

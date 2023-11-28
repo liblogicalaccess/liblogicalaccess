@@ -1,6 +1,6 @@
 /**
  * \file iso15693location.cpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief Location informations for ISO15693 card.
  */
 

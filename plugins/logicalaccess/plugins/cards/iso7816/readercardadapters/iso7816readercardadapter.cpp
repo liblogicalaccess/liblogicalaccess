@@ -1,6 +1,6 @@
 /**
  * \file iso7816readercardadapter.cpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief ISO7816 reader/card adapter.
  */
 

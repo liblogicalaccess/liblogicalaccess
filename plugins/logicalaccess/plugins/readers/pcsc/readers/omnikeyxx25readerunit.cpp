@@ -1,6 +1,6 @@
 /**
  * \file omnikeyxx25readerunit.cpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief Omnikey XX25 reader unit.
  */
 

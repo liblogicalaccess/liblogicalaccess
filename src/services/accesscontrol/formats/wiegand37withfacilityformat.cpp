@@ -1,6 +1,6 @@
 /**
  * \file wiegand37withfacilityformat.cpp
- * \author Arnaud H <arnaud-dev@islog.com>, Maxime C. <maxime-dev@islog.com>
+ * \author Arnaud H <arnaud-dev@islog.com>, Maxime C. <maxime@leosac.com>
  * \brief Wiegand 37 With Facility Format.
  */
 

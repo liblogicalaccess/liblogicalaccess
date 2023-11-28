@@ -1,6 +1,6 @@
 /**
  * \file Wiegand35Format.hpp
- * \author Arnaud H <arnaud-dev@islog.com>, Maxime C. <maxime-dev@islog.com>
+ * \author Arnaud H <arnaud-dev@islog.com>, Maxime C. <maxime@leosac.com>
  * \brief Corporate 1000 format.
  */
 

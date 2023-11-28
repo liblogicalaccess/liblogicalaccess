@@ -1,6 +1,6 @@
 /**
  * \file iso15693storagecardservice.hpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief ISO15693 storage card service.
  */
 

@@ -1,6 +1,6 @@
 /**
 * \file acsacr1222lreaderunit.cpp
-* \author Maxime C. <maxime-dev@islog.com>
+* \author Maxime C. <maxime@leosac.com>
 * \brief ACS ACR 1222L reader unit.
 */
 

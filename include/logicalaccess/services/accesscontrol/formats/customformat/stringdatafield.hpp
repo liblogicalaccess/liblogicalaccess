@@ -1,6 +1,6 @@
 /**
  * \file stringdatafield.hpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief String data field.
  */
 

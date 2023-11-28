@@ -1,6 +1,6 @@
 /**
 * \file acsacr1222lledbuzzerdisplay.hpp
-* \author Maxime C. <maxime-dev@islog.com>
+* \author Maxime C. <maxime@leosac.com>
 * \brief ACS ACR 1222L LED/Buzzer Display.
 */
 

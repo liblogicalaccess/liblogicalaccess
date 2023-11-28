@@ -1,6 +1,6 @@
 /**
  * \file mifare4kchip.cpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief Mifare 4k chip.
  */
 

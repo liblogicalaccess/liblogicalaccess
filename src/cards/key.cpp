@@ -1,6 +1,6 @@
 /**
  * \file key.cpp
- * \author Julien K. <julien-dev@islog.com>, Maxime C. <maxime-dev@islog.com>
+ * \author Julien K. <julien-dev@islog.com>, Maxime C. <maxime@leosac.com>
  * \brief Key.
  */
 

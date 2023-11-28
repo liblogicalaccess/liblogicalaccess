@@ -1,6 +1,6 @@
 /**
  * \file libusbreadercardadapter.hpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief Default LibUSB reader/card adapter.
  */
 

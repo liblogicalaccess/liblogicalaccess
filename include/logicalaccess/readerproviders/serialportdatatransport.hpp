@@ -1,6 +1,6 @@
 /**
  * \file serialportdatatransport.hpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief Serial port data transport for reader/card commands.
  */
 

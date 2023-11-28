@@ -1,6 +1,6 @@
 /**
  * \file generictagaccesscontrolcardservice.hpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief Generic Tag Access Control Card service.
  */
 

@@ -1,6 +1,6 @@
 /**
  * \file main.cpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief Main file for the basic sample of the liblogicalaccess.
  */
 

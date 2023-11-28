@@ -1,6 +1,6 @@
 /**
  * \file keystorage.cpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief Key storage base class.
  */
 

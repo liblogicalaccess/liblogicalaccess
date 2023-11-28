@@ -1,6 +1,6 @@
 /**
  * \file osdpreaderunitconfiguration.hpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief STidSTR Reader unit configuration.
  */
 

@@ -1,6 +1,6 @@
 /**
  * \file rfideasreaderunitconfiguration.hpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief RFIDeas Reader unit configuration.
  */
 

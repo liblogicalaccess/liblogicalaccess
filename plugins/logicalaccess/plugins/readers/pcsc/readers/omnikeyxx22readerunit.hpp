@@ -1,6 +1,6 @@
 /**
 * \file omnikeyxx22readerunit.hpp
-* \author Maxime C. <maxime-dev@islog.com>
+* \author Maxime C. <maxime@leosac.com>
 * \brief Omnikey XX22 Reader unit.
 */
 

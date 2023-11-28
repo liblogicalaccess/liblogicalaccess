@@ -1,6 +1,6 @@
 /**
  * \file keyboardreaderunitconfiguration.cpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief Keyboard reader unit configuration.
  */
 

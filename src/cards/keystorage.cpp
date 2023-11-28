@@ -1,16 +1,15 @@
 /**
  * \file keystorage.cpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief Key storage base class.
  */
 
 #include <logicalaccess/myexception.hpp>
 #include <boost/property_tree/ptree.hpp>
-#include <logicalaccess/cards/IKSStorage.hpp>
 #include <logicalaccess/cards/computermemorykeystorage.hpp>
 #include <logicalaccess/cards/readermemorykeystorage.hpp>
 #include <logicalaccess/cards/samkeystorage.hpp>
-#include <logicalaccess/cards/PKCSkeystorage.hpp>
+#include <logicalaccess/cards/pkcskeystorage.hpp>
 
 namespace logicalaccess
 {

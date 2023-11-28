@@ -1,7 +1,7 @@
 /**
  * \file aes_cipher.hpp
  * \author Julien K. <julien-dev@islog.com>
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief AES cipher class.
  */
 

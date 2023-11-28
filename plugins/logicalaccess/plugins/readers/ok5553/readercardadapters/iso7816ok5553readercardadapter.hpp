@@ -1,6 +1,6 @@
 /**
  * \file iso7816ok5553readercardadapter.hpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief ISO7816 OK5553 reader/card adapter.
  */
 

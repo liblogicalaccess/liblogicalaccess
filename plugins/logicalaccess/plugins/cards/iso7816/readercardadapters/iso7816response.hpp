@@ -1,6 +1,6 @@
 /**
  * \file iso7816response.hpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief ISO7816 response message.
  */
 

@@ -1,6 +1,6 @@
 /**
  * \file stidstrreadercardadapter.cpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief STidSTR reader/card adapter.
  */
 

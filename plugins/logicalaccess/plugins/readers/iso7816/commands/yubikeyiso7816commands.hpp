@@ -1,6 +1,6 @@
 /**
  * \file yubikeyiso7816commands.hpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief Yubikey ISO7816 commands.
  */
 

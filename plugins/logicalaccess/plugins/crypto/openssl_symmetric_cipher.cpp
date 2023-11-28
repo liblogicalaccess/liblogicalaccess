@@ -1,7 +1,7 @@
 /**
  * \file openssl_symmetric_cipher.cpp
  * \author Julien K. <julien-dev@islog.com>
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief Open SSL symmetric cipher base class.
  */
 

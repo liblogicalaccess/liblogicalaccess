@@ -1,6 +1,6 @@
 /**
 * \file acsacr1222llcddisplay.hpp
-* \author Maxime C. <maxime-dev@islog.com>
+* \author Maxime C. <maxime@leosac.com>
 * \brief ACS ACR 1222L LCD Display.
 */
 
