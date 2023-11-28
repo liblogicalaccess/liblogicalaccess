@@ -1,6 +1,6 @@
 /**
  * \file udpdatatransport.hpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief UDP transport for reader/card commands.
  */
 

@@ -1,7 +1,7 @@
 /**
  * \file aes_initialization_vector.cpp
  * \author Julien K. <julien-dev@islog.com>
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief AES initialization vector class.
  */
 

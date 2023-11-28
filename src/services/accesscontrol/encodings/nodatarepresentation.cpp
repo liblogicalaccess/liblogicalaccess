@@ -1,6 +1,6 @@
 /**
  * \file nodatarepresentation.cpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief Data Representation which do nothing.
  */
 

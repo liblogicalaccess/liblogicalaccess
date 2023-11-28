@@ -1,6 +1,6 @@
 /**
  * \file tlvdatafield.cpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief TLV Data field.
  */
 

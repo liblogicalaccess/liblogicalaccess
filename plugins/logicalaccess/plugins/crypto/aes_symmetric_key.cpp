@@ -1,7 +1,7 @@
 /**
  * \file aes_symmetric_key.cpp
  * \author Julien K. <julien-dev@islog.com>
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief AES symmetric key class.
  */
 

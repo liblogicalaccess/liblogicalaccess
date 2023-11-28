@@ -1,6 +1,6 @@
 /**
  * \file libusbreaderprovider.hpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief LibUSB card reader provider.
  */
 

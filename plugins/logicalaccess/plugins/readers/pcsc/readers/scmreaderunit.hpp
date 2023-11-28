@@ -1,6 +1,6 @@
 /**
  * \file scmreaderunit.hpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief SCM Reader unit.
  */
 

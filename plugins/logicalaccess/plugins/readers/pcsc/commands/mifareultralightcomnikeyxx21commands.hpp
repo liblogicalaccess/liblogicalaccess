@@ -1,6 +1,6 @@
 /**
  * \file mifareultralightcomnikeyxx21commands.hpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief Mifare Ultralight C - Omnikey xx21.
  */
 

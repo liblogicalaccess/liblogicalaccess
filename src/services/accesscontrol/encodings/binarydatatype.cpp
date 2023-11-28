@@ -1,6 +1,6 @@
 /**
  * \file binarydatatype.cpp
- * \author Arnaud H <arnaud-dev@islog.com>, Maxime C. <maxime-dev@islog.com>
+ * \author Arnaud H <arnaud-dev@islog.com>, Maxime C. <maxime@leosac.com>
  * \brief Binary Data Type.
  */
 

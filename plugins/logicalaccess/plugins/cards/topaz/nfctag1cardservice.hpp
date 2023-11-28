@@ -1,6 +1,6 @@
 /**
 * \file nfctag1cardservice.hpp
-* \author Maxime C. <maxime-dev@islog.com>
+* \author Maxime C. <maxime@leosac.com>
 * \brief NFC Tag Type 1 card service.
 */
 

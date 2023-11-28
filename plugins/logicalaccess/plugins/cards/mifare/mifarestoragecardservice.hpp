@@ -1,6 +1,6 @@
 /**
  * \file mifarestoragecardservice.hpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief Mifare storage card service.
  */
 

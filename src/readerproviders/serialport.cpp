@@ -1,7 +1,7 @@
 /**
  * \file serialport.cpp
  * \author Julien KAUFFMANN <julien.kauffmann@freelan.org>
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief A serial port class.
  */
 

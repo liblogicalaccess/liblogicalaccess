@@ -1,6 +1,6 @@
 /**
  * \file paritydatafield.hpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief Parity data field. The parity is calculate using other fields.
  */
 

@@ -1,7 +1,7 @@
 /**
  * \file symmetric_key.cpp
  * \author Julien K. <julien-dev@islog.com>
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief Symmetric key class.
  */
 

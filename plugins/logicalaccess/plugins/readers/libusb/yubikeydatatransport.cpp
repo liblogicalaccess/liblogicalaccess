@@ -1,6 +1,6 @@
 /**
  * \file yubikeydatatransport.cpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief Yubikey data transport.
  * \remarks Based on https://github.com/Yubico/yubikey-personalization
  */

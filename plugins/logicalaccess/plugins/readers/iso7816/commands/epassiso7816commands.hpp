@@ -1,6 +1,6 @@
 /**
  * \file epassiso7816commands.hpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief EPass ISO7816 commands.
  */
 

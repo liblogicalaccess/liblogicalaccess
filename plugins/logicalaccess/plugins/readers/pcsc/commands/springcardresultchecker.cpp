@@ -1,6 +1,6 @@
 /**
  * \file springcardresultchecker.cpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief SpringCard result checker.
  */
 

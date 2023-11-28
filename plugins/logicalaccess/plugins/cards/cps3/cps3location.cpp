@@ -1,6 +1,6 @@
 /**
  * \file cps3location.cpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief Location informations for CPS3 card.
  */
 

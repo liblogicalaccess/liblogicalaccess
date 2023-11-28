@@ -1,6 +1,6 @@
 /**
  * \file cps3commands.hpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief CPS3 commands.
  */
 

@@ -1,6 +1,6 @@
 /**
 * \file topazscmcommands.cpp
-* \author Maxime C. <maxime-dev@islog.com>
+* \author Maxime C. <maxime@leosac.com>
 * \brief Topaz SCM PC/SC commands.
 */
 

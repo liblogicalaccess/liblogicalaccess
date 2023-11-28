@@ -1,6 +1,6 @@
 /**
  * \file libusbdatatransport.hpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief LibUSB transport for reader/card commands.
  */
 

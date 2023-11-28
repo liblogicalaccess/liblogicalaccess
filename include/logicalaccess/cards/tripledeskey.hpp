@@ -1,6 +1,6 @@
 /**
  * \file tripledeskey.hpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief Triple DES key.
  */
 

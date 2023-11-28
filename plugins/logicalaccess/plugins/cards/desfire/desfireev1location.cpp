@@ -1,6 +1,6 @@
 /**
  * \file desfireev1location.cpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief Location informations for DESFire EV1 card.
  */
 

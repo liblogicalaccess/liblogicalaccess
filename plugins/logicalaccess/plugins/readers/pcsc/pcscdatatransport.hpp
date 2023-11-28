@@ -1,6 +1,6 @@
 /**
  * \file pcscdatatransport.hpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief PC/SC transport for reader/card commands.
  */
 

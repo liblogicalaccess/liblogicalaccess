@@ -1,7 +1,7 @@
 /**
  * \file serialportxml.cpp
  * \brief A serial port class which can be serialized.
- * \author Julien K. <julien-dev@islog.com>, Maxime C. <maxime-dev@islog.com>
+ * \author Julien K. <julien-dev@islog.com>, Maxime C. <maxime@leosac.com>
  */
 
 #include <logicalaccess/readerproviders/serialportxml.hpp>

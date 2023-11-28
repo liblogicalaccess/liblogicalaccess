@@ -1,6 +1,6 @@
 /**
  * \file desfireev1iso7816commands.cpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief DESFireEV1 ISO7816 commands.
  */
 

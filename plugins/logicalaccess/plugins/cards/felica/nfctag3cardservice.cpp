@@ -1,6 +1,6 @@
 /**
 * \file nfctag3cardservice.cpp
-* \author Maxime C. <maxime-dev@islog.com>
+* \author Maxime C. <maxime@leosac.com>
 * \brief NFC Tag Type 3 card service.
 */
 

@@ -1,7 +1,7 @@
 /**
  * \file des_cipher.cpp
  * \author Julien K. <julien-dev@islog.com>
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief DES cipher classes.
  */
 

@@ -1,6 +1,6 @@
 /**
  * \file twiciso7816commands.hpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief Twic ISO7816 commands.
  */
 

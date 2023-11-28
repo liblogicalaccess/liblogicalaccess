@@ -9,7 +9,6 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # Some build options. Either configured through CMake directly, or fed
 # by Conan options. It is important, for consistency, to keep those defaults
 # in sync with conafile.py
-set(LLA_BUILD_IKS TRUE CACHE BOOL "Build Islog Key Server support")
 set(LLA_BUILD_PKCS TRUE CACHE BOOL "Build PKCS11 support")
 set(LLA_BUILD_UNITTEST FALSE CACHE BOOL "Build unittests")
 
@@ -125,10 +124,6 @@ endif ()
 
 set_target_properties(${LIBLOGICALACCESS_LIBRARY} PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
 set_target_properties(${LIBLOGICALACCESS_LIBRARY} PROPERTIES LINKER_LANGUAGE CXX)
-
-if (LLA_BUILD_IKS)
-    add_subdirectory(plugins/logicalaccess/plugins/iks)
-endif ()
 
 add_subdirectory(plugins/logicalaccess/plugins/cards)
 add_subdirectory(plugins/logicalaccess/plugins/readers)

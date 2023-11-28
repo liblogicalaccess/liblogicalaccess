@@ -1,7 +1,7 @@
 /**
  * \file serialportxml.hpp
  * \brief A serial port class.
- * \author Julien K. <julien-dev@islog.com>, Maxime C. <maxime-dev@islog.com>
+ * \author Julien K. <julien-dev@islog.com>, Maxime C. <maxime@leosac.com>
  */
 
 #ifndef SERIALPORTXML_HPP

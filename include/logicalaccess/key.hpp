@@ -1,6 +1,6 @@
 /**
  * \file Key.hpp
- * \author Julien K. <julien-dev@islog.com>, Maxime C. <maxime-dev@islog.com>
+ * \author Julien K. <julien-dev@islog.com>, Maxime C. <maxime@leosac.com>
  * \brief Key card.
  */
 

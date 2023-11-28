@@ -1,6 +1,6 @@
 /**
  * \file mifareok5553commands.cpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief Mifaire commands for OK5553 readers.
  */
 

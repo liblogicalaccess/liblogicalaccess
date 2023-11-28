@@ -1,6 +1,6 @@
 /**
 * \file topazomnikeyxx27commands.cpp
-* \author Maxime C. <maxime-dev@islog.com>
+* \author Maxime C. <maxime@leosac.com>
 * \brief Topaz Omnikey XX27 PC/SC commands.
 */
 

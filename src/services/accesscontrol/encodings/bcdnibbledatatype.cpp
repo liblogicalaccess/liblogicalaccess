@@ -1,6 +1,6 @@
 /**
  * \file bcdnibbledatatype.cpp
- * \author Arnaud H <arnaud-dev@islog.com>, Maxime C. <maxime-dev@islog.com>
+ * \author Arnaud H <arnaud-dev@islog.com>, Maxime C. <maxime@leosac.com>
  * \brief BCD Nibble Data Type.
  */
 

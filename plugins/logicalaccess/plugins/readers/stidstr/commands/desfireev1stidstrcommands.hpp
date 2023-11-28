@@ -1,7 +1,7 @@
 
 /**
  * \file desfireev1stidstrcommands.hpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief DESFire EV1 STidSTR commands.
  */
 

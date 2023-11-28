@@ -9,8 +9,7 @@ class LLAConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
     requires = 'boost/1.81.0', 'openssl/1.1.1t', 'nlohmann_json/3.11.2', 'zlib/1.2.13'
     generators = "cmake"
-    options = {'LLA_BUILD_IKS': [True, False],
-               'LLA_BUILD_PKCS': [True, False],
+    options = {'LLA_BUILD_PKCS': [True, False],
                'LLA_BUILD_UNITTEST': [True, False],
                'LLA_BUILD_RFIDEAS': [True, False],
                'LLA_BUILD_LIBUSB': [True, False]}
@@ -23,7 +22,6 @@ class LLAConan(ConanFile):
         openssl:no_asm=True
         boost:shared=False
         gtest:shared=True
-        LLA_BUILD_IKS=False
         LLA_BUILD_PKCS=True
         LLA_BUILD_RFIDEAS=False
         LLA_BUILD_UNITTEST=False
@@ -33,7 +31,6 @@ class LLAConan(ConanFile):
         openssl:shared=True
         boost:shared=True
         gtest:shared=True
-        LLA_BUILD_IKS=False
         LLA_BUILD_PKCS=True
         LLA_BUILD_UNITTEST=False
         LLA_BUILD_LIBUSB=False'''
@@ -46,8 +43,6 @@ class LLAConan(ConanFile):
     def requirements(self):
         if self.settings.os == 'Windows' and self.options.LLA_BUILD_RFIDEAS:
             self.requires('rfideas/7.1.5@islog/stable')
-        if self.options.LLA_BUILD_IKS:
-            self.requires('grpc/1.39.1')
         if self.options.LLA_BUILD_UNITTEST:
             self.requires('gtest/1.11.0')
         if self.options.LLA_BUILD_PKCS:
@@ -66,11 +61,6 @@ class LLAConan(ConanFile):
             # to compiler. See https://github.com/conan-io/conan/issues/2856
             cmake.definitions['CONAN_LIBCXX'] = ''
             cmake.definitions['LLA_BOOST_ASIO_HAS_STD_STRING_VIEW'] = 1
-        
-        if self.options.LLA_BUILD_IKS:
-            cmake.definitions['LLA_BUILD_IKS'] = True
-        else:
-            cmake.definitions['LLA_BUILD_IKS'] = False
 
         if self.options.LLA_BUILD_PKCS:
             cmake.definitions['LLA_BUILD_PKCS'] = True

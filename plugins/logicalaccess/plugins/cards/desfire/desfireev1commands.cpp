@@ -1,6 +1,6 @@
 /**
  * \file desfireev1commands.cpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief DESFire EV1 commands.
  */
 

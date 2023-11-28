@@ -1,6 +1,6 @@
 /**
  * \file ok5553readerunitconfiguration.hpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief OK55553 Reader unit configuration.
  */
 

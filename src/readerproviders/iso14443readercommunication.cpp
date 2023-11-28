@@ -1,6 +1,6 @@
 /**
  * \file iso14443readercommunication.cpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief ISO14443-3 Reader communication.
  */
 

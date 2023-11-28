@@ -1,6 +1,6 @@
 /**
  * \file wiegand37withfacilityrightparity2format.cpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief Wiegand 37 With Facility and right parity * 2 Format.
  */
 

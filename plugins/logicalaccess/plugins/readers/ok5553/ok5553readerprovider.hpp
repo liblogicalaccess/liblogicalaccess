@@ -1,6 +1,6 @@
 /**
  * \file ok5553readerprovider.hpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief OK5553 card reader provider.
  */
 

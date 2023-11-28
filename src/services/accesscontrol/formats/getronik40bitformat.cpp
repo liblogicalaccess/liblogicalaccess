@@ -1,6 +1,6 @@
 /**
  * \file getronik40bitformat.cpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief Getronik 40-Bit Format.
  */
 

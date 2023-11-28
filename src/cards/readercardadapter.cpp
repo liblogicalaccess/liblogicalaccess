@@ -1,6 +1,6 @@
 /**
  * \file readercardadapter.cpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief Reader/Card adapter base class.
  */
 

@@ -1,6 +1,6 @@
 /**
  * \file topazaccessinfo.hpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief Topaz AccessInfo.
  */
 

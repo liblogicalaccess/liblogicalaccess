@@ -1,6 +1,6 @@
 /**
  * \file seoskey.hpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief SEOS key.
  */
 

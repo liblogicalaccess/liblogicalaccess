@@ -1,6 +1,6 @@
 /**
  * \file em4102chip.hpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief EM4102 chip.
  */
 

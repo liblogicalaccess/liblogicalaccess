@@ -1,6 +1,6 @@
 /**
  * \file desfireev1chip.hpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief DESFire EV1 chip.
  */
 

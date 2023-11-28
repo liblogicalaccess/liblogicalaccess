@@ -1,6 +1,6 @@
 /**
  * \file gunneboreadercardadapter.h
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief Default Gunnebo reader/card adapter.
  */
 

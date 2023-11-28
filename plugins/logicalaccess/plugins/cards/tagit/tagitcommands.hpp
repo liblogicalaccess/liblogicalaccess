@@ -1,6 +1,6 @@
 /**
  * \file tagitcommands.hpp
- * \author Maxime C. <maxime-dev@islog.com>
+ * \author Maxime C. <maxime@leosac.com>
  * \brief Tag-It commands.
  */
 
