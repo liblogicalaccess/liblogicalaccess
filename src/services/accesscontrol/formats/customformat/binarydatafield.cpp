@@ -10,55 +10,11 @@
 #include <logicalaccess/services/accesscontrol/formats/customformat/binarydatafield.hpp>
 #include <cstring>
 #include <boost/property_tree/ptree.hpp>
+#include <iomanip>
+#include <sstream>
 
 namespace logicalaccess
 {
-BinaryFieldValue::BinaryFieldValue()
-    : Key()
-{
-    Key::clear();
-    d_buf.clear();
-}
-
-BinaryFieldValue::BinaryFieldValue(const std::string &str)
-    : Key()
-{
-    d_buf.clear();
-    d_buf.resize((str.size() + 2) / 3);
-    Key::clear();
-    Key::fromString(str);
-}
-
-BinaryFieldValue::BinaryFieldValue(const ByteVector &buf)
-    : Key()
-{
-    Key::clear();
-    d_buf.clear();
-
-    if (buf.size() != 0)
-    {
-        d_buf.insert(d_buf.end(), buf.begin(), buf.end());
-        d_isEmpty = false;
-    }
-}
-
-void BinaryFieldValue::serialize(boost::property_tree::ptree &parentNode)
-{
-    boost::property_tree::ptree node;
-    Key::serialize(node);
-    parentNode.add_child(getDefaultXmlNodeName(), node);
-}
-
-void BinaryFieldValue::unSerialize(boost::property_tree::ptree &node)
-{
-    Key::unSerialize(node);
-}
-
-std::string BinaryFieldValue::getDefaultXmlNodeName() const
-{
-    return "BinaryFieldValue";
-}
-
 BinaryDataField::BinaryDataField()
     : ValueDataField()
 {
@@ -72,13 +28,12 @@ BinaryDataField::~BinaryDataField()
 
 void BinaryDataField::setValue(ByteVector value)
 {
-    d_value = BinaryFieldValue(value);
+    d_buf = value;
 }
 
 ByteVector BinaryDataField::getValue() const
 {
-    const unsigned char *vdata = d_value.getData();
-    return ByteVector(vdata, vdata + d_value.getLength());
+    return d_buf;
 }
 
 void BinaryDataField::setPaddingChar(unsigned char padding)
@@ -94,7 +49,7 @@ unsigned char BinaryDataField::getPaddingChar() const
 BitsetStream BinaryDataField::getLinearData(const BitsetStream &) const
 {
     unsigned int fieldDataLengthBytes = (d_length + 7) / 8;
-    ByteVector tmp(d_value.getData(), d_value.getData() + d_value.getLength());
+    ByteVector tmp(d_buf);
 
     BitsetStream paddedBuffer(d_padding, fieldDataLengthBytes);
     unsigned int copyValueLength = static_cast<unsigned int>(tmp.size()) * 8 > d_length
@@ -123,7 +78,7 @@ void BinaryDataField::setLinearData(const ByteVector &data)
 
     paddedBuffer.concat(revertBinaryData(_data, getPosition(), d_length));
 
-    d_value = BinaryFieldValue(paddedBuffer.getData());
+    d_buf = paddedBuffer.getData();
 }
 
 bool BinaryDataField::checkSkeleton(std::shared_ptr<DataField> field) const
@@ -146,12 +101,52 @@ bool BinaryDataField::checkSkeleton(std::shared_ptr<DataField> field) const
     return ret;
 }
 
+std::string byteVectorToString(const ByteVector& bv)
+{
+    std::ostringstream oss;
+    oss << std::setfill('0');
+
+    for (const auto& byte : bv)
+    {
+        if (&byte != &bv[0])
+        {
+            oss << " ";
+        }
+
+        oss << std::setw(2) << std::hex << static_cast<unsigned int>(byte);
+    }
+
+    return oss.str();
+}
+
+ByteVector byteVectorFromString(const std::string& str)
+{
+    ByteVector bv((str.size() + 2) / 3);
+
+    std::istringstream iss(str);
+    unsigned int tmp;
+
+    for (auto& byte : bv)
+    {
+        if (!iss.good())
+        {
+            // nothing better to do AFAIK
+            return bv;
+        }
+
+        iss >> std::hex >> tmp;
+        byte = static_cast<ByteVector::value_type>(tmp);
+    }
+
+    return bv;
+}
+
 void BinaryDataField::serialize(boost::property_tree::ptree &parentNode)
 {
     boost::property_tree::ptree node;
 
     ValueDataField::serialize(node);
-    node.put("Value", d_value.getString());
+    node.put("Value", byteVectorToString(d_buf));
     node.put("Padding", d_padding);
 
     parentNode.add_child(getDefaultXmlNodeName(), node);
@@ -160,7 +155,7 @@ void BinaryDataField::serialize(boost::property_tree::ptree &parentNode)
 void BinaryDataField::unSerialize(boost::property_tree::ptree &node)
 {
     ValueDataField::unSerialize(node);
-    d_value   = BinaryFieldValue(node.get_child("Value").get_value<std::string>());
+    d_buf     = byteVectorFromString(node.get_child("Value").get_value<std::string>());
     d_padding = node.get_child("Padding").get_value<unsigned char>();
 }
 
