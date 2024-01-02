@@ -12,12 +12,8 @@
 #include <logicalaccess/plugins/cards/desfire/nxpav1keydiversification.hpp>
 #include <logicalaccess/plugins/cards/desfire/nxpav2keydiversification.hpp>
 #include <logicalaccess/plugins/cards/samav/samav2commands.hpp>
-
-#include <logicalaccess/iks/IslogKeyServer.hpp>
 #include <logicalaccess/plugins/llacommon/settings.hpp>
-#include <logicalaccess/cards/IKSStorage.hpp>
 #include <logicalaccess/cards/computermemorykeystorage.hpp>
-#include <logicalaccess/iks/RemoteCrypto.hpp>
 #include <logicalaccess/dynlibrary/librarymanager.hpp>
 
 namespace logicalaccess
@@ -344,10 +340,6 @@ void DESFireISO7816Commands::changeKey(unsigned char keyno,
     if (samChangeKey)
     {
         cryptogram = getChangeKeySAMCryptogram(keyno, key);
-    }
-    else if (key->getKeyStorage()->getType() == KST_SERVER)
-    {
-        cryptogram = getChangeKeyIKSCryptogram(keyno, key);
     }
     else
     {
@@ -1066,56 +1058,5 @@ void DESFireISO7816Commands::setChip(std::shared_ptr<Chip> chip)
 {
     DESFireCommands::setChip(chip);
     getDESFireChip()->getCrypto()->setCryptoContext(chip->getChipIdentifier());
-}
-
-ByteVector
-DESFireISO7816Commands::getChangeKeyIKSCryptogram(unsigned char keyno,
-                                                  std::shared_ptr<DESFireKey> key) const
-{
-    std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
-    auto storage = std::dynamic_pointer_cast<IKSStorage>(key->getKeyStorage());
-    assert(storage);
-    auto old_key = crypto->getKey(0, keyno);
-    auto old_key_storage =
-        std::dynamic_pointer_cast<IKSStorage>(old_key->getKeyStorage());
-    assert(old_key_storage);
-
-
-    auto remote_crypto = LibraryManager::getInstance()->getRemoteCrypto();
-    ByteVector out_cryptogram;
-
-    bool change_same_key = (keyno & 0x0F) == crypto->d_currentKeyNo;
-
-    /*    CMSG_DesfireChangeKey req;
-        req.set_key_number(keyno);
-        req.set_old_key_uuid(old_key_storage->getKeyIdentity());
-        req.set_new_key_uuid(storage->getKeyIdentity());
-        req.set_iv(std::string(crypto->d_lastIV.begin(), crypto->d_lastIV.end()));
-        req.set_change_same_key((keyno & 0x0F) == crypto->d_currentKeyNo);*/
-
-
-    MyDivInfo old_key_div;
-    MyDivInfo new_key_div;
-
-    // Do we know our own session key?
-    if (crypto->iks_wrapper_)
-    {
-        ByteVector empty_unset_session_key;
-        remote_crypto->change_key(
-            old_key_storage->getKeyIdentity(), storage->getKeyIdentity(), change_same_key,
-            crypto->iks_wrapper_->remote_key_name, empty_unset_session_key, old_key_div,
-            new_key_div, keyno, crypto->d_lastIV, out_cryptogram);
-    }
-    else
-    {
-        std::string empty_unset_session_key_uuid;
-        remote_crypto->change_key(
-            old_key_storage->getKeyIdentity(), storage->getKeyIdentity(), change_same_key,
-            empty_unset_session_key_uuid, crypto->d_sessionKey, old_key_div, new_key_div,
-            keyno, crypto->d_lastIV, out_cryptogram);
-    }
-
-    crypto->d_lastIV = ByteVector(out_cryptogram.end() - 16, out_cryptogram.end());
-    return out_cryptogram;
 }
 }

@@ -387,45 +387,6 @@ ReaderServicePtr LibraryManager::getReaderService(ReaderUnitPtr reader,
     return srv;
 }
 
-std::shared_ptr<RemoteCrypto>
-LibraryManager::getRemoteCrypto(const iks::IslogKeyServer::IKSConfig &cfg)
-{
-    std::lock_guard<std::recursive_mutex> lg(mutex_);
-    RemoteCryptoPtr remoteCrypto;
-
-    if (libLoaded.empty())
-        scanPlugins();
-
-    for (auto &&itr : libLoaded)
-    {
-        IDynLibrary *lib = itr.second;
-
-        if (lib->hasSymbol("getRemoteCrypto"))
-        {
-            int (*fptr)(const iks::IslogKeyServer::IKSConfig &cfg, RemoteCryptoPtr &) =
-                nullptr;
-            fptr = reinterpret_cast<decltype(fptr)>(lib->getSymbol("getRemoteCrypto"));
-            assert(fptr);
-            fptr(cfg, remoteCrypto);
-            if (remoteCrypto)
-                break;
-        }
-    }
-    if (!remoteCrypto)
-    {
-        // We kinda assume that when one call getRemoteCrypto they expect a usable,
-        // non null pointer to be returned.
-        // If we cannot provide that, we throw.
-        throw LibLogicalAccessException("Cannot retrieve RemoteCrypto implementation");
-    }
-    return remoteCrypto;
-}
-
-std::shared_ptr<RemoteCrypto> LibraryManager::getRemoteCrypto()
-{
-    return getRemoteCrypto(iks::IslogKeyServer::get_global_config());
-}
-
 std::shared_ptr<IAESCryptoService>
 LibraryManager::getPKCSAESCrypto(const std::string &env_PROTECCIO_CONF_DIR,
                                  const std::string &pkcs_library_shared_object_path)

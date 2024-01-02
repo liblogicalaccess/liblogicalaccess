@@ -1,6 +1,8 @@
 #include <string>
 #include <memory>
 #include <logicalaccess/readerproviders/readerprovider.hpp>
+#include <logicalaccess/plugins/cards/desfire/desfireev3chip.hpp>
+#include <logicalaccess/plugins/cards/desfire/desfireev2chip.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfireev1chip.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfirechip.hpp>
 #include <logicalaccess/plugins/cards/desfire/sagemkeydiversification.hpp>
@@ -14,6 +16,22 @@ extern "C" {
 LLA_CARDS_DESFIRE_API char *getLibraryName()
 {
     return (char *)"DESFire";
+}
+
+LLA_CARDS_DESFIRE_API void getDESFireEV3Chip(std::shared_ptr<logicalaccess::Chip> *chip)
+{
+	if (chip != nullptr)
+	{
+		*chip = std::make_shared<logicalaccess::DESFireEV3Chip>();
+	}
+}
+
+LLA_CARDS_DESFIRE_API void getDESFireEV2Chip(std::shared_ptr<logicalaccess::Chip> *chip)
+{
+    if (chip != nullptr)
+    {
+        *chip = std::make_shared<logicalaccess::DESFireEV2Chip>();
+    }
 }
 
 LLA_CARDS_DESFIRE_API void getDESFireEV1Chip(std::shared_ptr<logicalaccess::Chip> *chip)
@@ -92,6 +110,22 @@ LLA_CARDS_DESFIRE_API bool getChipInfoAt(unsigned int index, char *chipname,
             ret = true;
         }
         break;
+		
+		case 2:
+        {
+            *getterfct = (void *)&getDESFireEV2Chip;
+            sprintf(chipname, CHIP_DESFIRE_EV2);
+            ret = true;
+        }
+        break;
+		
+		case 3:
+		{
+			*getterfct = (void *)&getDESFireEV3Chip;
+			sprintf(chipname, CHIP_DESFIRE_EV3);
+			ret = true;
+		}
+		break;
         default:;
         }
     }

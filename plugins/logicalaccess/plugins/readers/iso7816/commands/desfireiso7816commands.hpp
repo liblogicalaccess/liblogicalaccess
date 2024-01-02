@@ -355,9 +355,6 @@ class LLA_READERS_ISO7816_API DESFireISO7816Commands : public DESFireCommands
     ByteVector getChangeKeySAMCryptogram(unsigned char keyno,
                                          std::shared_ptr<DESFireKey> key) const;
 
-    ByteVector getChangeKeyIKSCryptogram(unsigned char keyno,
-                                         std::shared_ptr<DESFireKey> key) const;
-
     /**
      * \brief Generic method to read data from a file.
      * \param err The last error code

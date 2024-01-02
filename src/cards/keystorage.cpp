@@ -25,8 +25,6 @@ std::shared_ptr<KeyStorage> KeyStorage::getKeyStorageFromType(KeyStorageType kst
 
     case KST_SAM: ret.reset(new SAMKeyStorage()); break;
 
-    case KST_SERVER: ret.reset(new IKSStorage()); break;
-
     case KST_PKCS: ret.reset(new PKCSKeyStorage());
     }
 

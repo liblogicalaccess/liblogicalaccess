@@ -4,6 +4,8 @@
 #include <logicalaccess/plugins/readers/iso7816/commands/twiciso7816commands.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/desfireiso7816commands.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/desfireev1iso7816commands.hpp>
+#include <logicalaccess/plugins/readers/iso7816/commands/desfireev2iso7816commands.hpp>
+#include <logicalaccess/plugins/readers/iso7816/commands/desfireev3iso7816commands.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/iso7816iso7816commands.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfirechip.hpp>
 #include <logicalaccess/plugins/readers/iso7816/lla_readers_iso7816_api.hpp>
@@ -30,6 +32,24 @@ getDESFireISO7816Commands(std::shared_ptr<logicalaccess::Commands> *commands)
     {
         *commands = std::make_shared<logicalaccess::DESFireISO7816Commands>();
     }
+}
+
+LLA_READERS_ISO7816_API void
+getDESFireEV2ISO7816Commands(std::shared_ptr<logicalaccess::Commands> *commands)
+{
+	if (commands != nullptr)
+	{
+		*commands = std::make_shared<logicalaccess::DESFireEV2ISO7816Commands>();
+	}
+}
+
+LLA_READERS_ISO7816_API void
+getDESFireEV3ISO7816Commands(std::shared_ptr<logicalaccess::Commands> *commands)
+{
+	if (commands != nullptr)
+	{
+		*commands = std::make_shared<logicalaccess::DESFireEV3ISO7816Commands>();
+	}
 }
 
 LLA_READERS_ISO7816_API void

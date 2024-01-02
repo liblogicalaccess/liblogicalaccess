@@ -18,6 +18,8 @@
 #include <logicalaccess/plugins/readers/iso7816/commands/samav1iso7816commands.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/samav2iso7816commands.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/desfireev1iso7816commands.hpp>
+#include <logicalaccess/plugins/readers/iso7816/commands/desfireev2iso7816commands.hpp>
+#include <logicalaccess/plugins/readers/iso7816/commands/desfireev3iso7816commands.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/epassiso7816commands.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/yubikeyiso7816commands.hpp>
 #include <logicalaccess/plugins/readers/pcsc/commands/mifarepcsccommands.hpp>
@@ -737,22 +739,16 @@ std::shared_ptr<Chip> PCSCReaderUnit::createChip(std::string type)
                 LOG(LogLevel::WARNINGS) << "Cannot found HIDiClass commands.";
             }
         }
-        else if (type == CHIP_DESFIRE_EV2_PUBLIC)
+        else if (type == CHIP_DESFIRE_EV2)
         {
-            commands = LibraryManager::getInstance()->getCommands("DESFireEV2ISO7816");
-            if (!commands)
-                THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                         "Could not load DESFireEV2ISO7816 Commands.");
+            commands.reset(new DESFireEV2ISO7816Commands());
             std::dynamic_pointer_cast<DESFireISO7816Commands>(commands)->setSAMChip(
                 getSAMChip());
             resultChecker.reset(new DESFireISO7816ResultChecker());
         }
-        else if (type == CHIP_DESFIRE_EV3_PUBLIC)
+        else if (type == CHIP_DESFIRE_EV3)
         {
-            commands = LibraryManager::getInstance()->getCommands("DESFireEV3ISO7816");
-            if (!commands)
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                     "Could not load DESFireEV3ISO7816 Commands.");
+            commands.reset(new DESFireEV3ISO7816Commands());
             std::dynamic_pointer_cast<DESFireISO7816Commands>(commands)->setSAMChip(
                 getSAMChip());
             resultChecker.reset(new DESFireISO7816ResultChecker());
@@ -1530,13 +1526,13 @@ std::shared_ptr<Chip> PCSCReaderUnit::adjustChip(std::shared_ptr<Chip> c)
         if (createCardProbe()->is_desfire_ev1())
             c = createChip(CHIP_DESFIRE_EV1);
         else if (createCardProbe()->is_desfire_ev2())
-            c = createChip(CHIP_DESFIRE_EV2_PUBLIC);
+            c = createChip(CHIP_DESFIRE_EV2);
         else if (createCardProbe()->is_desfire_ev3())
-            c = createChip(CHIP_DESFIRE_EV3_PUBLIC);
+            c = createChip(CHIP_DESFIRE_EV3);
     }
     if (c->getCardType() == CHIP_DESFIRE || c->getCardType() == CHIP_DESFIRE_EV1 ||
-        c->getCardType() == CHIP_DESFIRE_EV2_PUBLIC ||
-        c->getCardType() == CHIP_DESFIRE_EV3_PUBLIC)
+        c->getCardType() == CHIP_DESFIRE_EV2 ||
+        c->getCardType() == CHIP_DESFIRE_EV3)
     {
         ByteVector uid;
         if (createCardProbe()->has_desfire_random_uid(&uid))

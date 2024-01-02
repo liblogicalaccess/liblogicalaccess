@@ -6,7 +6,6 @@
 #include <mutex>
 
 #include <logicalaccess/dynlibrary/idynlibrary.hpp>
-#include <logicalaccess/iks/IslogKeyServer.hpp>
 
 namespace logicalaccess
 {
@@ -47,17 +46,6 @@ class LLA_CORE_API LibraryManager
     std::shared_ptr<Chip> getCard(const std::string &cardtype);
 
     std::shared_ptr<Commands> getCommands(const std::string &extendedtype);
-
-    /**
-     * Retrieve an implementation of RemoteCrypto (IKS).
-     *
-     * We rely on the LibraryManager is order to avoid link-time
-     * dependencies on the IKS code.
-     */
-    std::shared_ptr<RemoteCrypto>
-    getRemoteCrypto(const iks::IslogKeyServer::IKSConfig &cfg);
-
-    std::shared_ptr<RemoteCrypto> getRemoteCrypto();
 
     /**
      * Retrieve an AESCryptoService backed by PKCS code.
