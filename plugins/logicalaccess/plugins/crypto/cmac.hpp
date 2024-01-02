@@ -52,18 +52,6 @@ class LLA_CRYPTO_API CMACCrypto
                            unsigned int padding_size = 0, bool forceK2Use = false);
 
     /**
-     * CMAC computation that delegates AES encryption to IKS.
-     * @param iks_key_name
-     * @param data
-     * @param iv
-     * @param padding_size
-     * @return
-     */
-    static ByteVector cmac_iks(const std::string &iks_key_name, const ByteVector &data,
-                               const ByteVector &lastIv, unsigned int padding_size,
-                               const std::shared_ptr<RemoteCrypto> &remote_crypto);
-
-    /**
      * \brief Shift a string.
      * \param buf The buffer string
      * \param xorparam The optional xor for the string.

@@ -16,7 +16,6 @@
 #include <vector>
 #include <iostream>
 #include <string>
-#include <logicalaccess/iks/RemoteCrypto.hpp>
 
 namespace logicalaccess
 {
@@ -28,19 +27,6 @@ typedef enum {
     CM_ISO    = 0x01, // EV1
     CM_EV2    = 0x02  // EV2
 } CryptoMethod;
-
-// manage desfire crypto operation through iks.
-struct IKSCryptoWrapper
-{
-    // IKS would generate a temporary key
-    // after a proper Desfire authentication (through IKS).
-    // Obviously key name is non-guessable and is unique per client / auth process
-    std::string remote_key_name;
-
-    // Simply the last signature received when we call aes_decrypt() through
-    // and IKSRPCClient.
-    SignatureResult last_sig;
-};
 
 /**
  * \brief DESFire cryptographic functions.
@@ -511,20 +497,6 @@ class LLA_CARDS_DESFIRE_API DESFireCrypto
      * \brief The current Key number.
      */
     unsigned char d_currentKeyNo;
-
-#ifndef SWIG
-    // If present it means we use IKS...
-    std::unique_ptr<IKSCryptoWrapper> iks_wrapper_;
-#endif
-
-    /**
-     * Retrieve the IKS signature (if requested) for the last decrypted
-     * data block.
-     *
-     * This will return an empty object if no IKS was used or if the operation
-     * mode does make sense to have that.
-     */
-    SignatureResult get_last_signature() const;
 
   protected:
     /**

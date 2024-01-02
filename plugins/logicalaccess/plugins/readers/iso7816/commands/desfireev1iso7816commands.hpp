@@ -191,7 +191,6 @@ class LLA_READERS_ISO7816_API DESFireEV1ISO7816Commands : public DESFireISO7816C
      * \param keyno The key number.
      */
     void authenticateAES(unsigned char keyno) override;
-    void iks_authenticateAES(std::shared_ptr<DESFireKey> key, uint8_t keyno);
 
     /**
      * \brief Read data from a specific file.
@@ -289,16 +288,6 @@ class LLA_READERS_ISO7816_API DESFireEV1ISO7816Commands : public DESFireISO7816C
                                       DESFireISOAlgorithm algorithm, bool isMasterCardKey,
                                       unsigned char keyno);
 
-    /**
-     * Perform the authentication relying on Islog Key Server to perform
-     * cryptographic operation.
-     * This routine is suitable only for AES key: this is enforced by assertion.
-     */
-    virtual void iks_iso_authenticate(std::shared_ptr<DESFireKey> key,
-                                      bool isMasterCardKey, uint8_t keyno);
-
-    MyDivInfo extract_iks_div_info(std::shared_ptr<Key> key, uint8_t keyno);
-
     void selectApplication(unsigned int aid) override;
 
     /**
@@ -326,16 +315,6 @@ class LLA_READERS_ISO7816_API DESFireEV1ISO7816Commands : public DESFireISO7816C
         command->setReaderCardAdapter(getReaderCardAdapter());
         return command;
     }
-
-    /**
-     * Retrieve the IKS signature corresponding the last PARTIAL read.
-     * todo: Should retrieve something for the whole readData() block.
-     *
-     * But currently this work using the underlying DESFireCrypto and
-     * therefore signature can only be retrieve for by block passed
-     * to handleReadData().
-     */
-    SignatureResult IKS_getLastReadSignature() const override;
 
   protected:
     /**
@@ -424,9 +403,6 @@ class LLA_READERS_ISO7816_API DESFireEV1ISO7816Commands : public DESFireISO7816C
      * Called after authentication was performed
      */
     void onAuthenticated();
-
-  protected:
-    SignatureResult handle_read_data_last_sig_;
 };
 }
 
