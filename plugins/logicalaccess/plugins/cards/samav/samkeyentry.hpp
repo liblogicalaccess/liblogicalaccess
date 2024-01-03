@@ -50,9 +50,10 @@ typedef struct s_SETAV2
 typedef struct s_EXTSET
 {
     unsigned char keyclass[3];
-    unsigned char dumpsessionkey;
+    unsigned char dumpsecretkey;
     unsigned char diversifieduse;
-    unsigned char rfu[2];
+    unsigned char reservedforperso;
+    unsigned char rfu;
 } ExtSETStruct;
 
 typedef struct s_KeyEntryAV1Information
@@ -188,16 +189,7 @@ class LLA_CARDS_SAMAV_API SAMKeyEntry : public SAMBasicKeyEntry
     {
         unsigned char keytype = 0x38 & d_keyentryinformation.set[0];
         size_t oldsize        = getLength();
-
-        switch (keytype)
-        {
-        case SAM_KEY_DES: d_keyType = SAM_KEY_DES; break;
-
-        case SAM_KEY_3K3DES: d_keyType = SAM_KEY_3K3DES; break;
-
-        case SAM_KEY_AES: d_keyType = SAM_KEY_AES; break;
-        default:;
-        }
+		d_keyType = static_cast<SAMKeyType>(keytype);
 
         unsigned char *tmp = new unsigned char[getLength()];
         if (getLength() < oldsize)
@@ -209,16 +201,8 @@ class LLA_CARDS_SAMAV_API SAMKeyEntry : public SAMBasicKeyEntry
 
     void setSETKeyTypeFromKeyType()
     {
-        d_keyentryinformation.set[0] =
-            d_keyentryinformation.set[0] - (0x38 & d_keyentryinformation.set[0]);
-        switch (d_keyType)
-        {
-        case SAM_KEY_DES: break;
-
-        case SAM_KEY_3K3DES: d_keyentryinformation.set[0] |= 0x18; break;
-
-        case SAM_KEY_AES: d_keyentryinformation.set[0] |= 0x20; break;
-        }
+        d_keyentryinformation.set[0] -= 0x38 & d_keyentryinformation.set[0];
+        d_keyentryinformation.set[0] |= static_cast<unsigned char>(d_keyType);
     }
 
     void setKeysData(std::vector<ByteVector> keys, SAMKeyType type) override

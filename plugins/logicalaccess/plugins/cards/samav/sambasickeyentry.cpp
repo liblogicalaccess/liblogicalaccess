@@ -59,17 +59,10 @@ SAMBasicKeyEntry::SAMBasicKeyEntry(const void **buf, size_t buflen, char numberk
     {
         if (buflen * numberkey >= getLength())
         {
-            if (numberkey >= 1)
+            size_t keysize = getSingleLength()
+            for (unsigned char i = 0; i < numberkey; ++i)
             {
-                memcpy(d_key, buf[0], getSingleLength());
-            }
-            if (numberkey >= 2)
-            {
-                memcpy(d_key + getSingleLength(), buf[1], getSingleLength());
-            }
-            if (numberkey >= 3)
-            {
-                memcpy(d_key + (getSingleLength() * 2), buf[2], getSingleLength());
+                memcpy(d_key + keysize * i, buf[i], keysize);
             }
         }
     }
@@ -86,14 +79,38 @@ size_t SAMBasicKeyEntry::getSingleLength() const
 
     switch (d_keyType)
     {
-    case SAM_KEY_DES: length = SAM_DES_KEY_SIZE; break;
+	case SAM_KEY_MIFARE:
+		length = SAM_KEY_SIZE_48;
+		break;
+    case SAM_KEY_DES:
+    case SAM_KEY_AES128:
+        length = SAM_KEY_SIZE_128;
+        break;
 
-    case SAM_KEY_3K3DES: length = SAM_MAXKEY_SIZE; break;
+    case SAM_KEY_3K3DES:
+    case SAM_KEY_AES192:
+        length = SAM_KEY_SIZE_192;
+        break;
 
-    case SAM_KEY_AES: length = SAM_AES_KEY_SIZE; break;
+    case SAM_KEY_AES256:
+        length = SAM_KEY_SIZE_256;
+        break;
     }
 
     return length;
+}
+
+unsigned char SAMBasicKeyEntry::getKeyNb() const
+{
+    unsigned char keynb = 3;
+    size_t keysize      = getSingleLength();
+    if (keysize == SAM_KEY_SIZE_192)
+        keynb = 2;
+    else if (keysize == SAM_KEY_SIZE_256)
+        keynb = 1;
+    else if (keysize == SAM_KEY_SIZE_48)
+        keynb = 6;
+    return keynb;
 }
 
 size_t SAMBasicKeyEntry::getLength() const
@@ -102,11 +119,19 @@ size_t SAMBasicKeyEntry::getLength() const
 
     switch (d_keyType)
     {
-    case SAM_KEY_DES: length = SAM_DES_KEY_SIZE * 3; break;
+    case SAM_KEY_DES:
+    case SAM_KEY_AES128:
+        length = SAM_KEY_SIZE_128 * 3;
+        break;
 
-    case SAM_KEY_3K3DES: length = SAM_MAXKEY_SIZE * 2; break;
+    case SAM_KEY_3K3DES:
+    case SAM_KEY_AES192:
+        length = SAM_KEY_SIZE_192 * 2;
+        break;
 
-    case SAM_KEY_AES: length = SAM_AES_KEY_SIZE * 3; break;
+    case SAM_KEY_AES256:
+        length = SAM_KEY_SIZE_256;
+        break;
     }
 
     return length;
@@ -114,13 +139,9 @@ size_t SAMBasicKeyEntry::getLength() const
 
 std::vector<ByteVector> SAMBasicKeyEntry::getKeysData() const
 {
+    unsigned char keynb = getKeyNb();
+    size_t keysize = getSingleLength();
     std::vector<ByteVector> ret;
-    size_t keysize      = getSingleLength();
-    unsigned char keynb = 3;
-
-    if (d_keyType == SAM_MAXKEY_SIZE)
-        keynb = 2;
-
     for (unsigned char x = 0; x < keynb; ++x)
         ret.push_back(ByteVector(d_key + (x * keysize), d_key + (x * keysize) + keysize));
     return ret;
@@ -130,12 +151,8 @@ void SAMBasicKeyEntry::setKeysData(std::vector<ByteVector> keys, SAMKeyType type
 {
     if (keys.size() == 0)
         return;
-    unsigned char keynb = 3;
+    unsigned char keynb = getKeyNb();
     d_keyType           = type;
-
-    if (d_keyType == SAM_KEY_3K3DES)
-        keynb = 2;
-
     size_t keysize = getSingleLength();
 
     delete[] d_key;
@@ -190,8 +207,11 @@ std::string SAMBasicKeyEntry::SAMKeyEntryTypeStr(SAMKeyType t)
     switch (t)
     {
     case SAM_KEY_DES: return "SAM_KEY_DES";
+	case SAM_KEY_MIFARE: return "SAM_KEY_MIFARE";
     case SAM_KEY_3K3DES: return "SAM_KEY_3K3DES";
-    case SAM_KEY_AES: return "SAM_KEY_AES";
+    case SAM_KEY_AES128: return "SAM_KEY_AES128";
+	case SAM_KEY_AES192: return "SAM_KEY_AES192";
+	case SAM_KEY_AES256: return "SAM_KEY_AES256";
     default: return "Unknown";
     }
 }
