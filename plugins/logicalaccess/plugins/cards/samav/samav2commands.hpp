@@ -1,5 +1,5 @@
 /**
- * \file SAMCommands.hpp
+ * \file SAMAV2Commands.hpp
  * \author Adrien J. <adrien.jund@islog.com>
  * \brief SAMAV2Commands commands.
  */
@@ -18,10 +18,10 @@ class SAMAV2Commands : public ICommands
 {
   public:
     virtual ByteVector dumpSecretKey(unsigned char keyno, unsigned char keyversion,
-                                     ByteVector divInpu) = 0;
+                                     ByteVector divInput) = 0;
 
     virtual void activateOfflineKey(unsigned char keyno, unsigned char keyversion,
-                                    ByteVector divInpu) = 0;
+                                    ByteVector divInput) = 0;
 
     virtual ByteVector decipherOfflineData(ByteVector data) = 0;
 

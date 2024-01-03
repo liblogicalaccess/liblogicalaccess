@@ -69,6 +69,9 @@ class SAMCommands : public Commands
     {
     }
     virtual SAMVersion getVersion() = 0;
+	virtual ByteVector getRandom(unsigned char length) = 0;
+	virtual void sleep() = 0;
+    virtual void killAuthentication(bool any = false) = 0;
     virtual std::shared_ptr<SAMKeyEntry<T, S>> getKeyEntry(unsigned char keyno) = 0;
     virtual std::shared_ptr<SAMKucEntry> getKUCEntry(unsigned char keyno) = 0;
     virtual void changeKeyEntry(unsigned char keyno,

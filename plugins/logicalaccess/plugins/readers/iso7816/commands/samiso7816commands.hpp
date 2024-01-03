@@ -142,7 +142,7 @@ class LLA_READERS_ISO7816_API SAMISO7816Commands : public SAMCommands<T, S>
     SAMVersion getVersion() override
     {
         unsigned char cmd[] = {d_cla, 0x60, 0x00, 0x00, 0x00};
-        ByteVector cmd_vector(cmd, cmd + 5);
+        ByteVector cmd_vector(cmd, cmd + sizeof(cmd));
         SAMVersion info;
         memset(&info, 0x00, sizeof(SAMVersion));
 
@@ -154,6 +154,38 @@ class LLA_READERS_ISO7816_API SAMISO7816Commands : public SAMCommands<T, S>
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "getVersion failed.");
 
         return info;
+    }
+
+    ByteVector getRandom(unsigned char length) override
+    {
+        unsigned char cmd[] = {d_cla, 0x84, 0x00, 0x00, length};
+        ByteVector cmd_vector(cmd, cmd + sizeof(cmd));
+        ByteVector result = transmit(cmd_vector);
+
+        if (result.size() <= 2 || result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00)
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "getRandom failed.");
+
+        return ByteVector(result.begin(), result.end() - 2);
+    }
+
+    void sleep() override
+    {
+        unsigned char cmd[] = {d_cla, 0x51, 0x00, 0x00};
+        ByteVector cmd_vector(cmd, cmd + sizeof(cmd));
+        ByteVector result = transmit(cmd_vector);
+
+        if (result.size() < 2 || result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00)
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "sleep failed.");
+    }
+
+    void killAuthentication(bool any) override
+    {
+        unsigned char cmd[] = {d_cla, 0xCA, any ? 0x00 : 0x01, 0x00};
+        ByteVector cmd_vector(cmd, cmd + sizeof(cmd));
+        ByteVector result = transmit(cmd_vector);
+
+        if (result.size() < 2 || result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00)
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "kill authentication failed.");
     }
 
     ByteVector decipherData(ByteVector data, bool islastdata) override

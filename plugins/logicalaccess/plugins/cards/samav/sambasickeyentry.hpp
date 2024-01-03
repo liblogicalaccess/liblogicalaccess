@@ -11,26 +11,35 @@
 #include <logicalaccess/plugins/cards/samav/lla_cards_samav_api.hpp>
 
 /**
- * \brief The SAM DES key size
+ * \brief The 48-bit key size
  */
-#define SAM_DES_KEY_SIZE 16
-
+#define SAM_KEY_SIZE_48 6
 /**
- * \brief The SAM AES key size
+ * \brief The 128-bit key size
  */
-#define SAM_AES_KEY_SIZE 16
-
+#define SAM_KEY_SIZE_128 16
 /**
- * \brief The SAM max key size
+ * \brief The 192-bit key size
  */
-#define SAM_MAXKEY_SIZE 24
+#define SAM_KEY_SIZE_192 24
+/**
+ * \brief The 192-bit key size
+ */
+#define SAM_KEY_SIZE_256 32
 
 namespace logicalaccess
 {
 /**
  * \brief The SAM key type.
  */
-typedef enum { SAM_KEY_DES = 0x00, SAM_KEY_3K3DES = 0x18, SAM_KEY_AES = 0x20 } SAMKeyType;
+typedef enum {
+    SAM_KEY_DES = 0x00,
+    SAM_KEY_MIFARE = 0x10,
+    SAM_KEY_3K3DES = 0x18,
+    SAM_KEY_AES128 = 0x20,
+	SAM_KEY_AES192 = 0x28,
+    SAM_KEY_AES256 = 0x38
+} SAMKeyType;
 
 typedef struct s_KeyEntryUpdateSettings
 {
@@ -82,6 +91,12 @@ class LLA_CARDS_SAMAV_API SAMBasicKeyEntry
      * \return The key length.
      */
     size_t getLength() const;
+
+    /**
+     * \brief Get the number of keys.
+     * \return The number of keys.
+     */
+    unsigned char getKeyNb() const
 
     /**
      * \brief Get the keys data.
