@@ -96,7 +96,7 @@ class LLA_CARDS_SAMAV_API SAMBasicKeyEntry
      * \brief Get the number of keys.
      * \return The number of keys.
      */
-    unsigned char getKeyNb() const
+    unsigned char getKeyNb() const;
 
     /**
      * \brief Get the keys data.

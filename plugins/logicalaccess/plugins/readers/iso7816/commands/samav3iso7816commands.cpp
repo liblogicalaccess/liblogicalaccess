@@ -23,13 +23,13 @@
 namespace logicalaccess
 {
 SAMAV3ISO7816Commands::SAMAV3ISO7816Commands()
-    : SAMAV2ISO7816Commands<KeyEntryAV2Information, SETAV2>(CMD_SAMAV3ISO7816)
+    : SAMAV2ISO7816Commands(CMD_SAMAV3ISO7816)
 {
     
 }
 
 SAMAV3ISO7816Commands::SAMAV3ISO7816Commands(std::string ct)
-    : SAMAV2ISO7816Commands<KeyEntryAV2Information, SETAV2>(ct)
+    : SAMAV2ISO7816Commands(ct)
 {
 
 }
@@ -47,10 +47,10 @@ ByteVector SAMAV3ISO7816Commands::encipherKeyEntry(unsigned char keyno,
 {
     unsigned char p2 = 0x00;
     ByteVector data;
-    data.push_bash<unsigned char>(0x80 & channel);
+    data.push_back(static_cast<unsigned char>(0x80 & channel));
     data.push_back(targetKeyno);
-    data.push_bash<unsigned char>(0xff & (changeCounter >> 8));
-    data.push_bash<unsigned char>(0xff & changeCounter);
+    data.push_back(static_cast<unsigned char>(0xff & (changeCounter >> 8)));
+    data.push_back(static_cast<unsigned char>(0xff & changeCounter));
     if (targetSamUid.size() > 0)
     {
         p2 |= 0x01;
@@ -61,6 +61,7 @@ ByteVector SAMAV3ISO7816Commands::encipherKeyEntry(unsigned char keyno,
         p2 |= 0x02;
         data.insert(data.end(), divInput.begin(), divInput.end());
     }
-    return getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, keyno, p2, data, 0x00);
+    auto result = getISO7816ReaderCardAdapter()->sendAPDUCommand(d_cla, 0xE1, keyno, p2, static_cast<unsigned char>(data.size()), data, 0x00);
+	return result.getData();
 }
 }

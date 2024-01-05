@@ -180,7 +180,7 @@ class LLA_READERS_ISO7816_API SAMISO7816Commands : public SAMCommands<T, S>
 
     void killAuthentication(bool any) override
     {
-        unsigned char cmd[] = {d_cla, 0xCA, any ? 0x00 : 0x01, 0x00};
+        unsigned char cmd[] = {d_cla, 0xCA, (unsigned char)(any ? 0x00 : 0x01), 0x00};
         ByteVector cmd_vector(cmd, cmd + sizeof(cmd));
         ByteVector result = transmit(cmd_vector);
 

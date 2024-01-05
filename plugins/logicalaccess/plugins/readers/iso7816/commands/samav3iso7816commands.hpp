@@ -7,7 +7,7 @@
 #ifndef LOGICALACCESS_SAMAV3ISO7816CARDPROVIDER_HPP
 #define LOGICALACCESS_SAMAV3ISO7816CARDPROVIDER_HPP
 
-#include <logicalaccess/plugins/cards/samav/samcommands.hpp>
+#include <logicalaccess/plugins/cards/samav/samav3commands.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/samav2iso7816commands.hpp>
 #include <logicalaccess/plugins/cards/iso7816/readercardadapters/iso7816readercardadapter.hpp>
 #include <logicalaccess/plugins/readers/iso7816/iso7816readerunitconfiguration.hpp>
@@ -27,7 +27,7 @@ namespace logicalaccess
  * \brief The SAM AV3 base commands class.
  */
 class LLA_READERS_ISO7816_API SAMAV3ISO7816Commands
-    : public SAMAV2ISO7816Commands<KeyEntryAV2Information, SETAV2>
+    : public SAMAV2ISO7816Commands
 #ifndef SWIG
       ,
       public SAMAV3Commands<KeyEntryAV2Information, SETAV2>
