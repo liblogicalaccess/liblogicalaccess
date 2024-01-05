@@ -59,7 +59,7 @@ SAMBasicKeyEntry::SAMBasicKeyEntry(const void **buf, size_t buflen, char numberk
     {
         if (buflen * numberkey >= getLength())
         {
-            size_t keysize = getSingleLength()
+            size_t keysize = getSingleLength();
             for (unsigned char i = 0; i < numberkey; ++i)
             {
                 memcpy(d_key + keysize * i, buf[i], keysize);

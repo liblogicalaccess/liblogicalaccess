@@ -32,7 +32,7 @@ namespace logicalaccess
 #endif
 
 /**
- * \brief The DESFire base commands class.
+ * \brief The SAM AV2 base commands class.
  */
 class LLA_READERS_ISO7816_API SAMAV2ISO7816Commands
     : public SAMISO7816Commands<KeyEntryAV2Information, SETAV2>
@@ -70,10 +70,10 @@ class LLA_READERS_ISO7816_API SAMAV2ISO7816Commands
     ByteVector transmit(ByteVector cmd, bool first = true, bool last = true) override;
 
     ByteVector dumpSecretKey(unsigned char keyno, unsigned char keyversion,
-                             ByteVector divInpu) override;
+                             ByteVector divInput) override;
 
     void activateOfflineKey(unsigned char keyno, unsigned char keyversion,
-                            ByteVector divInpu) override;
+                            ByteVector divInput) override;
 
     ByteVector decipherOfflineData(ByteVector data) override;
 
