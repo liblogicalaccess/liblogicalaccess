@@ -7,7 +7,7 @@ class LLAConan(ConanFile):
     url = "https://github.com/liblogicalaccess/liblogicalaccess"
     description = "LLA RFID library"
     settings = "os", "compiler", "build_type", "arch"
-    requires = 'boost/1.84.0', 'openssl/1.1.1w', 'nlohmann_json/3.11.3', 'zlib/1.3'
+    requires = 'boost/1.83.0', 'openssl/1.1.1w', 'nlohmann_json/3.11.3', 'zlib/1.3'
     generators = "cmake"
     options = {'LLA_BUILD_PKCS': [True, False],
                'LLA_BUILD_UNITTEST': [True, False],
@@ -35,7 +35,7 @@ class LLAConan(ConanFile):
        
     def requirements(self):
         if self.options.LLA_BUILD_UNITTEST:
-            self.requires('gtest/1.11.0')
+            self.requires('gtest/1.14.0')
         if self.options.LLA_BUILD_PKCS:
             self.requires('cppkcs11/1.1')
         if self.options.LLA_BUILD_LIBUSB:

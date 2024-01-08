@@ -3,15 +3,8 @@
 	<groupId>eu.islog.lib.readers</groupId>
 	<artifactId>liblogicalaccess-doc</artifactId>
 	<packaging>pom</packaging>
-	<version>2.5.0</version>
+	<version>3.0.0</version>
 	<name>LibLogicalaccess Documentation</name>
-	
-	<distributionManagement>
-		<repository>
-		  <id>rfid-releases</id>
-		  <url>http://artifacts.islog.com/repository/rfid-releases</url>
-		</repository>
-	</distributionManagement>
 	
 	<properties>		
 		<scmUrl>scm:git:https://github.com/liblogicalaccess/liblogicalaccess.git</scmUrl>
