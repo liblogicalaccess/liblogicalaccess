@@ -3,7 +3,7 @@
 #include "cppkcs11/services/crypto_service.hpp"
 #include "cppkcs11/services/object_service.hpp"
 #include "cppkcs11/session.hpp"
-#include <logicalaccess/cards/PKCSkeystorage.hpp>
+#include <logicalaccess/cards/pkcskeystorage.hpp>
 #include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/myexception.hpp>
 #include "cppkcs11/cppkcs11.hpp"
