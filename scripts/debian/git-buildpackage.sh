@@ -26,12 +26,12 @@ echo "GIT_COMMIT:"${GIT_COMMIT}
 echo "CODENAME:"${CODENAME}
 echo "DISTRIB:"${DISTRIB}
 
-cd /home/jenkins
-git clone https://github.com/islog/liblogicalaccess-debian.git
+cd ~
+git clone https://github.com/liblogicalaccess/liblogicalaccess-debian.git
 cd liblogicalaccess-debian
 
 git checkout -b upstream
-git remote add liblogicalaccess https://github.com/islog/liblogicalaccess.git
+git remote add liblogicalaccess https://github.com/liblogicalaccess/liblogicalaccess.git
 git pull --no-edit --allow-unrelated-histories -X theirs  liblogicalaccess ${GIT_BRANCH}
 git submodule init
 git submodule update
@@ -48,7 +48,7 @@ git rebase upstream
 
 
 #check if master and already have the hash dont push otherwise -> do
-DEBFULLNAME=ISLOG DEBEMAIL=support@islog.com  debchange -v $VERSION_DEBIAN --distribution $CODENAME "${GIT_BRANCH}-${GIT_COMMIT}"
+DEBFULLNAME=LIBLOGICALACCESS DEBEMAIL=support@liblogicalaccess.com  debchange -v $VERSION_DEBIAN --distribution $CODENAME "${GIT_BRANCH}-${GIT_COMMIT}"
 
 export DEB_BUILD_OPTIONS="parallel=3"
 gbp buildpackage --git-ignore-new --git-upstream-tree=upstream/$VERSION
