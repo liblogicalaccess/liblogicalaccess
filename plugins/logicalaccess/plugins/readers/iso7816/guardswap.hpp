@@ -51,7 +51,7 @@ struct ResultCheckerSwapper : GuardSwap<ReaderCardAdapter, std::shared_ptr<Resul
 };
 
 template <>
-struct ResultCheckerSwapper<nullptr_t>
+struct ResultCheckerSwapper<std::nullptr_t>
     : GuardSwap<ReaderCardAdapter, std::shared_ptr<ResultChecker>,
                 &ReaderCardAdapter::getResultChecker,
                 &ReaderCardAdapter::setResultChecker>
