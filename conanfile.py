@@ -2,16 +2,15 @@ from conans import ConanFile, CMake, tools
 
 class LLAConan(ConanFile):
     name = "LogicalAccess"
-    version = "2.5.0"
-    license = "https://github.com/islog/liblogicalaccess/blob/develop/LICENSE"
-    url = "https://github.com/islog/liblogicalaccess"
-    description = "ISLOG RFID library"
+    version = "3.0.0"
+    license = "https://github.com/liblogicalaccess/liblogicalaccess/blob/develop/LICENSE"
+    url = "https://github.com/liblogicalaccess/liblogicalaccess"
+    description = "LLA RFID library"
     settings = "os", "compiler", "build_type", "arch"
-    requires = 'boost/1.81.0', 'openssl/1.1.1t', 'nlohmann_json/3.11.2', 'zlib/1.2.13'
+    requires = 'boost/1.83.0', 'openssl/1.1.1w', 'nlohmann_json/3.11.3', 'zlib/1.3'
     generators = "cmake"
     options = {'LLA_BUILD_PKCS': [True, False],
                'LLA_BUILD_UNITTEST': [True, False],
-               'LLA_BUILD_RFIDEAS': [True, False],
                'LLA_BUILD_LIBUSB': [True, False]}
     revision_mode = "scm"
     exports_sources = "plugins*", "src*", "include*", "CMakeLists.txt", "cmake*", "liblogicalaccess.config", "tests*", "samples*"
@@ -23,7 +22,6 @@ class LLAConan(ConanFile):
         boost:shared=False
         gtest:shared=True
         LLA_BUILD_PKCS=True
-        LLA_BUILD_RFIDEAS=False
         LLA_BUILD_UNITTEST=False
         LLA_BUILD_LIBUSB=False'''
     else:
@@ -34,21 +32,14 @@ class LLAConan(ConanFile):
         LLA_BUILD_PKCS=True
         LLA_BUILD_UNITTEST=False
         LLA_BUILD_LIBUSB=False'''
-
-    def configure(self):
-        if self.settings.os != 'Windows':
-            # This options is not used on Linux
-            del self.options.LLA_BUILD_RFIDEAS
        
     def requirements(self):
-        if self.settings.os == 'Windows' and self.options.LLA_BUILD_RFIDEAS:
-            self.requires('rfideas/7.1.5@islog/stable')
         if self.options.LLA_BUILD_UNITTEST:
-            self.requires('gtest/1.11.0')
+            self.requires('gtest/1.14.0')
         if self.options.LLA_BUILD_PKCS:
             self.requires('cppkcs11/1.1')
         if self.options.LLA_BUILD_LIBUSB:
-            self.requires('libusb/1.0.24')
+            self.requires('libusb/1.0.26')
 
     def imports(self):
         if tools.os_info.is_windows:
@@ -71,11 +62,6 @@ class LLAConan(ConanFile):
             cmake.definitions['LLA_BUILD_UNITTEST'] = True
         else:
             cmake.definitions['LLA_BUILD_UNITTEST'] = False
-            
-        if 'LLA_BUILD_RFIDEAS' in self.options and self.options.LLA_BUILD_RFIDEAS:
-            cmake.definitions['LLA_BUILD_RFIDEAS'] = True
-        else:
-            cmake.definitions['LLA_BUILD_RFIDEAS'] = False
             
         if self.options.LLA_BUILD_LIBUSB:
             cmake.definitions['LLA_BUILD_LIBUSB'] = True
@@ -119,8 +105,6 @@ class LLAConan(ConanFile):
         if self.settings.os == 'Windows':
             # Those are some windows specific stuff.
             self.cpp_info.libs.append('keyboardreaders')
-            if self.options.LLA_BUILD_RFIDEAS:
-                self.cpp_info.libs.append('rfideasreaders')
             if self.settings.arch == 'x86_64':
                 self.cpp_info.libs.append('islogkbdhooklib64')
             else:
