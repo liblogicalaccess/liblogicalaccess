@@ -107,18 +107,6 @@ class CardException : public LibLogicalAccessException
     enum ErrorType error_type_;
 };
 
-/**
- * An exception related to operation against the Islog Key Server.
- */
-class IKSException : public LibLogicalAccessException
-{
-  public:
-    explicit IKSException(const std::string &message)
-        : LibLogicalAccessException(message)
-    {
-    }
-};
-
 #define EXCEPTION_MSG_CONNECTED                                                          \
     "Already connected to a card. Please disconnect before." /**< \brief Not connected   \
                                                                 exception message */
