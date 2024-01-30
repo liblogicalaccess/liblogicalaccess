@@ -151,8 +151,8 @@ void SAMBasicKeyEntry::setKeysData(std::vector<ByteVector> keys, SAMKeyType type
 {
     if (keys.size() == 0)
         return;
-    unsigned char keynb = getKeyNb();
     d_keyType           = type;
+    unsigned char keynb = getKeyNb();
     size_t keysize = getSingleLength();
 
     delete[] d_key;
