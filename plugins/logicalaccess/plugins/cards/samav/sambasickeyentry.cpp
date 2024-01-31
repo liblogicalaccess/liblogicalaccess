@@ -16,18 +16,17 @@ SAMBasicKeyEntry::SAMBasicKeyEntry()
     : d_updatemask(0)
 {
     d_keyType = SAM_KEY_DES;
-    d_key     = new unsigned char[getLength()];
-    memset(&*d_key, 0, getLength());
+    memset(d_key, 0, sizeof(d_key));
     d_diversify  = false;
     d_updatemask = 0;
 }
 
 SAMBasicKeyEntry::SAMBasicKeyEntry(const SAMBasicKeyEntry &copy)
-    : d_key(copy.d_key)
-    , d_diversify(copy.d_diversify)
+    : d_diversify(copy.d_diversify)
     , d_keyType(copy.d_keyType)
     , d_updatemask(copy.d_updatemask)
 {
+    memcpy(d_key, copy.d_key, sizeof(copy.d_key));
 }
 
 SAMBasicKeyEntry::SAMBasicKeyEntry(const std::string &str, const std::string &str1,
@@ -35,8 +34,7 @@ SAMBasicKeyEntry::SAMBasicKeyEntry(const std::string &str, const std::string &st
     : d_updatemask(0)
 {
     d_keyType = SAM_KEY_DES;
-    d_key     = new unsigned char[getLength()];
-    memset(&*d_key, 0, getLength());
+    memset(d_key, 0, sizeof(d_key));
     d_diversify  = false;
     d_updatemask = 0;
     if (str != "")
@@ -51,8 +49,7 @@ SAMBasicKeyEntry::SAMBasicKeyEntry(const void **buf, size_t buflen, char numberk
     : d_updatemask(0)
 {
     d_keyType = SAM_KEY_DES;
-    d_key     = new unsigned char[getLength()];
-    memset(&*d_key, 0, getLength());
+    memset(d_key, 0, sizeof(d_key));
     d_diversify  = false;
     d_updatemask = 0;
     if (buf != nullptr)
@@ -70,7 +67,6 @@ SAMBasicKeyEntry::SAMBasicKeyEntry(const void **buf, size_t buflen, char numberk
 
 SAMBasicKeyEntry::~SAMBasicKeyEntry()
 {
-    delete[] d_key;
 }
 
 size_t SAMBasicKeyEntry::getSingleLength() const
@@ -80,8 +76,6 @@ size_t SAMBasicKeyEntry::getSingleLength() const
     switch (d_keyType)
     {
 	case SAM_KEY_MIFARE:
-		length = SAM_KEY_SIZE_48;
-		break;
     case SAM_KEY_DES:
     case SAM_KEY_AES128:
         length = SAM_KEY_SIZE_128;
@@ -108,8 +102,6 @@ unsigned char SAMBasicKeyEntry::getKeyNb() const
         keynb = 2;
     else if (keysize == SAM_KEY_SIZE_256)
         keynb = 1;
-    else if (keysize == SAM_KEY_SIZE_48)
-        keynb = 6;
     return keynb;
 }
 
@@ -119,6 +111,7 @@ size_t SAMBasicKeyEntry::getLength() const
 
     switch (d_keyType)
     {
+    case SAM_KEY_MIFARE:
     case SAM_KEY_DES:
     case SAM_KEY_AES128:
         length = SAM_KEY_SIZE_128 * 3;
@@ -155,8 +148,7 @@ void SAMBasicKeyEntry::setKeysData(std::vector<ByteVector> keys, SAMKeyType type
     unsigned char keynb = getKeyNb();
     size_t keysize = getSingleLength();
 
-    delete[] d_key;
-    d_key = new unsigned char[getLength()];
+    memset(d_key, 0, sizeof(d_key));
     for (unsigned char x = 0; x < keynb; ++x)
     {
         if (keys[x].size() != keysize)
@@ -195,7 +187,7 @@ bool SAMBasicKeyEntry::operator==(const SAMBasicKeyEntry &key) const
     {
         return false;
     }
-    if (memcmp(&*d_key, &*(key.d_key), getLength()) == 0)
+    if (memcmp(d_key, key.d_key, getLength()) == 0)
     {
         return false;
     }

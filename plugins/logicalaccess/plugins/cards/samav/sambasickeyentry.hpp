@@ -11,9 +11,10 @@
 #include <logicalaccess/plugins/cards/samav/lla_cards_samav_api.hpp>
 
 /**
- * \brief The 48-bit key size
+ * \brief The total buffer size for keys on a key entry
  */
-#define SAM_KEY_SIZE_48 6
+#define SAM_KEY_BUFFER_SIZE 48
+
 /**
  * \brief The 128-bit key size
  */
@@ -113,7 +114,7 @@ class LLA_CARDS_SAMAV_API SAMBasicKeyEntry
      * \brief Get the key data.
      * \return The key data.
      */
-    unsigned char *getData() const
+    const unsigned char *getData() const
     {
         return d_key;
     }
@@ -222,7 +223,7 @@ class LLA_CARDS_SAMAV_API SAMBasicKeyEntry
     /**
      * \brief The key bytes;
      */
-    unsigned char *d_key;
+    unsigned char d_key[SAM_KEY_BUFFER_SIZE];
 
     /**
      * \brief Diversify the key on the card.

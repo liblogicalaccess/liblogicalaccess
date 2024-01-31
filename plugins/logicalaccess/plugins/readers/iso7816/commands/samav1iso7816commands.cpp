@@ -122,11 +122,11 @@ void SAMAV1ISO7816Commands::changeKeyEntry(
 
     unsigned char proMas = keyentry->getUpdateMask();
 
-    size_t buffer_size  = keyentry->getLength() + sizeof(KeyEntryAV1Information);
+    size_t buffer_size  = SAM_KEY_BUFFER_SIZE + sizeof(KeyEntryAV1Information);
     unsigned char *data = new unsigned char[buffer_size]();
 
-    memcpy(data, &*(keyentry->getData()), keyentry->getLength());
-    memcpy(data + 48, &keyentry->getKeyEntryInformation(),
+    memcpy(data, keyentry->getData(), SAM_KEY_BUFFER_SIZE);
+    memcpy(data + SAM_KEY_BUFFER_SIZE, &keyentry->getKeyEntryInformation(),
            sizeof(KeyEntryAV1Information));
 
     ByteVector iv;

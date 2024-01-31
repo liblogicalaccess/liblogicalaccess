@@ -494,7 +494,7 @@ SAMAV2ISO7816Commands::getKeyEntry(unsigned char keyno)
 
         memcpy(keyentryinformation.desfireAid, &result[result.size() - 12], 3);
 
-        if (result.size() == 13)
+        if (result.size() == 14)
         {
             keyentryinformation.verb = result[result.size() - 13];
             keyentryinformation.vera = result[result.size() - 14];
@@ -568,11 +568,11 @@ void SAMAV2ISO7816Commands::changeKeyEntry(
 
     unsigned char proMas = keyentry->getUpdateMask();
 
-    size_t buffer_size  = keyentry->getLength() + sizeof(KeyEntryAV2Information);
+    size_t buffer_size  = SAM_KEY_BUFFER_SIZE + sizeof(KeyEntryAV2Information);
     unsigned char *data = new unsigned char[buffer_size]();
 
-    memcpy(data, &*(keyentry->getData()), keyentry->getLength());
-    memcpy(data + 48, &keyentry->getKeyEntryInformation(),
+    memcpy(data, keyentry->getData(), SAM_KEY_BUFFER_SIZE);
+    memcpy(data + SAM_KEY_BUFFER_SIZE, &keyentry->getKeyEntryInformation(),
            sizeof(KeyEntryAV2Information));
     ByteVector vectordata(data, data + buffer_size);
     delete[] data;

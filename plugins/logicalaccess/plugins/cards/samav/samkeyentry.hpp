@@ -188,15 +188,7 @@ class LLA_CARDS_SAMAV_API SAMKeyEntry : public SAMBasicKeyEntry
     void setKeyTypeFromSET()
     {
         unsigned char keytype = 0x38 & d_keyentryinformation.set[0];
-        size_t oldsize        = getLength();
-		d_keyType = static_cast<SAMKeyType>(keytype);
-
-        unsigned char *tmp = new unsigned char[getLength()];
-        if (getLength() < oldsize)
-            oldsize = getLength();
-        memcpy(tmp, &*d_key, oldsize);
-        delete d_key;
-        d_key = tmp;
+        d_keyType = static_cast<SAMKeyType>(keytype);
     }
 
     void setSETKeyTypeFromKeyType()
