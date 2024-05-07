@@ -21,12 +21,12 @@ NumberDataField::~NumberDataField()
 {
 }
 
-void NumberDataField::setValue(long long value)
+void NumberDataField::setValue(unsigned long long value)
 {
     d_value = value;
 }
 
-long long NumberDataField::getValue() const
+unsigned long long NumberDataField::getValue() const
 {
     return d_value;
 }

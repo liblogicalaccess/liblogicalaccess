@@ -41,13 +41,13 @@ class LLA_CORE_API NumberDataField : public ValueDataField
      * \brief Set the field value.
      * \param value The field value.
      */
-    void setValue(long long value);
+    void setValue(unsigned long long value);
 
     /**
      * \brief Get the field value.
      * \return The field value.
      */
-    long long getValue() const;
+    unsigned long long getValue() const;
 
     /**
      * \brief Get linear data.
@@ -87,7 +87,7 @@ class LLA_CORE_API NumberDataField : public ValueDataField
     std::string getDefaultXmlNodeName() const override;
 
   protected:
-    long long d_value;
+    unsigned long long d_value;
 };
 }
 
