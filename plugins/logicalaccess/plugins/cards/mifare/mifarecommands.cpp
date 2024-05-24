@@ -401,12 +401,15 @@ void MifareCommands::changeKeys(std::shared_ptr<MifareKey> newkeyA,
 
     if (!newkeyB || newkeyB->isEmpty())
     {
-        memcpy(&trailerblock[0], newkeyA->getData(), MIFARE_KEY_SIZE);
+        ByteVector keydata = newkeyA->getData();
+        std::copy(keydata.begin(), keydata.end(), trailerblock.begin()); 
     }
     else
     {
-        memcpy(&trailerblock[0], newkeyA->getData(), MIFARE_KEY_SIZE);
-        memcpy(&trailerblock[10], newkeyB->getData(), MIFARE_KEY_SIZE);
+        ByteVector keydata = newkeyA->getData();
+        std::copy(keydata.begin(), keydata.end(), trailerblock.begin());
+        keydata = newkeyB->getData();
+        std::copy(keydata.begin(), keydata.end(), trailerblock.begin() + 10);
     }
 
     auto tmp = (*newsab).toArray();

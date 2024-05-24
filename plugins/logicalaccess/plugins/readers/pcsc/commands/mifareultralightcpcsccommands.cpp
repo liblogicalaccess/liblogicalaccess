@@ -105,8 +105,7 @@ void MifareUltralightCPCSCCommands::authenticate(std::shared_ptr<TripleDESKey> a
         ByteVector iv;
         iv.resize(8, 0x00);
 
-        ByteVector key =
-            ByteVector(authkey->getData(), authkey->getData() + authkey->getLength());
+        ByteVector key = authkey->getData();
         ByteVector encRndB(result.begin() + 1, result.end());
         ByteVector rndB = DESFireCrypto::desfire_CBC_receive(key, iv, encRndB);
 

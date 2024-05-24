@@ -104,7 +104,7 @@ void SAMAV2ISO7816Commands::authenticateHost(std::shared_ptr<DESFireKey> key,
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                  "authenticateHost P1 Failed.");
 
-    ByteVector keycipher(key->getData(), key->getData() + key->getLength());
+    ByteVector keycipher = key->getData();
     d_macSessionKey = keycipher;
     std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher(new openssl::AESCipher());
     ByteVector rnd1;

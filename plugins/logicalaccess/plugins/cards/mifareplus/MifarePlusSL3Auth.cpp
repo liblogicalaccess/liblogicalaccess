@@ -41,7 +41,7 @@ bool MifarePlusSL3Auth::firstAuthenticate(int sector, std::shared_ptr<AES128Key>
     EXCEPTION_ASSERT_WITH_LOG(ret.size() > 16, LibLogicalAccessException,
                               "Not enough data in buffer.");
 
-    aes_key_ = ByteVector(key->getData(), key->getData() + 16);
+    aes_key_ = key->getData();
     rnd_b_   = {ret.begin() + 1, ret.begin() + 17};
     rnd_b_   = AESHelper::AESDecrypt(rnd_b_, aes_key_, {});
 

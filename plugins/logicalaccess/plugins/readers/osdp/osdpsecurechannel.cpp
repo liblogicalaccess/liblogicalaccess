@@ -23,7 +23,7 @@ void OSDPSecureChannel::deriveKey(std::shared_ptr<AES128Key> scbkkey,
     ByteVector d_lastIV(16);
     ByteVector inputData(16);
 
-    unsigned char *keydata;
+    ByteVector keydata;
     if (isSCBK_D)
         keydata = scbkdkey->getData();
     else
@@ -31,7 +31,7 @@ void OSDPSecureChannel::deriveKey(std::shared_ptr<AES128Key> scbkkey,
 
     openssl::SymmetricKey aeskey =
         static_cast<openssl::SymmetricKey>(openssl::AESSymmetricKey(
-            openssl::AESSymmetricKey::createFromData(ByteVector(keydata, keydata + 16))));
+            openssl::AESSymmetricKey::createFromData(keydata)));
     openssl::AESCipher cipher =
         openssl::AESCipher(openssl::OpenSSLSymmetricCipher::ENC_MODE_ECB);
     openssl::InitializationVector iv = openssl::AESInitializationVector(

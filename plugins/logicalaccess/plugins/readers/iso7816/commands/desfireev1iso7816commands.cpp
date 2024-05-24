@@ -1336,7 +1336,7 @@ void DESFireEV1ISO7816Commands::setConfiguration(std::shared_ptr<DESFireKey> def
     }
     std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
 
-    ByteVector command = defaultKey->getBytes();
+    ByteVector command = defaultKey->getData();
     command.resize(25);
     command[24] = defaultKey->getKeyVersion();
 

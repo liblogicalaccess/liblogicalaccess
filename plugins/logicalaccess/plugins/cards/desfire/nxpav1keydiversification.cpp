@@ -46,7 +46,7 @@ ByteVector NXPAV1KeyDiversification::getDiversifiedKey(std::shared_ptr<Key> key,
     std::shared_ptr<openssl::SymmetricKey> symkey;
     std::shared_ptr<openssl::InitializationVector> iv;
     std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher;
-    ByteVector keycipher(key->getData(), key->getData() + key->getLength());
+    ByteVector keycipher = key->getData();
     ByteVector divKey, divInputEncP1, divInputEncP2;
 
     if (std::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() != DF_KEY_AES)

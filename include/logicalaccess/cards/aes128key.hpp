@@ -46,7 +46,7 @@ class LLA_CORE_API AES128Key : public Key
     AES128Key(const void *buf, size_t buflen);
 
     /**
-     * Create a key from a 16bytes vector.
+     * Create a key from a bytes vector.
      */
     explicit AES128Key(const ByteVector &data);
 
@@ -60,28 +60,10 @@ class LLA_CORE_API AES128Key : public Key
     }
 
     /**
- * \brief Get the key data.
- * \return The key data.
- */
-    const unsigned char *getData() const override
-    {
-        return d_key;
-    }
-
-    /**
- * \brief Get the key data.
- * \return The key data.
- */
-    unsigned char *getData() override
-    {
-        return d_key;
-    }
-
-    /**
- * \brief Serialize the current object to XML.
- * \param parentNode The parent node.
- * \return The XML string.
- */
+     * \brief Serialize the current object to XML.
+     * \param parentNode The parent node.
+     * \return The XML string.
+     */
     void serialize(boost::property_tree::ptree &parentNode) override;
 
     /**
@@ -95,18 +77,6 @@ class LLA_CORE_API AES128Key : public Key
      * \return The Xml node name.
      */
     std::string getDefaultXmlNodeName() const override;
-
-    /**
-     * Construct a key from a raw byte vector.
-     * The vector MUST be 16 bytes.
-     */
-    void fromBytes(const ByteVector &v);
-
-  private:
-    /**
-     * \brief The key bytes;
-     */
-    unsigned char d_key[AES128_KEY_SIZE];
 };
 }
 

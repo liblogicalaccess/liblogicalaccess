@@ -337,8 +337,7 @@ class LLA_READERS_ISO7816_API SAMISO7816Commands : public SAMCommands<T, S>
         if (result.getData().size() != 12 || result.getSW1() != 0x90 || result.getSW2() != 0xAF)
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "lockUnlock P1 Failed.");
 
-        ByteVector keycipher(masterKey->getData(),
-                             masterKey->getData() + masterKey->getLength());
+        ByteVector keycipher = masterKey->getData();
         std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher(new openssl::AESCipher());
         ByteVector emptyIV(16), rnd1;
 

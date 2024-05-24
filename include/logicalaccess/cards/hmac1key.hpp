@@ -41,6 +41,11 @@ class LLA_CORE_API HMAC1Key : public Key
      * \param buflen The buffer length.
      */
     HMAC1Key(const void *buf, size_t buflen);
+    
+    /**
+     * Create a key from a bytes vector.
+     */
+    explicit HMAC1Key(const ByteVector &data);
 
     /**
      * \brief Get the key length.
@@ -49,24 +54,6 @@ class LLA_CORE_API HMAC1Key : public Key
     size_t getLength() const override
     {
         return HMAC1_KEY_SIZE;
-    }
-
-    /**
-     * \brief Get the key data.
-     * \return The key data.
-     */
-    const unsigned char *getData() const override
-    {
-        return d_key;
-    }
-
-    /**
-     * \brief Get the key data.
-     * \return The key data.
-     */
-    unsigned char *getData() override
-    {
-        return d_key;
     }
 
     /**
@@ -87,12 +74,6 @@ class LLA_CORE_API HMAC1Key : public Key
      * \return The Xml node name.
      */
     std::string getDefaultXmlNodeName() const override;
-
-  private:
-    /**
-     * \brief The key bytes;
-     */
-    unsigned char d_key[HMAC1_KEY_SIZE];
 };
 }
 

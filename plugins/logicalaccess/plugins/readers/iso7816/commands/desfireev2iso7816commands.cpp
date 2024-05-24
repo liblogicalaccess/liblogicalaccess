@@ -196,7 +196,7 @@ void DESFireEV2ISO7816Commands::sam_authenticateEV2First(uint8_t keyno,
     EXCEPTION_ASSERT_WITH_LOG(response.getData().size() > 0, LibLogicalAccessException,
                               "Response is too short");
 
-    auto key_data   = key->getBytes();
+    auto key_data   = key->getData();
     const auto rnda = RandomHelper::bytes(16);
 
     // Get RNDB
@@ -655,7 +655,7 @@ void DESFireEV2ISO7816Commands::createTransactionMACFile(
     command.push_back(static_cast<unsigned char>(0x02)); // TMKeyOption AES only
 
     crypto->initBuf();
-    auto data = tmkey->getBytes(); // TMKey
+    auto data = tmkey->getData(); // TMKey
     data.push_back(tmkversion);    // TMKeyVer
     auto param = command;
     param.insert(param.begin(), DFEV2_INS_CREATE_TRANSACTION_MAC_FILE);
@@ -783,20 +783,20 @@ std::pair<ByteVector, ByteVector> DESFireEV2ISO7816Commands::createDAMChallenge(
     }
 
     // Generate encK
-    ByteVector keybuffer = DAMDefaultKey->getBytes();
+    ByteVector keybuffer = DAMDefaultKey->getData();
     keybuffer.resize(24);
     keybuffer.push_back(DAMDefaultKey->getKeyVersion());
     auto randomBytes = RandomHelper::bytes(7);
     keybuffer.insert(keybuffer.begin(), randomBytes.begin(), randomBytes.end());
-    cryptoTmp->d_sessionKey = DAMENCKey->getBytes();
+    cryptoTmp->d_sessionKey = DAMENCKey->getData();
     cryptoTmp->d_lastIV.clear();
     cryptoTmp->d_lastIV.resize(cryptoTmp->d_cipher->getBlockSize(), 0x00);
     ByteVector encK = cryptoTmp->desfireEncrypt(keybuffer, {}, false);
 
     // Add encK to mac buffer
     command.insert(command.end(), encK.begin(), encK.end());
-    cryptoTmp->d_sessionKey    = DAMMACKey->getBytes();
-    cryptoTmp->d_macSessionKey = DAMMACKey->getBytes();
+    cryptoTmp->d_sessionKey    = DAMMACKey->getData();
+    cryptoTmp->d_macSessionKey = DAMMACKey->getData();
     cryptoTmp->d_lastIV.clear();
     cryptoTmp->d_lastIV.resize(cryptoTmp->d_cipher->getBlockSize(), 0x00);
     auto dammac = cryptoTmp->generateMAC(DFEV2_INS_CREATE_DELEGATED_APPLICATION, command);
@@ -1018,7 +1018,7 @@ void DESFireEV2ISO7816Commands::proximityCheck(std::shared_ptr<DESFireKey> key,
 
     // Verify PC
     auto mac = DESFireEV2Crypto::truncateMAC(
-        openssl::CMACCrypto::cmac(key->getBytes(), "aes", MAC_SOURCE));
+        openssl::CMACCrypto::cmac(key->getData(), "aes", MAC_SOURCE));
     resp = transmit_plain(DFEV2_INS_VERIFY_PC, mac);
 
     // Now verify the MAC sent by the card.
@@ -1026,7 +1026,7 @@ void DESFireEV2ISO7816Commands::proximityCheck(std::shared_ptr<DESFireKey> key,
     // uses 0x90 instead of 0xFD
     MAC_SOURCE[0]  = 0x90;
     auto mac_verif = DESFireEV2Crypto::truncateMAC(
-        openssl::CMACCrypto::cmac(key->getBytes(), "aes", MAC_SOURCE));
+        openssl::CMACCrypto::cmac(key->getData(), "aes", MAC_SOURCE));
 
     // The verif should match what the card sent us, otherwise PC check fails.
     EXCEPTION_ASSERT_WITH_LOG(mac_verif == resp.getData(), LibLogicalAccessException,

@@ -40,29 +40,7 @@ class LLA_CORE_API BinaryFieldValue : public Key
      */
     size_t getLength() const override
     {
-        return d_buf.size();
-    }
-
-    /**
-     * \brief Get the key data.
-     * \return The key data.
-     */
-    const unsigned char *getData() const override
-    {
-        if (d_buf.size() != 0)
-            return &d_buf[0];
-        return nullptr;
-    }
-
-    /**
-     * \brief Get the key data.
-     * \return The key data.
-     */
-    unsigned char *getData() override
-    {
-        if (d_buf.size() != 0)
-            return &d_buf[0];
-        return nullptr;
+        return 0;
     }
 
     /**
@@ -82,12 +60,6 @@ class LLA_CORE_API BinaryFieldValue : public Key
      * \return The Xml node name.
      */
     std::string getDefaultXmlNodeName() const override;
-
-  private:
-    /**
-     * \brief The key bytes;
-     */
-    ByteVector d_buf;
 };
 
 /**

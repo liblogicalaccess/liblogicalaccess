@@ -619,8 +619,8 @@ void DESFireCrypto::getKey(std::shared_ptr<DESFireKey> key, ByteVector diversify
         }
         else
         {
-            keydiv.insert(keydiv.end(), key->getData(),
-                          key->getData() + key->getLength());
+            ByteVector keycipher = key->getData();
+            keydiv.insert(keydiv.end(), keycipher.begin(), keycipher.end());
         }
     }
     if (key->getKeyType() != DF_KEY_AES)
@@ -630,7 +630,7 @@ void DESFireCrypto::getKey(std::shared_ptr<DESFireKey> key, ByteVector diversify
 void DESFireCrypto::getKeyVersioned(std::shared_ptr<DESFireKey> key,
                                     ByteVector &keyversioned)
 {
-    auto keytmpversioned  = key->getBytes();
+    auto keytmpversioned  = key->getData();
     unsigned char version = key->getKeyVersion();
     // set the key version
     for (unsigned char i = 0; i < 8; i++)

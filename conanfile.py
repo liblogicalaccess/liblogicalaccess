@@ -2,7 +2,7 @@ from conans import ConanFile, CMake, tools
 
 class LLAConan(ConanFile):
     name = "LogicalAccess"
-    version = "3.1.0"
+    version = "3.2.0"
     license = "https://github.com/liblogicalaccess/liblogicalaccess/blob/develop/LICENSE"
     url = "https://github.com/liblogicalaccess/liblogicalaccess"
     description = "LLA RFID library"

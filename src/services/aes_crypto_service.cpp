@@ -18,13 +18,13 @@ ByteVector AESCryptoService::aes_encrypt(const ByteVector &data, const ByteVecto
 ByteVector AESCryptoService::in_memory(const ByteVector &data, const ByteVector &iv,
                                        std::shared_ptr<Key> key, bool encrypt)
 {
-    EXCEPTION_ASSERT_WITH_LOG(key->getBytes().size() == 16, LibLogicalAccessException,
+    EXCEPTION_ASSERT_WITH_LOG(key->getData().size() == 16, LibLogicalAccessException,
                               "Key length is not valid for AES crypto");
 
     if (encrypt)
-        return AESHelper::AESEncrypt(data, key->getBytes(), iv);
+        return AESHelper::AESEncrypt(data, key->getData(), iv);
     else
-        return AESHelper::AESDecrypt(data, key->getBytes(), iv);
+        return AESHelper::AESDecrypt(data, key->getData(), iv);
 }
 
 ByteVector AESCryptoService::with_pkcs(const ByteVector &data, const ByteVector &iv,

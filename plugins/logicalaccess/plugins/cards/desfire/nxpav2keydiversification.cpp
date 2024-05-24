@@ -72,7 +72,7 @@ ByteVector NXPAV2KeyDiversification::getDiversifiedKey(std::shared_ptr<Key> key,
     LOG(LogLevel::INFOS) << "Using key diversification NXP AV2 with div : "
                          << BufferHelper::getHex(diversify);
     std::shared_ptr<openssl::OpenSSLSymmetricCipher> d_cipher;
-    ByteVector keycipher(key->getData(), key->getData() + key->getLength());
+    ByteVector keycipher = key->getData();
     ByteVector emptyIV, keydiv;
 
     if (std::dynamic_pointer_cast<DESFireKey>(key)->getKeyType() == DF_KEY_DES ||

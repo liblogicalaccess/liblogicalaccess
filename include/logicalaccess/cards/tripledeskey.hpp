@@ -46,30 +46,17 @@ class LLA_CORE_API TripleDESKey : public Key
     TripleDESKey(const void *buf, size_t buflen);
 
     /**
+     * Create a key from a bytes vector.
+     */
+    explicit TripleDESKey(const ByteVector &data);
+
+    /**
      * \brief Get the key length.
      * \return The key length.
      */
     size_t getLength() const override
     {
         return TRIPLEDES_KEY_SIZE;
-    }
-
-    /**
-     * \brief Get the key data.
-     * \return The key data.
-     */
-    const unsigned char *getData() const override
-    {
-        return d_key;
-    }
-
-    /**
-     * \brief Get the key data.
-     * \return The key data.
-     */
-    unsigned char *getData() override
-    {
-        return d_key;
     }
 
     /**
@@ -90,12 +77,6 @@ class LLA_CORE_API TripleDESKey : public Key
      * \return The Xml node name.
      */
     std::string getDefaultXmlNodeName() const override;
-
-  private:
-    /**
-     * \brief The key bytes;
-     */
-    unsigned char d_key[TRIPLEDES_KEY_SIZE];
 };
 }
 

@@ -13,7 +13,6 @@ SeosKey::SeosKey()
     : Key()
 {
     d_keyType = SEOS_KEY_DES;
-    d_key.resize(SeosKey::getLength());
     Key::clear();
 }
 
@@ -21,8 +20,6 @@ SeosKey::SeosKey(const std::string &str)
     : Key()
 {
     d_keyType = SEOS_KEY_DES;
-    d_key.resize(SeosKey::getLength());
-    Key::clear();
     Key::fromString(str);
 }
 
@@ -30,16 +27,13 @@ SeosKey::SeosKey(const void *buf, size_t buflen)
     : Key()
 {
     d_keyType = SEOS_KEY_DES;
-    d_key.resize(SeosKey::getLength());
-    Key::clear();
+    Key::setData(buf, buflen);
+}
 
-    if (buf != nullptr && buflen >= SeosKey::getLength())
-    {
-        d_key.clear();
-        d_key.insert(d_key.end(), reinterpret_cast<const unsigned char *>(buf),
-                     reinterpret_cast<const unsigned char *>(buf) + SeosKey::getLength());
-        d_isEmpty = false;
-    }
+SeosKey::SeosKey(const ByteVector &data)
+    : Key()
+{
+    Key::setData(data);
 }
 
 size_t SeosKey::getLength() const
@@ -75,15 +69,6 @@ bool SeosKey::operator==(const SeosKey &key) const
     {
         return false;
     }
-    if (isEmpty() && key.isEmpty())
-    {
-        return true;
-    }
-
-    if (getLength() != key.getLength() || isEmpty() || key.isEmpty())
-    {
-        return false;
-    }
 
     return (getKeyType() == key.getKeyType());
 }
@@ -101,6 +86,6 @@ std::string SeosKey::SeosKeyTypeStr(SeosKeyType t)
 void SeosKey::setKeyType(SeosKeyType keyType)
 {
     d_keyType = keyType;
-    d_key.resize(getLength());
+    d_data.resize(getLength(), 0x00);
 }
 }

@@ -206,7 +206,6 @@ void SAMAV1ISO7816Commands::authenticateHostDES(std::shared_ptr<DESFireKey> key,
 {
     ByteVector data;
     unsigned char authMode = 0x00;
-    size_t keylength       = key->getLength();
 
     data.push_back(keyno);
     data.push_back(key->getKeyVersion());
@@ -221,7 +220,7 @@ void SAMAV1ISO7816Commands::authenticateHostDES(std::shared_ptr<DESFireKey> key,
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                  "authenticateHostDES P1 failed.");
 
-    ByteVector keyvec(key->getData(), key->getData() + keylength);
+    ByteVector keyvec = key->getData();
 
     // get encRNB
     ByteVector encRNB(result.begin(), result.end() - 2);

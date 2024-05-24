@@ -37,8 +37,7 @@ bool MifarePCSCCommands::loadKey(unsigned char keyno, MifareKeyType keytype,
 {
     bool r = false;
     ISO7816Response result;
-    ByteVector vector_key((unsigned char *)key->getData(),
-                          (unsigned char *)key->getData() + key->getLength());
+    ByteVector vector_key = key->getData();
 
     try
     {

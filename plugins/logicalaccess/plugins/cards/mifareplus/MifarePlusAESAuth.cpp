@@ -38,7 +38,7 @@ bool logicalaccess::MifarePlusAESAuth::AESAuthenticate(std::shared_ptr<AES128Key
 
     ByteVector rnd_b(ret.begin() + 1, ret.begin() + 17);
     return aes_auth_step2(
-        AESHelper::AESDecrypt(rnd_b, ByteVector(key->getData(), key->getData() + 16), {}),
+        AESHelper::AESDecrypt(rnd_b, key->getData(), {}),
         key);
 }
 
@@ -52,8 +52,7 @@ bool logicalaccess::MifarePlusAESAuth::aes_auth_step2(
     data.insert(data.end(), rnd_a.begin(), rnd_a.end());
     data.insert(data.end(), rnd_b.begin(), rnd_b.end());
 
-    ByteVector result =
-        AESHelper::AESEncrypt(data, ByteVector(key->getData(), key->getData() + 16), {});
+    ByteVector result = AESHelper::AESEncrypt(data, key->getData(), {});
     ByteVector command;
 
     command.push_back(0x72);
@@ -77,8 +76,7 @@ bool logicalaccess::MifarePlusAESAuth::aes_auth_final(
     // If we received garbage, the AES code may throw. This means auth failure.
     try
     {
-        auto tmp_rnd_a_reader = AESHelper::AESDecrypt(
-            rnd_a_reader, ByteVector(key->getData(), key->getData() + 16), {});
+        auto tmp_rnd_a_reader = AESHelper::AESDecrypt(rnd_a_reader, key->getData(), {});
         rotate(tmp_rnd_a_reader.rbegin(), tmp_rnd_a_reader.rbegin() + 1,
                tmp_rnd_a_reader.rend());
 

@@ -43,14 +43,15 @@ void MifareUltralightCOmnikeyXX22Commands::authenticate(
     EXCEPTION_ASSERT(authkey->getLength() >= 16, LibLogicalAccessException,
                      "Invalid key length.");
 
+    ByteVector keydata = authkey->getData();
     // Load key part1 to key slot 1
     getPCSCReaderCardAdapter()->sendAPDUCommand(
         0xFF, 0x82, 0x00, 0x00, 0x08,
-        ByteVector(authkey->getData(), authkey->getData() + 8));
+        ByteVector(keydata.begin(), keydata.begin() + 8));
     // Load key part2 to key slot 2
     getPCSCReaderCardAdapter()->sendAPDUCommand(
         0xFF, 0x82, 0x00, 0x01, 0x08,
-        ByteVector(authkey->getData() + 8, authkey->getData() + 16));
+        ByteVector(keydata.begin() + 8, keydata.begin() + 16));
 
     // Authenticate with key 0
     ByteVector command;

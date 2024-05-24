@@ -43,11 +43,11 @@ class LLA_CARDS_MIFARE_API MifareKey : public Key
      * \param buflen The buffer length.
      */
     MifareKey(const void *buf, size_t buflen);
-
+    
     /**
-     * \brief Clear the key.
+     * Create a key from a bytes vector.
      */
-    void clear() override;
+    explicit MifareKey(const ByteVector &data);
 
     /**
      * \brief Get the key length.
@@ -57,23 +57,10 @@ class LLA_CARDS_MIFARE_API MifareKey : public Key
     {
         return MIFARE_KEY_SIZE;
     }
-
-    /**
-     * \brief Get the key data.
-     * \return The key data.
-     */
-    const unsigned char *getData() const override
+    
+    virtual unsigned char getEmptyByte() const
     {
-        return d_key;
-    }
-
-    /**
-     * \brief Get the key data.
-     * \return The key data.
-     */
-    unsigned char *getData() override
-    {
-        return d_key;
+        return 0xff;
     }
 
     /**
@@ -93,30 +80,6 @@ class LLA_CARDS_MIFARE_API MifareKey : public Key
      * \return The Xml node name.
      */
     std::string getDefaultXmlNodeName() const override;
-
-    bool operator==(MifareKey b)
-    {
-      unsigned char *keyA = this->getData();
-      unsigned char *keyB = b.getData();
-
-      for (unsigned int i = 0; i != 6; i++)
-      {;
-        if (keyA[i] != keyB[i])
-          return false;
-      }
-      return true;
-    }
-
-    bool operator!=(MifareKey b)
-    {
-      bool a = (*this) == b;
-      return !a;
-    }
-  private:
-    /**
-     * \brief The key bytes
-     */
-    unsigned char d_key[MIFARE_KEY_SIZE];
 };
 }
 

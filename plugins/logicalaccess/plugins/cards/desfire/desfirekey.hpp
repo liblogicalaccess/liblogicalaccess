@@ -62,30 +62,17 @@ class LLA_CARDS_DESFIRE_API DESFireKey : public Key
      * \param buflen The buffer length.
      */
     DESFireKey(const void *buf, size_t buflen);
+    
+    /**
+     * Create a key from a bytes vector.
+     */
+    explicit DESFireKey(const ByteVector &data);
 
     /**
      * \brief Get the key length.
      * \return The key length.
      */
     size_t getLength() const override;
-
-    /**
-     * \brief Get the key data.
-     * \return The key data.
-     */
-    const unsigned char *getData() const override
-    {
-        return &d_key[0];
-    }
-
-    /**
-     * \brief Get the key data.
-     * \return The key data.
-     */
-    unsigned char *getData() override
-    {
-        return &d_key[0];
-    }
 
     /**
      * \brief Set the key version
@@ -162,11 +149,6 @@ class LLA_CARDS_DESFIRE_API DESFireKey : public Key
     static std::string DESFireKeyTypeStr(DESFireKeyType t);
 
   private:
-    /**
-     * \brief The key bytes;
-     */
-    ByteVector d_key;
-
     /**
      * \brief The key version.
      */

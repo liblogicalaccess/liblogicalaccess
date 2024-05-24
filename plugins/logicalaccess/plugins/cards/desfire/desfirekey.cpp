@@ -13,7 +13,6 @@ DESFireKey::DESFireKey()
     : Key()
 {
     d_keyType = DF_KEY_DES;
-    d_key.resize(DESFireKey::getLength());
     d_key_version = 0;
     Key::clear();
 }
@@ -22,9 +21,7 @@ DESFireKey::DESFireKey(const std::string &str)
     : Key()
 {
     d_keyType = DF_KEY_DES;
-    d_key.resize(DESFireKey::getLength());
     d_key_version = 0;
-    Key::clear();
     Key::fromString(str);
 }
 
@@ -32,18 +29,16 @@ DESFireKey::DESFireKey(const void *buf, size_t buflen)
     : Key()
 {
     d_keyType = DF_KEY_DES;
-    d_key.resize(DESFireKey::getLength());
     d_key_version = 0;
-    Key::clear();
+    Key::setData(buf, buflen);
+}
 
-    if (buf != nullptr && buflen >= DESFireKey::getLength())
-    {
-        d_key.clear();
-        d_key.insert(d_key.end(), reinterpret_cast<const unsigned char *>(buf),
-                     reinterpret_cast<const unsigned char *>(buf) +
-                         DESFireKey::getLength());
-        d_isEmpty = false;
-    }
+DESFireKey::DESFireKey(const ByteVector &data)
+    : Key()
+{
+    d_keyType = DF_KEY_DES;
+    d_key_version = 0;
+    Key::setData(data);
 }
 
 size_t DESFireKey::getLength() const
@@ -92,15 +87,6 @@ bool DESFireKey::operator==(const DESFireKey &key) const
     {
         return false;
     }
-    if (isEmpty() && key.isEmpty())
-    {
-        return true;
-    }
-
-    if (getLength() != key.getLength() || isEmpty() || key.isEmpty())
-    {
-        return false;
-    }
 
     return (getKeyVersion() == key.getKeyVersion() && getKeyType() == key.getKeyType());
 }
@@ -119,6 +105,6 @@ std::string DESFireKey::DESFireKeyTypeStr(DESFireKeyType t)
 void DESFireKey::setKeyType(DESFireKeyType keyType)
 {
     d_keyType = keyType;
-    d_key.resize(getLength());
+    d_data.resize(getLength(), 0x00);
 }
 }

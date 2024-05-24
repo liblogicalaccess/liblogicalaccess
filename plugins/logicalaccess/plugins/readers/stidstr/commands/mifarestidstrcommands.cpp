@@ -72,11 +72,12 @@ bool MifareSTidSTRCommands::loadKey(unsigned char keyno, MifareKeyType keytype,
                          << std::dec << "(" << keyno << ")} key type {0x" << std::hex
                          << keytype << std::dec << "(" << keytype << ")} key len {"
                          << key->getLength() << "} volatile ? {" << vol << "}";
+    ByteVector keydata = key->getData();
     ByteVector command;
     command.push_back(static_cast<unsigned char>(keytype));
     command.push_back(vol ? 0x00 : 0x01);
     command.push_back(keyno);
-    command.insert(command.end(), key->getData(), key->getData() + key->getLength());
+    command.insert(command.end(), keydata.begin(), keydata.end());
     command.push_back(0x00); // Diversify ?
 
     getSTidSTRReaderCardAdapter()->sendCommand(0x00D0, command);

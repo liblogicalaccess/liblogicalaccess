@@ -473,9 +473,7 @@ void DESFireEV1STidSTRCommands::loadKey(std::shared_ptr<DESFireKey> key)
     if (std::dynamic_pointer_cast<ComputerMemoryKeyStorage>(key_storage))
     {
         LOG(LogLevel::INFOS) << "Using computer memory key storage...";
-        unsigned char *keydata = key->getData();
-        loadKey(ByteVector(keydata, keydata + key->getLength()),
-                key->getKeyDiversification() != nullptr, true);
+        loadKey(key->getData(), key->getKeyDiversification() != nullptr, true);
     }
     else if (std::dynamic_pointer_cast<ReaderMemoryKeyStorage>(key_storage))
     {
@@ -846,10 +844,10 @@ void DESFireEV1STidSTRCommands::changeKey(unsigned char keyno,
                 command.push_back(key->getKeyVersion());
             }
 
-            unsigned char *keydata = key->getData();
-            command.insert(command.end(), keydata, keydata + key->getLength());
+            ByteVector keydata = key->getData();
+            command.insert(command.end(), keydata.begin(), keydata.end());
             keydata = oldKey->getData();
-            command.insert(command.end(), keydata, keydata + oldKey->getLength());
+            command.insert(command.end(), keydata.begin(), keydata.end());
 
             getSTidSTRReaderCardAdapter()->sendCommand(0x00C4, command);
         }
@@ -1011,8 +1009,8 @@ void DESFireEV1STidSTRCommands::setConfiguration(std::shared_ptr<DESFireKey> def
     ByteVector command;
     command.push_back(0x01);
     command.push_back(0x19);
-    unsigned char *keydata = defaultKey->getData();
-    command.insert(command.end(), keydata, keydata + 24);
+    ByteVector keydata = defaultKey->getData();
+    command.insert(command.end(), keydata.begin(), keydata.begin() + 24);
     command.push_back(defaultKey->getKeyVersion());
 
     getSTidSTRReaderCardAdapter()->sendCommand(0x005C, command);

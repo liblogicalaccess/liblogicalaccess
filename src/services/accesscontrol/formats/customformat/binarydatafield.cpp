@@ -17,29 +17,18 @@ BinaryFieldValue::BinaryFieldValue()
     : Key()
 {
     Key::clear();
-    d_buf.clear();
 }
 
 BinaryFieldValue::BinaryFieldValue(const std::string &str)
     : Key()
 {
-    d_buf.clear();
-    d_buf.resize((str.size() + 2) / 3);
-    Key::clear();
     Key::fromString(str);
 }
 
 BinaryFieldValue::BinaryFieldValue(const ByteVector &buf)
     : Key()
 {
-    Key::clear();
-    d_buf.clear();
-
-    if (buf.size() != 0)
-    {
-        d_buf.insert(d_buf.end(), buf.begin(), buf.end());
-        d_isEmpty = false;
-    }
+    Key::setData(buf);
 }
 
 void BinaryFieldValue::serialize(boost::property_tree::ptree &parentNode)
@@ -77,8 +66,7 @@ void BinaryDataField::setValue(ByteVector value)
 
 ByteVector BinaryDataField::getValue() const
 {
-    const unsigned char *vdata = d_value.getData();
-    return ByteVector(vdata, vdata + d_value.getLength());
+    return d_value.getData();
 }
 
 void BinaryDataField::setPaddingChar(unsigned char padding)
@@ -94,7 +82,7 @@ unsigned char BinaryDataField::getPaddingChar() const
 BitsetStream BinaryDataField::getLinearData(const BitsetStream &) const
 {
     unsigned int fieldDataLengthBytes = (d_length + 7) / 8;
-    ByteVector tmp(d_value.getData(), d_value.getData() + d_value.getLength());
+    ByteVector tmp = d_value.getData();
 
     BitsetStream paddedBuffer(d_padding, fieldDataLengthBytes);
     unsigned int copyValueLength = static_cast<unsigned int>(tmp.size()) * 8 > d_length

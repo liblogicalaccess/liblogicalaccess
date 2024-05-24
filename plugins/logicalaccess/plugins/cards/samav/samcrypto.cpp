@@ -35,7 +35,7 @@ ByteVector SAMDESfireCrypto::authenticateHostP1(std::shared_ptr<DESFireKey> key,
                                                 ByteVector encRndB,
                                                 unsigned char /*keyno*/)
 {
-    ByteVector keyvec(key->getData(), key->getData() + key->getLength());
+    ByteVector keyvec = key->getData();
 
     if (key->getKeyType() == DF_KEY_AES)
         d_cipher.reset(new openssl::AESCipher());
@@ -71,7 +71,7 @@ ByteVector SAMDESfireCrypto::authenticateHostP1(std::shared_ptr<DESFireKey> key,
 void SAMDESfireCrypto::authenticateHostP2(unsigned char keyno, ByteVector encRndA1,
                                           std::shared_ptr<DESFireKey> key)
 {
-    ByteVector keyvec(key->getData(), key->getData() + key->getLength());
+    ByteVector keyvec = key->getData();
     ByteVector checkRndA;
     ByteVector rndA;
     openssl::AESSymmetricKey cipherkey = openssl::AESSymmetricKey::createFromData(keyvec);

@@ -14,6 +14,7 @@
 #include <cstring>
 
 #include <logicalaccess/plugins/llacommon/logs.hpp>
+#include <logicalaccess/myexception.hpp>
 #include <logicalaccess/plugins/crypto/aes_cipher.hpp>
 #include <logicalaccess/plugins/crypto/aes_symmetric_key.hpp>
 #include <logicalaccess/plugins/crypto/aes_initialization_vector.hpp>
@@ -30,7 +31,6 @@ const std::string Key::secureAiKey = "Obscurity is not security Julien would say
 
 Key::Key()
 {
-    d_isEmpty = true;
     d_key_storage.reset(new ComputerMemoryKeyStorage());
     d_cipherKey         = "";
     d_storeCipheredData = true;
@@ -38,22 +38,24 @@ Key::Key()
 
 void Key::clear()
 {
-    if (getLength() > 0)
-    {
-        memset(getData(), 0x00, getLength());
-    }
+    d_data.clear();
+}
+
+bool Key::isEmpty() const
+{
+    return (d_data.size() == 0 && d_key_storage->getType() == KST_COMPUTER_MEMORY);
 }
 
 std::string Key::getString(bool withSpace) const
 {
-    const unsigned char *data = getData();
     std::ostringstream oss;
 
     oss << std::setfill('0');
 
-    if (!d_isEmpty)
+    if (!isEmpty())
     {
-        for (size_t i = 0; i < getLength(); ++i)
+        ByteVector data = getData();
+        for (size_t i = 0; i < data.size(); ++i)
         {
             oss << std::setw(2) << std::hex << static_cast<unsigned int>(data[i]);
 
@@ -69,54 +71,67 @@ std::string Key::getString(bool withSpace) const
 
 bool Key::fromString(const std::string &str)
 {
-    unsigned char *data = getData();
     std::istringstream iss(str);
-
-    if (str == "")
+    clear();
+    if (str != "")
     {
-        d_isEmpty = true;
-    }
-    else
-    {
+        unsigned int tmp;
         for (size_t i = 0; i < getLength(); ++i)
         {
-            unsigned int tmp;
-
             if (!iss.good())
             {
-                d_isEmpty = true;
-
                 return false;
             }
 
             iss >> std::hex >> tmp;
-
-            data[i] = static_cast<unsigned char>(tmp);
+            d_data.push_back(static_cast<unsigned char>(tmp));
         }
-
-        d_isEmpty = false;
     }
 
     return true;
 }
 
-void Key::setData(const unsigned char *data)
+void Key::setData(const void *buf, size_t buflen)
 {
-    memcpy(getData(), data, getLength());
-    d_isEmpty = false;
+    clear();
+    if (buf != nullptr)
+    {
+        size_t end = buflen;
+        if (getLength() > 0)
+        {
+            end = getLength();
+            if (buflen < end)
+            {
+                THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Wrong key data length.");
+            }
+        }
+        d_data.insert(d_data.end(), reinterpret_cast<const unsigned char *>(buf), reinterpret_cast<const unsigned char *>(buf) + end);
+    }
 }
 
-void Key::setData(const ByteVector &data, size_t offset)
+void Key::setData(const ByteVector &data)
 {
-    if (data.size() == 0)
+    clear();
+    size_t end = data.size();
+    if (getLength() > 0)
     {
-        d_isEmpty = true;
+        end = getLength();
+        if (data.size() < end)
+        {
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Wrong key data length.");
+        }
     }
-    else
+    d_data.insert(d_data.begin(), data.begin(), data.begin() + end);
+}
+
+ByteVector Key::getData() const
+{
+    ByteVector data = d_data;
+    if (getLength() > 0 && data.size() != getLength())
     {
-        memcpy(getData(), &data[offset], getLength());
-        d_isEmpty = false;
+        data.resize(getLength(), getEmptyByte());
     }
+    return data;
 }
 
 void Key::setKeyStorage(std::shared_ptr<KeyStorage> key_storage)
@@ -140,7 +155,7 @@ void Key::serialize(boost::property_tree::ptree &node)
         d_key_diversification->serialize(newnode);
         node.add_child("KeyDiversification", newnode);
     }
-    node.put("IsCiphered", (d_storeCipheredData && !d_isEmpty));
+    node.put("IsCiphered", (d_storeCipheredData && !isEmpty()));
     cipherKeyData(node);
     d_key_storage->serialize(node);
 }
@@ -196,7 +211,7 @@ void Key::setCipherKey(const std::string &key)
 
 void Key::cipherKeyData(boost::property_tree::ptree &node)
 {
-    if (!d_storeCipheredData || d_isEmpty)
+    if (!d_storeCipheredData || isEmpty())
     {
         node.put("Data", getString());
     }
@@ -265,7 +280,7 @@ void Key::uncipherKeyData(boost::property_tree::ptree &node)
     }
 }
 
-bool Key::operator==(const Key &key) const
+bool Key::isEqual(const Key &key) const
 {
     if (isEmpty() && key.isEmpty())
     {
@@ -277,22 +292,17 @@ bool Key::operator==(const Key &key) const
         return false;
     }
 
-    return (memcmp(getData(), key.getData(), getLength()) == 0);
+    return std::equal(getData().begin(), getData().end(), key.getData().begin());
+}
+
+bool Key::operator==(const Key &key) const
+{
+    return isEqual(key);
 }
 
 bool Key::operator!=(const Key &key) const
 {
-    if (isEmpty() && key.isEmpty())
-    {
-        return false;
-    }
-
-    if (getLength() != key.getLength() || isEmpty() || key.isEmpty())
-    {
-        return true;
-    }
-
-    return (memcmp(getData(), key.getData(), getLength()) != 0);
+    return !isEqual(key);
 }
 
 std::ostream &operator<<(std::ostream &os, const Key &key)
@@ -308,10 +318,5 @@ std::shared_ptr<KeyDiversification> Key::getKeyDiversification() const
 void Key::setKeyDiversification(std::shared_ptr<KeyDiversification> div)
 {
     d_key_diversification = div;
-}
-
-ByteVector Key::getBytes() const
-{
-    return ByteVector(getData(), getData() + getLength());
 }
 }

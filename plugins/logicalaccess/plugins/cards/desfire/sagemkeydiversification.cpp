@@ -55,8 +55,8 @@ ByteVector SagemKeyDiversification::getDiversifiedKey(std::shared_ptr<Key> key,
     }
     else
     {
-        vkeydata.insert(vkeydata.end(), desfirekey->getData(),
-                        desfirekey->getData() + desfirekey->getLength());
+        ByteVector keycipher = desfirekey->getData();
+        vkeydata.insert(vkeydata.end(), keycipher.begin(), keycipher.end());
     }
 
     ByteVector r = DESFireCrypto::sam_CBC_send(

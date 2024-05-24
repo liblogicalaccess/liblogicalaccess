@@ -38,30 +38,30 @@ class LLA_CORE_API Key : public XmlSerializable,
      * \return The key length.
      */
     virtual size_t getLength() const = 0;
+    
+    virtual unsigned char getEmptyByte() const
+    {
+        return 0x00;
+    }
 
     /**
      * \brief Get the key data.
      * \return The key data.
      */
-    virtual const unsigned char *getData() const = 0;
-
+    virtual ByteVector getData() const;
+    
     /**
-     * \brief Get the key data.
-     * \return The key data.
+     * \brief Set the key data.
+     * \param buf The buffer.
+     * \param buflen The buffer length.
      */
-    virtual unsigned char *getData() = 0;
+    virtual void setData(const void *buf, size_t buflen);
 
     /**
      * \brief Set the key data.
      * \param data The key data.
      */
-    virtual void setData(const unsigned char *data);
-
-    /**
-     * \brief Set the key data.
-     * \param data The key data.
-     */
-    virtual void setData(const ByteVector &data, size_t offset = 0);
+    virtual void setData(const ByteVector &data);
 
     /**
      * \brief Get the string representation of the key.
@@ -73,10 +73,7 @@ class LLA_CORE_API Key : public XmlSerializable,
      * \brief Get if key data are empty.
      * \return True if empty, false otherwise.
      */
-    bool isEmpty() const
-    {
-        return (d_isEmpty && d_key_storage->getType() == KST_COMPUTER_MEMORY);
-    }
+    bool isEmpty() const;
 
     /**
      * \brief Set the key from a string representation of it.
@@ -110,6 +107,13 @@ class LLA_CORE_API Key : public XmlSerializable,
      * \param node The XML node.
      */
     void unSerialize(boost::property_tree::ptree &node) override;
+    
+    /**
+     * \brief Check if a key is equals.
+     * \param key Key to compare.
+     * \return True if equals, false otherwise.
+     */
+    bool Key::isEqual(const Key &key) const;
 
     /**
      * \brief Equality operator
@@ -147,11 +151,6 @@ class LLA_CORE_API Key : public XmlSerializable,
 
     std::shared_ptr<KeyDiversification> getKeyDiversification() const;
 
-    /**
-     * Retrieve the bytes of the key.
-     */
-    ByteVector getBytes() const;
-
   private:
     /**
      * \brief The default 'secure' key for ciphering.
@@ -171,10 +170,6 @@ class LLA_CORE_API Key : public XmlSerializable,
     void uncipherKeyData(boost::property_tree::ptree &node);
 
   protected:
-    /**
-     * \brief Checked if key data are empty.
-     */
-    bool d_isEmpty;
 
     /**
      * \brief The key storage used for this key.
@@ -195,6 +190,11 @@ class LLA_CORE_API Key : public XmlSerializable,
      * \brief The data is stored ciphered or not.
      */
     bool d_storeCipheredData;
+    
+    /**
+     * \biref The key data.
+     */
+    ByteVector d_data;
 };
 
 /**

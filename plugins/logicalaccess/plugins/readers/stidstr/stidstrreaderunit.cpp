@@ -664,11 +664,11 @@ void STidSTRReaderUnit::authenticateHMAC()
      * COMPONENTS */
 
     ByteVector rndA        = authenticateReader1(true);
-    unsigned char *keydata = key->getData();
-    buf1.insert(buf1.end(), keydata, keydata + key->getLength());
+    ByteVector keydata = key->getData();
+    buf1.insert(buf1.end(), keydata.begin(), keydata.end());
     buf1.insert(buf1.end(), rndA.begin(), rndA.end());
 
-    HMAC(EVP_sha1(), key->getData(), static_cast<int>(key->getLength()), &buf1[0],
+    HMAC(EVP_sha1(), &keydata[0], static_cast<int>(keydata.size()), &buf1[0],
          buf1.size(), &key16ks[0], &len);
     key16ks.resize(key16ks.size() - 4);
     openssl::AESSymmetricKey aeskey = openssl::AESSymmetricKey::createFromData(key16ks);
@@ -721,9 +721,7 @@ void STidSTRReaderUnit::authenticateAES()
         key.reset(new AES128Key("E7 4A 54 0F A0 7C 4D B1 B4 64 21 12 6D F7 AD 36"));
     }
 
-    unsigned char *keydata          = key->getData();
-    openssl::AESSymmetricKey aeskey = openssl::AESSymmetricKey::createFromData(
-        ByteVector(keydata, keydata + key->getLength()));
+    openssl::AESSymmetricKey aeskey = openssl::AESSymmetricKey::createFromData(key->getData());
     openssl::AESInitializationVector aesiv =
         openssl::AESInitializationVector::createNull();
     openssl::AESCipher cipher(openssl::OpenSSLSymmetricCipher::ENC_MODE_CBC);

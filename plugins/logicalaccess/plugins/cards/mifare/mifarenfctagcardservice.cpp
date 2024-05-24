@@ -331,11 +331,11 @@ void MifareNFCTagCardService::writeInfo(int baseAddr, std::shared_ptr<MifareKey>
   location->useMAD = useMad;
   location->aid    = 0x03E1;
   aiToWrite->keyA.reset(new MifareKey(FULL_SECTOR_KEY));
-  aiToWrite->keyB.reset(new MifareKey(keyB->getData(), keyB->getLength()));
+  aiToWrite->keyB.reset(new MifareKey(keyB->getData()));
   aiToWrite->sab.setNfcConfiguration();
   aiToWrite->gpb = 0x40;
-  aiToWrite->madKeyA.reset(new MifareKey(madKey->getData(), madKey->getLength()));
-  aiToWrite->madKeyB.reset(new MifareKey(keyB->getData(), keyB->getLength()));
+  aiToWrite->madKeyA.reset(new MifareKey(madKey->getData()));
+  aiToWrite->madKeyB.reset(new MifareKey(keyB->getData()));
   aiToWrite->madGPB = 0xC1;
 
   int endSector = (baseAddr + tmpBuffer.size()) / 64;
@@ -383,12 +383,12 @@ void MifareNFCTagCardService::writeInfo(int baseAddr, std::shared_ptr<MifareAcce
   }
   location->useMAD = false;
   location->aid    = 0x03E1;
-  newAiToWrite->keyA.reset(new MifareKey(nfcKey->getData(), nfcKey->getLength()));
-  newAiToWrite->keyB.reset(new MifareKey(aiToWrite->keyB->getData(), aiToWrite->keyB->getLength()));
+  newAiToWrite->keyA.reset(new MifareKey(nfcKey->getData()));
+  newAiToWrite->keyB.reset(new MifareKey(aiToWrite->keyB->getData()));
   newAiToWrite->sab.setNfcConfiguration();
   newAiToWrite->gpb = 0x40;
-  newAiToWrite->madKeyA.reset(new MifareKey(aiToWrite->madKeyA->getData(), aiToWrite->madKeyA->getLength()));
-  newAiToWrite->madKeyB.reset(new MifareKey(aiToWrite->madKeyB->getData(), aiToWrite->madKeyB->getLength()));
+  newAiToWrite->madKeyA.reset(new MifareKey(aiToWrite->madKeyA->getData()));
+  newAiToWrite->madKeyB.reset(new MifareKey(aiToWrite->madKeyB->getData()));
   newAiToWrite->madGPB = 0xC1;
 
   int endSector = (baseAddr + tmpBuffer.size()) / 64;

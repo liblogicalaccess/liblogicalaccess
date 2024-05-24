@@ -39,8 +39,7 @@ bool MifareCherryCommands::loadKey(unsigned char keyno, MifareKeyType /*keytype*
     {
         keyno = 1;
     }
-    ByteVector vector_key((unsigned char *)key->getData(),
-                          (unsigned char *)key->getData() + key->getLength());
+    ByteVector vector_key = key->getData();
     getPCSCReaderCardAdapter()->sendAPDUCommand(
         0xFF, 0x82, 0x00, keyno, static_cast<unsigned char>(key->getLength()),
         vector_key);

@@ -34,9 +34,7 @@ bool MifareSCMCommands::loadKey(unsigned char keyno, MifareKeyType keytype,
                                 std::shared_ptr<MifareKey> key, bool vol)
 {
     bool r = false;
-
-    ByteVector vector_key((unsigned char *)key->getData(),
-                          (unsigned char *)key->getData() + key->getLength());
+    ByteVector vector_key = key->getData();
 
     auto result = getPCSCReaderCardAdapter()->sendAPDUCommand(
         0xFF, 0x82, 0x00, static_cast<unsigned char>(keytype),
