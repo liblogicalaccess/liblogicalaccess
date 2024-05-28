@@ -76,7 +76,7 @@ bool Key::fromString(const std::string &str)
     if (str != "")
     {
         unsigned int tmp;
-        for (size_t i = 0; i < getLength(); ++i)
+        for (size_t i = 0; i < getLength() || getLength() == 0; ++i)
         {
             if (!iss.good())
             {

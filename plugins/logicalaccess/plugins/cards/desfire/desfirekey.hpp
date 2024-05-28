@@ -73,6 +73,15 @@ class LLA_CARDS_DESFIRE_API DESFireKey : public Key
      * \return The key length.
      */
     size_t getLength() const override;
+    
+    /**
+     * \brief Override the key length.
+     * \param length The key length.
+     */
+    void setLength(size_t length)
+    {
+        d_length = length;
+    }
 
     /**
      * \brief Set the key version
@@ -158,6 +167,11 @@ class LLA_CARDS_DESFIRE_API DESFireKey : public Key
      * \brief The DESFire key type.
      */
     DESFireKeyType d_keyType;
+    
+    /**
+     * \brief The overriden key length, if forced.
+     */
+    size_t d_length;
 };
 }
 

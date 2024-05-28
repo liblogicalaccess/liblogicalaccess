@@ -14,6 +14,7 @@ DESFireKey::DESFireKey()
 {
     d_keyType = DF_KEY_DES;
     d_key_version = 0;
+    d_length = 0;
     Key::clear();
 }
 
@@ -22,6 +23,7 @@ DESFireKey::DESFireKey(const std::string &str)
 {
     d_keyType = DF_KEY_DES;
     d_key_version = 0;
+    d_length = 0;
     Key::fromString(str);
 }
 
@@ -30,6 +32,7 @@ DESFireKey::DESFireKey(const void *buf, size_t buflen)
 {
     d_keyType = DF_KEY_DES;
     d_key_version = 0;
+    d_length = 0;
     Key::setData(buf, buflen);
 }
 
@@ -38,11 +41,17 @@ DESFireKey::DESFireKey(const ByteVector &data)
 {
     d_keyType = DF_KEY_DES;
     d_key_version = 0;
+    d_length = 0;
     Key::setData(data);
 }
 
 size_t DESFireKey::getLength() const
 {
+    if (d_length > 0)
+    {
+        return d_length;
+    }
+    
     size_t length = 0;
 
     switch (d_keyType)
