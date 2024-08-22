@@ -228,13 +228,19 @@ KeyEntryUpdateSettings SAMBasicKeyEntry::getUpdateSettings()
 
 void SAMBasicKeyEntry::setUpdateSettings(const KeyEntryUpdateSettings &t)
 {
-    bool *x      = (bool *)&t;
-    d_updatemask = 0;
+    d_updatemask = SAMBasicKeyEntry::getUpdateMask(t);
+}
+
+unsigned char SAMBasicKeyEntry::getUpdateMask(const KeyEntryUpdateSettings &t)
+{
+	bool *x      = (bool *)&t;
+    unsigned char updatemask = 0;
     for (unsigned char i = 0; i < sizeof(KeyEntryUpdateSettings); ++i)
     {
-        d_updatemask += x[i];
+        updatemask += x[i];
         if (i + (unsigned int)1 < sizeof(KeyEntryUpdateSettings))
-            d_updatemask = d_updatemask << 1;
+            updatemask = updatemask << 1;
     }
+	return updatemask;
 }
 }

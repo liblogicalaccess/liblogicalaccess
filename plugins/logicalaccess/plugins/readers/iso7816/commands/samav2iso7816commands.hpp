@@ -78,6 +78,12 @@ class LLA_READERS_ISO7816_API SAMAV2ISO7816Commands
     ByteVector decipherOfflineData(ByteVector data) override;
 
     ByteVector encipherOfflineData(ByteVector data) override;
+	
+	void changeKeyEntryOffline(unsigned char keyno, const KeyEntryUpdateSettings& updateSettings, unsigned short changecnt, const ByteVector& encke) override;
+	
+	void changeKUCEntryOffline(unsigned char kucno, const KucEntryUpdateSettings& updateSettings, unsigned short changecnt, const ByteVector& enckuc) override;
+	
+	void disableKeyEntryOffline(unsigned char keyno, unsigned short changecnt, const ByteVector& encuid) override;
 
     virtual ByteVector cmacOffline(const ByteVector &data);
 

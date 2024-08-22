@@ -588,6 +588,75 @@ void SAMAV2ISO7816Commands::changeKeyEntry(
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "changeKeyEntry failed.");
 }
 
+void SAMAV2ISO7816Commands::changeKeyEntryOffline(
+	unsigned char keyno,
+	const KeyEntryUpdateSettings& updateSettings,
+	unsigned short changecnt,
+	const ByteVector& encke)
+{
+	unsigned char proMas = SAMBasicKeyEntry::getUpdateMask(updateSettings);
+
+	ByteVector vectordata;
+    vectordata.push_back(static_cast<unsigned char>((changecnt >> 8) & 0xff));
+    vectordata.push_back(static_cast<unsigned char>(changecnt & 0xff));
+	vectordata.insert(vectordata.end(), encke.begin(), encke.end());
+
+    unsigned char cmd[] = {d_cla, 0xc1, keyno, proMas, (unsigned char)vectordata.size()};
+    ByteVector cmd_vector(cmd, cmd + 5);
+    cmd_vector.insert(cmd_vector.end(), vectordata.begin(), vectordata.end());
+
+    ByteVector result = transmit(cmd_vector, true, true);
+
+    if (result.size() >= 2 &&
+        (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "changeKeyEntryOffline failed.")
+}
+
+void SAMAV2ISO7816Commands::changeKUCEntryOffline(
+	unsigned char kucno,
+	const KucEntryUpdateSettings& updateSettings,
+	unsigned short changecnt,
+	const ByteVector& enckuc)
+{
+	unsigned char proMas = SAMKucEntry::getUpdateMask(updateSettings);
+	
+	ByteVector vectordata;
+    vectordata.push_back(static_cast<unsigned char>((changecnt >> 8) & 0xff));
+    vectordata.push_back(static_cast<unsigned char>(changecnt & 0xff));
+	vectordata.insert(vectordata.end(), enckuc.begin(), enckuc.end());
+	
+	unsigned char cmd[] = {d_cla, 0xcc, kucno, proMas, (unsigned char)vectordata.size()};
+    ByteVector cmd_vector(cmd, cmd + 5);
+    cmd_vector.insert(cmd_vector.end(), vectordata.begin(), vectordata.end());
+
+    ByteVector result = transmit(cmd_vector, true, true);
+
+    if (result.size() >= 2 &&
+        (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "changeKUCEntryOffline failed.")
+}
+
+void SAMAV2ISO7816Commands::disableKeyEntryOffline(
+	unsigned char keyno,
+	unsigned short changecnt,
+	const ByteVector& encuid)
+{
+	ByteVector vectordata;
+    vectordata.push_back(static_cast<unsigned char>((changecnt >> 8) & 0xff));
+    vectordata.push_back(static_cast<unsigned char>(changecnt & 0xff));
+	vectordata.insert(vectordata.end(), encuid.begin(), encuid.end());
+	
+	unsigned char cmd[] = {d_cla, 0xd8, keyno, 0x00, (unsigned char)vectordata.size()};
+    ByteVector cmd_vector(cmd, cmd + 5);
+    cmd_vector.insert(cmd_vector.end(), vectordata.begin(), vectordata.end());
+
+    ByteVector result = transmit(cmd_vector, true, true);
+
+    if (result.size() >= 2 &&
+        (result[result.size() - 2] != 0x90 || result[result.size() - 1] != 0x00))
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "disableKeyEntryOffline failed.")
+}
+
 ByteVector SAMAV2ISO7816Commands::dumpSecretKey(unsigned char keyno,
                                                 unsigned char keyversion,
                                                 ByteVector divInpu)

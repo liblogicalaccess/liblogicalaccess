@@ -77,7 +77,7 @@ class SAMCommands : public Commands
     virtual void changeKeyEntry(unsigned char keyno,
                                 std::shared_ptr<SAMKeyEntry<T, S>> keyentry,
                                 std::shared_ptr<DESFireKey> key) = 0;
-    virtual void changeKUCEntry(unsigned char keyno,
+    virtual void changeKUCEntry(unsigned char kucno,
                                 std::shared_ptr<SAMKucEntry> keyentry,
                                 std::shared_ptr<DESFireKey> key) = 0;
     virtual void authenticateHost(std::shared_ptr<DESFireKey> key,

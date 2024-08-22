@@ -26,6 +26,12 @@ class SAMAV2Commands : public ICommands
     virtual ByteVector decipherOfflineData(ByteVector data) = 0;
 
     virtual ByteVector encipherOfflineData(ByteVector data) = 0;
+	
+	virtual void changeKeyEntryOffline(unsigned char keyno, const KeyEntryUpdateSettings& updateSettings, unsigned short changecnt, const ByteVector& encke) = 0;
+	
+	virtual void changeKUCEntryOffline(unsigned char kucno, const KucEntryUpdateSettings& updateSettings, unsigned short changecnt, const ByteVector& enckuc) = 0;
+	
+	virtual void disableKeyEntryOffline(unsigned char keyno, unsigned short changecnt, const ByteVector& encuid)  = 0;
 };
 }
 

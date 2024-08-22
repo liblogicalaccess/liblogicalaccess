@@ -27,13 +27,19 @@ KucEntryUpdateSettings SAMKucEntry::getUpdateSettings()
 
 void SAMKucEntry::setUpdateSettings(const KucEntryUpdateSettings &t)
 {
+    d_updatemask = SAMKucEntry::getUpdateMask(t);
+}
+
+unsigned char SAMKucEntry::getUpdateMask(const KucEntryUpdateSettings &t)
+{
     bool *x      = (bool *)&t;
-    d_updatemask = 0;
+	unsigned char updatemask = 0;
     for (unsigned char i = 0; i < sizeof(t); ++i)
     {
-        d_updatemask += x[i];
+        updatemask += x[i];
         if (i + (unsigned int)1 < sizeof(t))
-            d_updatemask = d_updatemask << 1;
+            updatemask = updatemask << 1;
     }
+	return updatemask;
 }
 }

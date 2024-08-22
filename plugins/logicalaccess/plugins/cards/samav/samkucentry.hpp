@@ -65,6 +65,8 @@ class LLA_CARDS_SAMAV_API SAMKucEntry
 
     KucEntryUpdateSettings getUpdateSettings();
     void setUpdateSettings(const KucEntryUpdateSettings &t);
+	
+	static unsigned char getUpdateMask(const KucEntryUpdateSettings &t);
 
     SAMKUCEntryStruct &getKucEntryStruct()
     {

@@ -206,6 +206,8 @@ class LLA_CARDS_SAMAV_API SAMBasicKeyEntry
     {
         d_updatemask = c;
     }
+	
+	static unsigned char getUpdateMask(const KeyEntryUpdateSettings &t);
 
     KeyEntryUpdateSettings getUpdateSettings();
     void setUpdateSettings(const KeyEntryUpdateSettings &t);
