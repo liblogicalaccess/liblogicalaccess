@@ -52,7 +52,7 @@ class LLA_READERS_STIDSTR_API STidSTRReaderProvider : public ISO7816ReaderProvid
      */
     std::string getRPName() const override
     {
-        return "STid STR";
+        return "SSCP (STid)";
     }
 
     /**

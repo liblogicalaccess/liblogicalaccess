@@ -44,6 +44,7 @@ typedef enum {
 class LLA_READERS_STIDSTR_API DESFireEV1STidSTRCommands : public Commands
 #ifndef SWIG
                                                        ,
+                                                       public DESFireCommands,
                                                        public DESFireEV1Commands
 #endif
 {
