@@ -32,6 +32,14 @@ typedef enum {
 } STidCmdType;
 
 /**
+ * \brief The STid protocol mode (SSCP v2).
+ */
+typedef enum {
+    STID_PM_AUTH_REQUEST  = 0x00, /**< Authentication Request */
+    STID_PM_NORMAL        = 0x01 /**< Normal Communication */
+} STidProtocolMode;
+
+/**
  * \brief A default STidSTR reader/card adapter class.
  */
 class LLA_READERS_STIDSTR_API STidSTRReaderCardAdapter : public ISO7816ReaderCardAdapter
@@ -40,10 +48,14 @@ class LLA_READERS_STIDSTR_API STidSTRReaderCardAdapter : public ISO7816ReaderCar
     /**
      * \brief Constructor.
      * \param adapterType The adapter type.
-     * \param iso7816 ISO7816 communication type (transparent mode)
+     * \param protocolMode The protocol mode.
      */
-    explicit STidSTRReaderCardAdapter(STidCmdType adapterType = STID_CMD_READER,
-                                      bool iso7816            = false);
+    explicit STidSTRReaderCardAdapter(STidProtocolMode protocolMode, STidCmdType adapterType = STID_CMD_READER);
+                                      
+    /**
+     * \brief Constructor, for ISO-7816 command wrapping use.
+     */
+    explicit STidSTRReaderCardAdapter();
 
     /**
      * \brief Destructor.
@@ -127,6 +139,11 @@ class LLA_READERS_STIDSTR_API STidSTRReaderCardAdapter : public ISO7816ReaderCar
      * \brief The adapter type.
      */
     STidCmdType d_adapterType;
+    
+    /**
+     * \brief The protocol mode.
+     */
+    STidProtocolMode d_protocolMode;
 
     /**
     * \brief Use iso7816 / transparent mode.

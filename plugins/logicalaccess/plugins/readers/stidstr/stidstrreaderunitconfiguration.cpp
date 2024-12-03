@@ -26,6 +26,7 @@ void STidSTRReaderUnitConfiguration::resetConfiguration()
     d_rs485Address      = 0;
     d_communicationType = STID_RS232;
     d_communicationMode = STID_CM_PLAIN;
+    d_protocolVersion   = STID_SSCP_V1;
     d_pn532_direct      = false;
     d_key_hmac.reset(new HMAC1Key(""));
     d_key_aes.reset(new AES128Key(""));
@@ -66,14 +67,14 @@ std::string STidSTRReaderUnitConfiguration::getDefaultXmlNodeName() const
 
 unsigned char STidSTRReaderUnitConfiguration::getRS485Address() const
 {
-    LOG(LogLevel::INFOS) << "RS485 Address {0x" << std::hex << d_rs485Address << std::dec
+    LOG(LogLevel::DEBUGS) << "RS485 Address {0x" << std::hex << d_rs485Address << std::dec
                          << "(" << d_rs485Address << ")}";
     return d_rs485Address;
 }
 
 void STidSTRReaderUnitConfiguration::setRS485Address(unsigned char address)
 {
-    LOG(LogLevel::INFOS) << "RS485 Address {0x" << std::hex << address << std::dec << "("
+    LOG(LogLevel::DEBUGS) << "RS485 Address {0x" << std::hex << address << std::dec << "("
                          << address << ")}";
     d_rs485Address = address;
 }
@@ -93,12 +94,12 @@ STidCommunicationType STidSTRReaderUnitConfiguration::getCommunicationType() con
     switch (d_communicationType)
     {
     case STID_RS232:
-        LOG(LogLevel::INFOS) << "Get Communication type {0x" << std::hex
+        LOG(LogLevel::DEBUGS) << "Get Communication type {0x" << std::hex
                              << d_communicationType << std::dec << "("
                              << d_communicationType << ")} {STID_RS232}";
         break;
     case STID_RS485:
-        LOG(LogLevel::INFOS) << "Get Communication type {0x" << std::hex
+        LOG(LogLevel::DEBUGS) << "Get Communication type {0x" << std::hex
                              << d_communicationType << std::dec << "("
                              << d_communicationType << ")} {STID_RS485}";
         break;
@@ -112,12 +113,12 @@ void STidSTRReaderUnitConfiguration::setCommunicationType(STidCommunicationType 
     switch (d_communicationType)
     {
     case STID_RS232:
-        LOG(LogLevel::INFOS) << "Get Communication type {0x" << std::hex
+        LOG(LogLevel::DEBUGS) << "Set Communication type {0x" << std::hex
                              << d_communicationType << std::dec << "("
                              << d_communicationType << ")} {STID_RS232}";
         break;
     case STID_RS485:
-        LOG(LogLevel::INFOS) << "Get Communication type {0x" << std::hex
+        LOG(LogLevel::DEBUGS) << "Set Communication type {0x" << std::hex
                              << d_communicationType << std::dec << "("
                              << d_communicationType << ")} {STID_RS485}";
         break;
@@ -129,29 +130,64 @@ STidCommunicationMode STidSTRReaderUnitConfiguration::getCommunicationMode() con
     switch (d_communicationMode)
     {
     case STID_CM_PLAIN:
-        LOG(LogLevel::INFOS) << "Get Communication mode {0x" << std::hex
+        LOG(LogLevel::DEBUGS) << "Get Communication mode {0x" << std::hex
                              << d_communicationType << std::dec << "("
                              << d_communicationType << ")} {STID_CM_PLAIN}";
         break;
     case STID_CM_SIGNED:
-        LOG(LogLevel::INFOS) << "Get Communication mode {0x" << std::hex
+        LOG(LogLevel::DEBUGS) << "Get Communication mode {0x" << std::hex
                              << d_communicationType << std::dec << "("
                              << d_communicationType << ")} {STID_CM_SIGNED}";
         break;
     case STID_CM_CIPHERED:
-        LOG(LogLevel::INFOS) << "Get Communication mode {0x" << std::hex
+        LOG(LogLevel::DEBUGS) << "Get Communication mode {0x" << std::hex
                              << d_communicationType << std::dec << "("
                              << d_communicationType << ")} {STID_CM_CIPHERED}";
         break;
     case STID_CM_CIPHERED_AND_SIGNED:
-        LOG(LogLevel::INFOS) << "Get Communication mode {0x" << std::hex
+        LOG(LogLevel::DEBUGS) << "Get Communication mode {0x" << std::hex
                              << d_communicationType << std::dec << "("
                              << d_communicationType << ")} {STID_CM_CIPHERED_AND_SIGNED}";
         break;
     case STID_CM_RESERVED:
-        LOG(LogLevel::INFOS) << "Get Communication mode {0x" << std::hex
+        LOG(LogLevel::DEBUGS) << "Get Communication mode {0x" << std::hex
                              << d_communicationType << std::dec << "("
                              << d_communicationType << ")} {STID_CM_RESERVED}";
+        break;
+    }
+    return d_communicationMode;
+}
+
+void STidSTRReaderUnitConfiguration::setProtocolVersion(STidProtocolVersion protocol)
+{
+    d_protocolVersion = protocol;
+    switch (d_protocolVersion)
+    {
+    case STID_SSCP_V1:
+        LOG(LogLevel::DEBUGS) << "Set Protocol Version {0x" << std::hex
+                             << d_protocolVersion << std::dec << "("
+                             << d_protocolVersion << ")} {STID_SSCP_V1}";
+        break;
+    case STID_SSCP_V2:
+        LOG(LogLevel::DEBUGS) << "Set Protocol Version {0x" << std::hex
+                             << d_protocolVersion << std::dec << "("
+                             << d_protocolVersion << ")} {STID_SSCP_V2}";
+        break;
+}
+
+STidProtocolVersion STidSTRReaderUnitConfiguration::getProtocolVersion() const
+{
+    switch (d_protocolVersion)
+    {
+    case STID_SSCP_V1:
+        LOG(LogLevel::DEBUGS) << "Get Protocol Version {0x" << std::hex
+                             << d_protocolVersion << std::dec << "("
+                             << d_protocolVersion << ")} {STID_SSCP_V1}";
+        break;
+    case STID_SSCP_V2:
+        LOG(LogLevel::DEBUGS) << "Get Protocol Version {0x" << std::hex
+                             << d_protocolVersion << std::dec << "("
+                             << d_protocolVersion << ")} {STID_SSCP_V2}";
         break;
     }
     return d_communicationMode;

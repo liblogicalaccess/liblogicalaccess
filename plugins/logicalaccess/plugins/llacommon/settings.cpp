@@ -15,6 +15,7 @@
 #include <boost/property_tree/xml_parser.hpp>
 
 #include <string>
+#include <list>
 
 #ifdef __APPLE__
 #include <CoreFoundation/CoreFoundation.h>

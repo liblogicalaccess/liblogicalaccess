@@ -15,7 +15,7 @@
 namespace logicalaccess
 {
 /**
- * \brief The STidSRT communication type.
+ * \brief The STid communication type.
  */
 typedef enum {
     STID_RS232 = 0x00, /**< RS232 communication */
@@ -23,16 +23,23 @@ typedef enum {
 } STidCommunicationType;
 
 /**
- * \brief The STidSRT communication mode.
+ * \brief The STid communication mode (SSCP v1).
  */
 typedef enum {
     STID_CM_PLAIN    = 0x00, /**< Plain communication */
     STID_CM_SIGNED   = 0x01, /**< Signed communication */
     STID_CM_CIPHERED = 0x02, /**< Ciphered communication */
-    STID_CM_CIPHERED_AND_SIGNED =
-        STID_CM_CIPHERED | STID_CM_SIGNED, /**< Ciphered and signed communication */
-    STID_CM_RESERVED = 0x04                /**< Reserved */
+    STID_CM_CIPHERED_AND_SIGNED = STID_CM_CIPHERED | STID_CM_SIGNED, /**< Ciphered and signed communication */
+    STID_CM_RESERVED = 0x04 /**< Reserved */
 } STidCommunicationMode;
+
+/**
+ * \brief The STid protocol version.
+ */
+typedef enum {
+    STID_SSCP_V1    = 0x00, /**< SSCP v1 */
+    STID_SSCP_V2    = 0x01 /**< SSCP v2 */
+} STidProtocolVersion;
 
 /**
  * \brief The STidSTR reader unit configuration base class.
@@ -111,6 +118,18 @@ class LLA_READERS_STIDSTR_API STidSTRReaderUnitConfiguration
     void setCommunicationMode(STidCommunicationMode cmode);
 
     /**
+     * \brief Get protocol version.
+     * \return The protocol version.
+     */
+    STidProtocolVersion getProtocolVersion() const;
+
+    /**
+     * \brief Set the protocol version.
+     * \param ctype The  protocol version.
+     */
+    void setProtocolVersion(STidProtocolVersion protocol);
+
+    /**
      * \brief Get the key used for HMAC signature.
      * \return The key.
      */
@@ -153,6 +172,11 @@ class LLA_READERS_STIDSTR_API STidSTRReaderUnitConfiguration
      * \brief The reader communication mode (security objective).
      */
     STidCommunicationMode d_communicationMode;
+    
+    /**
+     * \brief The reader protocol version.
+     */
+    STidProtocolVersion d_protocolVersion;
 
     /**
      * \brief The key used for HMAC signature.

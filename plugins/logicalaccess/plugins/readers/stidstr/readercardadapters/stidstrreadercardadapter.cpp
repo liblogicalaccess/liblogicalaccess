@@ -20,16 +20,22 @@ namespace logicalaccess
 {
 const unsigned char STidSTRReaderCardAdapter::SOF = 0x02;
 
-STidSTRReaderCardAdapter::STidSTRReaderCardAdapter(STidCmdType adapterType, bool iso7816)
+STidSTRReaderCardAdapter::STidSTRReaderCardAdapter(STidProtocolMode protocolMode, STidCmdType adapterType)
     : ISO7816ReaderCardAdapter()
     , d_adapterType(adapterType)
-    , d_iso7816(iso7816)
+    , d_protocolMode(protocolMode)
+    , d_iso7816(false)
     , d_lastCommandCode(0x00)
 {
-    if (d_iso7816)
-    {
-        d_adapterType = STID_CMD_READER;
-    }
+}
+
+STidSTRReaderCardAdapter::STidSTRReaderCardAdapter()
+    : ISO7816ReaderCardAdapter()
+    , d_adapterType(STID_CMD_READER)
+    , d_protocolMode(STID_PM_NORMAL)
+    , d_iso7816(true)
+    , d_lastCommandCode(0x00)
+{
 }
 
 STidSTRReaderCardAdapter::~STidSTRReaderCardAdapter()
@@ -68,7 +74,17 @@ ByteVector STidSTRReaderCardAdapter::adaptCommand(const ByteVector &command)
         CTRL1 |= (readerConfig->getRS485Address() << 1);
     }
     cmd.push_back(CTRL1);
-    cmd.push_back(static_cast<unsigned char>(readerConfig->getCommunicationMode()));
+    
+    unsigned char CTRL2 = ((static_cast<unsigned char>(readerConfig->getProtocolVersion()) << 4) & 0xf0);
+    if (readerConfig->getProtocolVersion() == STID_SSCP_V1)
+    {
+        CTRL2 |= (readerConfig->getCommunicationMode() & 0x0f);
+    }
+    else
+    {
+        CTRL2 |= (d_protocolMode & 0x0f);
+    }
+    cmd.push_back(CTRL2);
 
     cmd.insert(cmd.end(), commandEncapsuled.begin(), commandEncapsuled.end());
     unsigned char first, second;
@@ -87,22 +103,27 @@ ByteVector STidSTRReaderCardAdapter::sendMessage(unsigned short commandCode,
                         << BufferHelper::getHex(command) << " command size {"
                         << command.size() << "}...";
     ByteVector processedMsg;
+    std::shared_ptr<STidSTRReaderUnitConfiguration> readerConfig =
+        getSTidSTRReaderUnit()->getSTidSTRConfiguration();
 
-    processedMsg.push_back(0x00);                                      // RFU
+    if (readerConfig->getProtocolVersion() == STID_SSCP_V1)
+    {
+        processedMsg.push_back(0x00);          // RFU
+    }
     processedMsg.push_back(static_cast<unsigned char>(d_adapterType)); // Type
     processedMsg.push_back((commandCode & 0xff00) >> 8);               // Code
     processedMsg.push_back(commandCode & 0xff);                        // Code
 
-    processedMsg.push_back(0xAA); // Reserved
-    processedMsg.push_back(0x55); // Reserved
+    if (readerConfig->getProtocolVersion() == STID_SSCP_V1)
+    {
+        processedMsg.push_back(0xAA); // Reserved
+        processedMsg.push_back(0x55); // Reserved
+    }
 
     processedMsg.push_back((command.size() & 0xff00) >> 8); // Data length
     processedMsg.push_back(command.size() & 0xff);          // Data length
 
     processedMsg.insert(processedMsg.end(), command.begin(), command.end());
-
-    std::shared_ptr<STidSTRReaderUnitConfiguration> readerConfig =
-        getSTidSTRReaderUnit()->getSTidSTRConfiguration();
 
     // Cipher the data
     if ((readerConfig->getCommunicationMode() & STID_CM_CIPHERED) == STID_CM_CIPHERED)
@@ -316,7 +337,7 @@ ByteVector STidSTRReaderCardAdapter::receiveMessage(const ByteVector &data,
         getSTidSTRReaderUnit()->getSTidSTRConfiguration();
 
     // Check the message HMAC and remove it from the message
-    if ((readerConfig->getCommunicationMode() & STID_CM_SIGNED) == STID_CM_SIGNED)
+    if ((readerConfig->getCommunicationMode() & STID_CM_SIGNED) == STID_CM_SIGNED || )
     {
         LOG(LogLevel::COMS) << "Need to check for signed data...";
         EXCEPTION_ASSERT_WITH_LOG(
