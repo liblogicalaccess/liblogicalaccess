@@ -304,8 +304,7 @@ class LLA_READERS_PCSC_API PCSCReaderUnit : public ISO7816ReaderUnit
      * \param control the behavior of the reconnect.
      */
     void reset(int action = 0);
-
-  protected:
+    
     /**
      * \brief Reconnect to the card with the currently active share mode on the same
      * reader.
@@ -314,6 +313,7 @@ class LLA_READERS_PCSC_API PCSCReaderUnit : public ISO7816ReaderUnit
      */
     bool reconnect(int action = 0) override;
 
+  protected:
     /**
      * Perform adjustment regarding a Chip.
      *

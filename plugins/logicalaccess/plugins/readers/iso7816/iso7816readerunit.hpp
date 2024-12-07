@@ -102,6 +102,8 @@ class LLA_READERS_ISO7816_API ISO7816ReaderUnit : public ReaderUnit
     {
     }
 
+    bool reconnect(int action) override;
+
 	virtual void connectToSAM();
 
     /**
@@ -192,8 +194,6 @@ class LLA_READERS_ISO7816_API ISO7816ReaderUnit : public ReaderUnit
         return std::dynamic_pointer_cast<ISO7816ReaderUnitConfiguration>(
             getConfiguration());
     }
-
-    bool reconnect(int action) override;
 
     /**
  * \brief The SAM chip.
