@@ -22,7 +22,7 @@ class LLA_READERS_STIDSTR_API STidSTRReaderProvider : public ISO7816ReaderProvid
   public:
     /**
      * \brief Get the STidSTReaderProvider instance. Singleton because we can only have
-     * one COM communication, and Deister can't have shared access, so we share the same
+     * one COM communication, and STid can't have shared access, so we share the same
      * reader unit.
      */
     static std::shared_ptr<STidSTRReaderProvider> getSingletonInstance();

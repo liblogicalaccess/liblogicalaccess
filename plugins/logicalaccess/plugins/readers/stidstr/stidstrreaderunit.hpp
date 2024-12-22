@@ -198,6 +198,12 @@ class LLA_READERS_STIDSTR_API STidSTRReaderUnit : public ISO7816ReaderUnit
      * \return The chip object if a tag is inserted.
      */
     std::shared_ptr<Chip> scan14443B();
+    
+    /**
+     * \brief Scan the RFID field for a tag detection.
+     * \return The chip object if a tag is inserted.
+     */
+    std::shared_ptr<Chip> scanGlobal(bool iso14443a, bool activeRats, bool iso14443b, bool lf125khz, bool blueNfc, bool selectedKeyBlueNfc, bool keyboard, bool imageScanEngine);
 
     /**
      * \brief Authenticate the host with the reader and genereate session keys for HMAC
@@ -333,6 +339,10 @@ class LLA_READERS_STIDSTR_API STidSTRReaderUnit : public ISO7816ReaderUnit
      * \brief Authenticate the host and the reader to obtain the AES session key.
      */
     void authenticateAES();
+    
+    std::shared_ptr<Chip> createChipFromiso14443aBuffer(const ByteVector& data);
+    
+    std::shared_ptr<Chip> createGenericChipFromBuffer(const ByteVector& data, std::string cardType = CHIP_GENERICTAG, bool lenIsShort = false);
 
     /**
      * \brief The HMAC session key.

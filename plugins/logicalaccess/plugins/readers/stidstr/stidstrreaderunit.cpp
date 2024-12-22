@@ -109,11 +109,18 @@ bool STidSTRReaderUnit::waitInsertion(unsigned int maxwait)
     {
         do
         {
-            std::shared_ptr<Chip> chip = scanARaw(); // scan14443A() => Obsolete. It's
-                                                     // just used for testing purpose !
-            if (!chip)
+            std::shared_ptr<Chip> chip;
+            if (getSTidSTRConfiguration()->getProtocolVersion() == STID_SSCP_V1)
             {
-                chip = scan14443B();
+                chip = scanARaw(); // scan14443A() => Obsolete. It's just used for testing purpose !
+                if (!chip)
+                {
+                    chip = scan14443B();
+                }
+            }
+            else
+            {
+                chip = scanGlobal();
             }
 
             if (chip)
@@ -173,12 +180,20 @@ bool STidSTRReaderUnit::waitRemoval(unsigned int maxwait)
         {
             do
             {
-                std::shared_ptr<Chip> chip = scanARaw(); // scan14443A() => Obsolete. It's
-                                                         // just used for testing purpose
-                                                         // !
-                if (!chip)
+                std::shared_ptr<Chip> chip;
+                if (getSTidSTRConfiguration()->getProtocolVersion() == STID_SSCP_V1)
                 {
-                    chip = scan14443B();
+                    chip = scanARaw(); // scan14443A() => Obsolete. It's
+                                                             // just used for testing purpose
+                                                             // !
+                    if (!chip)
+                    {
+                        chip = scan14443B();
+                    }
+                }
+                else
+                {
+                    chip = scanGlobal();
                 }
 
                 if (chip)
@@ -475,24 +490,15 @@ std::shared_ptr<Chip> STidSTRReaderUnit::scan14443A()
     return chip;
 }
 
-std::shared_ptr<Chip> STidSTRReaderUnit::scanARaw()
+std::shared_ptr<Chip> STidSTRReaderUnit::createChipFromiso14443aBuffer(const ByteVector& data)
 {
-    LOG(LogLevel::INFOS) << "Scanning 14443A RAW chips...";
     std::shared_ptr<Chip> chip;
-    ByteVector command;
-    command.push_back(getSTidSTRConfiguration()->getPN532Direct()
-                          ? 0x01
-                          : 0x00); // 0x01 to Request ATS (required for DESFire / PN532
-                                   // direct communication), 0x00 otherwise
-
-    ByteVector response =
-        getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x000F, command);
-    if (response.size() > 0)
+    if (data.size() > 0)
     {
-        bool haveCard = (response[0] == 0x01);
-        if (haveCard && response.size() > 5)
+        bool haveCard = (data[0] == 0x01);
+        if (haveCard && data.size() > 5)
         {
-            unsigned short atqa = (response[1] << 8) | response[2];
+            unsigned short atqa = (data[1] << 8) | data[2];
             LOG(LogLevel::INFOS) << "ATQA (Answer To Request Type A) value {0x"
                                  << std::hex << atqa << std::dec << "(" << atqa << ")}";
 
@@ -523,17 +529,17 @@ std::shared_ptr<Chip> STidSTRReaderUnit::scanARaw()
                 break;
             }
 
-            // unsigned char sak = response[3];
+            // unsigned char sak = data[3];
             // LOG(LogLevel::INFOS) << "SAK (Select Acknowloedge Type A) value
             // {0x%x(%u)}", sak);
 
-            unsigned char uidLen = response[4];
+            unsigned char uidLen = data[4];
             LOG(LogLevel::INFOS) << "UID length {" << uidLen << "}";
 
             if (uidLen > 0)
             {
                 ByteVector uid =
-                    ByteVector(response.begin() + 5, response.begin() + 5 + uidLen);
+                    ByteVector(data.begin() + 5, data.begin() + 5 + uidLen);
 
                 LOG(LogLevel::INFOS) << "UID " << BufferHelper::getHex(uid) << "-{"
                                      << BufferHelper::getStdString(uid) << "}";
@@ -579,10 +585,25 @@ std::shared_ptr<Chip> STidSTRReaderUnit::scanARaw()
     }
     else
     {
-        LOG(LogLevel::ERRORS) << "No response !";
+        LOG(LogLevel::ERRORS) << "No data !";
     }
-
     return chip;
+}
+
+std::shared_ptr<Chip> STidSTRReaderUnit::scanARaw()
+{
+    LOG(LogLevel::INFOS) << "Scanning 14443A RAW chips...";
+    std::shared_ptr<Chip> chip;
+    ByteVector command;
+    command.push_back(getSTidSTRConfiguration()->getPN532Direct()
+                          ? 0x01
+                          : 0x00); // 0x01 to Request ATS (required for DESFire / PN532
+                                   // direct communication), 0x00 otherwise
+
+    ByteVector response =
+        getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x000F, command);
+    
+    return createChipFromiso14443aBuffer(response);
 }
 
 std::shared_ptr<Chip> STidSTRReaderUnit::scan14443B()
@@ -625,6 +646,128 @@ std::shared_ptr<Chip> STidSTRReaderUnit::scan14443B()
         LOG(LogLevel::ERRORS) << "No response !";
     }
 
+    return chip;
+}
+
+std::shared_ptr<Chip> STidSTRReaderUnit::createGenericChipFromBuffer(const ByteVector& data, std::string cardType, bool lenIsShort)
+{
+    std::shared_ptr<Chip> chip;
+    if (data.size() > 0)
+    {
+        bool haveCard = (data[0] == 0x01);
+        if (haveCard && data.size() > 3)
+        {
+            unsigned short uidLen = data[2];
+            if (lenIsShort)
+            {
+                uidlen |= data[1] << 8;
+            }
+            LOG(LogLevel::INFOS) << "UID length {" << uidLen << "}";
+
+            if (uidLen > 0)
+            {
+                ByteVector uid = ByteVector(data.begin() + 3, data.begin() + 3 + uidLen);
+                LOG(LogLevel::INFOS) << "UID " << BufferHelper::getHex(uid) << "-{"
+                                     << BufferHelper::getStdString(uid) << "}";
+                                     
+                if (cardType == "")
+                {
+                    cardType = CHIP_GENERICTAG;
+                }
+
+                chip = createChip(cardType);
+                chip->setChipIdentifier(uid);
+            }
+            else
+            {
+                LOG(LogLevel::ERRORS) << "No UID retrieved !";
+            }
+        }
+        else if (!haveCard)
+        {
+            LOG(LogLevel::INFOS) << "No card detected !";
+        }
+        else
+        {
+            LOG(LogLevel::ERRORS) << "Command length should be > 3";
+        }
+    }
+    else
+    {
+        LOG(LogLevel::ERRORS) << "No response !";
+    }
+}
+
+std::shared_ptr<Chip> STidSTRReaderUnit::scanGlobal(bool iso14443a, bool activeRats, bool iso14443b, bool lf125khz, bool blueNfc, bool selectedKeyBlueNfc, bool keyboard, bool imageScanEngine)
+{
+    LOG(LogLevel::INFOS) << "Scanning global...";
+    std::shared_ptr<Chip> chip;
+    ByteVector command;
+    
+    unsigned char filter1 = //((tamperSwitch ? 1 : 0) << 7) |
+                            //((configCard ? 1 : 0) << 6) |
+                            //((touchCoordinates ? 1 : 0) << 2) |
+                            ((imageScanEngine ? 1 : 0) << 1) |
+                            (keyboard ? 1 : 0);
+    unsigned char filter2 = ((selectedKeyBlueNfc) ? 1 : 0 << 5) |
+                            ((blueNfc) ? 1 : 0 << 4) |
+                            ((lf125khz) ? 1 : 0 << 3) |
+                            ((iso14443b) ? 1 : 0 << 2) |
+                            ((activeRats) ? 1 : 0 << 1) |
+                            (iso14443a ? 1 : 0);
+
+    command.push_back(filter1);
+    command.push_back(filter2);
+
+    ByteVector response = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x00B0, command);
+    if (response.size() > 0)
+    {
+        unsigned char infoType = response[0];
+        ByteVector data = ByteVector(response.begin() + 1, response.end());
+        switch(infoType)
+        {
+            case 0x01: // ISO14443-A
+            {
+                chip = createChipFromiso14443aBuffer(data);
+            } break;
+            case 0x02: // ISO14443-B
+            {
+                chip = createGenericChipFromBuffer(data);
+            } break;
+            case 0x03: // 125Khz
+            {
+                chip = createGenericChipFromBuffer(data);
+            } break;
+            case 0x04: // Blue-NFC
+            {
+                chip = createGenericChipFromBuffer(data);
+            } break;
+            case 0x09: // Keyboard
+            {
+            } break;
+            case 0x10: // Tamper
+            {
+            } break;
+            case 0x11: // Image Scan Engine
+            {
+                chip = createGenericChipFromBuffer(data, CHIP_GENERICTAG, true);
+            } break;
+            case 0x12: // Touch Coordinates
+            {
+            } break;
+            case 0x40: // Config Card
+            {
+            } break;
+            default:
+            {
+                LOG(LogLevel::INFOS) << "Unknown info type.";
+            } break;
+        }
+    }
+    else
+    {
+        LOG(LogLevel::ERRORS) << "No response !";
+    }
     return chip;
 }
 
