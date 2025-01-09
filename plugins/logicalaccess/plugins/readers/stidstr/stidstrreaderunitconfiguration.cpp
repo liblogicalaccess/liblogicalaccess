@@ -173,6 +173,7 @@ void STidSTRReaderUnitConfiguration::setProtocolVersion(STidProtocolVersion prot
                              << d_protocolVersion << std::dec << "("
                              << d_protocolVersion << ")} {STID_SSCP_V2}";
         break;
+    }
 }
 
 STidProtocolVersion STidSTRReaderUnitConfiguration::getProtocolVersion() const
@@ -190,7 +191,7 @@ STidProtocolVersion STidSTRReaderUnitConfiguration::getProtocolVersion() const
                              << d_protocolVersion << ")} {STID_SSCP_V2}";
         break;
     }
-    return d_communicationMode;
+    return d_protocolVersion;
 }
 
 void STidSTRReaderUnitConfiguration::setCommunicationMode(STidCommunicationMode cmode)

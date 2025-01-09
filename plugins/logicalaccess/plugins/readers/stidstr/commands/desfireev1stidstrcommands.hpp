@@ -41,10 +41,9 @@ typedef enum {
 /**
  * \brief The DESFire EV1 base commands class for STidSTR reader.
  */
-class LLA_READERS_STIDSTR_API DESFireEV1STidSTRCommands : public Commands
+class LLA_READERS_STIDSTR_API DESFireEV1STidSTRCommands : public DESFireCommands
 #ifndef SWIG
                                                        ,
-                                                       public DESFireCommands,
                                                        public DESFireEV1Commands
 #endif
 {
@@ -384,7 +383,7 @@ class LLA_READERS_STIDSTR_API DESFireEV1STidSTRCommands : public Commands
      * \param mode The communication mode
      * \return True on success, false otherwise.
      */
-    virtual void limitedCredit(unsigned char fileno, unsigned int value,
+    virtual void limitedCredit(unsigned char fileno, int32_t value,
                                EncryptionMode mode);
 
     /**
@@ -466,9 +465,9 @@ class LLA_READERS_STIDSTR_API DESFireEV1STidSTRCommands : public Commands
 
     /**
      * \brief Get the card version information.
-     * \param dataVersion The card version information structure that will be filled
+     * \return The card version information structure that will be filled
      */
-    virtual void getVersion(DESFireCommands::DESFireCardVersion &dataVersion);
+    virtual DESFireCommands::DESFireCardVersion getVersion();
 
     /**
      * \brief Get the current application list.
@@ -486,18 +485,17 @@ class LLA_READERS_STIDSTR_API DESFireEV1STidSTRCommands : public Commands
     /**
      * \brief Get settings of a specific file in the current application.
      * \param fileno The file number
-     * \param fileSetting The file setting
+     * \return The file settings
      */
-    virtual void getFileSettings(unsigned char fileno,
-                                 DESFireCommands::FileSetting &fileSetting);
+    virtual DESFireCommands::FileSetting getFileSettings(unsigned char fileno);
 
     /**
      * \brief Get value from a specific value file.
      * \param fileno The file number
      * \param mode The communication mode
-     * \param value The value stored in the card
+     * \return The value stored in the card
      */
-    virtual void getValue(unsigned char fileno, EncryptionMode mode, unsigned int &value);
+    virtual int32_t getValue(unsigned char fileno, EncryptionMode mode);
 
     /**
      * \brief Set the card configuration.

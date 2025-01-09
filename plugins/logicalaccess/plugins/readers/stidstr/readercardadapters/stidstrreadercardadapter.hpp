@@ -77,6 +77,15 @@ class LLA_READERS_STIDSTR_API STidSTRReaderCardAdapter : public ISO7816ReaderCar
      * \return The adapted answer received.
      */
     ByteVector adaptAnswer(const ByteVector &answer) override;
+    
+    /**
+     * \brief Send a command to the reader.
+     * \param commandCode The command code.
+     * \param command The command buffer.
+     * \param protocolMode Temporary override the default RCA protocol mode for this command.
+     * \return The result of the command.
+     */
+    virtual ByteVector sendCommand(unsigned short commandCode, const ByteVector &command, STidProtocolMode protocolMode);
 
     /**
      * \brief Send a command to the reader.

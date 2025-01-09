@@ -9,6 +9,7 @@
 
 #include <logicalaccess/plugins/readers/iso7816/iso7816readerunit.hpp>
 #include <logicalaccess/plugins/readers/stidstr/stidstr_fwd.hpp>
+#include <logicalaccess/cards/chip.hpp>
 
 namespace logicalaccess
 {
@@ -198,6 +199,12 @@ class LLA_READERS_STIDSTR_API STidSTRReaderUnit : public ISO7816ReaderUnit
      * \return The chip object if a tag is inserted.
      */
     std::shared_ptr<Chip> scan14443B();
+
+    /**
+     * \brief Scan the RFID field for a tag detection.
+     * \return The chip object if a tag is inserted.
+     */
+    std::shared_ptr<Chip> scanGlobal();
     
     /**
      * \brief Scan the RFID field for a tag detection.

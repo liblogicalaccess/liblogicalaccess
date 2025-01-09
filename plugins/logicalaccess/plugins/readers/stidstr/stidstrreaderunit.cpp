@@ -46,7 +46,7 @@ STidSTRReaderUnit::STidSTRReaderUnit()
 {
     d_readerUnitConfig.reset(new STidSTRReaderUnitConfiguration());
     ReaderUnit::setDefaultReaderCardAdapter(
-        std::make_shared<STidSTRReaderCardAdapter>(STID_CMD_READER));
+        std::make_shared<STidSTRReaderCardAdapter>(STID_PM_NORMAL, STID_CMD_READER));
     d_ledBuzzerDisplay.reset(new STidSTRLEDBuzzerDisplay());
     std::shared_ptr<STidSTRSerialPortDataTransport> dataTransport(new STidSTRSerialPortDataTransport());
     dataTransport->setPortBaudRate(38400);
@@ -302,14 +302,13 @@ std::shared_ptr<Chip> STidSTRReaderUnit::createChip(std::string type)
         if (type == "Mifare1K" || type == "Mifare4K" || type == "Mifare")
         {
             LOG(LogLevel::INFOS) << "Mifare classic Chip created";
-            rca.reset(new STidSTRReaderCardAdapter(STID_CMD_MIFARE_CLASSIC));
+            rca.reset(new STidSTRReaderCardAdapter(STID_PM_NORMAL, STID_CMD_MIFARE_CLASSIC));
             commands.reset(new MifareSTidSTRCommands());
         }
         else if (type == "DESFire" || type == "DESFireEV1")
         {
             LOG(LogLevel::INFOS) << "Mifare DESFire Chip created";
-            rca.reset(new STidSTRReaderCardAdapter(
-                STID_CMD_DESFIRE, getSTidSTRConfiguration()->getPN532Direct()));
+            rca.reset(new STidSTRReaderCardAdapter(STID_PM_NORMAL, STID_CMD_DESFIRE));
             if (getSTidSTRConfiguration()->getPN532Direct())
             {
                 commands.reset(new DESFireEV1ISO7816Commands());
@@ -660,7 +659,7 @@ std::shared_ptr<Chip> STidSTRReaderUnit::createGenericChipFromBuffer(const ByteV
             unsigned short uidLen = data[2];
             if (lenIsShort)
             {
-                uidlen |= data[1] << 8;
+                uidLen |= data[1] << 8;
             }
             LOG(LogLevel::INFOS) << "UID length {" << uidLen << "}";
 
@@ -696,6 +695,11 @@ std::shared_ptr<Chip> STidSTRReaderUnit::createGenericChipFromBuffer(const ByteV
     {
         LOG(LogLevel::ERRORS) << "No response !";
     }
+}
+
+std::shared_ptr<Chip> STidSTRReaderUnit::scanGlobal()
+{
+    return scanGlobal(true, true, true, true, true, false, true, true);
 }
 
 std::shared_ptr<Chip> STidSTRReaderUnit::scanGlobal(bool iso14443a, bool activeRats, bool iso14443b, bool lf125khz, bool blueNfc, bool selectedKeyBlueNfc, bool keyboard, bool imageScanEngine)
@@ -919,7 +923,7 @@ ByteVector STidSTRReaderUnit::authenticateReader1(bool isHMAC)
     getSTidSTRConfiguration()->setCommunicationMode(STID_CM_RESERVED);
     try
     {
-        ret = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x0001, command);
+        ret = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x0001, command, STID_PM_AUTH_REQUEST);
     }
     catch (std::exception &e)
     {
@@ -940,7 +944,7 @@ ByteVector STidSTRReaderUnit::authenticateReader2(const ByteVector &data)
     getSTidSTRConfiguration()->setCommunicationMode(STID_CM_RESERVED);
     try
     {
-        ret = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x0001, data);
+        ret = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x0001, data, STID_PM_AUTH_REQUEST);
     }
     catch (std::exception &e)
     {

@@ -337,7 +337,7 @@ class LLA_CARDS_DESFIRE_API DESFireCommands : public Commands
     /**
      * \brief Get settings of a specific file in the current application.
      * \param fileno The file number
-     * \param fileSetting The file setting
+     * \return The file setting
      */
     virtual FileSetting getFileSettings(unsigned char fileno) = 0;
 
@@ -446,7 +446,7 @@ class LLA_CARDS_DESFIRE_API DESFireCommands : public Commands
      * \brief Get value from a specific value file.
      * \param fileno The file number
      * \param mode The communicatio mode
-     * \param value The value stored in the card
+     * \return The value stored in the card
      */
     virtual int32_t getValue(unsigned char fileno, EncryptionMode mode) = 0;
 
@@ -528,7 +528,7 @@ class LLA_CARDS_DESFIRE_API DESFireCommands : public Commands
 
     /**
      * \brief Get the card version information.
-     * \param dataVersion The card version information structure that will be filled
+     * \return The card version information structure that will be filled
      */
     virtual DESFireCardVersion getVersion() = 0;
 

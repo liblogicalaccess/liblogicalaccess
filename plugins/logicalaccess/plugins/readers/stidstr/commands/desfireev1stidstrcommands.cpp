@@ -22,13 +22,13 @@
 namespace logicalaccess
 {
 DESFireEV1STidSTRCommands::DESFireEV1STidSTRCommands()
-    : Commands(CMD_DESFIREEV1STIDSTR)
+    : DESFireCommands(CMD_DESFIREEV1STIDSTR)
 {
     d_currentAid = 0;
 }
 
 DESFireEV1STidSTRCommands::DESFireEV1STidSTRCommands(std::string ct)
-    : Commands(ct)
+    : DESFireCommands(ct)
 {
     d_currentAid = 0;
 }
@@ -675,7 +675,7 @@ void DESFireEV1STidSTRCommands::debit(unsigned char fileno, unsigned int value,
     getSTidSTRReaderCardAdapter()->sendCommand(0x00DC, command);
 }
 
-void DESFireEV1STidSTRCommands::limitedCredit(unsigned char fileno, unsigned int value,
+void DESFireEV1STidSTRCommands::limitedCredit(unsigned char fileno, int32_t value,
                                               EncryptionMode mode)
 {
     LOG(LogLevel::INFOS) << "Increasing value file with limited amount... file number {0x"
@@ -686,7 +686,7 @@ void DESFireEV1STidSTRCommands::limitedCredit(unsigned char fileno, unsigned int
     ByteVector command;
     command.push_back(static_cast<unsigned char>(mode));
     command.push_back(fileno);
-    BufferHelper::setUInt32(command, value);
+    BufferHelper::setInt32(command, value);
 
     getSTidSTRReaderCardAdapter()->sendCommand(0x001C, command);
 }
@@ -887,16 +887,17 @@ void DESFireEV1STidSTRCommands::changeKeyIndex(unsigned char keyno,
     getSTidSTRReaderCardAdapter()->sendCommand(0x00C5, command);
 }
 
-void DESFireEV1STidSTRCommands::getVersion(
-    DESFireCommands::DESFireCardVersion &dataVersion)
+DESFireCommands::DESFireCardVersion DESFireEV1STidSTRCommands::getVersion()
 {
     LOG(LogLevel::INFOS) << "Retrieving version...";
+    DESFireCommands::DESFireCardVersion dataVersion;
     ByteVector result = getSTidSTRReaderCardAdapter()->sendCommand(0x0060, ByteVector());
 
     EXCEPTION_ASSERT_WITH_LOG(result.size() >= 28, LibLogicalAccessException,
                               "The response length should be at least 28-byte long");
 
     memcpy(reinterpret_cast<char *>(&dataVersion), &result[0], 28);
+    return dataVersion;
 }
 
 std::vector<unsigned int> DESFireEV1STidSTRCommands::getApplicationIDs()
@@ -951,21 +952,21 @@ ByteVector DESFireEV1STidSTRCommands::getFileIDs()
     return files;
 }
 
-void DESFireEV1STidSTRCommands::getFileSettings(unsigned char fileno,
-                                                DESFireCommands::FileSetting &fileSetting)
+DESFireCommands::FileSetting DESFireEV1STidSTRCommands::getFileSettings(unsigned char fileno)
 {
     LOG(LogLevel::INFOS) << "Retrieving file settings for file number {0x" << std::hex
                          << fileno << std::dec << "(" << fileno << ")}";
 
+    FileSetting fileSetting;
     ByteVector command;
     command.push_back(fileno);
 
     ByteVector result = getSTidSTRReaderCardAdapter()->sendCommand(0x00F5, command);
     memcpy(&fileSetting, &result[0], result.size());
+    return fileSetting;
 }
 
-void DESFireEV1STidSTRCommands::getValue(unsigned char fileno, EncryptionMode mode,
-                                         unsigned int &value)
+int32_t DESFireEV1STidSTRCommands::getValue(unsigned char fileno, EncryptionMode mode)
 {
     LOG(LogLevel::INFOS) << "Retrieving value for file number {0x" << std::hex << fileno
                          << std::dec << "(" << fileno << ")} encrypt mode {0x" << std::hex
@@ -980,10 +981,9 @@ void DESFireEV1STidSTRCommands::getValue(unsigned char fileno, EncryptionMode mo
     if (result.size() >= 4)
     {
         size_t offset = 0;
-        value         = BufferHelper::getUInt32(result, offset);
-        LOG(LogLevel::INFOS) << "Result value {0x" << std::hex << value << std::dec << "("
-                             << value << ")}";
+        return BufferHelper::getInt32(result, offset);
     }
+    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "DESFireEV1STidSTRCommands getValue did not return enough data");
 }
 
 void DESFireEV1STidSTRCommands::setConfiguration(bool formatCardEnabled,

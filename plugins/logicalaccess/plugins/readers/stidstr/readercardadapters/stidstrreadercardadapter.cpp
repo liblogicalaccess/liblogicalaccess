@@ -206,6 +206,25 @@ ByteVector STidSTRReaderCardAdapter::getIV()
 
 ByteVector STidSTRReaderCardAdapter::sendCommand(unsigned short commandCode,
                                                  const ByteVector &command,
+                                                 STidProtocolMode protocolMode)
+{
+     
+    STidProtocolMode pm = d_protocolMode;
+    try
+    {
+        d_protocolMode = protocolMode;
+        return sendCommand(commandCode, command);
+    }
+    catch (std::exception &e)
+    {
+        d_protocolMode = pm;
+        throw;
+    }
+    d_protocolMode = pm;
+}
+
+ByteVector STidSTRReaderCardAdapter::sendCommand(unsigned short commandCode,
+                                                 const ByteVector &command,
                                                  long int timeout)
 {
     LOG(LogLevel::COMS) << "Sending message with command code {0x" << std::hex
@@ -337,7 +356,7 @@ ByteVector STidSTRReaderCardAdapter::receiveMessage(const ByteVector &data,
         getSTidSTRReaderUnit()->getSTidSTRConfiguration();
 
     // Check the message HMAC and remove it from the message
-    if ((readerConfig->getCommunicationMode() & STID_CM_SIGNED) == STID_CM_SIGNED || )
+    if ((readerConfig->getCommunicationMode() & STID_CM_SIGNED) == STID_CM_SIGNED)
     {
         LOG(LogLevel::COMS) << "Need to check for signed data...";
         EXCEPTION_ASSERT_WITH_LOG(
