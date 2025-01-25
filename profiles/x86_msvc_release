@@ -1,0 +1,6 @@
+[settings]
+arch=x86
+build_type=Release
+compiler=Visual Studio
+compiler.version=17
+os=Windows
