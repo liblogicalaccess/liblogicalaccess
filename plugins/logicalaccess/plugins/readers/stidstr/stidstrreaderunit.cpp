@@ -695,6 +695,7 @@ std::shared_ptr<Chip> STidSTRReaderUnit::createGenericChipFromBuffer(const ByteV
     {
         LOG(LogLevel::ERRORS) << "No response !";
     }
+    return chip;
 }
 
 std::shared_ptr<Chip> STidSTRReaderUnit::scanGlobal()
