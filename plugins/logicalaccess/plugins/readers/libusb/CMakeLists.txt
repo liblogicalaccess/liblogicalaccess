@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.5)
 project(libusbreaders)
 
 if (MSVC)
@@ -32,8 +32,8 @@ target_link_libraries(libusbreaders
 		yubikeycards
 		iso7816readers
 		logicalaccess
-		CONAN_PKG::libusb
-		CONAN_PKG::boost
+		libusb::libusb
+		boost::boost
 		)
 
 LLA_GENERATE_EXPORTS(LLA_READERS_LIBUSB)

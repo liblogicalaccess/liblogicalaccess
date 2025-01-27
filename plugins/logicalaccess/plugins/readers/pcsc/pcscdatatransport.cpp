@@ -53,7 +53,7 @@ void PCSCDataTransport::send(const ByteVector &data)
     if (!data.empty())
     {
         std::array<uint8_t, 4096> responseBuffer{};
-        ULONG ulNoOfDataReceived = responseBuffer.size();
+        DWORD ulNoOfDataReceived = static_cast<DWORD>(responseBuffer.size());
         LPCSCARD_IO_REQUEST ior  = nullptr;
         switch (getPCSCReaderUnit()->getActiveProtocol())
         {

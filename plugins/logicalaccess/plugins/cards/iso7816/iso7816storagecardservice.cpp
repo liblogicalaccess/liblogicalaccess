@@ -161,8 +161,7 @@ ByteVector ISO7816StorageCardService::readData(std::shared_ptr<Location> locatio
     case IFT_DIRECTORY:
         if (icLocation->dataObject > 0)
         {
-            data = getISO7816Chip()->getISO7816Commands()->getData(
-                length, icLocation->dataObject);
+            data = getISO7816Chip()->getISO7816Commands()->getData(icLocation->dataObject, length);
         }
         else
         {

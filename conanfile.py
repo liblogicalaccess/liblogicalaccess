@@ -1,90 +1,83 @@
-from conans import ConanFile, CMake, tools
+from conan import ConanFile
+from conan.tools.cmake import CMakeToolchain, CMakeDeps, CMake, cmake_layout
 
 class LLAConan(ConanFile):
-    name = "LogicalAccess"
+    name = "logicalaccess"
     version = "3.2.0"
     license = "https://github.com/liblogicalaccess/liblogicalaccess/blob/develop/LICENSE"
     url = "https://github.com/liblogicalaccess/liblogicalaccess"
     description = "LLA RFID library"
     settings = "os", "compiler", "build_type", "arch"
     requires = 'boost/1.83.0', 'openssl/1.1.1w', 'nlohmann_json/3.11.3', 'zlib/1.3.1'
-    generators = "cmake"
-    options = {'LLA_BUILD_PKCS': [True, False],
-               'LLA_BUILD_UNITTEST': [True, False],
-               'LLA_BUILD_LIBUSB': [True, False]}
+    options = {'LLA_BUILD_PKCS': [True, False], 'LLA_BUILD_LIBUSB': [True, False]}
     revision_mode = "scm"
     exports_sources = "plugins*", "src*", "include*", "CMakeLists.txt", "cmake*", "liblogicalaccess.config", "tests*", "samples*"
     
-    if tools.os_info.is_windows:
-        default_options = '''
-        openssl:shared=True
-        openssl:no_asm=True
-        boost:shared=False
-        gtest:shared=True
-        LLA_BUILD_PKCS=True
-        LLA_BUILD_UNITTEST=False
-        LLA_BUILD_LIBUSB=False'''
-    else:
-        default_options = '''
-        openssl:shared=True
-        boost:shared=True
-        gtest:shared=True
-        LLA_BUILD_PKCS=True
-        LLA_BUILD_UNITTEST=False
-        LLA_BUILD_LIBUSB=False'''
+    def config_options(self):
+        self.options.LLA_BUILD_PKCS = True
+        self.options.LLA_BUILD_LIBUSB = False
+        self.options['openssl'].shared = True
+        self.options['gtest'].shared = True
+        if self.settings.os == "Windows":
+            self.options['openssl'].no_asm = True
+            self.options['boost'].shared = False
+        else:
+            self.options['boost'].shared = True
        
     def requirements(self):
-        if self.options.LLA_BUILD_UNITTEST:
-            self.requires('gtest/1.15.0')
         if self.options.LLA_BUILD_PKCS:
             self.requires('cppkcs11/1.2')
         if self.options.LLA_BUILD_LIBUSB:
             self.requires('libusb/1.0.26')
+    
+    def build_requirements(self):
+        self.test_requires('gtest/1.15.0')
 
     def imports(self):
-        if tools.os_info.is_windows:
+        if self.settings.os == "Windows":
             self.copy("*.dll", "bin", "bin")
 
-    def configure_cmake(self):
-        cmake = CMake(self, build_type=self.settings.build_type)
+    def layout(self):
+        cmake_layout(self)
+
+    def generate(self):
+        tc = CMakeToolchain(self)
         if self.settings.os == 'Android':
             # Workaround to avoid conan passing -stdlib=libc++
             # to compiler. See https://github.com/conan-io/conan/issues/2856
-            cmake.definitions['CONAN_LIBCXX'] = ''
-            cmake.definitions['LLA_BOOST_ASIO_HAS_STD_STRING_VIEW'] = 1
+            tc.variables['CONAN_LIBCXX'] = ''
+            tc.variables['LLA_BOOST_ASIO_HAS_STD_STRING_VIEW'] = 1
 
         if self.options.LLA_BUILD_PKCS:
-            cmake.definitions['LLA_BUILD_PKCS'] = True
+            tc.variables['LLA_BUILD_PKCS'] = True
         else:
-            cmake.definitions['LLA_BUILD_PKCS'] = False
-
-        if self.options.LLA_BUILD_UNITTEST:
-            cmake.definitions['LLA_BUILD_UNITTEST'] = True
-        else:
-            cmake.definitions['LLA_BUILD_UNITTEST'] = False
+            tc.variables['LLA_BUILD_PKCS'] = False
             
         if self.options.LLA_BUILD_LIBUSB:
-            cmake.definitions['LLA_BUILD_LIBUSB'] = True
+            tc.variables['LLA_BUILD_LIBUSB'] = True
         else:
-            cmake.definitions['LLA_BUILD_LIBUSB'] = False
+            tc.variables['LLA_BUILD_LIBUSB'] = False
 
-        cmake.definitions['LIBLOGICALACCESS_VERSION_STRING'] = self.version
-        cmake.definitions['LIBLOGICALACCESS_WINDOWS_VERSION'] = self.version.replace('.', ',') + ',0'
-        cmake.definitions['TARGET_ARCH'] = self.settings.arch		
+        tc.variables['LIBLOGICALACCESS_VERSION_STRING'] = self.version
+        tc.variables['LIBLOGICALACCESS_WINDOWS_VERSION'] = self.version.replace('.', ',') + ',0'
+        tc.variables['TARGET_ARCH'] = self.settings.arch		
 
-        if tools.os_info.is_windows:
+        if self.settings.os == "Windows":
             # For MSVC we need to restrict configuration type to avoid issues.
-            cmake.definitions['CMAKE_CONFIGURATION_TYPES'] = self.settings.build_type
-
-        cmake.configure()
-        return cmake
+            tc.variables['CMAKE_CONFIGURATION_TYPES'] = self.settings.build_type
+        
+        tc.generate()
+        
+        deps = CMakeDeps(self)
+        deps.generate()
 
     def build(self):
-        cmake = self.configure_cmake()
+        cmake = CMake(self)
+        cmake.configure()
         cmake.build()
 
     def package(self):
-        cmake = self.configure_cmake()
+        cmake = CMake(self)
         cmake.install()
 
     def package_info(self):

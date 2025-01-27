@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.5)
 project(pkcscryptounified)
 
 if (MSVC)
@@ -19,7 +19,7 @@ SET_TARGET_PROPERTIES(pkcscryptounified PROPERTIES VERSION ${LIBLOGICALACCESS_VE
 
 target_link_libraries(
         pkcscryptounified
-        CONAN_PKG::cppkcs11
+        cppkcs11::cppkcs11
         logicalaccess
 )
 

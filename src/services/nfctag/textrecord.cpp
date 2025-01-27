@@ -27,7 +27,7 @@ namespace logicalaccess
     unsigned char firstByte = static_cast<int>(m_utf);
 
     firstByte = firstByte << 7;
-    firstByte += m_language.size();
+    firstByte += static_cast<unsigned char>(m_language.size());
     m_payload.clear();
     m_payload.push_back(firstByte);
     m_payload.insert(m_payload.end(), m_language.begin(), m_language.end());

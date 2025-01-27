@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.3)
+cmake_minimum_required(VERSION 3.5)
 project(logicalaccess)
 
 # Global C++ configuration
@@ -10,12 +10,18 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # by Conan options. It is important, for consistency, to keep those defaults
 # in sync with conafile.py
 set(LLA_BUILD_PKCS TRUE CACHE BOOL "Build PKCS11 support")
-set(LLA_BUILD_UNITTEST FALSE CACHE BOOL "Build unittests")
 
 include(GenerateExportHeader)
-# Perform Conan basic setup to import targets etc
-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup(TARGETS)
+
+if (NOT BUILD_TESTING STREQUAL OFF)
+    find_package(GTest)
+endif ()
+find_package(boost)
+find_package(openssl)
+find_package(nlohmann_json)
+if (LLA_BUILD_PKCS)
+    find_package(cppkcs11)
+endif ()
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
@@ -92,10 +98,10 @@ endif ()
 target_link_libraries(logicalaccess PUBLIC
         llacommon
         logicalaccess-cryptolib
-        CONAN_PKG::openssl
+        openssl::openssl
         ${LLA_ADDITIONAL_LIBRARIES_TO_LINK_AGAINST}
-        CONAN_PKG::boost
-        CONAN_PKG::nlohmann_json
+        boost::boost
+        nlohmann_json::nlohmann_json
         )
 
 # Wrong, fix /plugins/
@@ -120,6 +126,8 @@ if (MSVC)
     SET(VERSION_PRODUCTNAME_VALUE "Liblogicalaccess")
     SET(VERSION_PROJECT_FILE_DESCRIPTION_VALUE "${VERSION_PRODUCTNAME_VALUE}\ (${TARGET_ARCH})")
     target_compile_definitions(logicalaccess PUBLIC -DVERSION_PRODUCTNAME_VALUE="${VERSION_PRODUCTNAME_VALUE}" -DVERSION_PROJECT_FILE_DESCRIPTION_VALUE="${VERSION_PROJECT_FILE_DESCRIPTION_VALUE}" -DVERSION_FILE_AND_PRODUCT_VALUE_STRING="${LIBLOGICALACCESS_VERSION_STRING}" -DVERSION_FILE_AND_PRODUCT_VALUE=${LIBLOGICALACCESS_WINDOWS_VERSION})
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS)
+    add_definitions(-D_WIN32_WINNT=0x0601)
 endif ()
 
 set_target_properties(${LIBLOGICALACCESS_LIBRARY} PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
@@ -132,7 +140,7 @@ if (LLA_BUILD_PKCS)
     add_subdirectory(plugins/logicalaccess/plugins/pkcs)
 endif ()
 
-if (LLA_BUILD_UNITTEST)
+if (NOT BUILD_TESTING STREQUAL OFF)
     enable_testing()
     add_subdirectory(tests)
 endif ()

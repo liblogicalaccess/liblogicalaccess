@@ -21,7 +21,7 @@ class AESCryptoPKCSProvider : public IAESCryptoService
             std::dynamic_pointer_cast<PKCSKeyStorage>(key->getKeyStorage());
         EXCEPTION_ASSERT_WITH_LOG(storage, LibLogicalAccessException, "No key storage.");
 
-        auto session        = cppkcs::open_session(storage->get_slot_id(), 0);
+        auto session        = cppkcs::open_session(static_cast<CK_SLOT_ID>(storage->get_slot_id()), 0);
         std::string pw_copy = storage->get_pkcs_session_password();
         session.login(cppkcs::SecureString(std::move(pw_copy)));
 
@@ -40,7 +40,7 @@ class AESCryptoPKCSProvider : public IAESCryptoService
             std::dynamic_pointer_cast<PKCSKeyStorage>(key->getKeyStorage());
         EXCEPTION_ASSERT_WITH_LOG(storage, LibLogicalAccessException, "No key storage.");
 
-        auto session        = cppkcs::open_session(storage->get_slot_id(), 0);
+        auto session        = cppkcs::open_session(static_cast<CK_SLOT_ID>(storage->get_slot_id()), 0);
         std::string pw_copy = storage->get_pkcs_session_password();
         session.login(cppkcs::SecureString(std::move(pw_copy)));
 

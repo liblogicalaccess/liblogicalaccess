@@ -171,7 +171,7 @@ void MifareNFCTagCardService::writeNFC(std::shared_ptr<NfcData> records, int sec
       fillMemoryList(it->second);
   }
   ByteVector bigBuffer = NfcData::dataToTLV(records);
-  int additionalSectors = bigBuffer.size() / 48;
+  int additionalSectors = static_cast<int>(bigBuffer.size() / 48);
   while (additionalSectors >= 0)
   {
     madSector[(sector + additionalSectors) * 2] = 0x03;
@@ -300,11 +300,11 @@ ByteVector MifareNFCTagCardService::getCardData()
 int MifareNFCTagCardService::checkForReservedArea(unsigned int i)
 {
   int res = -1;
-  unsigned int size = _memoryList.size();
+  unsigned int size = static_cast<unsigned int>(_memoryList.size());
 
   for (unsigned int j = 0; j != size; j++)
   {
-    if (i >= _memoryList[j].byteAddr && i < (_memoryList[j].byteAddr + _memoryList[j].size))
+    if (i >= _memoryList[j].byteAddr && static_cast<int>(i) < (_memoryList[j].byteAddr + _memoryList[j].size))
     {
       return _memoryList[j].byteAddr + _memoryList[j].size - i - 1;
     }
@@ -338,7 +338,7 @@ void MifareNFCTagCardService::writeInfo(int baseAddr, std::shared_ptr<MifareKey>
   aiToWrite->madKeyB.reset(new MifareKey(keyB->getData()));
   aiToWrite->madGPB = 0xC1;
 
-  int endSector = (baseAddr + tmpBuffer.size()) / 64;
+  int endSector = static_cast<int>((baseAddr + tmpBuffer.size()) / 64);
   if (((baseAddr + tmpBuffer.size()) / 16) % 4 == 3)
     endSector++;
   if  ((baseAddr / 16) % 4 == 3)
@@ -391,7 +391,7 @@ void MifareNFCTagCardService::writeInfo(int baseAddr, std::shared_ptr<MifareAcce
   newAiToWrite->madKeyB.reset(new MifareKey(aiToWrite->madKeyB->getData()));
   newAiToWrite->madGPB = 0xC1;
 
-  int endSector = (baseAddr + tmpBuffer.size()) / 64;
+  int endSector = static_cast<int>((baseAddr + tmpBuffer.size()) / 64);
   if (((baseAddr + tmpBuffer.size()) / 16) % 4 == 3)
     endSector++;
   if  ((baseAddr / 16) % 4 == 3)

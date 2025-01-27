@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.5)
 
 ## Register some include directories for tests.
 ## Variable number of arguments.
@@ -24,7 +24,7 @@ function(lla_create_test TEST_SUITE_NAME SOURCE_FILENAME)
     target_link_libraries(${TARGET_NAME}
             lla-tests
             logicalaccess
-            CONAN_PKG::boost
+            boost::boost
             )
     get_property(LLA_TESTS_ADDITIONAL_INCLUDES GLOBAL PROPERTY LLA_TESTS_ADDITIONAL_INCLUDES_PROPERTY)
 

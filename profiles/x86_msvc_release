@@ -1,6 +1,8 @@
 [settings]
 arch=x86
 build_type=Release
-compiler=Visual Studio
-compiler.version=17
+compiler=msvc
+compiler.cppstd=14
+compiler.runtime=dynamic
+compiler.version=194
 os=Windows

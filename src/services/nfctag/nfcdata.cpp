@@ -83,7 +83,7 @@ namespace logicalaccess
               }
               break;
           case 0xFE: // Terminator
-              i = tlv.size();
+              i = static_cast<unsigned short>(tlv.size());
               break;
           default:;
           }

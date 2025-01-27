@@ -46,7 +46,7 @@ unsigned char TLVDataField::getTag() const
 
 void TLVDataField::setValue(const std::string &value)
 {
-    d_length = 16 + value.size() * 8;
+    d_length = 16 + static_cast<unsigned char>(value.size()) * 8;
     d_value  = value;
 }
 
@@ -69,7 +69,7 @@ void TLVDataField::setRawValue(const ByteVector &value)
 ByteVector TLVDataField::getRawValue() const
 {
     auto value = ByteVector(d_value.begin(), d_value.end());
-    value.insert(value.begin(), value.size());
+    value.insert(value.begin(), static_cast<unsigned char>(value.size()));
     value.insert(value.begin(), d_tag);
     return value;
 }

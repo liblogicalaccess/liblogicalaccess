@@ -207,7 +207,7 @@ TEST(bitset_tests, complete_test)
     bstream.insert(37, 0x00, 1, 1);
     ASSERT_EQ(38, bstream.getBitSize());
     bstream.clear();
-    bstream.insert(0, a, 0, a.size() * 8);
+    bstream.insert(0, a, 0, static_cast<unsigned int>(a.size() * 8));
     ASSERT_EQ(a, bstream.getData());
 
     bstream.clear();
@@ -248,7 +248,7 @@ TEST(bitset_tests, complete_test)
     a.push_back(0x23);
     a.push_back(0x45);
     a.push_back(0x67);
-    bstream.writeAt(0, a, 0, a.size() * 8);
+    bstream.writeAt(0, a, 0, static_cast<unsigned int>(a.size() * 8));
     ASSERT_EQ(a, bstream.getData());
 
     bstream.clear();

@@ -78,11 +78,11 @@ namespace logicalaccess
 
     for (int i = 15; i > 0; i--)
     {
-      a = byteAddr / i;
+      a = static_cast<float>(byteAddr / i);
       a = ceil(a);
       b = log2(a);
-      bytesPerPage = floor(b);
-      offset = byteAddr - i * pow(2, bytesPerPage);
+      bytesPerPage = static_cast<int>(floor(b));
+      offset = static_cast<int>(byteAddr - i * pow(2, bytesPerPage));
       if (offset >= 0 && offset <= 15)
       {
         _pageAddr = (unsigned char)i;

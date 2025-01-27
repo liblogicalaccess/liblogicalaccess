@@ -7,15 +7,15 @@ function(create_test file)
 
     if (MSVC)
         target_link_libraries(${test_name} PUBLIC
-                CONAN_PKG::gtest
-                CONAN_PKG::boost
+                gtest::gtest
+                boost::boost
                 pcscreaders
                 epasscards
                 logicalaccess)
     else ()
         target_link_libraries(${test_name} PUBLIC
-                CONAN_PKG::gtest
-                CONAN_PKG::boost
+                gtest::gtest
+                boost::boost
                 pthread
                 pcscreaders
                 epasscards

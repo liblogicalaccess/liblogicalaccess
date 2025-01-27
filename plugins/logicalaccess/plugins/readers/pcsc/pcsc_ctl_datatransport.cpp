@@ -34,8 +34,8 @@ void logicalaccess::PCSCControlDataTransport::send(const ByteVector &data)
         LOG(LogLevel::COMS) << "APDU (control) command: " << BufferHelper::getHex(data);
 
         unsigned int errorFlag = SCardControl(
-            getPCSCReaderUnit()->getHandle(), IOCTL_CCID_ESCAPE, &data[0], data.size(),
-            &returnedData[0], returnedData.size(), &ulNoOfDataReceived);
+            getPCSCReaderUnit()->getHandle(), IOCTL_CCID_ESCAPE, &data[0], static_cast<DWORD>(data.size()),
+            &returnedData[0], static_cast<DWORD>(returnedData.size()), &ulNoOfDataReceived);
         CheckCardError(errorFlag);
         d_response =
             ByteVector(returnedData.begin(), returnedData.begin() + ulNoOfDataReceived);

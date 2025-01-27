@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.5)
 project(pcscreaders)
 
 if (MSVC)
@@ -72,7 +72,7 @@ if (UNIX)
 			yubikeycards
             logicalaccess
             PCSCLite::PCSCLite
-            CONAN_PKG::boost
+            boost::boost
             )
 else ()
     target_link_libraries(pcscreaders
@@ -94,7 +94,7 @@ else ()
 			yubikeycards
 			winscard
             logicalaccess
-            CONAN_PKG::boost)
+            boost::boost)
 endif ()
 
 LLA_GENERATE_EXPORTS(LLA_READERS_PCSC)

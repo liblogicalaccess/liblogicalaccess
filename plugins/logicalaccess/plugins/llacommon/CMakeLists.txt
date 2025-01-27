@@ -19,7 +19,7 @@ target_include_directories(llacommon PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/../../../../include
         ${CMAKE_CURRENT_SOURCE_DIR}/../../../../plugins)
 
-target_link_libraries(llacommon PUBLIC CONAN_PKG::boost)
+target_link_libraries(llacommon PUBLIC boost::boost)
 generate_export_header(llacommon
         EXPORT_MACRO_NAME LLA_COMMON_API
         EXPORT_FILE_NAME "${CMAKE_CURRENT_SOURCE_DIR}/lla_common_api.hpp")

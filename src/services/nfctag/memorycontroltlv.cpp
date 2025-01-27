@@ -67,11 +67,11 @@ namespace logicalaccess
 
     for (int i = 15; i > 0; i--)
     {
-      a = _byteAddr / i;
+      a = static_cast<float>(_byteAddr / i);
       a = ceil(a);
       b = log2(a);
       bytesPerPage = floor(b);
-      offset = _byteAddr - i * pow(2, bytesPerPage);
+      offset = static_cast<float>(_byteAddr - i * pow(2, bytesPerPage));
       if (offset >= 0 && offset <= 15)
       {
         _bytesPerPage = (unsigned char)bytesPerPage;

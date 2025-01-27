@@ -173,7 +173,7 @@ nlohmann::json result_to_json(const std::shared_ptr<logicalaccess::Format> &form
             json_result[field->getName()]["type"] = "BINARY";
             auto data                             = bdf->getValue();
 
-            std::string dataString = base64_encode(data.data(), data.size());
+            std::string dataString = base64_encode(data.data(), static_cast<unsigned int>(data.size()));
             json_result[field->getName()]["value"]        = dataString;
             json_result[field->getName()]["isIdentifier"] = bdf->getIsIdentifier();
         }
@@ -250,7 +250,7 @@ std::string JsonDumpCardService::dump()
                     format_info.second->getLocation()->incrementOffset(
                         format_info.second->getFormat()->getDataLength() / 8);
                 }
-                catch (const std::exception &e)
+                catch (const std::exception&)
                 {
                     // todo: handle this better.
                     // For now we assume failure means we are done reading.

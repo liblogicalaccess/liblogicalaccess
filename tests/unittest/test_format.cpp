@@ -119,14 +119,14 @@ TEST(test_format_utils, test_format_ASCIIFormat)
     auto formatASCII    = std::make_shared<ASCIIFormat>();
     std::string message = "I am locking at you from a RFID distance !";
     formatASCII->setASCIIValue(message);
-    formatASCII->setASCIILength(message.size() + 10);
+    formatASCII->setASCIILength(static_cast<unsigned int>(message.size() + 10));
     auto formatBuf = formatASCII->getLinearData();
     auto result    = std::vector<unsigned char>(message.begin(), message.end());
     for (int x = 0; x < 10; ++x)
         result.push_back(' ');
     ASSERT_EQ(formatBuf, result);
     formatASCII = std::make_shared<ASCIIFormat>();
-    formatASCII->setASCIILength(message.size() + 10);
+    formatASCII->setASCIILength(static_cast<unsigned int>(message.size() + 10));
     formatASCII->setLinearData(result);
     ASSERT_EQ(formatASCII->getASCIIValue(), message);
 }

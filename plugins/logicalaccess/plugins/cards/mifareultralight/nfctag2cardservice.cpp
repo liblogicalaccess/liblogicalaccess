@@ -48,7 +48,7 @@ void NFCTag2CardService::writeData(std::shared_ptr<NfcData> records, int addr)
             getMifareUltralightChip()->getService(CST_STORAGE));
     ByteVector data = NfcData::dataToTLV(records);
     ByteVector tmp = {};
-    unsigned int size = data.size();
+    unsigned int size = static_cast<unsigned int>(data.size());
     std::shared_ptr<MifareUltralightLocation> location(new MifareUltralightLocation());
 
     readData();
@@ -70,7 +70,7 @@ void NFCTag2CardService::writeData(std::shared_ptr<NfcData> records, int addr)
                              std::shared_ptr<AccessInfo>(),
                              tmp, CB_AUTOSWITCHAREA);
         }
-        addr += c + tmp.size() + 1;
+        addr += static_cast<int>(c + tmp.size() + 1);
         tmp.clear();
       }
       tmp.push_back(data[i]);
@@ -104,7 +104,7 @@ std::shared_ptr<NdefMessage> NFCTag2CardService::readNDEF()
             ByteVector data = mfucmd->readPages(4, 4 + (CC[2] * 2) - 1);
             //ndef            = NdefMessage::TLVToNdefMessage(data);
             fillMemoryList(data);
-            unsigned int size = data.size();
+            unsigned int size = static_cast<unsigned int>(data.size());
             unsigned int r;
             for (unsigned int i = 0; i != size; i++)
             {
@@ -143,7 +143,7 @@ std::vector<std::shared_ptr<NfcData>> NFCTag2CardService::readData()
             // Read all available data from data blocks
             ByteVector data = mfucmd->readPages(4, 4 + (CC[2] * 2) - 1);
             fillMemoryList(data);
-            unsigned int size = data.size();
+            unsigned int size = static_cast<unsigned int>(data.size());
             int r;
             for (unsigned int i = 0; i != size; i++)
             {
@@ -171,11 +171,11 @@ void NFCTag2CardService::eraseNDEF()
 int NFCTag2CardService::checkForReservedArea(unsigned int i)
 {
   unsigned int res = -1;
-  unsigned int size = _memoryList.size();
+  unsigned int size = static_cast<unsigned int>(_memoryList.size());
 
   for (unsigned int j = 0; j != size; j++)
   {
-    if (i >= _memoryList[j].byteAddr && i < (_memoryList[j].byteAddr + _memoryList[j].size))
+    if (static_cast<int>(i) >= _memoryList[j].byteAddr && static_cast<int>(i) < (_memoryList[j].byteAddr + _memoryList[j].size))
     {
       return _memoryList[j].byteAddr + _memoryList[j].size - i - 1;
     }

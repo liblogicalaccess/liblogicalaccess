@@ -296,8 +296,8 @@ bool PCSCReaderUnit::waitInsertion(unsigned int maxwait)
                                   "PCSC Reader Provider is null.");
         LONG r = SCardGetStatusChange(
             provider->getContext(),
-            ((maxwait == 0) ? INFINITE : maxwait - time_counter.elapsed()), &readers[0],
-            readers.size());
+            ((maxwait == 0) ? INFINITE : static_cast<DWORD>(maxwait - time_counter.elapsed())), &readers[0],
+            static_cast<DWORD>(readers.size()));
         if (SCARD_S_SUCCESS == r)
         {
             for (size_t i = 0; i < readers.size(); ++i)
@@ -404,8 +404,8 @@ bool PCSCReaderUnit::waitRemoval(unsigned int maxwait)
     reader.clear();
 
     LONG r = SCardGetStatusChange(getPCSCReaderProvider()->getContext(),
-                                  ((maxwait == 0) ? INFINITE : maxwait), readers.data(),
-                                  readers_count);
+                                  ((maxwait == 0) ? INFINITE : static_cast<DWORD>(maxwait)), readers.data(),
+                                  static_cast<DWORD>(readers_count));
     if (SCARD_S_SUCCESS == r)
     {
         for (size_t i = 0; i < readers_count; ++i)
@@ -432,8 +432,8 @@ bool PCSCReaderUnit::waitRemoval(unsigned int maxwait)
             {
                 loop = false;
                 r    = SCardGetStatusChange(getPCSCReaderProvider()->getContext(),
-                                         ((maxwait == 0) ? INFINITE : maxwait),
-                                         readers.data(), readers_count);
+                                         ((maxwait == 0) ? INFINITE : static_cast<DWORD>(maxwait)),
+                                         readers.data(), static_cast<DWORD>(readers_count));
                 if (SCARD_S_SUCCESS == r)
                 {
                     if ((maxwait == 0) || time_counter.elapsed() < maxwait)
