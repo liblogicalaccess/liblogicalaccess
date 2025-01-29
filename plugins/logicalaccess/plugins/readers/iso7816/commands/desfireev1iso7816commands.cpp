@@ -467,7 +467,7 @@ void DESFireEV1ISO7816Commands::sam_iso_authenticate(std::shared_ptr<DESFireKey>
                 ->getReaderCardAdapter()
                 ->getDataTransport()
                 ->getReaderUnit()
-                ->reconnect();
+                ->reconnect(0);
         }
         ++trytoreconnect;
     } while (true);

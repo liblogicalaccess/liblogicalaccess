@@ -311,7 +311,7 @@ class LLA_READERS_PCSC_API PCSCReaderUnit : public ISO7816ReaderUnit
      * \param control the behavior of the reconnect.
      * \return True if the card was reconnected without error, false otherwise.
      */
-    bool reconnect(int action = 0) override;
+    bool reconnect(int action) override;
 
   protected:
     /**

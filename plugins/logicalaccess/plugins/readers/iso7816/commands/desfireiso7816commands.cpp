@@ -937,7 +937,7 @@ ByteVector DESFireISO7816Commands::sam_authenticate_p1(std::shared_ptr<DESFireKe
                 ->getReaderCardAdapter()
                 ->getDataTransport()
                 ->getReaderUnit()
-                ->reconnect();
+                ->reconnect(0);
         }
         ++trytoreconnect;
     } while (true);

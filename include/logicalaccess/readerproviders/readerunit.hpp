@@ -195,7 +195,7 @@ class LLA_CORE_API ReaderUnit : public XmlSerializable,
     * reader.
     * \return True if the card was reconnected without error, false otherwise.
     */
-    virtual bool reconnect(int action = 0)
+    virtual bool reconnect(int action)
     {
         (void)action;
         return true;

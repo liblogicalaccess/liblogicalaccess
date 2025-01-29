@@ -579,7 +579,7 @@ bool PCSCReaderUnit::reconnect(int action)
 {
     if (d_proxyReaderUnit)
     {
-        return d_proxyReaderUnit->reconnect();
+        return d_proxyReaderUnit->reconnect(action);
     }
 
     connection_->reconnect();
