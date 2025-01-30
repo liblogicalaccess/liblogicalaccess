@@ -4,6 +4,8 @@ file(GLOB_RECURSE HDPPRS *.hpp)
 
 set(INCLUDE ${HDRS} ${HDPPRS})
 
+find_package(openssl)
+
 add_library(logicalaccess-cryptolib
         SHARED
         ${SRCS}

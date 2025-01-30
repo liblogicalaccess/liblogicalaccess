@@ -6,6 +6,8 @@ if (MSVC)
     add_definitions(-DVERSION_PRODUCTNAME_VALUE="${VERSION_PRODUCTNAME_VALUE}")
 endif ()
 
+find_package(boost)
+
 if (UNIX)
     find_package(PCSCLite REQUIRED)
 endif ()

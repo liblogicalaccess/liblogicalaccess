@@ -3,6 +3,7 @@ file(GLOB_RECURSE HDRS *.h)
 file(GLOB_RECURSE HDPPRS *.hpp)
 
 set(INCLUDE ${HDRS} ${HDPPRS})
+find_package(boost)
 add_library(llacommon
         SHARED
         ${SRCS}

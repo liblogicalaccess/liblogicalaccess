@@ -34,4 +34,6 @@ function(lla_create_test TEST_SUITE_NAME SOURCE_FILENAME)
             )
 endfunction()
 
+find_package(boost)
+
 add_subdirectory(unittest)

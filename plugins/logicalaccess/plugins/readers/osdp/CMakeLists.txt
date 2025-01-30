@@ -8,6 +8,8 @@ endif ()
 
 set(HEADER_RELATIVE_INSTALL_DIR "include/logicalaccess/plugins/readers/osdp")
 
+find_package(openssl)
+
 file(GLOB SRCS *.cpp)
 file(GLOB include *.hpp)
 

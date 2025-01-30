@@ -29,6 +29,9 @@ function(add_gtest_test file)
     add_test(NAME ${test_name} COMMAND ${test_name} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 endfunction()
 
+find_package(boost)
+find_package(gtest)
+
 add_gtest_test(test_atrparser.cpp)
 add_gtest_test(test_elapsed_time_counter.cpp)
 add_gtest_test(test_epass_utils.cpp)
