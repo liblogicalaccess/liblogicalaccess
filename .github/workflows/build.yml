@@ -35,7 +35,7 @@ jobs:
         run: |
           mkdir build
           cd build
-          conan install .. -o LLA_BUILD_UNITTEST=True --build=missing
+          conan install .. --build=missing
           conan build ..
         working-directory: lla
       - name: "Test"
@@ -59,7 +59,7 @@ jobs:
       - name: "Checkout cppkcs11"
         uses: actions/checkout@v2
         with:
-          repository: islog/cppkcs11
+          repository: liblogicalaccess/cppkcs11
           path: cppkcs
       - name: "Setup cppkcs11"
         run: |
@@ -72,7 +72,7 @@ jobs:
         run: |
           mkdir build
           cd build
-          conan install .. -o LLA_BUILD_UNITTEST=True --build=missing
+          conan install .. --build=missing
           conan build ..
         working-directory: lla
       - name: "Test"
@@ -94,7 +94,7 @@ jobs:
       - name: "Checkout cppkcs11"
         uses: actions/checkout@v2
         with:
-          repository: islog/cppkcs11
+          repository: liblogicalaccess/cppkcs11
           path: cppkcs
       - name: "Setup cppkcs11"
         run: |
@@ -104,7 +104,7 @@ jobs:
         run: |
           mkdir build
           cd build
-          conan install .. -o LLA_BUILD_UNITTEST=True --build=missing
+          conan install .. --build=missing
           conan build ..
         working-directory: lla
       - name: "Test"
