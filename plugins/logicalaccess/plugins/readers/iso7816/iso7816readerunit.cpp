@@ -64,14 +64,21 @@ bool ISO7816ReaderUnit::reconnect(int /*action*/)
         auto chip = getSingleChip();
         if (chip && chip->getGenericCardType() == CHIP_SAM)
         {
+            LOG(DEBUGS) << "Running specific behavior on reconnect with a connected SAM...";
             std::this_thread::sleep_for(std::chrono::milliseconds(200));
 
             auto command =
                 std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(
                     chip->getCommands());
             if (command)
+            {
                 command->lockUnlock(getISO7816Configuration()->getSAMUnLockKey(), Unlock,
                                     getISO7816Configuration()->getSAMUnLockkeyNo(), 0, 0);
+            }
+            else
+            {
+                LOG(WARNINGS) << "No SAM AV2 commands";
+            }
         }
     }
     catch (std::exception &ex)
