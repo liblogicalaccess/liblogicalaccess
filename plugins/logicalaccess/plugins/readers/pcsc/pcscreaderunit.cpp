@@ -577,7 +577,7 @@ void PCSCReaderUnit::reset(int action)
 
 bool PCSCReaderUnit::reconnect(int action)
 {
-    if (d_proxyReaderUnit)
+    if (d_proxyReaderUnit && action != -1) // -1 action is a workaround to skip proxy reader unit
     {
         return d_proxyReaderUnit->reconnect(action);
     }
