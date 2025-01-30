@@ -36,6 +36,10 @@ void DummyReaderUnit::disconnect()
 {
     throw std::runtime_error("Not implemented");
 }
+bool DummyReaderUnit::reconnect(int action)
+{
+    throw std::runtime_error("Not implemented");
+}
 bool DummyReaderUnit::connectToReader()
 {
     throw std::runtime_error("Not implemented");

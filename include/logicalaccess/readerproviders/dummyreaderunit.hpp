@@ -33,6 +33,8 @@ class LLA_CORE_API DummyReaderUnit : public ReaderUnit
     bool connect() override;
 
     void disconnect() override;
+    
+    bool reconnect(int action) override;
 
     bool connectToReader() override;
 
