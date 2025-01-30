@@ -40,6 +40,7 @@ void STidSTRReaderUnitConfiguration::serialize(boost::property_tree::ptree &pare
     node.put("CommunicationType", d_communicationType);
     node.put("CommunicationMode", d_communicationMode);
     node.put("PN532Direct", d_pn532_direct);
+    node.put("Protocolversion", d_protocolVersion);
     d_key_hmac->serialize(node);
     d_key_aes->serialize(node);
 
@@ -56,6 +57,8 @@ void STidSTRReaderUnitConfiguration::unSerialize(boost::property_tree::ptree &no
     d_communicationMode = static_cast<STidCommunicationMode>(
         node.get_child("CommunicationMode").get_value<unsigned int>());
     d_pn532_direct = node.get_child("PN532Direct").get_value<bool>();
+    d_protocolVersion = static_cast<STidProtocolVersion>(
+        node.get_child("ProtocolVersion").get_value<unsigned int>());
     d_key_hmac->unSerialize(node.get_child(d_key_hmac->getDefaultXmlNodeName()));
     d_key_aes->unSerialize(node.get_child(d_key_aes->getDefaultXmlNodeName()));
 }
