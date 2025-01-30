@@ -98,7 +98,7 @@ endif ()
 target_link_libraries(logicalaccess PUBLIC
         llacommon
         logicalaccess-cryptolib
-        OpenSSL::openssl
+        OpenSSL::Crypto
         ${LLA_ADDITIONAL_LIBRARIES_TO_LINK_AGAINST}
         Boost::boost
         nlohmann_json::nlohmann_json

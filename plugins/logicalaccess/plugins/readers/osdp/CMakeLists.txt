@@ -8,7 +8,7 @@ endif ()
 
 set(HEADER_RELATIVE_INSTALL_DIR "include/logicalaccess/plugins/readers/osdp")
 
-find_package(openssl)
+find_package(OpenSSL)
 
 file(GLOB SRCS *.cpp)
 file(GLOB include *.hpp)
@@ -35,7 +35,7 @@ target_link_libraries(osdpreaders
         iso7816readers
         iso7816cards
         logicalaccess
-        openssl::openssl)
+        OpenSSL::Crypto)
 LLA_GENERATE_EXPORTS(LLA_READERS_OSDP)
 
 install(FILES ${include} DESTINATION ${HEADER_RELATIVE_INSTALL_DIR})
