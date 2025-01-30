@@ -4,7 +4,7 @@ file(GLOB_RECURSE HDPPRS *.hpp)
 
 set(INCLUDE ${HDRS} ${HDPPRS})
 
-find_package(openssl)
+find_package(OpenSSL)
 
 add_library(logicalaccess-cryptolib
         SHARED
@@ -14,7 +14,7 @@ add_library(logicalaccess-cryptolib
 if (MSVC)
     target_compile_options(logicalaccess-cryptolib PUBLIC "/wd4251")
 endif()
-target_link_libraries(logicalaccess-cryptolib PUBLIC llacommon openssl::openssl)
+target_link_libraries(logicalaccess-cryptolib PUBLIC llacommon OpenSSL::openssl)
 
 # Export header generation and installation
 generate_export_header(logicalaccess-cryptolib

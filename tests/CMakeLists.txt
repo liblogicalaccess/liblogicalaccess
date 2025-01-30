@@ -24,7 +24,7 @@ function(lla_create_test TEST_SUITE_NAME SOURCE_FILENAME)
     target_link_libraries(${TARGET_NAME}
             lla-tests
             logicalaccess
-            boost::boost
+            Boost::boost
             )
     get_property(LLA_TESTS_ADDITIONAL_INCLUDES GLOBAL PROPERTY LLA_TESTS_ADDITIONAL_INCLUDES_PROPERTY)
 
@@ -34,6 +34,6 @@ function(lla_create_test TEST_SUITE_NAME SOURCE_FILENAME)
             )
 endfunction()
 
-find_package(boost)
+find_package(Boost)
 
 add_subdirectory(unittest)

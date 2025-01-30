@@ -2,20 +2,23 @@ function(create_test file)
     get_filename_component(test_name ${file} NAME_WE)
     add_executable(${test_name} ${file})
 
+    find_package(Boost)
+    find_package(GTest)
+
     target_include_directories(${test_name} PRIVATE
             ${CMAKE_SOURCE_DIR}/plugins)
 
     if (MSVC)
         target_link_libraries(${test_name} PUBLIC
-                gtest::gtest
-                boost::boost
+                GTest::gtest
+                Boost::boost
                 pcscreaders
                 epasscards
                 logicalaccess)
     else ()
         target_link_libraries(${test_name} PUBLIC
-                gtest::gtest
-                boost::boost
+                GTest::gtest
+                Boost::boost
                 pthread
                 pcscreaders
                 epasscards
@@ -28,9 +31,6 @@ function(add_gtest_test file)
     create_test(${file})
     add_test(NAME ${test_name} COMMAND ${test_name} WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 endfunction()
-
-find_package(boost)
-find_package(gtest)
 
 add_gtest_test(test_atrparser.cpp)
 add_gtest_test(test_elapsed_time_counter.cpp)

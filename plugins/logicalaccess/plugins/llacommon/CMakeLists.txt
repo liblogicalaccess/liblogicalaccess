@@ -3,7 +3,7 @@ file(GLOB_RECURSE HDRS *.h)
 file(GLOB_RECURSE HDPPRS *.hpp)
 
 set(INCLUDE ${HDRS} ${HDPPRS})
-find_package(boost)
+find_package(Boost)
 add_library(llacommon
         SHARED
         ${SRCS}
@@ -20,7 +20,7 @@ target_include_directories(llacommon PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/../../../../include
         ${CMAKE_CURRENT_SOURCE_DIR}/../../../../plugins)
 
-target_link_libraries(llacommon PUBLIC boost::boost)
+target_link_libraries(llacommon PUBLIC Boost::boost)
 generate_export_header(llacommon
         EXPORT_MACRO_NAME LLA_COMMON_API
         EXPORT_FILE_NAME "${CMAKE_CURRENT_SOURCE_DIR}/lla_common_api.hpp")

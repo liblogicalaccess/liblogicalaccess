@@ -6,7 +6,7 @@ if (MSVC)
     add_definitions(-DVERSION_PRODUCTNAME_VALUE="${VERSION_PRODUCTNAME_VALUE}")
 endif ()
 
-find_package(boost)
+find_package(Boost)
 
 if (UNIX)
     find_package(PCSCLite REQUIRED)
@@ -74,7 +74,7 @@ if (UNIX)
 			yubikeycards
             logicalaccess
             PCSCLite::PCSCLite
-            boost::boost
+            Boost::boost
             )
 else ()
     target_link_libraries(pcscreaders
@@ -96,7 +96,7 @@ else ()
 			yubikeycards
 			winscard
             logicalaccess
-            boost::boost)
+            Boost::boost)
 endif ()
 
 LLA_GENERATE_EXPORTS(LLA_READERS_PCSC)

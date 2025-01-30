@@ -16,8 +16,8 @@ include(GenerateExportHeader)
 if (NOT BUILD_TESTING STREQUAL OFF)
     find_package(GTest)
 endif ()
-find_package(boost)
-find_package(openssl)
+find_package(Boost)
+find_package(OpenSSL)
 find_package(nlohmann_json)
 if (LLA_BUILD_PKCS)
     find_package(cppkcs11)
@@ -98,9 +98,9 @@ endif ()
 target_link_libraries(logicalaccess PUBLIC
         llacommon
         logicalaccess-cryptolib
-        openssl::openssl
+        OpenSSL::openssl
         ${LLA_ADDITIONAL_LIBRARIES_TO_LINK_AGAINST}
-        boost::boost
+        Boost::boost
         nlohmann_json::nlohmann_json
         )
 
