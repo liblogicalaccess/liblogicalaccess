@@ -140,6 +140,16 @@ class LLA_READERS_ISO7816_API ISO7816ReaderUnitConfiguration
 		d_skipCSN = skipCSN;
 	}
 
+    bool getUseSAMAuthenticateHost() const
+	{
+		return d_use_sam_authenticate_host;
+	}
+	
+	void setUseSAMAuthenticateHost(bool skipCSN)
+	{
+		d_use_sam_authenticate_host = skipCSN;
+	}
+
   protected:
     /**
      * \brief The SAM type.
@@ -176,6 +186,11 @@ class LLA_READERS_ISO7816_API ISO7816ReaderUnitConfiguration
 	 * \brief Skip to get CSN
 	 */
 	bool d_skipCSN;
+
+    /**
+     * \brief Use Authenticate Host instead of Unlock
+     */
+    bool d_use_sam_authenticate_host;
 };
 }
 

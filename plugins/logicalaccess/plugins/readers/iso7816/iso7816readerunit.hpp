@@ -176,6 +176,8 @@ class LLA_READERS_ISO7816_API ISO7816ReaderUnit : public ReaderUnit
      */
     virtual void setSAMReaderUnit(std::shared_ptr<ISO7816ReaderUnit> t);
 
+    void unlockSAM();
+
   protected:
     std::shared_ptr<ResultChecker> createDefaultResultChecker() const override;
 

@@ -67,18 +67,7 @@ bool ISO7816ReaderUnit::reconnect(int /*action*/)
             LOG(DEBUGS) << "Running specific behavior on reconnect with a connected SAM...";
             std::this_thread::sleep_for(std::chrono::milliseconds(200));
 
-            auto command =
-                std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(
-                    chip->getCommands());
-            if (command)
-            {
-                command->lockUnlock(getISO7816Configuration()->getSAMUnLockKey(), Unlock,
-                                    getISO7816Configuration()->getSAMUnLockkeyNo(), 0, 0);
-            }
-            else
-            {
-                LOG(WARNINGS) << "No SAM AV2 commands";
-            }
+            unlockSAM();
         }
     }
     catch (std::exception &ex)
@@ -175,45 +164,7 @@ void ISO7816ReaderUnit::connectToSAM()
 
         try
         {
-            if (!getISO7816Configuration()->getSAMUnLockKey())
-                THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                         "The Unlock SAM key is empty.");
-
-            if (ret->getSingleChip()->getCardType() == "SAM_AV1")
-                std::dynamic_pointer_cast<SAMAV1ISO7816Commands>(
-                    getSAMChip()->getCommands())
-                    ->authenticateHost(getISO7816Configuration()->getSAMUnLockKey(),
-                                       getISO7816Configuration()->getSAMUnLockkeyNo());
-            else if (ret->getSingleChip()->getCardType() == "SAM_AV2" || ret->getSingleChip()->getCardType() == "SAM_AV3")
-            {
-                try
-                {
-                    std::dynamic_pointer_cast<SAMAV2ISO7816Commands>(
-                        getSAMChip()->getCommands())
-                        ->lockUnlock(getISO7816Configuration()->getSAMUnLockKey(), Unlock,
-                                     getISO7816Configuration()->getSAMUnLockkeyNo(), 0,
-                                     0);
-                }
-                catch (CardException &ex)
-                {
-                    if (ex.error_code() != CardException::WRONG_P1_P2)
-                        std::rethrow_exception(std::current_exception());
-
-                    // try to lock the SAM in case it was already unlocked
-                    std::dynamic_pointer_cast<SAMAV2ISO7816Commands>(
-                        getSAMChip()->getCommands())
-                        ->lockUnlock(getISO7816Configuration()->getSAMUnLockKey(),
-                                     LockWithoutSpecifyingKey,
-                                     getISO7816Configuration()->getSAMUnLockkeyNo(), 0,
-                                     0);
-
-                    std::dynamic_pointer_cast<SAMAV2ISO7816Commands>(
-                        getSAMChip()->getCommands())
-                        ->lockUnlock(getISO7816Configuration()->getSAMUnLockKey(), Unlock,
-                                     getISO7816Configuration()->getSAMUnLockkeyNo(), 0,
-                                     0);
-                }
-            }
+            unlockSAM();
         }
         catch (std::exception &)
         {
@@ -227,6 +178,62 @@ void ISO7816ReaderUnit::connectToSAM()
         ret->getISO7816Configuration()->setSAMUnlockKey(
             getISO7816Configuration()->getSAMUnLockKey(),
             getISO7816Configuration()->getSAMUnLockkeyNo());
+    }
+}
+
+void ISO7816ReaderUnit::unlockSAM()
+{
+    if (!getISO7816Configuration()->getSAMUnLockKey())
+                THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                         "The Unlock SAM key is empty.");
+
+    auto samchip = getSAMChip();
+    if (samchip->getCardType() == "SAM_AV1")
+    {
+        auto av1cmd = std::dynamic_pointer_cast<SAMAV1ISO7816Commands>(samchip->getCommands());
+        if (!av1cmd)
+        {
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "No SAM AV1 commands.");
+        }
+        av1cmd->authenticateHost(getISO7816Configuration()->getSAMUnLockKey(),
+                                getISO7816Configuration()->getSAMUnLockkeyNo());
+    }
+    else if (samchip->getCardType() == "SAM_AV2" || samchip->getCardType() == "SAM_AV3")
+    {
+        auto av2cmd = std::dynamic_pointer_cast<SAMAV2ISO7816Commands>(getSAMChip()->getCommands());
+        if (!av2cmd)
+        {
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "No SAM AV2 commands.");
+        }
+
+        if (getISO7816Configuration()->getUseSAMAuthenticateHost())
+        {
+            av2cmd->authenticateHost(getISO7816Configuration()->getSAMUnLockKey(), getISO7816Configuration()->getSAMUnLockkeyNo());
+        }
+        else
+        {
+            try
+            {
+                av2cmd->lockUnlock(getISO7816Configuration()->getSAMUnLockKey(), Unlock,
+                                getISO7816Configuration()->getSAMUnLockkeyNo(), 0,
+                                0);
+            }
+            catch (CardException &ex)
+            {
+                if (ex.error_code() != CardException::WRONG_P1_P2)
+                    std::rethrow_exception(std::current_exception());
+
+                // try to lock the SAM in case it was already unlocked
+                av2cmd->lockUnlock(getISO7816Configuration()->getSAMUnLockKey(),
+                                LockWithoutSpecifyingKey,
+                                getISO7816Configuration()->getSAMUnLockkeyNo(), 0,
+                                0);
+
+                av2cmd->lockUnlock(getISO7816Configuration()->getSAMUnLockKey(), Unlock,
+                                getISO7816Configuration()->getSAMUnLockkeyNo(), 0,
+                                0);
+            }
+        }
     }
 }
 

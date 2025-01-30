@@ -36,6 +36,7 @@ void ISO7816ReaderUnitConfiguration::resetConfiguration()
     d_check_sam_reader_available = true;
     d_auto_connect_sam_reader    = true;
 	d_skipCSN                    = false;
+    d_use_sam_authenticate_host  = false;
 }
 
 void ISO7816ReaderUnitConfiguration::serialize(boost::property_tree::ptree &node)
@@ -52,6 +53,7 @@ void ISO7816ReaderUnitConfiguration::serialize(boost::property_tree::ptree &node
     node.add_child("SAMKey", knode);
     node.put("CheckSAMReaderIsAvailable", d_check_sam_reader_available);
     node.put("AutoConnectToSAMReader", d_auto_connect_sam_reader);
+    node.put("UseSAMAuthenticateHost", d_use_sam_authenticate_host);
 }
 
 void ISO7816ReaderUnitConfiguration::unSerialize(boost::property_tree::ptree &node)
@@ -81,6 +83,11 @@ void ISO7816ReaderUnitConfiguration::unSerialize(boost::property_tree::ptree &no
         node.get_child("CheckSAMReaderIsAvailable").get_value<bool>();
     d_auto_connect_sam_reader =
         node.get_child("AutoConnectToSAMReader").get_value<bool>();
+    auto useSAMAuthenticateHost = node.get_child_optional("UseSAMAuthenticateHost");
+	if (useSAMAuthenticateHost)
+	{
+		d_use_sam_authenticate_host = useSAMAuthenticateHost.get().get_value<bool>();
+	}
 }
 
 std::string ISO7816ReaderUnitConfiguration::getDefaultXmlNodeName() const
