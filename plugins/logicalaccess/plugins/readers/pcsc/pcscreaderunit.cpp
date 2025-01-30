@@ -582,7 +582,8 @@ bool PCSCReaderUnit::reconnect(int action)
         return d_proxyReaderUnit->reconnect(action);
     }
 
-    connection_->reconnect();
+    if (connection_)
+        connection_->reconnect();
 
     if (!ISO7816ReaderUnit::reconnect(action))
         return false;
