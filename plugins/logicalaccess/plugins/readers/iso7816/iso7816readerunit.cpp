@@ -71,7 +71,7 @@ bool ISO7816ReaderUnit::reconnect(int /*action*/)
                     chip->getCommands());
             if (command)
                 command->lockUnlock(getISO7816Configuration()->getSAMUnLockKey(), Unlock,
-                                    0, 0, 0);
+                                    getISO7816Configuration()->getSAMUnLockkeyNo(), 0, 0);
         }
     }
     catch (std::exception &ex)
