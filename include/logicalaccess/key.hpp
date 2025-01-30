@@ -113,7 +113,7 @@ class LLA_CORE_API Key : public XmlSerializable,
      * \param key Key to compare.
      * \return True if equals, false otherwise.
      */
-    bool Key::isEqual(const Key &key) const;
+    bool isEqual(const Key &key) const;
 
     /**
      * \brief Equality operator
