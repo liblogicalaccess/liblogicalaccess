@@ -778,7 +778,7 @@ std::shared_ptr<Chip> STidSTRReaderUnit::scanGlobal(bool iso14443a, bool activeR
 
 void STidSTRReaderUnit::authenticateHMAC()
 {
-    LOG(LogLevel::INFOS) << "Authenticating HMAC (signed communication)...";
+    LOG(LogLevel::INFOS) << "Authenticating HMAC (signed communication, SSCP v1)...";
 
     ByteVector buf1;
     std::shared_ptr<HMAC1Key> key = getSTidSTRConfiguration()->getHMACKey();
@@ -852,7 +852,7 @@ void STidSTRReaderUnit::authenticateHMAC()
 
 void STidSTRReaderUnit::authenticateAES()
 {
-    LOG(LogLevel::INFOS) << "Authenticating AES (ciphered communication)...";
+    LOG(LogLevel::INFOS) << "Authenticating AES (ciphered communication, SSCP v1)...";
 
     ByteVector rndB;
     rndB.resize(16);
@@ -962,6 +962,42 @@ void STidSTRReaderUnit::ResetAuthenticate()
 {
     LOG(LogLevel::INFOS) << "Reseting authentication...";
     getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x000D, ByteVector());
+}
+
+void STidSTRReaderUnit::authenticateReader()
+{
+    LOG(LogLevel::INFOS) << "Authenticating Reader (SSCP v2)...";
+
+    ByteVector idA = { 0x48, 0x6f, 0x07, 0xad };
+    ByteVector idB = { 0x53, 0x77, 0x07, 0xad };
+
+    ByteVector rndA;
+    rndA.resize(16);
+    if (RAND_bytes(&rndA[0], static_cast<int>(rndA.size())) != 1)
+    {
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "Cannot retrieve cryptographically strong bytes");
+    }
+
+    ByteVector command, ret;
+    // Key index - not used here
+    command.push_back(0x00);
+    command.push_back(0x00);
+
+    command.insert(command.end(), rndA.begin(), rndA.end());
+
+    try
+    {
+        ret = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x0000 /* Not used */, command, STID_PM_AUTH_REQUEST);
+        
+        // TODO: get id A and B, get RndB, check signature, and perform authentication step 2 to calculate session keys
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SSCP v2 is not yet fully implemented.");
+    }
+    catch (std::exception &e)
+    {
+        LOG(LogLevel::ERRORS) << "Exception {" << e.what() << "}";
+        throw;
+    }
 }
 
 void STidSTRReaderUnit::ChangeReaderKeys(const ByteVector &key_hmac,

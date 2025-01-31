@@ -214,7 +214,7 @@ class LLA_READERS_STIDSTR_API STidSTRReaderUnit : public ISO7816ReaderUnit
 
     /**
      * \brief Authenticate the host with the reader and genereate session keys for HMAC
-     * and enciphering, 1/2.
+     * and enciphering, 1/2. SSCP v1 only.
      * \param isHMAC True if the authentication process is for HMAC session key, false for
      * AES session key.
      * \return The reader response.
@@ -223,7 +223,7 @@ class LLA_READERS_STIDSTR_API STidSTRReaderUnit : public ISO7816ReaderUnit
 
     /**
      * \brief Authenticate the host with the reader and genereate session keys for HMAC
-     * and enciphering, 2/2.
+     * and enciphering, 2/2. SSCP v1 only.
      * \param data The authentication command data.
      * \return The reader response.
      */
@@ -231,7 +231,7 @@ class LLA_READERS_STIDSTR_API STidSTRReaderUnit : public ISO7816ReaderUnit
 
     /**
      * \brief Reset the reader authentication and session keys. Next frames will be
-     * transmitted plain.
+     * transmitted plain. SSCP v1 only.
      */
     void ResetAuthenticate();
 
@@ -338,14 +338,19 @@ class LLA_READERS_STIDSTR_API STidSTRReaderUnit : public ISO7816ReaderUnit
 
   protected:
     /**
-     * \brief Authenticate the host and the reader to obtain the HMAC session key.
+     * \brief Authenticate the host and the reader to obtain the HMAC session key. SSCP v1 only.
      */
     void authenticateHMAC();
 
     /**
-     * \brief Authenticate the host and the reader to obtain the AES session key.
+     * \brief Authenticate the host and the reader to obtain the AES session key. SSCP v1 only.
      */
     void authenticateAES();
+
+    /**
+     * \brief Authenticate the host and the reader to obtain the session keys. SSCP v2 only.
+     */
+    void authenticateReader();
     
     std::shared_ptr<Chip> createChipFromiso14443aBuffer(const ByteVector& data);
     
