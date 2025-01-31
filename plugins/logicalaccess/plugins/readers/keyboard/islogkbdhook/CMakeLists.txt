@@ -24,6 +24,7 @@ add_executable(${TARGET_EXE_NAME} WIN32
 SET_TARGET_PROPERTIES(${TARGET_EXE_NAME} PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})
 target_link_libraries(${TARGET_EXE_NAME}
 	logicalaccess
+	Boost::program_options
     ${BACKING_LIB_NAME})
 target_include_directories(${TARGET_EXE_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../islogkbdhooklib)
 

@@ -14,7 +14,7 @@ add_library(logicalaccess-cryptolib
 if (MSVC)
     target_compile_options(logicalaccess-cryptolib PUBLIC "/wd4251")
 endif()
-target_link_libraries(logicalaccess-cryptolib PUBLIC llacommon OpenSSL::Crypto)
+target_link_libraries(logicalaccess-cryptolib PUBLIC llacommon OpenSSL::Crypto OpenSSL::SSL)
 
 # Export header generation and installation
 generate_export_header(logicalaccess-cryptolib

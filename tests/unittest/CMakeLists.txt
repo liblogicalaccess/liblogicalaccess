@@ -10,14 +10,14 @@ function(create_test file)
 
     if (MSVC)
         target_link_libraries(${test_name} PUBLIC
-                GTest::gtest
+                GTest::gtest_main
                 Boost::boost
                 pcscreaders
                 epasscards
                 logicalaccess)
     else ()
         target_link_libraries(${test_name} PUBLIC
-                GTest::gtest
+                GTest::gtest_main
                 Boost::boost
                 pthread
                 pcscreaders

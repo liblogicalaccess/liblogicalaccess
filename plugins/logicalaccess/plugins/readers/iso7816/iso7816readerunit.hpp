@@ -176,8 +176,6 @@ class LLA_READERS_ISO7816_API ISO7816ReaderUnit : public ReaderUnit
      */
     virtual void setSAMReaderUnit(std::shared_ptr<ISO7816ReaderUnit> t);
 
-    void unlockSAM();
-
   protected:
     std::shared_ptr<ResultChecker> createDefaultResultChecker() const override;
 
@@ -197,9 +195,11 @@ class LLA_READERS_ISO7816_API ISO7816ReaderUnit : public ReaderUnit
             getConfiguration());
     }
 
+    void unlockSAM(std::shared_ptr<Chip> samchip);
+
     /**
- * \brief The SAM chip.
- */
+     * \brief The SAM chip.
+     */
     std::shared_ptr<SAMChip> d_sam_chip;
 
     /**
