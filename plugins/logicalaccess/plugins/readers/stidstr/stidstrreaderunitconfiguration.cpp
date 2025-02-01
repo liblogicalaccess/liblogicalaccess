@@ -28,6 +28,7 @@ void STidSTRReaderUnitConfiguration::resetConfiguration()
     d_communicationMode = STID_CM_PLAIN;
     d_protocolVersion   = STID_SSCP_V1;
     d_pn532_direct      = false;
+    d_use_scan_global   = true;
     d_key_hmac.reset(new HMAC1Key(""));
     d_key_aes.reset(new AES128Key(""));
 }
@@ -41,6 +42,7 @@ void STidSTRReaderUnitConfiguration::serialize(boost::property_tree::ptree &pare
     node.put("CommunicationMode", d_communicationMode);
     node.put("PN532Direct", d_pn532_direct);
     node.put("Protocolversion", d_protocolVersion);
+    node.put("UseScanGlobal", d_use_scan_global);
     d_key_hmac->serialize(node);
     d_key_aes->serialize(node);
 
@@ -59,6 +61,7 @@ void STidSTRReaderUnitConfiguration::unSerialize(boost::property_tree::ptree &no
     d_pn532_direct = node.get_child("PN532Direct").get_value<bool>();
     d_protocolVersion = static_cast<STidProtocolVersion>(
         node.get_child("ProtocolVersion").get_value<unsigned int>());
+    d_use_scan_global = node.get_child("UseScanGlobal").get_value<bool>();
     d_key_hmac->unSerialize(node.get_child(d_key_hmac->getDefaultXmlNodeName()));
     d_key_aes->unSerialize(node.get_child(d_key_aes->getDefaultXmlNodeName()));
 }
@@ -90,6 +93,16 @@ bool STidSTRReaderUnitConfiguration::getPN532Direct() const
 void STidSTRReaderUnitConfiguration::setPN532Direct(bool direct)
 {
     d_pn532_direct = direct;
+}
+
+bool STidSTRReaderUnitConfiguration::getUseScanGlobal() const
+{
+    return d_use_scan_global;
+}
+
+void STidSTRReaderUnitConfiguration::setUseScanGlobal(bool use)
+{
+    d_use_scan_global = use;
 }
 
 STidCommunicationType STidSTRReaderUnitConfiguration::getCommunicationType() const

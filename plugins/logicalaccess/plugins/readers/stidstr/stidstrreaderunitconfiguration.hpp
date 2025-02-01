@@ -157,6 +157,10 @@ class LLA_READERS_STIDSTR_API STidSTRReaderUnitConfiguration
 
     void setPN532Direct(bool direct);
 
+    bool getUseScanGlobal() const;
+
+    void setUseScanGlobal(bool use);
+
   protected:
     /**
      * \brief The reader RS485 address (if communication type RS485 used).
@@ -189,9 +193,14 @@ class LLA_READERS_STIDSTR_API STidSTRReaderUnitConfiguration
     std::shared_ptr<AES128Key> d_key_aes;
 
     /**
-    * \brief Direct communication with the internal PN532 component.
-    */
+     * \brief Direct communication with the internal PN532 component.
+     */
     bool d_pn532_direct;
+
+    /**
+     * \brief True to use Scan Global command. False to use the old way with scanARaw/scan14443B
+     */
+    bool d_use_scan_global;
 };
 }
 

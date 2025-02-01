@@ -110,7 +110,7 @@ bool STidSTRReaderUnit::waitInsertion(unsigned int maxwait)
         do
         {
             std::shared_ptr<Chip> chip;
-            if (getSTidSTRConfiguration()->getProtocolVersion() == STID_SSCP_V1)
+            if (!getSTidSTRConfiguration()->getUseScanGlobal())
             {
                 chip = scanARaw(); // scan14443A() => Obsolete. It's just used for testing purpose !
                 if (!chip)
@@ -181,7 +181,7 @@ bool STidSTRReaderUnit::waitRemoval(unsigned int maxwait)
             do
             {
                 std::shared_ptr<Chip> chip;
-                if (getSTidSTRConfiguration()->getProtocolVersion() == STID_SSCP_V1)
+                if (!getSTidSTRConfiguration()->getUseScanGlobal())
                 {
                     chip = scanARaw(); // scan14443A() => Obsolete. It's
                                                              // just used for testing purpose
