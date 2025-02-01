@@ -106,25 +106,26 @@ ByteVector STidSTRReaderCardAdapter::sendMessage(unsigned short commandCode,
     std::shared_ptr<STidSTRReaderUnitConfiguration> readerConfig =
         getSTidSTRReaderUnit()->getSTidSTRConfiguration();
 
-    if (readerConfig->getProtocolVersion() == STID_SSCP_V1)
-    {
-        processedMsg.push_back(0x00);          // RFU
-    }
     if (readerConfig->getProtocolVersion() == STID_SSCP_V1 || d_protocolMode != STID_PM_AUTH_REQUEST)
     {
+        if (readerConfig->getProtocolVersion() == STID_SSCP_V1)
+        {
+            processedMsg.push_back(0x00);          // RFU
+        }
+
         processedMsg.push_back(static_cast<unsigned char>(d_adapterType)); // Type
         processedMsg.push_back((commandCode & 0xff00) >> 8);               // Code
         processedMsg.push_back(commandCode & 0xff);                        // Code
-    }
 
-    if (readerConfig->getProtocolVersion() == STID_SSCP_V1)
-    {
-        processedMsg.push_back(0xAA); // Reserved
-        processedMsg.push_back(0x55); // Reserved
-    }
+        if (readerConfig->getProtocolVersion() == STID_SSCP_V1)
+        {
+            processedMsg.push_back(0xAA); // Reserved
+            processedMsg.push_back(0x55); // Reserved
+        }
 
-    processedMsg.push_back((command.size() & 0xff00) >> 8); // Data length
-    processedMsg.push_back(command.size() & 0xff);          // Data length
+        processedMsg.push_back((command.size() & 0xff00) >> 8); // Data length
+        processedMsg.push_back(command.size() & 0xff);          // Data length
+    }
 
     processedMsg.insert(processedMsg.end(), command.begin(), command.end());
 

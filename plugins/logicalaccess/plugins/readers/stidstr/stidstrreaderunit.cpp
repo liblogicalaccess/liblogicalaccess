@@ -249,18 +249,25 @@ bool STidSTRReaderUnit::connectToReader()
     bool connected = getDataTransport()->connect();
     if (connected)
     {
-        // Negotiate sessions according to communication options
-        if ((getSTidSTRConfiguration()->getCommunicationMode() & STID_CM_SIGNED) ==
-            STID_CM_SIGNED)
+        if (getSTidSTRConfiguration()->getProtocolVersion() == STID_SSCP_V1)
         {
-            LOG(LogLevel::INFOS) << "Signed communication required, negotiating HMAC...";
-            authenticateHMAC();
+            // Negotiate sessions according to communication options
+            if ((getSTidSTRConfiguration()->getCommunicationMode() & STID_CM_SIGNED) ==
+                STID_CM_SIGNED)
+            {
+                LOG(LogLevel::INFOS) << "Signed communication required, negotiating HMAC...";
+                authenticateHMAC();
+            }
+            if ((getSTidSTRConfiguration()->getCommunicationMode() & STID_CM_CIPHERED) ==
+                STID_CM_CIPHERED)
+            {
+                LOG(LogLevel::INFOS) << "Ciphered communication required, negotiating AES...";
+                authenticateAES();
+            }
         }
-        if ((getSTidSTRConfiguration()->getCommunicationMode() & STID_CM_CIPHERED) ==
-            STID_CM_CIPHERED)
+        else
         {
-            LOG(LogLevel::INFOS) << "Ciphered communication required, negotiating AES...";
-            authenticateAES();
+            authenticateReader();
         }
     }
 
