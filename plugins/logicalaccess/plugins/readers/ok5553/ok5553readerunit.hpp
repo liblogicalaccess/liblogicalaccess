@@ -166,7 +166,7 @@ class LLA_READERS_OK5553_API OK5553ReaderUnit : public ReaderUnit
      * \brief Get the OK5553 reader unit configuration.
      * \return The OK5553 reader unit configuration.
      */
-    std::shared_ptr<OK5553ReaderUnitConfiguration> getOK5553Configuration()
+    std::shared_ptr<OK5553ReaderUnitConfiguration> getOK5553Configuration() const
     {
         return std::dynamic_pointer_cast<OK5553ReaderUnitConfiguration>(
             getConfiguration());

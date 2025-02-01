@@ -166,7 +166,7 @@ class LLA_READERS_LIBUSB_API LibUSBReaderUnit : public ReaderUnit
      * \brief Get the LibUSB reader unit configuration.
      * \return The LibUSB reader unit configuration.
      */
-    std::shared_ptr<LibUSBReaderUnitConfiguration> getLibUSBConfiguration()
+    std::shared_ptr<LibUSBReaderUnitConfiguration> getLibUSBConfiguration() const
     {
         return std::dynamic_pointer_cast<LibUSBReaderUnitConfiguration>(getConfiguration());
     }

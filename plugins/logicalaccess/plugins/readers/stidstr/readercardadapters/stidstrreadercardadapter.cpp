@@ -133,39 +133,7 @@ ByteVector STidSTRReaderCardAdapter::sendMessage(unsigned short commandCode,
         // Cipher the data
         if ((readerConfig->getCommunicationMode() & STID_CM_CIPHERED) == STID_CM_CIPHERED)
         {
-            LOG(LogLevel::COMS) << "Need to cipher data ! Ciphering with AES...";
-            LOG(LogLevel::COMS) << "Message before ciphering {"
-                                << BufferHelper::getHex(processedMsg) << "}";
-            // 16-byte buffer aligned
-            if ((processedMsg.size() % 16) != 0)
-            {
-                int pad = 16 - (processedMsg.size() % 16);
-                for (int i = 0; i < pad; ++i)
-                {
-                    processedMsg.push_back(0x00);
-                }
-            }
-
-            ByteVector iv                   = getIV();
-            openssl::AESSymmetricKey aeskey = openssl::AESSymmetricKey::createFromData(
-                getSTidSTRReaderUnit()->getSessionKeyAES());
-            openssl::AESInitializationVector aesiv =
-                openssl::AESInitializationVector::createFromData(iv);
-            openssl::AESCipher cipher;
-
-            ByteVector encProcessedMsg;
-            cipher.cipher(processedMsg, encProcessedMsg, aeskey, aesiv, false);
-
-            if (encProcessedMsg.size() >= 16)
-            {
-                d_lastIV = ByteVector(encProcessedMsg.end() - 16, encProcessedMsg.end());
-            }
-
-            processedMsg = encProcessedMsg;
-            processedMsg.insert(processedMsg.end(), iv.begin(), iv.end());
-
-            LOG(LogLevel::COMS) << "Message after ciphering {"
-                                << BufferHelper::getHex(processedMsg) << "}";
+            processedMsg = cipherMessage(processedMsg);
         }
         else
         {
@@ -175,13 +143,7 @@ ByteVector STidSTRReaderCardAdapter::sendMessage(unsigned short commandCode,
         // Add the HMAC to the message
         if ((readerConfig->getCommunicationMode() & STID_CM_SIGNED) == STID_CM_SIGNED)
         {
-            LOG(LogLevel::COMS) << "Need to sign data ! Adding the HMAC...";
-            LOG(LogLevel::COMS) << "Message before signing {"
-                                << BufferHelper::getHex(processedMsg) << "}";
-            ByteVector hmacbuf = calculateHMAC(processedMsg);
-            processedMsg.insert(processedMsg.end(), hmacbuf.begin(), hmacbuf.end());
-            LOG(LogLevel::COMS) << "Message after signing {"
-                                << BufferHelper::getHex(processedMsg) << "}";
+            signMessage(processedMsg);
         }
         else
         {
@@ -192,8 +154,14 @@ ByteVector STidSTRReaderCardAdapter::sendMessage(unsigned short commandCode,
     {
         if (d_protocolMode != STID_PM_AUTH_REQUEST)
         {
-            // TODO: sign then cipher data here
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SSCP v2 is not yet fully implemented.");
+            int counter = getSTidSTRReaderUnit()->getCommandCounter(true);
+            processedMsg.insert(processedMsg.begin(), static_cast<uint8_t>(processedMsg.size() & 0xff));
+            processedMsg.insert(processedMsg.begin(), static_cast<uint8_t>((processedMsg.size() & 0xff00) >> 8));
+            processedMsg.insert(processedMsg.begin(), static_cast<uint8_t>((processedMsg.size() & 0xff0000) >> 16));
+            processedMsg.insert(processedMsg.begin(), static_cast<uint8_t>((processedMsg.size() & 0xff000000) >> 24));
+
+            signMessage(processedMsg);
+            processedMsg = cipherMessage(processedMsg);
         }
     }
 
@@ -201,6 +169,81 @@ ByteVector STidSTRReaderCardAdapter::sendMessage(unsigned short commandCode,
                         << " message size {" << processedMsg.size();
 
     return processedMsg;
+}
+
+void STidSTRReaderCardAdapter::signMessage(ByteVector& data) const
+{
+    LOG(LogLevel::COMS) << "Need to sign data ! Adding the HMAC...";
+    LOG(LogLevel::COMS) << "Message before signing {"
+                        << BufferHelper::getHex(data) << "}";
+    ByteVector hmacbuf = getSTidSTRReaderUnit()->calculateHMAC(data, STID_KEYCTX_A_TO_B);
+    data.insert(data.end(), hmacbuf.begin(), hmacbuf.end());
+    LOG(LogLevel::COMS) << "Message after signing {"
+                        << BufferHelper::getHex(data) << "}";
+}
+
+void STidSTRReaderCardAdapter::unsignMessage(ByteVector& data) const
+{
+    LOG(LogLevel::COMS) << "Need to check for signed data...";
+    unsigned int hmaclen = getSTidSTRReaderUnit()->getHMACLength();
+    EXCEPTION_ASSERT_WITH_LOG(
+        data.size() >= hmaclen, LibLogicalAccessException,
+        "The buffer is too short to contains the message HMAC.");
+    ByteVector signature = ByteVector(data.end() - hmaclen, data.end());
+    data.resize(data.size() - hmaclen);
+    EXCEPTION_ASSERT_WITH_LOG(signature == getSTidSTRReaderUnit()->calculateHMAC(data, STID_KEYCTX_B_TO_A),
+                            LibLogicalAccessException, "Wrong HMAC.");
+    LOG(LogLevel::COMS) << "Data after removing signed data "
+                        << BufferHelper::getHex(data);
+}
+
+ByteVector STidSTRReaderCardAdapter::cipherMessage(const ByteVector& data)
+{
+    LOG(LogLevel::COMS) << "Need to cipher data ! Ciphering with AES...";
+    LOG(LogLevel::COMS) << "Message before ciphering {"
+                        << BufferHelper::getHex(data) << "}";
+    // 16-byte buffer aligned
+    ByteVector tmpData = data;
+    if ((data.size() % 16) != 0)
+    {
+        int pad = 16 - (data.size() % 16);
+        for (int i = 0; i < pad; ++i)
+        {
+            tmpData.push_back(0x00);
+        }
+    }
+
+    ByteVector iv = getIV();
+    ByteVector encProcessedMsg = getSTidSTRReaderUnit()->cipherData(tmpData, iv, static_cast<STidKeyContext>(STID_KEYCTX_A_TO_B | STID_KEYCTX_AES));
+
+    if (encProcessedMsg.size() >= 16)
+    {
+        d_lastIV = ByteVector(encProcessedMsg.end() - 16, encProcessedMsg.end());
+    }
+
+    LOG(LogLevel::COMS) << "Message after ciphering {"
+                        << BufferHelper::getHex(encProcessedMsg) << "}";
+    return encProcessedMsg;
+}
+
+ByteVector STidSTRReaderCardAdapter::uncipherMessage(const ByteVector& data)
+{
+    LOG(LogLevel::COMS) << "Need to check for ciphered data...";
+    EXCEPTION_ASSERT_WITH_LOG(data.size() >= 16, LibLogicalAccessException,
+                            "The buffer is too short to contains the IV.");
+
+    ByteVector iv = ByteVector(data.end() - 16, data.end());
+    ByteVector encData = ByteVector(data.begin(), data.end() - 16);
+    ByteVector decData = getSTidSTRReaderUnit()->uncipherData(encData, iv, static_cast<STidKeyContext>(STID_KEYCTX_B_TO_A | STID_KEYCTX_AES));
+
+    if (encData.size() >= 16)
+    {
+        d_lastIV = ByteVector(encData.end() - 16, encData.end());
+    }
+
+    LOG(LogLevel::COMS) << "Data after removing ciphered data "
+                        << BufferHelper::getHex(decData);
+    return decData;
 }
 
 ByteVector STidSTRReaderCardAdapter::getIV()
@@ -229,7 +272,7 @@ ByteVector STidSTRReaderCardAdapter::sendCommand(unsigned short commandCode,
         d_protocolMode = protocolMode;
         return sendCommand(commandCode, command);
     }
-    catch (std::exception &e)
+    catch (std::exception &)
     {
         d_protocolMode = pm;
         throw;
@@ -345,21 +388,6 @@ ByteVector STidSTRReaderCardAdapter::adaptAnswer(const ByteVector &answer)
     return receiveMessage(data, statusCode);
 }
 
-ByteVector STidSTRReaderCardAdapter::calculateHMAC(const ByteVector &buf) const
-{
-    // HMAC-SHA-1
-
-    unsigned int len = 10;
-    ByteVector r;
-    r.resize(len, 0x00);
-
-    ByteVector sessionkey = getSTidSTRReaderUnit()->getSessionKeyHMAC();
-    HMAC(EVP_sha1(), &sessionkey[0], static_cast<int>(sessionkey.size()), &buf[0],
-         buf.size(), &r[0], &len);
-
-    return r;
-}
-
 ByteVector STidSTRReaderCardAdapter::receiveMessage(const ByteVector &data,
                                                     unsigned char &statusCode)
 {
@@ -377,52 +405,24 @@ ByteVector STidSTRReaderCardAdapter::receiveMessage(const ByteVector &data,
         // Check the message HMAC and remove it from the message
         if ((readerConfig->getCommunicationMode() & STID_CM_SIGNED) == STID_CM_SIGNED)
         {
-            LOG(LogLevel::COMS) << "Need to check for signed data...";
-            EXCEPTION_ASSERT_WITH_LOG(
-                data.size() >= 10, LibLogicalAccessException,
-                "The buffer is too short to contains the message HMAC.");
-            tmpData = ByteVector(data.begin(), data.end() - 10);
-            EXCEPTION_ASSERT_WITH_LOG(ByteVector(data.end() - 10, data.end()) ==
-                                        calculateHMAC(tmpData),
-                                    LibLogicalAccessException, "Wrong HMAC.");
-            LOG(LogLevel::COMS) << "Data after removing signed data "
-                                << BufferHelper::getHex(tmpData);
+            unsignMessage(tmpData);
         }
 
         // Uncipher the data
         if ((readerConfig->getCommunicationMode() & STID_CM_CIPHERED) == STID_CM_CIPHERED)
         {
-            LOG(LogLevel::COMS) << "Need to check for ciphered data...";
-            EXCEPTION_ASSERT_WITH_LOG(tmpData.size() >= 16, LibLogicalAccessException,
-                                    "The buffer is too short to contains the IV.");
-
-            ByteVector iv = ByteVector(tmpData.end() - 16, tmpData.end());
-            tmpData.resize(tmpData.size() - 16);
-            openssl::AESSymmetricKey aeskey = openssl::AESSymmetricKey::createFromData(
-                getSTidSTRReaderUnit()->getSessionKeyAES());
-            openssl::AESInitializationVector aesiv =
-                openssl::AESInitializationVector::createFromData(iv);
-            openssl::AESCipher cipher;
-
-            ByteVector decTmpData;
-            cipher.decipher(tmpData, decTmpData, aeskey, aesiv, false);
-
-            if (tmpData.size() >= 16)
-            {
-                d_lastIV = ByteVector(tmpData.end() - 16, tmpData.end());
-            }
-            tmpData = decTmpData;
-
-            LOG(LogLevel::COMS) << "Data after removing ciphered data "
-                                << BufferHelper::getHex(tmpData);
+            tmpData = uncipherMessage(tmpData);
         }
     }
     else
     {
         if (d_protocolMode != STID_PM_AUTH_REQUEST)
         {
-            // TODO: decipher then check signature here
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SSCP v2 is not yet fully implemented.");
+            EXCEPTION_ASSERT_WITH_LOG(tmpData.size() >= 16, LibLogicalAccessException,
+                                    "The buffer is too short to contains the IV.");
+
+            tmpData = uncipherMessage(tmpData);
+            unsignMessage(tmpData);
         }
     }
 
@@ -434,6 +434,20 @@ ByteVector STidSTRReaderCardAdapter::receiveMessage(const ByteVector &data,
             "The plain response message should be at least 6 bytes long.");
 
         size_t offset      = 0;
+        if (readerConfig->getProtocolVersion() != STID_SSCP_V1)
+        {
+            EXCEPTION_ASSERT_WITH_LOG(
+                tmpData.size() >= 10, LibLogicalAccessException,
+                "The plain response message should be at least 10 bytes long.");
+            
+            int counter = (tmpData[offset] << 24) |
+                          (tmpData[offset + 1] << 16) |
+                          (tmpData[offset + 2] << 8) |
+                          tmpData[offset + 3];
+            offset += 4;
+            EXCEPTION_ASSERT_WITH_LOG(counter == getSTidSTRReaderUnit()->getCommandCounter(), LibLogicalAccessException,
+                                "Command counter mismatch.");
+        }
         unsigned short ack = (tmpData[offset] << 8) | tmpData[offset + 1];
         offset += 2;
         LOG(LogLevel::COMS) << "Acquiment value {0x" << std::hex << ack << std::dec << "("

@@ -1031,7 +1031,7 @@ void PCSCReaderUnit::setSingleChip(std::shared_ptr<Chip> chip)
     d_insertedChip = chip;
 }
 
-std::shared_ptr<ReaderUnitConfiguration> PCSCReaderUnit::getConfiguration()
+std::shared_ptr<ReaderUnitConfiguration> PCSCReaderUnit::getConfiguration() const
 {
     if (d_proxyReaderUnit)
     {

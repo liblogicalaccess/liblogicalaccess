@@ -105,15 +105,16 @@ class LLA_READERS_STIDSTR_API STidSTRReaderCardAdapter : public ISO7816ReaderCar
     */
     ByteVector sendCommand(const ByteVector &command, long timeout = -1) override;
 
-    /**
-     * \brief Calculate the message HMAC.
-     * \param buf The message buffer.
-     * \return The HMAC.
-     */
-    ByteVector calculateHMAC(const ByteVector &buf) const;
-
   protected:
     std::shared_ptr<STidSTRReaderUnit> getSTidSTRReaderUnit() const;
+
+    void signMessage(ByteVector& data) const;
+
+    void unsignMessage(ByteVector& data) const;
+
+    ByteVector cipherMessage(const ByteVector& data);
+
+    ByteVector uncipherMessage(const ByteVector& data);
 
     /**
      * \brief Process message data to send.

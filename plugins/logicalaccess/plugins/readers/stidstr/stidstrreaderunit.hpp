@@ -36,6 +36,18 @@ typedef enum {
 } STidTamperSwitchBehavior;
 
 /**
+ * \brief The STid key context.
+ */
+typedef enum {
+    STID_KEYCTX_UNDEFINED = 0x00, /**< Undefined context */
+    STID_KEYCTX_AUTH = 0x01, /** Authentication context */
+    STID_KEYCTX_AUTH2 = 0x02, /** Authentication context with K2 */
+    STID_KEYCTX_A_TO_B = 0x03, /**< Command from A to B */
+    STID_KEYCTX_B_TO_A  = 0x04,  /**< Command from B to A */
+    STID_KEYCTX_AES = 0x80 /** AES key type */
+} STidKeyContext;
+
+/**
  * \brief The STidSTR reader unit class.
  */
 class LLA_READERS_STIDSTR_API STidSTRReaderUnit : public ISO7816ReaderUnit
@@ -174,12 +186,12 @@ class LLA_READERS_STIDSTR_API STidSTRReaderUnit : public ISO7816ReaderUnit
      */
     void unSerialize(boost::property_tree::ptree &node) override;
 
-    std::shared_ptr<STidSTRReaderUnitConfiguration> getSTidSTRConfiguration();
+    std::shared_ptr<STidSTRReaderUnitConfiguration> getSTidSTRConfiguration() const;
 
     /**
- * \brief Get the STidSTR reader provider.
- * \return The STidSTR reader provider.
- */
+     * \brief Get the STidSTR reader provider.
+     * \return The STidSTR reader provider.
+     */
     std::shared_ptr<STidSTRReaderProvider> getSTidSTRReaderProvider() const;
 
     /**
@@ -319,24 +331,52 @@ class LLA_READERS_STIDSTR_API STidSTRReaderUnit : public ISO7816ReaderUnit
     void loadSKB();
 
     /**
-     * \brief The the HMAC session key.
-     * \return The session key.
+     * \brief Calculate the message HMAC.
+     * \param buf The message buffer.
+     * \param kctx The key context.
+     * \return The HMAC.
      */
-    ByteVector getSessionKeyHMAC() const
-    {
-        return d_sessionKey_hmac;
-    }
+    ByteVector calculateHMAC(const ByteVector &buf, STidKeyContext kctx) const;
 
     /**
-     * \brief The the AES session key.
-     * \return The session key.
+     * \brief Cipher data.
+     * \param buf The message buffer.
+     * \param iv The initialization vector.
+     * \param kctx The key context.
+     * \return The ciphered data.
      */
-    ByteVector getSessionKeyAES() const
-    {
-        return d_sessionKey_aes;
-    }
+    ByteVector cipherData(const ByteVector &buf, const ByteVector &iv, STidKeyContext kctx) const;
+
+    /**
+     * \brief Uncipher data.
+     * \param buf The message buffer.
+     * \param iv The initialization vector.
+     * \param kctx The key context.
+     * \return The unciphered data.
+     */
+    ByteVector uncipherData(const ByteVector &buf, const ByteVector &iv, STidKeyContext kctx) const;
+
+    /**
+     * \brief Get the command counter.
+     * \param incr True to increment the counter after return, false otherwise.
+     * \return The command counter.
+     */
+    int getCommandCounter(bool incr = false);
+
+    /**
+     * \brief Get the HMAC byte length.
+     * \return The HMAC byte length.
+     */
+    unsigned int getHMACLength() const;
 
   protected:
+    /**
+     * \brief Get a key from context.
+     * \param kctx The key context.
+     * \return The key.
+     */
+    ByteVector getKeyFromContext(STidKeyContext kctx) const;
+
     /**
      * \brief Authenticate the host and the reader to obtain the HMAC session key. SSCP v1 only.
      */
@@ -357,14 +397,29 @@ class LLA_READERS_STIDSTR_API STidSTRReaderUnit : public ISO7816ReaderUnit
     std::shared_ptr<Chip> createGenericChipFromBuffer(const ByteVector& data, std::string cardType = CHIP_GENERICTAG, bool lenIsShort = false);
 
     /**
-     * \brief The HMAC session key.
+     * \brief The HMAC session key, from A to B.
      */
-    ByteVector d_sessionKey_hmac;
+    ByteVector d_sessionKey_hmac_ab;
 
     /**
-     * \brief The AES session key.
+     * \brief The HMAC session key, from B to A.
      */
-    ByteVector d_sessionKey_aes;
+    ByteVector d_sessionKey_hmac_ba;
+
+    /**
+     * \brief The AES session key, from A to B.
+     */
+    ByteVector d_sessionKey_aes_ab;
+
+    /**
+     * \brief The AES session key, from B to A.
+     */
+    ByteVector d_sessionKey_aes_ba;
+
+    /**
+     * \brief The command counter.
+     */
+    int d_cmd_counter;
 };
 }
 

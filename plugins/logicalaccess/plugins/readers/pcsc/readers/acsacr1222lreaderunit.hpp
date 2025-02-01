@@ -104,7 +104,7 @@ class LLA_READERS_PCSC_API ACSACR1222LReaderUnit : public PCSCReaderUnit
      */
     std::shared_ptr<LEDBuzzerDisplay> getLEDBuzzerDisplay() override;
 
-    std::shared_ptr<ACSACR1222LReaderUnitConfiguration> getACSACR1222LConfiguration();
+    std::shared_ptr<ACSACR1222LReaderUnitConfiguration> getACSACR1222LConfiguration() const;
 
   protected:
     std::shared_ptr<PCSCReaderCardAdapter> getReaderControlReaderCardAdapter();

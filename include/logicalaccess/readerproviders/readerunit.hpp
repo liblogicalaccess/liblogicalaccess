@@ -236,7 +236,7 @@ class LLA_CORE_API ReaderUnit : public XmlSerializable,
      * \brief Get the reader unit configuration.
      * \return The reader unit configuration.
      */
-    virtual std::shared_ptr<ReaderUnitConfiguration> getConfiguration();
+    virtual std::shared_ptr<ReaderUnitConfiguration> getConfiguration() const;
 
     /**
      * \brief Set the reader unit configuration.

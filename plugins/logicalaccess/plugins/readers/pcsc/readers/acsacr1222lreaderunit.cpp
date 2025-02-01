@@ -229,7 +229,7 @@ void ACSACR1222LReaderUnit::kill_background_connection()
 }
 
 std::shared_ptr<ACSACR1222LReaderUnitConfiguration>
-ACSACR1222LReaderUnit::getACSACR1222LConfiguration()
+ACSACR1222LReaderUnit::getACSACR1222LConfiguration() const
 {
     auto cfg =
         std::dynamic_pointer_cast<ACSACR1222LReaderUnitConfiguration>(getConfiguration());

@@ -167,7 +167,7 @@ class LLA_READERS_ELATEC_API ElatecReaderUnit : public ReaderUnit
      * \brief Get the Elatec reader unit configuration.
      * \return The Elatec reader unit configuration.
      */
-    std::shared_ptr<ElatecReaderUnitConfiguration> getElatecConfiguration()
+    std::shared_ptr<ElatecReaderUnitConfiguration> getElatecConfiguration() const
     {
         return std::dynamic_pointer_cast<ElatecReaderUnitConfiguration>(
             getConfiguration());

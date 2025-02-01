@@ -339,7 +339,7 @@ void ReaderUnit::setDataTransport(std::shared_ptr<DataTransport> dataTransport)
     d_dataTransport = dataTransport;
 }
 
-std::shared_ptr<ReaderUnitConfiguration> ReaderUnit::getConfiguration()
+std::shared_ptr<ReaderUnitConfiguration> ReaderUnit::getConfiguration() const
 {
     // LOG(LogLevel::INFOS) << "Getting reader unit configuration...");
     if (d_readerUnitConfig)

@@ -190,7 +190,7 @@ class LLA_READERS_DEISTER_API DeisterReaderUnit : public ReaderUnit
      * \brief Get the Deister reader unit configuration.
      * \return The Deister reader unit configuration.
      */
-    std::shared_ptr<DeisterReaderUnitConfiguration> getDeisterConfiguration()
+    std::shared_ptr<DeisterReaderUnitConfiguration> getDeisterConfiguration() const
     {
         return std::dynamic_pointer_cast<DeisterReaderUnitConfiguration>(
             getConfiguration());

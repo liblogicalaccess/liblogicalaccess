@@ -837,17 +837,18 @@ void STidSTRReaderUnit::authenticateHMAC()
                               "Cannot negotiate the session: RndB'' != RndB.");
     ByteVector rndC = ByteVector(buf3.begin() + 16, buf3.begin() + 16 + 16);
 
-    d_sessionKey_hmac.clear();
-    d_sessionKey_hmac.push_back(rndB[0]);
-    d_sessionKey_hmac.push_back(rndB[1]);
-    d_sessionKey_hmac.push_back(rndB[2]);
-    d_sessionKey_hmac.push_back(rndC[0]);
-    d_sessionKey_hmac.push_back(rndC[1]);
-    d_sessionKey_hmac.push_back(rndB[14]);
-    d_sessionKey_hmac.push_back(rndB[15]);
-    d_sessionKey_hmac.push_back(rndC[13]);
-    d_sessionKey_hmac.push_back(rndC[14]);
-    d_sessionKey_hmac.push_back(rndC[15]);
+    d_sessionKey_hmac_ab.clear();
+    d_sessionKey_hmac_ab.push_back(rndB[0]);
+    d_sessionKey_hmac_ab.push_back(rndB[1]);
+    d_sessionKey_hmac_ab.push_back(rndB[2]);
+    d_sessionKey_hmac_ab.push_back(rndC[0]);
+    d_sessionKey_hmac_ab.push_back(rndC[1]);
+    d_sessionKey_hmac_ab.push_back(rndB[14]);
+    d_sessionKey_hmac_ab.push_back(rndB[15]);
+    d_sessionKey_hmac_ab.push_back(rndC[13]);
+    d_sessionKey_hmac_ab.push_back(rndC[14]);
+    d_sessionKey_hmac_ab.push_back(rndC[15]);
+    d_sessionKey_hmac_ba = d_sessionKey_hmac_ab;
 }
 
 void STidSTRReaderUnit::authenticateAES()
@@ -893,25 +894,26 @@ void STidSTRReaderUnit::authenticateAES()
 
     cipher.decipher(encrndB2, rndB2, aeskey, aesiv, false);
     EXCEPTION_ASSERT_WITH_LOG(rndB2 == rndB, LibLogicalAccessException,
-                              "Cannot negotiate the session: RndB'' != RndB.");
+                              "Cannot negotiate the session: RndB' != RndB.");
 
-    d_sessionKey_aes.clear();
-    d_sessionKey_aes.push_back(rndA[0]);
-    d_sessionKey_aes.push_back(rndA[1]);
-    d_sessionKey_aes.push_back(rndA[2]);
-    d_sessionKey_aes.push_back(rndA[3]);
-    d_sessionKey_aes.push_back(rndB[0]);
-    d_sessionKey_aes.push_back(rndB[1]);
-    d_sessionKey_aes.push_back(rndB[2]);
-    d_sessionKey_aes.push_back(rndB[3]);
-    d_sessionKey_aes.push_back(rndA[12]);
-    d_sessionKey_aes.push_back(rndA[13]);
-    d_sessionKey_aes.push_back(rndA[14]);
-    d_sessionKey_aes.push_back(rndA[15]);
-    d_sessionKey_aes.push_back(rndB[12]);
-    d_sessionKey_aes.push_back(rndB[13]);
-    d_sessionKey_aes.push_back(rndB[14]);
-    d_sessionKey_aes.push_back(rndB[15]);
+    d_sessionKey_aes_ab.clear();
+    d_sessionKey_aes_ab.push_back(rndA[0]);
+    d_sessionKey_aes_ab.push_back(rndA[1]);
+    d_sessionKey_aes_ab.push_back(rndA[2]);
+    d_sessionKey_aes_ab.push_back(rndA[3]);
+    d_sessionKey_aes_ab.push_back(rndB[0]);
+    d_sessionKey_aes_ab.push_back(rndB[1]);
+    d_sessionKey_aes_ab.push_back(rndB[2]);
+    d_sessionKey_aes_ab.push_back(rndB[3]);
+    d_sessionKey_aes_ab.push_back(rndA[12]);
+    d_sessionKey_aes_ab.push_back(rndA[13]);
+    d_sessionKey_aes_ab.push_back(rndA[14]);
+    d_sessionKey_aes_ab.push_back(rndA[15]);
+    d_sessionKey_aes_ab.push_back(rndB[12]);
+    d_sessionKey_aes_ab.push_back(rndB[13]);
+    d_sessionKey_aes_ab.push_back(rndB[14]);
+    d_sessionKey_aes_ab.push_back(rndB[15]);
+    d_sessionKey_aes_ba = d_sessionKey_aes_ab;
 }
 
 ByteVector STidSTRReaderUnit::authenticateReader1(bool isHMAC)
@@ -990,14 +992,134 @@ void STidSTRReaderUnit::authenticateReader()
     {
         ret = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x0000 /* Not used */, command, STID_PM_AUTH_REQUEST);
         
-        // TODO: get id A and B, get RndB, check signature, and perform authentication step 2 to calculate session keys
-        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SSCP v2 is not yet fully implemented.");
+        if (ret.size() < 40)
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Unexpected response size");
+        
+        ByteVector idA2 = ByteVector(ret.begin(), ret.begin() + 4);
+        ByteVector idB2 = ByteVector(ret.begin() + 4, ret.begin() + 8);
+        ByteVector rndA2 = ByteVector(ret.begin() + 8, ret.begin() + 24);
+        ByteVector rndB = ByteVector(ret.begin() + 24, ret.begin() + 40);
+        ByteVector signature = ByteVector(ret.begin() + 40, ret.end());
+
+        EXCEPTION_ASSERT_WITH_LOG(rndA == rndA2, LibLogicalAccessException,
+                              "Cannot negotiate the session: RndA' != RndA.");
+
+        ByteVector signature2 = calculateHMAC(ByteVector(ret.begin(), ret.begin() + 40), STID_KEYCTX_AUTH);
+
+        EXCEPTION_ASSERT_WITH_LOG(signature == signature2, LibLogicalAccessException,
+                              "Cannot negotiate the session: wrong signature.");
+
+        command = ByteVector(idA2.begin(), idA2.end());
+        command.insert(command.end(), rndB.begin(), rndB.end());
+        signature = calculateHMAC(command, STID_KEYCTX_AUTH);
+        command.insert(command.end(), signature.begin(), signature.end());
+
+        ret = getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x0000 /* Not used */, command, STID_PM_AUTH_REQUEST);
+        if (ret.size() < 6)
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Unexpected response size");
+        EXCEPTION_ASSERT_WITH_LOG(ret[4] == 0x00 && ret[5] == 0x08, LibLogicalAccessException,
+                              "Wrong authentication status code.");
+
+        ByteVector w = calculateHMAC(rndB, STID_KEYCTX_AUTH2);
+        ByteVector info1 = { 0x02, 0x6a, 0x53, 0x82, 0xe6, 0x53};
+        ByteVector info2 = { 0x02, 0x6a};
+
+        ByteVector p1 = { 0x00, 0x00, 0x00, 0x00 };
+        p1.insert(p1.end(), w.begin(), w.end());
+        p1.insert(p1.end(), info1.begin(), info1.end());
+        ByteVector hp1 = openssl::SHA256Hash(p1);
+        EXCEPTION_ASSERT_WITH_LOG(hp1.size() == 32, LibLogicalAccessException,
+                              "Wrong sha256 size when calculating T.");
+
+        ByteVector p2 = { 0x00, 0x00, 0x00, 0x01 };
+        p2.insert(p2.end(), w.begin(), w.end());
+        p2.insert(p2.end(), info2.begin(), info2.end());
+        ByteVector hp2 = openssl::SHA256Hash(p2);
+        EXCEPTION_ASSERT_WITH_LOG(hp2.size() == 32, LibLogicalAccessException,
+                              "Wrong sha256 size when calculating T.");
+
+        // T = hp1 + hp2
+        d_sessionKey_aes_ab = ByteVector(hp1.begin(), hp1.begin() + 16);
+        d_sessionKey_aes_ba = ByteVector(hp1.end() - 16, hp1.end());
+        d_sessionKey_hmac_ab = ByteVector(hp2.begin(), hp2.begin() + 16);
+        d_sessionKey_hmac_ba = ByteVector(hp2.end() - 16, hp2.end());
+        d_cmd_counter = 1;
     }
     catch (std::exception &e)
     {
         LOG(LogLevel::ERRORS) << "Exception {" << e.what() << "}";
         throw;
     }
+}
+
+unsigned int STidSTRReaderUnit::getHMACLength() const
+{
+    return (getSTidSTRConfiguration()->getProtocolVersion() == STID_SSCP_V1) ? 10 : 32;
+}
+
+ByteVector STidSTRReaderUnit::calculateHMAC(const ByteVector &buf, STidKeyContext kctx) const
+{
+    auto key = getKeyFromContext(kctx);
+    unsigned int len = getHMACLength();
+    ByteVector r;
+    r.resize(len, 0x00);
+    if (getSTidSTRConfiguration()->getProtocolVersion() == STID_SSCP_V1)
+    {
+        HMAC(EVP_sha1(), &key[0], static_cast<int>(key.size()), &buf[0],
+            buf.size(), &r[0], &len);
+    }
+    else
+    {
+        HMAC(EVP_sha256(), &key[0], static_cast<int>(key.size()), &buf[0],
+            buf.size(), &r[0], &len);
+    }
+    return r;
+}
+
+ByteVector STidSTRReaderUnit::getKeyFromContext(STidKeyContext kctx) const
+{
+    ByteVector key;
+    if ((kctx & STID_KEYCTX_AUTH) == STID_KEYCTX_AUTH)
+        key = getSTidSTRConfiguration()->getAESKey()->getData();
+    else if ((kctx & STID_KEYCTX_AUTH2) == STID_KEYCTX_AUTH)
+        key = cipherData(getSTidSTRConfiguration()->getAESKey()->getData(), ByteVector(), static_cast<STidKeyContext>(STID_KEYCTX_AUTH | STID_KEYCTX_AES));
+    else if ((kctx & STID_KEYCTX_B_TO_A) == STID_KEYCTX_AUTH)
+    {
+        if ((kctx & STID_KEYCTX_AES) == STID_KEYCTX_AES)
+            key = d_sessionKey_aes_ba;
+        else
+            key = d_sessionKey_hmac_ba;
+    }
+    else
+    {
+        if ((kctx & STID_KEYCTX_AES) == STID_KEYCTX_AES)
+            key = d_sessionKey_aes_ab;
+        else
+            key = d_sessionKey_hmac_ab;
+    }
+    return key;
+}
+
+ByteVector STidSTRReaderUnit::cipherData(const ByteVector &buf, const ByteVector &iv, STidKeyContext kctx) const
+{
+    openssl::AESSymmetricKey aeskey = openssl::AESSymmetricKey::createFromData(getKeyFromContext(kctx));
+    openssl::AESInitializationVector aesiv =
+        iv.size() > 0 ? openssl::AESInitializationVector::createFromData(iv) : openssl::AESInitializationVector::createNull();
+    openssl::AESCipher cipher;
+    ByteVector encbuf;
+    cipher.cipher(buf, encbuf, aeskey, aesiv, false);
+    return encbuf;
+}
+
+ByteVector STidSTRReaderUnit::uncipherData(const ByteVector &buf, const ByteVector &iv, STidKeyContext kctx) const
+{
+    openssl::AESSymmetricKey aeskey = openssl::AESSymmetricKey::createFromData(getKeyFromContext(kctx));
+    openssl::AESInitializationVector aesiv =
+        iv.size() > 0 ? openssl::AESInitializationVector::createFromData(iv) : openssl::AESInitializationVector::createNull();
+    openssl::AESCipher cipher;
+    ByteVector decbuf;
+    cipher.decipher(buf, decbuf, aeskey, aesiv, false);
+    return decbuf;
 }
 
 void STidSTRReaderUnit::ChangeReaderKeys(const ByteVector &key_hmac,
@@ -1133,8 +1255,20 @@ void STidSTRReaderUnit::loadSKB()
         "Unable to load the SKB values. An unknown error occurred.");
 }
 
+int STidSTRReaderUnit::getCommandCounter(bool incr)
+{
+    if (incr)
+    {
+        if (d_cmd_counter >= 0xfffffffe)
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Command counter limit reached, please run again authentication.");
+        return d_cmd_counter++;
+    }
+    else
+        return d_cmd_counter;
+}
+
 std::shared_ptr<STidSTRReaderUnitConfiguration>
-STidSTRReaderUnit::getSTidSTRConfiguration()
+STidSTRReaderUnit::getSTidSTRConfiguration() const
 {
     return std::dynamic_pointer_cast<STidSTRReaderUnitConfiguration>(getConfiguration());
 }

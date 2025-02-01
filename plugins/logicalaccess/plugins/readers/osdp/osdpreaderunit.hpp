@@ -150,7 +150,7 @@ class LLA_READERS_OSDP_API OSDPReaderUnit : public ReaderUnit
      * \brief Get the STidSTR reader unit configuration.
      * \return The STidSTR reader unit configuration.
      */
-    std::shared_ptr<OSDPReaderUnitConfiguration> getOSDPConfiguration()
+    std::shared_ptr<OSDPReaderUnitConfiguration> getOSDPConfiguration() const
     {
         return std::dynamic_pointer_cast<OSDPReaderUnitConfiguration>(getConfiguration());
     }

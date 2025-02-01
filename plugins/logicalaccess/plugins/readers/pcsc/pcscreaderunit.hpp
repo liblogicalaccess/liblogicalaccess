@@ -219,7 +219,7 @@ class LLA_READERS_PCSC_API PCSCReaderUnit : public ISO7816ReaderUnit
      * \brief Get the reader unit configuration.
      * \return The reader unit configuration.
      */
-    std::shared_ptr<ReaderUnitConfiguration> getConfiguration() override;
+    std::shared_ptr<ReaderUnitConfiguration> getConfiguration() const override;
 
     /**
      * \brief Set the reader unit configuration.
@@ -239,7 +239,7 @@ class LLA_READERS_PCSC_API PCSCReaderUnit : public ISO7816ReaderUnit
      * \brief Get the PC/SC reader unit configuration.
      * \return The PC/SC reader unit configuration.
      */
-    std::shared_ptr<PCSCReaderUnitConfiguration> getPCSCConfiguration()
+    std::shared_ptr<PCSCReaderUnitConfiguration> getPCSCConfiguration() const
     {
         return std::dynamic_pointer_cast<PCSCReaderUnitConfiguration>(getConfiguration());
     }

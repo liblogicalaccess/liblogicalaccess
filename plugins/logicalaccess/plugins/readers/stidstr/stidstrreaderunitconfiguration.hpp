@@ -142,13 +142,13 @@ class LLA_READERS_STIDSTR_API STidSTRReaderUnitConfiguration
     void setHMACKey(std::shared_ptr<HMAC1Key> key);
 
     /**
-     * \brief Get the key used for AES enciphering.
+     * \brief Get the key used for AES enciphering (SSCP v1) or authentication (SSCP v2).
      * \return The key.
      */
     std::shared_ptr<AES128Key> getAESKey() const;
 
     /**
-     * \brief Set the key used for AES enciphering.
+     * \brief Set the key used for AES enciphering (SSCP v1) or authentication (SSCP v2).
      * \param key The key.
      */
     void setAESKey(std::shared_ptr<AES128Key> key);

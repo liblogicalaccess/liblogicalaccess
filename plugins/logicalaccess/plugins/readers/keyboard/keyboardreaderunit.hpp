@@ -147,7 +147,7 @@ class LLA_READERS_PRIVATE_KEYBOARD_API KeyboardReaderUnit : public ReaderUnit
      * \brief Get the Elatec reader unit configuration.
      * \return The Elatec reader unit configuration.
      */
-    std::shared_ptr<KeyboardReaderUnitConfiguration> getKeyboardConfiguration()
+    std::shared_ptr<KeyboardReaderUnitConfiguration> getKeyboardConfiguration() const
     {
         return std::dynamic_pointer_cast<KeyboardReaderUnitConfiguration>(
             getConfiguration());
