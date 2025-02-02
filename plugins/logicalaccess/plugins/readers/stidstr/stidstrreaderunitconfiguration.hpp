@@ -42,6 +42,15 @@ typedef enum {
 } STidProtocolVersion;
 
 /**
+ * \brief The STid scan mode.
+ */
+typedef enum {
+    STID_SCAN_LEGACY  = 0x00, /** Use scanARaw/scan14443B */
+    STID_SCAN_VIRTUAL = 0x0f, /** Use scanBlueNFC */
+    STID_SCAN_GLOBAL  = 0xff /** Use scanGlobal */
+} STidScanMode;
+
+/**
  * \brief The STidSTR reader unit configuration base class.
  */
 class LLA_READERS_STIDSTR_API STidSTRReaderUnitConfiguration
@@ -157,9 +166,9 @@ class LLA_READERS_STIDSTR_API STidSTRReaderUnitConfiguration
 
     void setPN532Direct(bool direct);
 
-    bool getUseScanGlobal() const;
+    STidScanMode getScanMode() const;
 
-    void setUseScanGlobal(bool use);
+    void setScanMode(STidScanMode mode);
 
   protected:
     /**
@@ -198,9 +207,9 @@ class LLA_READERS_STIDSTR_API STidSTRReaderUnitConfiguration
     bool d_pn532_direct;
 
     /**
-     * \brief True to use Scan Global command. False to use the old way with scanARaw/scan14443B
+     * \brief The scan mode.
      */
-    bool d_use_scan_global;
+    STidScanMode d_scan_mode;
 };
 }
 

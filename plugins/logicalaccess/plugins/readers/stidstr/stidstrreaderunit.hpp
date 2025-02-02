@@ -213,6 +213,13 @@ class LLA_READERS_STIDSTR_API STidSTRReaderUnit : public ISO7816ReaderUnit
     std::shared_ptr<Chip> scan14443B();
 
     /**
+     * \brief Scan for virtual credential (BLE / NFC)
+     * \param use_selected_key True to use key previously loaded with LoadKeyBlue_NFC + SelectKeyBlue_NFC, false to use key loaded by configuration with Load_Conf or LoadConf_xxxx.
+     * \return The chip object if a tag is inserted.
+     */
+    std::shared_ptr<Chip> scanBlueNFC(bool use_selected_key = false);
+
+    /**
      * \brief Scan the RFID field for a tag detection.
      * \return The chip object if a tag is inserted.
      */

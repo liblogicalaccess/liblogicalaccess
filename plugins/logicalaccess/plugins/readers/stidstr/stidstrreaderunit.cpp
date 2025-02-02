@@ -110,13 +110,17 @@ bool STidSTRReaderUnit::waitInsertion(unsigned int maxwait)
         do
         {
             std::shared_ptr<Chip> chip;
-            if (!getSTidSTRConfiguration()->getUseScanGlobal())
+            if (getSTidSTRConfiguration()->getScanMode() == STID_SCAN_LEGACY)
             {
                 chip = scanARaw(); // scan14443A() => Obsolete. It's just used for testing purpose !
                 if (!chip)
                 {
                     chip = scan14443B();
                 }
+            }
+            else if (getSTidSTRConfiguration()->getScanMode() == STID_SCAN_LEGACY)
+            {
+                chip = scanBlueNFC();
             }
             else
             {
@@ -181,7 +185,7 @@ bool STidSTRReaderUnit::waitRemoval(unsigned int maxwait)
             do
             {
                 std::shared_ptr<Chip> chip;
-                if (!getSTidSTRConfiguration()->getUseScanGlobal())
+                if (getSTidSTRConfiguration()->getScanMode() == STID_SCAN_LEGACY)
                 {
                     chip = scanARaw(); // scan14443A() => Obsolete. It's
                                                              // just used for testing purpose
@@ -190,6 +194,10 @@ bool STidSTRReaderUnit::waitRemoval(unsigned int maxwait)
                     {
                         chip = scan14443B();
                     }
+                }
+                else if (getSTidSTRConfiguration()->getScanMode() == STID_SCAN_VIRTUAL)
+                {
+                    chip = scanBlueNFC();
                 }
                 else
                 {
@@ -705,6 +713,22 @@ std::shared_ptr<Chip> STidSTRReaderUnit::createGenericChipFromBuffer(const ByteV
     return chip;
 }
 
+std::shared_ptr<Chip> STidSTRReaderUnit::scanBlueNFC(bool use_selected_key)
+{
+    LOG(LogLevel::INFOS) << "Scanning for Blue NFC...";
+    ByteVector command;
+    command.push_back(use_selected_key ? 0x01 : 0x00);
+    auto rca = std::make_shared<STidSTRReaderCardAdapter>(STID_PM_NORMAL, STID_CMD_BLUENFC);
+    rca->setDataTransport(getDataTransport());
+    ByteVector response = rca->sendCommand(0x000A, command);
+    std::shared_ptr<Chip> chip;
+    if (response.size() > 0)
+    {
+        chip = createGenericChipFromBuffer(response);
+    }
+    return chip;
+}
+
 std::shared_ptr<Chip> STidSTRReaderUnit::scanGlobal()
 {
     return scanGlobal(true, true, true, true, true, false, true, true);
@@ -721,11 +745,11 @@ std::shared_ptr<Chip> STidSTRReaderUnit::scanGlobal(bool iso14443a, bool activeR
                             //((touchCoordinates ? 1 : 0) << 2) |
                             ((imageScanEngine ? 1 : 0) << 1) |
                             (keyboard ? 1 : 0);
-    unsigned char filter2 = ((selectedKeyBlueNfc) ? 1 : 0 << 5) |
-                            ((blueNfc) ? 1 : 0 << 4) |
-                            ((lf125khz) ? 1 : 0 << 3) |
-                            ((iso14443b) ? 1 : 0 << 2) |
-                            ((activeRats) ? 1 : 0 << 1) |
+    unsigned char filter2 = ((selectedKeyBlueNfc ? 1 : 0) << 5) |
+                            ((blueNfc ? 1 : 0) << 4) |
+                            ((lf125khz ? 1 : 0) << 3) |
+                            ((iso14443b ? 1 : 0) << 2) |
+                            ((activeRats ? 1 : 0) << 1) |
                             (iso14443a ? 1 : 0);
 
     command.push_back(filter1);
@@ -768,6 +792,9 @@ std::shared_ptr<Chip> STidSTRReaderUnit::scanGlobal(bool iso14443a, bool activeR
             {
             } break;
             case 0x40: // Config Card
+            {
+            } break;
+            case 0x00: // No information
             {
             } break;
             default:

@@ -28,7 +28,8 @@ typedef enum {
     STID_CMD_MIFARE_PLUS        = 0x03, /**< Mifare plus command type */
     STID_CMD_RESERVED           = 0x04, /**< Reserved command type */
     STID_CMD_MIFARE_ULTRALIGHTC = 0x05, /**< Mifare ultralight C command type */
-    STID_CMD_RFIDCHIP           = 0x06  /**< RFID chip command type */
+    STID_CMD_RFIDCHIP           = 0x06, /**< RFID chip command type */
+    STID_CMD_BLUENFC            = 0x0f  /**< Blue NFC command type */
 } STidCmdType;
 
 /**
