@@ -70,6 +70,7 @@ typedef enum {
     KS_FREE_LISTING_WITHOUT_MK        = 0x02,
     KS_FREE_CREATE_DELETE_WITHOUT_MK  = 0x04,
     KS_CONFIGURATION_CHANGEABLE       = 0x08,
+    KS_ENABLE_NXP_DAM_KEYS            = 0x10,
     KS_CHANGE_KEY_WITH_MK             = 0x00,
     KS_CHANGE_KEY_WITH_TARGETED_KEYNO = 0xE0,
     KS_CHANGE_KEY_FROZEN              = 0xF0,
