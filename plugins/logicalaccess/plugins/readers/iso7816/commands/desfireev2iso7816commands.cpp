@@ -431,7 +431,7 @@ void DESFireEV2ISO7816Commands::createApplication(
                                                  cryptoMethod)); // keySett2
 
     unsigned char keysett3 = (numberKeySets != 0);
-    if (keysett3)
+    if (keysett3 || specificVCKeys || specificCapabilityData)
     {
         command[4] |= 0x10; // enable KeySett3 on keySett2 flag
         keysett3 |= specificVCKeys ? 0x02 : 0x00;
