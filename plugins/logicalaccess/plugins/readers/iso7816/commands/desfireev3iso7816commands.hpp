@@ -56,16 +56,44 @@ class LLA_READERS_ISO7816_API DESFireEV3ISO7816Commands
         unsigned char actualkeySetVersion, unsigned char rollkeyno,
         bool specificCapabilityData, bool specificVCKeys) override;
 
-    void initliazeKeySet(uint8_t keySetNo, DESFireKeyType keySetType) override;
+    void initializeKeySet(uint8_t keySetNo, DESFireKeyType keySetType) override;
 
     void rollKeySet(uint8_t keySetNo) override;
 
     void finalizeKeySet(uint8_t keySetNo, uint8_t keySetVersion) override;
 
+    void createStdDataFile(unsigned char fileno, EncryptionMode comSettings,
+                           const DESFireAccessRights &accessRights,
+                           unsigned int fileSize, unsigned short isoFID,
+                           bool multiAccessRights) override;
+
+    void createStdDataFile(unsigned char fileno, EncryptionMode comSettings,
+                           const DESFireAccessRights &accessRights,
+                           unsigned int fileSize,
+                           unsigned short isoFID,
+                           bool multiAccessRights,
+                           bool sdmAndMirroring) override;
+
+    void createBackupFile(unsigned char fileno, EncryptionMode comSettings,
+                          const DESFireAccessRights &accessRights,
+                          unsigned int fileSize, unsigned short isoFID,
+                          bool multiAccessRights) override;
+
+    void createLinearRecordFile(unsigned char fileno, EncryptionMode comSettings,
+                                const DESFireAccessRights &accessRights,
+                                unsigned int fileSize,
+                                unsigned int maxNumberOfRecords,
+                                unsigned short isoFID, bool multiAccessRights) override;
+
+    void createCyclicRecordFile(unsigned char fileno, EncryptionMode comSettings,
+                                const DESFireAccessRights &accessRights,
+                                unsigned int fileSize,
+                                unsigned int maxNumberOfRecords,
+                                unsigned short isoFID, bool multiAccessRights) override;
+
     void createTransactionMACFile(unsigned char fileno, EncryptionMode comSettings,
                                   const DESFireAccessRights &accessRights,
-                                  std::shared_ptr<DESFireKey> tmkey,
-                                  unsigned char tmkversion) override;
+                                  std::shared_ptr<DESFireKey> tmkey) override;
 
     ByteVector getKeyVersion(uint8_t keysetno, uint8_t keyno) override;
 
@@ -83,10 +111,36 @@ class LLA_READERS_ISO7816_API DESFireEV3ISO7816Commands
     void setConfiguration(ByteVector DAMMAC, ByteVector ISODFNameOrVCIID) override;
 
     void changeFileSettings(unsigned char fileno, EncryptionMode comSettings,
+                            std::vector<DESFireAccessRights> accessRights) override;
+
+    void changeFileSettings(unsigned char fileno, EncryptionMode comSettings,
                             std::vector<DESFireAccessRights> accessRights,
-                            bool plain) override;
+                            bool sdmAndMirroring,
+                            unsigned int tmcLimit,
+                            bool sdmVCUID,
+                            bool sdmReadCtr,
+                            bool sdmReadCtrLimit,
+                            bool sdmEncFileData,
+                            bool asciiEncoding,
+                            DESFireAccessRights sdmAccessRights,
+                            unsigned int vcuidOffset,
+                            unsigned int sdmReadCtrOffset,
+                            unsigned int piccDataOffset,
+                            unsigned int sdmMacInputOffset,
+                            unsigned int sdmEncOffset,
+                            unsigned int sdmEncLength,
+                            unsigned int sdmMacOffset,
+                            unsigned int sdmReadCtrLimitValue) override;
 
     void proximityCheck(std::shared_ptr<DESFireKey> key, uint8_t chunk_size) override;
+
+    ByteVector commitTransaction(bool return_tmac) override;
+
+    ByteVector commitReaderID(ByteVector readerid) override;
+
+    void restoreTransfer(unsigned char target_fileno, unsigned char source_fileno) override;
+
+    ByteVector getFileCounters(unsigned char fileno);
 };
 
 }

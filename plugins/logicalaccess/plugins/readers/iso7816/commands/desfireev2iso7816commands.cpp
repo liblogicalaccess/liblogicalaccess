@@ -469,7 +469,7 @@ void DESFireEV2ISO7816Commands::createApplication(
     crypto->createApplication(aid, numberKeySets + 1, maxNbKeys, cryptoMethod);
 }
 
-void DESFireEV2ISO7816Commands::initliazeKeySet(uint8_t keySetNo,
+void DESFireEV2ISO7816Commands::initializeKeySet(uint8_t keySetNo,
                                                 DESFireKeyType keySetType)
 {
     ByteVector parameters;
@@ -523,7 +523,7 @@ void DESFireEV2ISO7816Commands::finalizeKeySet(uint8_t keySetNo, uint8_t keySetV
 
 void DESFireEV2ISO7816Commands::changeFileSettings(
     unsigned char fileno, EncryptionMode comSettings,
-    std::vector<DESFireAccessRights> accessRights, bool plain)
+    std::vector<DESFireAccessRights> accessRights)
 {
     EXCEPTION_ASSERT_WITH_LOG(accessRights.size() > 0 && accessRights.size() <= 8,
                               LibLogicalAccessException,
@@ -531,7 +531,7 @@ void DESFireEV2ISO7816Commands::changeFileSettings(
 
     if (accessRights.size() == 1)
         return DESFireEV1ISO7816Commands::changeFileSettings(fileno, comSettings,
-                                                             accessRights[0], plain);
+                                                             accessRights[0], false);
 
     std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
     ByteVector command;
@@ -549,31 +549,11 @@ void DESFireEV2ISO7816Commands::changeFileSettings(
         ar = AccessRightsInMemory(accessRights[x]);
         BufferHelper::setUShort(command, ar);
     }
+    
+    ByteVector param;
+    param.push_back(static_cast<unsigned char>(fileno));
 
-    if (!plain)
-    {
-        ByteVector param;
-        param.push_back(DF_INS_CHANGE_FILE_SETTINGS);
-        param.push_back(static_cast<unsigned char>(fileno));
-        crypto->initBuf();
-        command = crypto->desfireEncrypt(command, param);
-    }
-    unsigned char uf = static_cast<unsigned char>(fileno);
-    command.insert(command.begin(), uf);
-
-    if (crypto->d_auth_method == CM_LEGACY || plain)
-    {
-        transmit_plain(DF_INS_CHANGE_FILE_SETTINGS, command);
-    }
-    else
-    {
-        ByteVector dd = transmit_plain(DF_INS_CHANGE_FILE_SETTINGS, command).getData();
-        if (!crypto->verifyMAC(true, dd))
-        {
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                     "MAC verification failed.");
-        }
-    }
+    transmit_full(DF_INS_CHANGE_FILE_SETTINGS, command, param).getData();
 }
 
 void DESFireEV2ISO7816Commands::createStdDataFile(unsigned char fileno,
@@ -642,28 +622,19 @@ void DESFireEV2ISO7816Commands::createCyclicRecordFile(
 
 void DESFireEV2ISO7816Commands::createTransactionMACFile(
     unsigned char fileno, EncryptionMode comSettings,
-    const DESFireAccessRights &accessRights, std::shared_ptr<DESFireKey> tmkey,
-    unsigned char tmkversion)
+    const DESFireAccessRights &accessRights, std::shared_ptr<DESFireKey> tmkey)
 {
-    std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
-
-    ByteVector command;
-    command.push_back(static_cast<unsigned char>(fileno));      // FileNo
-    command.push_back(static_cast<unsigned char>(comSettings)); // FileOption
+    ByteVector param;
+    param.push_back(static_cast<unsigned char>(fileno));      // FileNo
+    param.push_back(static_cast<unsigned char>(comSettings)); // FileOption
     short ar = AccessRightsInMemory(accessRights);
-    BufferHelper::setUShort(command, ar);                // AccessRights
-    command.push_back(static_cast<unsigned char>(0x02)); // TMKeyOption AES only
+    BufferHelper::setUShort(param, ar);                // AccessRights
+    param.push_back(static_cast<unsigned char>(0x02)); // TMKeyOption AES only atm
 
-    crypto->initBuf();
     auto data = tmkey->getData(); // TMKey
-    data.push_back(tmkversion);    // TMKeyVer
-    auto param = command;
-    param.insert(param.begin(), DFEV2_INS_CREATE_TRANSACTION_MAC_FILE);
-    auto edata = crypto->desfireEncrypt(data, param);
+    data.push_back(tmkey->getKeyVersion());    // TMKeyVer
 
-    command.insert(command.end(), edata.begin(), edata.end());
-
-    transmit_plain(DFEV2_INS_CREATE_TRANSACTION_MAC_FILE, command);
+    transmit_full(DFEV2_INS_CREATE_TRANSACTION_MAC_FILE, data, param);
 }
 
 void DESFireEV2ISO7816Commands::createDelegatedApplication(
@@ -829,81 +800,59 @@ void DESFireEV2ISO7816Commands::setConfiguration(bool formatCardEnabled,
 {
     ResultCheckerSwapper<SetConfiguration0ResultChecker> swapper(*getReaderCardAdapter());
 
-    std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
     ByteVector command(1);
     command[0] = (formatCardEnabled ? 0x00u : 0x01u) | (randomIdEnabled ? 0x02u : 0x00u) |
                  (PCMandatoryEnabled ? 0x04u : 0x00u) |
                  (AuthVCMandatoryEnabled ? 0x08u : 0x00u);
 
-    crypto->initBuf();
     ByteVector param;
-    param.push_back(DFEV1_INS_SET_CONFIGURATION);
     param.push_back(0x00); // PICC App key config
-    ByteVector encBuffer = crypto->desfireEncrypt(command, param);
-    encBuffer.insert(encBuffer.begin(), 0x00);
-    transmit_plain(DFEV1_INS_SET_CONFIGURATION, encBuffer);
+    transmit_full(DFEV1_INS_SET_CONFIGURATION, command, param);
 }
 
 void DESFireEV2ISO7816Commands::setConfiguration(uint8_t sak1, uint8_t sak2)
 {
-    std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
     ByteVector command;
     command.push_back(sak1);
     command.push_back(sak2);
 
-    crypto->initBuf();
     ByteVector param;
-    param.push_back(DFEV1_INS_SET_CONFIGURATION);
     param.push_back(0x03); // SAK Configuration
-    ByteVector encBuffer = crypto->desfireEncrypt(command, param);
-    encBuffer.insert(encBuffer.begin(), 0x03);
-    transmit_plain(DFEV1_INS_SET_CONFIGURATION, encBuffer);
+    transmit_full(DFEV1_INS_SET_CONFIGURATION, command, param);
 }
 
 void DESFireEV2ISO7816Commands::setConfiguration(bool D40SecureMessagingEnabled,
                                                  bool EV1SecureMessagingEnabled,
                                                  bool EV2ChainedWritingEnabled)
 {
-    std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
     ByteVector command(2);
     command[1] = ((D40SecureMessagingEnabled) ? 0x00 : 0x01) |
                  ((EV1SecureMessagingEnabled) ? 0x00 : 0x02) |
                  ((EV2ChainedWritingEnabled) ? 0x00 : 0x04);
 
-    crypto->initBuf();
     ByteVector param;
-    param.push_back(DFEV1_INS_SET_CONFIGURATION);
     param.push_back(0x04); // Secure messaging
-    ByteVector encBuffer = crypto->desfireEncrypt(command, param);
-    encBuffer.insert(encBuffer.begin(), 0x04);
-    transmit_plain(DFEV1_INS_SET_CONFIGURATION, encBuffer);
+    transmit_full(DFEV1_INS_SET_CONFIGURATION, command, param);
 }
 
 void DESFireEV2ISO7816Commands::setConfigurationPDCap(uint8_t pdcap1_1, uint8_t pdcap2_5,
                                                       uint8_t pdcap2_6)
 {
-    std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
     ByteVector command(10);
     command[0] = pdcap2_6;
     command[1] = pdcap2_5;
     command[6] = pdcap1_1;
     std::reverse(std::begin(command), std::end(command));
 
-    crypto->initBuf();
     ByteVector param;
-    param.push_back(DFEV1_INS_SET_CONFIGURATION);
     param.push_back(0x05); // PDCap
-    ByteVector encBuffer = crypto->desfireEncrypt(command, param);
-    encBuffer.insert(encBuffer.begin(), 0x05);
-    transmit_plain(DFEV1_INS_SET_CONFIGURATION, encBuffer);
+    transmit_full(DFEV1_INS_SET_CONFIGURATION, command, param);
 }
 
 // TODO CALCUL DAMMAC
 void DESFireEV2ISO7816Commands::setConfiguration(ByteVector DAMMAC,
                                                  ByteVector ISODFNameOrVCIID)
 {
-    std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
-
     EXCEPTION_ASSERT_WITH_LOG(
         (DAMMAC.size() == 8 || DAMMAC.size() == 0) && ISODFNameOrVCIID.size() > 0 &&
             ISODFNameOrVCIID.size() <= 0x10,
@@ -917,13 +866,9 @@ void DESFireEV2ISO7816Commands::setConfiguration(ByteVector DAMMAC,
     command.push_back(static_cast<unsigned char>(ISODFNameOrVCIID.size()));
     // std::reverse(std::begin(command), std::end(command));
 
-    crypto->initBuf();
     ByteVector param;
-    param.push_back(DFEV1_INS_SET_CONFIGURATION);
     param.push_back(0x06); // DFNames / VCIID
-    ByteVector encBuffer = crypto->desfireEncrypt(command, param);
-    encBuffer.insert(encBuffer.begin(), 0x06);
-    transmit_plain(DFEV1_INS_SET_CONFIGURATION, encBuffer);
+    transmit_full(DFEV1_INS_SET_CONFIGURATION, command, param);
 }
 
 void DESFireEV2ISO7816Commands::proximityCheck(std::shared_ptr<DESFireKey> key,
@@ -1031,4 +976,24 @@ void DESFireEV2ISO7816Commands::proximityCheck(std::shared_ptr<DESFireKey> key,
     // The verif should match what the card sent us, otherwise PC check fails.
     EXCEPTION_ASSERT_WITH_LOG(mac_verif == resp.getData(), LibLogicalAccessException,
                               "Proximity Check failed. Cannot verify PICC provided MAC");
+}
+
+ByteVector DESFireEV2ISO7816Commands::commitTransaction(bool return_tmac)
+{
+    ByteVector data;
+    data.push_back(return_tmac ? 0x01 : 0x00);
+    return transmit(DF_COMMIT_TRANSACTION, data).getData();
+}
+
+ByteVector DESFireEV2ISO7816Commands::commitReaderID(ByteVector readerid)
+{
+    return transmit(DFEV2_INS_COMMIT_READERID, readerid).getData();
+}
+
+void DESFireEV2ISO7816Commands::restoreTransfer(unsigned char target_fileno, unsigned char source_fileno)
+{
+    ByteVector data;
+    data.push_back(target_fileno);
+    data.push_back(source_fileno);
+    transmit(DFEV2_INS_RESTORE_TRANSFER, data);
 }

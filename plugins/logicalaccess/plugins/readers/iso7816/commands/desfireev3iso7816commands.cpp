@@ -79,10 +79,10 @@ std::pair<ByteVector, ByteVector> DESFireEV3ISO7816Commands::createDAMChallenge(
         specificVCKeys);
 }
 
-void DESFireEV3ISO7816Commands::initliazeKeySet(uint8_t keySetNo,
+void DESFireEV3ISO7816Commands::initializeKeySet(uint8_t keySetNo,
                                                 DESFireKeyType keySetType)
 {
-    DESFireEV2ISO7816Commands::initliazeKeySet(keySetNo, keySetType);
+    DESFireEV2ISO7816Commands::initializeKeySet(keySetNo, keySetType);
 }
 
 void DESFireEV3ISO7816Commands::rollKeySet(uint8_t keySetNo)
@@ -95,13 +95,66 @@ void DESFireEV3ISO7816Commands::finalizeKeySet(uint8_t keySetNo, uint8_t keySetV
     return DESFireEV2ISO7816Commands::finalizeKeySet(keySetNo, keySetVersion);
 }
 
+void DESFireEV3ISO7816Commands::createStdDataFile(unsigned char fileno, EncryptionMode comSettings,
+    const DESFireAccessRights &accessRights,
+    unsigned int fileSize, unsigned short isoFID,
+    bool multiAccessRights)
+{
+    DESFireEV2ISO7816Commands::createStdDataFile(fileno, comSettings, accessRights, fileSize, isoFID, multiAccessRights);
+}
+
+void DESFireEV3ISO7816Commands::createStdDataFile(unsigned char fileno, EncryptionMode comSettings,
+    const DESFireAccessRights &accessRights,
+    unsigned int fileSize, unsigned short isoFID,
+    bool multiAccessRights, bool sdmAndMirroring)
+{
+    
+    int tmpComSettings = comSettings;
+    if (multiAccessRights)
+    {
+        tmpComSettings |= 0x80; // Additional access rights
+    }
+    if (sdmAndMirroring)
+    {
+        tmpComSettings |= 0x40; // Secure Dynamic Messaging and Mirroring
+    }
+    
+    comSettings = static_cast<EncryptionMode>(tmpComSettings);
+    DESFireEV1ISO7816Commands::createStdDataFile(fileno, comSettings, accessRights,
+                                                 fileSize, isoFID);
+}
+
+void DESFireEV3ISO7816Commands::createBackupFile(unsigned char fileno, EncryptionMode comSettings,
+    const DESFireAccessRights &accessRights,
+    unsigned int fileSize, unsigned short isoFID,
+    bool multiAccessRights)
+{
+    DESFireEV2ISO7816Commands::createBackupFile(fileno, comSettings, accessRights, fileSize, isoFID, multiAccessRights);
+}
+
+void DESFireEV3ISO7816Commands::createLinearRecordFile(unsigned char fileno, EncryptionMode comSettings,
+    const DESFireAccessRights &accessRights,
+    unsigned int fileSize,
+    unsigned int maxNumberOfRecords,
+    unsigned short isoFID, bool multiAccessRights)
+{
+    DESFireEV2ISO7816Commands::createLinearRecordFile(fileno, comSettings, accessRights, fileSize, maxNumberOfRecords, isoFID, multiAccessRights);
+}
+
+void DESFireEV3ISO7816Commands::createCyclicRecordFile(unsigned char fileno, EncryptionMode comSettings,
+    const DESFireAccessRights &accessRights,
+    unsigned int fileSize,
+    unsigned int maxNumberOfRecords,
+    unsigned short isoFID, bool multiAccessRights)
+{
+    DESFireEV2ISO7816Commands::createCyclicRecordFile(fileno, comSettings, accessRights, fileSize, maxNumberOfRecords, isoFID, multiAccessRights);
+}
+
 void DESFireEV3ISO7816Commands::createTransactionMACFile(
     unsigned char fileno, EncryptionMode comSettings,
-    const DESFireAccessRights &accessRights, std::shared_ptr<DESFireKey> tmkey,
-    unsigned char tmkversion)
+    const DESFireAccessRights &accessRights, std::shared_ptr<DESFireKey> tmkey)
 {
-    DESFireEV2ISO7816Commands::createTransactionMACFile(fileno, comSettings, accessRights,
-                                                        tmkey, tmkversion);
+    DESFireEV2ISO7816Commands::createTransactionMACFile(fileno, comSettings, accessRights, tmkey);
 }
 
 ByteVector DESFireEV3ISO7816Commands::getKeyVersion(uint8_t keysetno, uint8_t keyno)
@@ -145,10 +198,130 @@ void DESFireEV3ISO7816Commands::setConfiguration(ByteVector DAMMAC,
 
 void DESFireEV3ISO7816Commands::changeFileSettings(
     unsigned char fileno, EncryptionMode comSettings,
-    std::vector<DESFireAccessRights> accessRights, bool plain)
+    std::vector<DESFireAccessRights> accessRights)
 {
-    DESFireEV2ISO7816Commands::changeFileSettings(fileno, comSettings, accessRights,
-                                                  plain);
+    DESFireEV2ISO7816Commands::changeFileSettings(fileno, comSettings, accessRights);
+}
+
+void DESFireEV3ISO7816Commands::changeFileSettings(unsigned char fileno, EncryptionMode comSettings,
+    std::vector<DESFireAccessRights> accessRights,
+    bool sdmAndMirroring,
+    unsigned int tmcLimit,
+    bool sdmVCUID,
+    bool sdmReadCtr,
+    bool sdmReadCtrLimit,
+    bool sdmEncFileData,
+    bool asciiEncoding,
+    DESFireAccessRights sdmAccessRights,
+    unsigned int vcuidOffset,
+    unsigned int sdmReadCtrOffset,
+    unsigned int piccDataOffset,
+    unsigned int sdmMacInputOffset,
+    unsigned int sdmEncOffset,
+    unsigned int sdmEncLength,
+    unsigned int sdmMacOffset,
+    unsigned int sdmReadCtrLimitValue)
+{
+    EXCEPTION_ASSERT_WITH_LOG(accessRights.size() > 0 && accessRights.size() <= 8,
+                              LibLogicalAccessException,
+                              "Invalid accessrights has been provided.");
+
+    if (accessRights.size() == 1)
+        return DESFireEV1ISO7816Commands::changeFileSettings(fileno, comSettings,
+                                                             accessRights[0], false);
+
+    ByteVector command;
+
+    unsigned char fileOpt = static_cast<unsigned char>(comSettings);
+    fileOpt |= 0x80; // Multi access rights
+
+    short ar = AccessRightsInMemory(accessRights[0]);
+    BufferHelper::setUShort(command, ar);
+
+    command.push_back(static_cast<unsigned char>(accessRights.size() - 1));
+    for (int x = 1; x < static_cast<int>(accessRights.size()); ++x)
+    {
+        ar = AccessRightsInMemory(accessRights[x]);
+        BufferHelper::setUShort(command, ar);
+    }
+
+    if (sdmAndMirroring)
+    {
+        fileOpt |= 0x40;
+
+        unsigned char sdmOpt = 0x00 |
+            sdmVCUID ? 0x80 : 0x00 |
+            sdmReadCtr ? 0x40 : 0x00 |
+            sdmReadCtrLimit ? 0x20 : 0x00 |
+            sdmEncFileData ? 0x10 : 0x00 |
+            asciiEncoding ? 0x01 : 00;
+        command.push_back(sdmOpt);
+        ar = AccessRightsInMemory(sdmAccessRights);
+        BufferHelper::setUShort(command, ar);
+
+        if (sdmVCUID && sdmAccessRights.readAccess == 0x0E) // SDMMetaRead
+        {
+            command.push_back(static_cast<unsigned char>((vcuidOffset & 0xffffff) >> 16));
+            command.push_back(static_cast<unsigned char>((vcuidOffset & 0xffff) >> 8));
+            command.push_back(static_cast<unsigned char>(vcuidOffset & 0xff));
+        }
+        if (sdmReadCtr && sdmAccessRights.readAccess == 0x0E) // SDMMetaRead
+        {
+            command.push_back(static_cast<unsigned char>((sdmReadCtrOffset & 0xffffff) >> 16));
+            command.push_back(static_cast<unsigned char>((sdmReadCtrOffset & 0xffff) >> 8));
+            command.push_back(static_cast<unsigned char>(sdmReadCtrOffset & 0xff));
+        }
+        if (sdmAccessRights.readAccess != 0x0E && sdmAccessRights.readAccess != 0x0F) // SDMMetaRead
+        {
+            command.push_back(static_cast<unsigned char>((piccDataOffset & 0xffffff) >> 16));
+            command.push_back(static_cast<unsigned char>((piccDataOffset & 0xffff) >> 8));
+            command.push_back(static_cast<unsigned char>(piccDataOffset & 0xff));
+        }
+        if (sdmAccessRights.writeAccess != 0x0F) // SDMFileRead
+        {
+            command.push_back(static_cast<unsigned char>((sdmMacInputOffset & 0xffffff) >> 16));
+            command.push_back(static_cast<unsigned char>((sdmMacInputOffset & 0xffff) >> 8));
+            command.push_back(static_cast<unsigned char>(sdmMacInputOffset & 0xff));
+        }
+        if (sdmEncFileData && sdmAccessRights.writeAccess != 0x0F) // SDMFileRead
+        {
+            command.push_back(static_cast<unsigned char>((sdmEncOffset & 0xffffff) >> 16));
+            command.push_back(static_cast<unsigned char>((sdmEncOffset & 0xffff) >> 8));
+            command.push_back(static_cast<unsigned char>(sdmEncOffset & 0xff));
+            command.push_back(static_cast<unsigned char>((sdmEncLength & 0xffffff) >> 16));
+            command.push_back(static_cast<unsigned char>((sdmEncLength & 0xffff) >> 8));
+            command.push_back(static_cast<unsigned char>(sdmEncLength & 0xff));
+        }
+        if (sdmAccessRights.writeAccess != 0x0F) // SDMFileRead
+        {
+            command.push_back(static_cast<unsigned char>((sdmMacOffset & 0xffffff) >> 16));
+            command.push_back(static_cast<unsigned char>((sdmMacOffset & 0xffff) >> 8));
+            command.push_back(static_cast<unsigned char>(sdmMacOffset & 0xff));
+        }
+        if (sdmReadCtrLimitValue)
+        {
+            command.push_back(static_cast<unsigned char>((sdmReadCtrLimitValue & 0xffffff) >> 16));
+            command.push_back(static_cast<unsigned char>((sdmReadCtrLimitValue & 0xffff) >> 8));
+            command.push_back(static_cast<unsigned char>(sdmReadCtrLimitValue & 0xff));
+        }
+    }
+
+    if (tmcLimit > 0)
+    {
+        fileOpt |= 0x20;
+
+        command.push_back(static_cast<unsigned char>((tmcLimit & 0xffffffff) >> 24));
+        command.push_back(static_cast<unsigned char>((tmcLimit & 0xffffff) >> 16));
+        command.push_back(static_cast<unsigned char>((tmcLimit & 0xffff) >> 8));
+        command.push_back(static_cast<unsigned char>(tmcLimit & 0xff));
+    }
+
+    command.insert(command.begin(), fileOpt);
+    
+    ByteVector param;
+    param.push_back(static_cast<unsigned char>(fileno));
+
+    transmit_full(DF_INS_CHANGE_FILE_SETTINGS, command, param).getData();
 }
 
 void DESFireEV3ISO7816Commands::proximityCheck(std::shared_ptr<DESFireKey> key,
@@ -156,4 +329,27 @@ void DESFireEV3ISO7816Commands::proximityCheck(std::shared_ptr<DESFireKey> key,
 {
     return DESFireEV2ISO7816Commands::proximityCheck(key, chunk_size);
 }
+
+ByteVector DESFireEV3ISO7816Commands::commitTransaction(bool return_tmac)
+{
+    return DESFireEV2ISO7816Commands::commitTransaction(return_tmac);
+}
+
+ByteVector DESFireEV3ISO7816Commands::commitReaderID(ByteVector readerid)
+{
+    return DESFireEV2ISO7816Commands::commitReaderID(readerid);
+}
+
+void DESFireEV3ISO7816Commands::restoreTransfer(unsigned char target_fileno, unsigned char source_fileno)
+{
+    return DESFireEV2ISO7816Commands::restoreTransfer(target_fileno, source_fileno);
+}
+
+ByteVector DESFireEV3ISO7816Commands::getFileCounters(unsigned char fileno)
+{
+    ByteVector data;
+    data.push_back(fileno);
+    return transmit_full(DFEV3_INS_GET_FILE_COUNTERS, data).getData();
+}
+
 }

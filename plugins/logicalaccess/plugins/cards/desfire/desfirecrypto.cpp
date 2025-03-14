@@ -43,6 +43,11 @@ DESFireCrypto::~DESFireCrypto()
 {
 }
 
+unsigned char DESFireCrypto::getMACSize() const
+{
+    return d_auth_method == CM_LEGACY ? 4 : 8;
+}
+
 void DESFireCrypto::appendDecipherData(const ByteVector &data)
 {
     d_buf.insert(d_buf.end(), data.begin(), data.end());
@@ -85,31 +90,24 @@ bool DESFireCrypto::verifyMAC(bool end, const ByteVector &data)
 
     if (end)
     {
+        unsigned char msize = getMACSize();
+        EXCEPTION_ASSERT_WITH_LOG(d_buf.size() >= msize, LibLogicalAccessException, "Wrong MAC buffer length.");
+
+        ByteVector mac;
+        mac.insert(mac.end(), d_buf.end() - msize, d_buf.end());
+        ByteVector ourMacBuf;
+        ourMacBuf.insert(ourMacBuf.end(), d_buf.begin(), d_buf.end() - msize);
+
         if (d_auth_method == CM_LEGACY) // Native DESFire mode
         {
-            EXCEPTION_ASSERT_WITH_LOG(d_buf.size() >= 4, LibLogicalAccessException,
-                                      "Wrong MAC buffer length.");
-
-            ByteVector mac;
-            mac.insert(mac.end(), d_buf.end() - 4, d_buf.end());
-            ByteVector ourMacBuf;
-            ourMacBuf.insert(ourMacBuf.end(), d_buf.begin(), d_buf.end() - 4);
             ByteVector ourMac = desfire_mac(d_sessionKey, ourMacBuf);
             ret               = (mac == ourMac);
         }
         else
         {
-            EXCEPTION_ASSERT_WITH_LOG(d_buf.size() >= 8, LibLogicalAccessException,
-                                      "Wrong MAC buffer length.");
-
-            ByteVector mac;
-            mac.insert(mac.end(), d_buf.end() - 8, d_buf.end());
-            ByteVector ourMacBuf;
-            ourMacBuf.insert(ourMacBuf.end(), d_buf.begin(), d_buf.end() - 8);
             ourMacBuf.push_back(0x00); // SW_OPERATION_OK
-            ByteVector ourMac =
-                desfire_cmac(d_sessionKey, d_cipher, ourMacBuf);
-            ret = (mac == ourMac);
+            ByteVector ourMac = desfire_cmac(d_sessionKey, d_cipher, ourMacBuf);
+            ret               = (mac == ourMac);
         }
 
         d_buf.clear();

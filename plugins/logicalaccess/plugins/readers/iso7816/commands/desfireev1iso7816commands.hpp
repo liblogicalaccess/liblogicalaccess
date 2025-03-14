@@ -379,6 +379,14 @@ class LLA_READERS_ISO7816_API DESFireEV1ISO7816Commands : public DESFireISO7816C
                                       const ByteVector &buf = ByteVector(),
                                       unsigned char lc = 0, bool forceLc = false);
 
+    virtual ISO7816Response transmit_full(unsigned char cmd,
+                                          unsigned char lc);
+
+    virtual ISO7816Response transmit_full(unsigned char cmd,
+                                          const ByteVector &buf = ByteVector(),
+                                          ByteVector params = ByteVector(),
+                                          unsigned char lc = 0, bool forceLc = false);
+
     /**
      * \brief Transmit a command.
      * \param cmd The command code.

@@ -67,7 +67,7 @@ class LLA_READERS_ISO7816_API DESFireEV2ISO7816Commands
         unsigned char actualkeySetVersion = 0, unsigned char rollkeyno = 0,
         bool specificCapabilityData = false, bool specificVCKeys = false) override;
 
-    void initliazeKeySet(uint8_t keySetNo, DESFireKeyType keySetType) override;
+    void initializeKeySet(uint8_t keySetNo, DESFireKeyType keySetType) override;
 
     void rollKeySet(uint8_t keySetNo) override;
 
@@ -78,68 +78,35 @@ class LLA_READERS_ISO7816_API DESFireEV2ISO7816Commands
      * \param fileno The file number
      * \param comSettings The file communication setting
      * \param accessRights The file access rights
-     * \param plain Communication is currently in plain data.
      */
     void changeFileSettings(unsigned char fileno, EncryptionMode comSettings,
-                            std::vector<DESFireAccessRights> accessRights,
-                            bool plain) override;
+                            std::vector<DESFireAccessRights> accessRights) override;
 
-    /**
-     * \brief Create a new data file in the current application.
-     * \param fileno The new file number
-     * \param comSettings The file communication setting
-     * \param accessRights The file access rights
-     * \param fileSize The file size (in bytes).
-     */
-    virtual void createStdDataFile(unsigned char fileno, EncryptionMode comSettings,
+    void createStdDataFile(unsigned char fileno, EncryptionMode comSettings,
                                    const DESFireAccessRights &accessRights,
                                    unsigned int fileSize, unsigned short isoFID,
-                                   bool multiAccessRights);
+                                   bool multiAccessRights) override;
 
-    /**
-     * \brief Create a new backup file in the current application.
-     * \param fileno The new file number
-     * \param comSettings The file communication setting
-     * \param accessRights The file access rights
-     * \param fileSize The file size (in bytes).
-     */
-    virtual void createBackupFile(unsigned char fileno, EncryptionMode comSettings,
+    void createBackupFile(unsigned char fileno, EncryptionMode comSettings,
                                   const DESFireAccessRights &accessRights,
                                   unsigned int fileSize, unsigned short isoFID,
-                                  bool multiAccessRights);
+                                  bool multiAccessRights) override;
 
-    /**
-     * \brief Create a new linear record file in the current application.
-     * \param fileno The new file number
-     * \param comSettings The file communication setting
-     * \param accessRights The file access rights
-     * \param fileSize The file size (in bytes).
-     * \param maxNumberOfRecords Max number of records in the file.
-     */
-    virtual void createLinearRecordFile(unsigned char fileno, EncryptionMode comSettings,
+    void createLinearRecordFile(unsigned char fileno, EncryptionMode comSettings,
                                         const DESFireAccessRights &accessRights,
                                         unsigned int fileSize,
                                         unsigned int maxNumberOfRecords,
-                                        unsigned short isoFID, bool multiAccessRights);
+                                        unsigned short isoFID, bool multiAccessRights) override;
 
-    /**
-     * \brief Create a new cyclic record file in the current application.
-     * \param fileno The new file number
-     * \param comSettings The file communication setting
-     * \param accessRights The file access rights
-     * \param fileSize The file size (in bytes).
-     * \param maxNumberOfRecords Max number of records in the file.
-     */
-    virtual void createCyclicRecordFile(unsigned char fileno, EncryptionMode comSettings,
+    void createCyclicRecordFile(unsigned char fileno, EncryptionMode comSettings,
                                         const DESFireAccessRights &accessRights,
                                         unsigned int fileSize,
                                         unsigned int maxNumberOfRecords,
-                                        unsigned short isoFID, bool multiAccessRights);
+                                        unsigned short isoFID, bool multiAccessRights) override;
 
     void createTransactionMACFile(unsigned char fileno, EncryptionMode comSettings,
                                   const DESFireAccessRights &accessRights,
-                                  std::shared_ptr<DESFireKey> tmkey,
-                                  unsigned char tmkversion) override;
+                                  std::shared_ptr<DESFireKey> tmkey) override;
 
     ByteVector getKeyVersion(uint8_t keysetno, uint8_t keyno) override;
 
@@ -166,6 +133,12 @@ class LLA_READERS_ISO7816_API DESFireEV2ISO7816Commands
     }
 
     void proximityCheck(std::shared_ptr<DESFireKey> key, uint8_t chunk_size) override;
+
+    ByteVector commitTransaction(bool return_tmac) override;
+
+    ByteVector commitReaderID(ByteVector readerid) override;
+
+    void restoreTransfer(unsigned char target_fileno, unsigned char source_fileno) override;
 
   private:
     /**

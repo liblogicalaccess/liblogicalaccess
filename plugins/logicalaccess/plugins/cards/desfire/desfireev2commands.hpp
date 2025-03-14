@@ -18,17 +18,17 @@ namespace logicalaccess
 #define DFEV2_INS_INITIALIZEKEYSET 0x56
 #define DFEV2_INS_ROLLKEYSET 0x55
 #define DFEV2_INS_FINALIZEKEYSET 0x57
-#define DFEV2_INS_CHANGEKEYEV2 0xc6
-#define DFEV2_INS_CREATE_TRANSACTION_MAC_FILE 0xce
-#define DFEV2_INS_CREATE_DELEGATED_APPLICATION 0xc9
-
+#define DFEV2_INS_CHANGEKEYEV2 0xC6
+#define DFEV2_INS_CREATE_TRANSACTION_MAC_FILE 0xCE
+#define DFEV2_INS_CREATE_DELEGATED_APPLICATION 0xC9
+#define DFEV2_INS_COMMIT_READERID 0xC8
+#define DFEV2_INS_RESTORE_TRANSFER 0xB1
 // Prepare Proximity Check
 #define DFEV2_INS_PREPARE_PC 0xF0
 // ProximityCheck data exchange
 #define DFEV2_INS_PROXIMITY_CHECK 0xF2
 // ProximityCheck validation
 #define DFEV2_INS_VERIFY_PC 0xFD
-
 #define DFEV2_PROXIMITY_CHECK_KEY_NO 0x21
 
 #endif
@@ -78,17 +78,42 @@ class LLA_CARDS_DESFIRE_API DESFireEV2Commands : public ICommands
         unsigned char actualkeySetVersion = 0, unsigned char rollkeyno = 0,
         bool specificCapabilityData = false, bool specificVCKeys = false) = 0;
 
-    virtual void initliazeKeySet(uint8_t keySetNo, DESFireKeyType keySetType) = 0;
+    virtual void initializeKeySet(uint8_t keySetNo, DESFireKeyType keySetType) = 0;
 
     virtual void rollKeySet(uint8_t keySetNo) = 0;
 
     virtual void finalizeKeySet(uint8_t keySetNo, uint8_t keySetVersion) = 0;
 
+    virtual void createStdDataFile(unsigned char fileno, EncryptionMode comSettings,
+                                   const DESFireAccessRights &accessRights,
+                                   unsigned int fileSize,
+                                   unsigned short isoFID,
+                                   bool multiAccessRights) = 0;
+
+    virtual void createBackupFile(unsigned char fileno, EncryptionMode comSettings,
+                                  const DESFireAccessRights &accessRights,
+                                  unsigned int fileSize,
+                                  unsigned short isoFID,
+                                  bool multiAccessRights) = 0;
+
+    virtual void createLinearRecordFile(unsigned char fileno, EncryptionMode comSettings,
+                                        const DESFireAccessRights &accessRights,
+                                        unsigned int fileSize,
+                                        unsigned int maxNumberOfRecords,
+                                        unsigned short isoFID,
+                                        bool multiAccessRights) = 0;
+
+    virtual void createCyclicRecordFile(unsigned char fileno, EncryptionMode comSettings,
+                                        const DESFireAccessRights &accessRights,
+                                        unsigned int fileSize,
+                                        unsigned int maxNumberOfRecords,
+                                        unsigned short isoFID,
+                                        bool multiAccessRights) = 0;
+
     virtual void createTransactionMACFile(unsigned char fileno,
                                           EncryptionMode comSettings,
                                           const DESFireAccessRights &accessRights,
-                                          std::shared_ptr<DESFireKey> tmkey,
-                                          unsigned char tmkversion) = 0;
+                                          std::shared_ptr<DESFireKey> tmkey) = 0;
 
     virtual ByteVector getKeyVersion(uint8_t keysetno, uint8_t keyno) = 0;
 
@@ -108,8 +133,7 @@ class LLA_CARDS_DESFIRE_API DESFireEV2Commands : public ICommands
     virtual void setConfiguration(ByteVector DAMMAC, ByteVector ISODFNameOrVCIID) = 0;
 
     virtual void changeFileSettings(unsigned char fileno, EncryptionMode comSettings,
-                                    std::vector<DESFireAccessRights> accessRights,
-                                    bool plain) = 0;
+                                    std::vector<DESFireAccessRights> accessRights) = 0;
 
     /**
      * Perform proximity check.
@@ -127,6 +151,16 @@ class LLA_CARDS_DESFIRE_API DESFireEV2Commands : public ICommands
      * // Todo maybe add a user-defined timing parameter.
      */
     virtual void proximityCheck(std::shared_ptr<DESFireKey> key, uint8_t chunk_size) = 0;
+
+     /**
+     * \brief Commit the transaction.
+     * \param return_tmac True to return the new Transaction MAC counter and value, false otherwise.
+     */
+    virtual ByteVector commitTransaction(bool return_tmac) = 0;
+
+    virtual ByteVector commitReaderID(ByteVector readerid) = 0;
+
+    virtual void restoreTransfer(unsigned char target_fileno, unsigned char source_fileno) = 0;
 
   private:
     std::shared_ptr<DESFireEV2Chip> getDESFireEV2Chip() const;
