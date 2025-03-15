@@ -140,6 +140,10 @@ class LLA_READERS_ISO7816_API DESFireEV2ISO7816Commands
 
     void restoreTransfer(unsigned char target_fileno, unsigned char source_fileno) override;
 
+    ByteVector readSignature(unsigned char address = 0x00) override;
+
+    bool performECCOriginalityCheck() override;
+
   private:
     /**
      * \brief Transmit a command.

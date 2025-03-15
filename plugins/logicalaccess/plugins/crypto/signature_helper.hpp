@@ -7,6 +7,7 @@
 
 #include "logicalaccess/plugins/crypto/lla_crypto_api.hpp"
 #include <string>
+#include <vector>
 
 namespace logicalaccess
 {
@@ -31,6 +32,10 @@ class LLA_CRYPTO_API SignatureHelper
      */
     static bool verify_sha512(const std::string &data, const std::string &signature,
                               const std::string &pem_pubkey);
+
+    static bool verify_ecdsa_secp224r1(const std::vector<uint8_t> &data,
+                                       const std::vector<uint8_t> &signature,
+                                       const std::vector<uint8_t> &pem_pubkey);
 };
 }
 

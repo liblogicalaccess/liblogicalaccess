@@ -7,6 +7,7 @@
 #include <logicalaccess/cards/samkeystorage.hpp>
 #include <logicalaccess/plugins/crypto/lla_random.hpp>
 #include <logicalaccess/plugins/crypto/cmac.hpp>
+#include <logicalaccess/plugins/crypto/signature_helper.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfirechip.hpp>
 #include <algorithm>
 #include <logicalaccess/plugins/crypto/aes_helper.hpp>
@@ -996,4 +997,22 @@ void DESFireEV2ISO7816Commands::restoreTransfer(unsigned char target_fileno, uns
     data.push_back(target_fileno);
     data.push_back(source_fileno);
     transmit(DFEV2_INS_RESTORE_TRANSFER, data);
+}
+
+ByteVector DESFireEV2ISO7816Commands::readSignature(unsigned char address)
+{
+    ByteVector params;
+    params.push_back(address);
+    transmit_full(DFEV2_INS_READ_SIG, {}, params);
+}
+
+bool DESFireEV2ISO7816Commands::performECCOriginalityCheck()
+{
+    ByteVector pubkey = { 0x04, 0x1D, 0xB4, 0x6C, 0x14, 0x5D, 0x0A, 0x36, 0x53, 0x9C, 0x65, 0x44,
+        0xBD, 0x6D, 0x9B, 0x0A, 0xA6, 0x2F, 0xF9, 0x1E, 0xC4, 0x8C, 0xBC, 0x6A, 0xBA, 0xE3, 0x6E,
+        0x00, 0x89, 0xA4, 0x6F, 0x0D, 0x08, 0xC8, 0xA7, 0x15, 0xEA, 0x40, 0xA6, 0x33, 0x13, 0xB9,
+        0x2E, 0x90, 0xDD, 0xC1, 0x73, 0x02, 0x30, 0xE0, 0x45, 0x8A, 0x33, 0x27, 0x6F, 0xB7, 0x43 };
+    
+    ByteVector sig = readSignature(0x00);
+    return SignatureHelper::verify_ecdsa_secp224r1(getDESFireChip()->getChipIdentifier(), sig, pubkey);
 }

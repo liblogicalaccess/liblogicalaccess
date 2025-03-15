@@ -140,7 +140,11 @@ class LLA_READERS_ISO7816_API DESFireEV3ISO7816Commands
 
     void restoreTransfer(unsigned char target_fileno, unsigned char source_fileno) override;
 
-    ByteVector getFileCounters(unsigned char fileno);
+    ByteVector readSignature(unsigned char address = 0x00) override;
+
+    bool performECCOriginalityCheck() override;
+
+    ByteVector getFileCounters(unsigned char fileno) override;
 };
 
 }

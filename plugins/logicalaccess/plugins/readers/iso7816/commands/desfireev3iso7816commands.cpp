@@ -327,7 +327,7 @@ void DESFireEV3ISO7816Commands::changeFileSettings(unsigned char fileno, Encrypt
 void DESFireEV3ISO7816Commands::proximityCheck(std::shared_ptr<DESFireKey> key,
                                                uint8_t chunk_size)
 {
-    return DESFireEV2ISO7816Commands::proximityCheck(key, chunk_size);
+    DESFireEV2ISO7816Commands::proximityCheck(key, chunk_size);
 }
 
 ByteVector DESFireEV3ISO7816Commands::commitTransaction(bool return_tmac)
@@ -342,14 +342,24 @@ ByteVector DESFireEV3ISO7816Commands::commitReaderID(ByteVector readerid)
 
 void DESFireEV3ISO7816Commands::restoreTransfer(unsigned char target_fileno, unsigned char source_fileno)
 {
-    return DESFireEV2ISO7816Commands::restoreTransfer(target_fileno, source_fileno);
+    DESFireEV2ISO7816Commands::restoreTransfer(target_fileno, source_fileno);
+}
+
+ByteVector DESFireEV3ISO7816Commands::readSignature(unsigned char address)
+{
+    return DESFireEV2ISO7816Commands::readSignature(address);
+}
+
+bool DESFireEV3ISO7816Commands::performECCOriginalityCheck()
+{
+    return DESFireEV2ISO7816Commands::performECCOriginalityCheck();
 }
 
 ByteVector DESFireEV3ISO7816Commands::getFileCounters(unsigned char fileno)
 {
-    ByteVector data;
-    data.push_back(fileno);
-    return transmit_full(DFEV3_INS_GET_FILE_COUNTERS, data).getData();
+    ByteVector params;
+    params.push_back(fileno);
+    return transmit_full(DFEV3_INS_GET_FILE_COUNTERS, {}, params).getData();
 }
 
 }

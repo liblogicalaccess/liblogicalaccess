@@ -3,10 +3,12 @@
 //
 
 #include <logicalaccess/plugins/crypto/signature_helper.hpp>
-#include <openssl/evp.h>
 #include <stdexcept>
-#include <openssl/pem.h>
 #include <cassert>
+#include <openssl/core.h>
+#include <openssl/evp.h>
+#include <openssl/pem.h>
+#include <openssl/param_build.h>
 
 namespace logicalaccess
 {
@@ -94,5 +96,37 @@ bool SignatureHelper::verify_sha512(const std::string &data, const std::string &
                                       reinterpret_cast<unsigned char *>(
                                           const_cast<char *>(signature.c_str())),
                                       signature.size());
+}
+
+bool SignatureHelper::verify_ecdsa_secp224r1(const std::vector<uint8_t> &data,
+                                             const std::vector<uint8_t> &signature,
+                                             const std::vector<uint8_t> &pubkey)
+{
+    bool ret;
+    EVP_PKEY_CTX *ctx;
+    //EVP_PKEY *pkey = NULL;
+    OSSL_PARAM_BLD *param_bld;
+    OSSL_PARAM *params = NULL;
+    param_bld = OSSL_PARAM_BLD_new();
+    if (param_bld != NULL
+        && OSSL_PARAM_BLD_push_utf8_string(param_bld, "group", "secp224r1", 0)
+        && OSSL_PARAM_BLD_push_octet_string(param_bld, "pub", pubkey.data(), pubkey.size()))
+    {
+        params = OSSL_PARAM_BLD_to_param(param_bld);
+    }
+    ctx = EVP_PKEY_CTX_new_from_name(NULL, "EC", NULL);
+    if (ctx == NULL || params == NULL || EVP_PKEY_fromdata_init(ctx) <= 0 || EVP_PKEY_verify_init_ex(ctx, params) <= 0) //  || EVP_PKEY_fromdata(ctx, &pkey, EVP_PKEY_PUBLIC_KEY, params) <= 0
+    {
+        ret = false;
+    }
+    else
+    {
+        ret = (EVP_PKEY_verify(ctx, signature.data(), signature.size(), data.data(), data.size()) == 1);
+    }
+    //EVP_PKEY_free(pkey);
+    EVP_PKEY_CTX_free(ctx);
+    OSSL_PARAM_free(params);
+    OSSL_PARAM_BLD_free(param_bld);
+    return ret;
 }
 }

@@ -23,6 +23,7 @@ namespace logicalaccess
 #define DFEV2_INS_CREATE_DELEGATED_APPLICATION 0xC9
 #define DFEV2_INS_COMMIT_READERID 0xC8
 #define DFEV2_INS_RESTORE_TRANSFER 0xB1
+#define DFEV2_INS_READ_SIG 0x3C
 // Prepare Proximity Check
 #define DFEV2_INS_PREPARE_PC 0xF0
 // ProximityCheck data exchange
@@ -161,6 +162,10 @@ class LLA_CARDS_DESFIRE_API DESFireEV2Commands : public ICommands
     virtual ByteVector commitReaderID(ByteVector readerid) = 0;
 
     virtual void restoreTransfer(unsigned char target_fileno, unsigned char source_fileno) = 0;
+
+    virtual ByteVector readSignature(unsigned char address = 0x00) = 0;
+
+    virtual bool performECCOriginalityCheck() = 0;
 
   private:
     std::shared_ptr<DESFireEV2Chip> getDESFireEV2Chip() const;
