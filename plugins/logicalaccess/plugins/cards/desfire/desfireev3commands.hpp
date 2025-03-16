@@ -55,6 +55,8 @@ class LLA_CARDS_DESFIRE_API DESFireEV3Commands : public DESFireEV2Commands
                                     unsigned int sdmMacOffset,
                                     unsigned int sdmReadCtrLimitValue) = 0;
 
+    virtual bool performAESOriginalityCheck() = 0;
+
   private:
     std::shared_ptr<DESFireEV3Chip> getDESFireEV3Chip() const;
 };

@@ -1571,16 +1571,13 @@ std::shared_ptr<Chip> PCSCReaderUnit::adjustChip(std::shared_ptr<Chip> c)
             }
             else if (d_card_type == "UNKNOWN" && c && c->getCardType() == "SAM_AV2")
             {
-                if (c->getCardType() == "SAM_AV2")
+                if (std::dynamic_pointer_cast<
+                        SAMCommands<KeyEntryAV2Information, SETAV2>>(c->getCommands())
+                        ->getSAMTypeFromSAM() == "SAM_AV1")
                 {
-                    if (std::dynamic_pointer_cast<
-                            SAMCommands<KeyEntryAV2Information, SETAV2>>(c->getCommands())
-                            ->getSAMTypeFromSAM() == "SAM_AV1")
-                    {
-                        LOG(LogLevel::INFOS) << "SAM on the reader is AV2 but mode AV1 "
-                                                "so we switch to AV1.";
-                        c = createChip("SAM_AV1");
-                    }
+                    LOG(LogLevel::INFOS) << "SAM on the reader is AV2 but mode AV1 "
+                                            "so we switch to AV1.";
+                    c = createChip("SAM_AV1");
                 }
             }
             else

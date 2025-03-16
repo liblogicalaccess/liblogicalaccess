@@ -29,6 +29,8 @@ class LLA_READERS_ISO7816_API DESFireEV2ISO7816Commands
     void sam_authenticateEV2First(uint8_t keyno,
                                   std::shared_ptr<DESFireKey> key) override;
 
+    void sam_authenticate_p2(unsigned char keyno, ByteVector rndap, bool authev2) const;
+
     /**
      * \brief Authenticate, given a key number.
      * \param keyno The key number.

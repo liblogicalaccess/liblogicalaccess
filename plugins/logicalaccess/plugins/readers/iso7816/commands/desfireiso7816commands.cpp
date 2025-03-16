@@ -882,13 +882,20 @@ void DESFireISO7816Commands::getKeyFromSAM(std::shared_ptr<DESFireKey> key,
 
 ByteVector DESFireISO7816Commands::sam_authenticate_p1(std::shared_ptr<DESFireKey> key,
                                                        ByteVector rndb,
-                                                       ByteVector diversify) const
+                                                       ByteVector diversify,
+                                                       bool evxauth,
+                                                       bool authfirst,
+                                                       bool suppresssm) const
 {
     unsigned char p1 = 0x00;
     ByteVector data(2);
-    data[0] =
-        std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage())->getKeySlot();
+    std::shared_ptr<SAMKeyStorage> ks = std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage());
+    data[0] = ks->getKeySlot();
     data[1] = key->getKeyVersion();
+    if (evxauth)
+    {
+        data.push_back(0x00); // EV2 auth. 0x01 LRP auth but this is not supported on LLA atm.
+    }
     data.insert(data.end(), rndb.begin(), rndb.end());
 
     if (std::dynamic_pointer_cast<NXPKeyDiversification>(key->getKeyDiversification()))
@@ -898,6 +905,24 @@ ByteVector DESFireISO7816Commands::sam_authenticate_p1(std::shared_ptr<DESFireKe
                 key->getKeyDiversification()))
             p1 |= 0x10;
         data.insert(data.end(), diversify.begin(), diversify.end());
+    }
+
+    if (!ks->getIsAbsolute())
+    {
+        p1 |= 0x02; // Use Key Slot as a relative DESFire Key Number instead
+    }
+
+    if (evxauth)
+    {
+        p1 |= 0x80;
+        if (!authfirst)
+        {
+            p1 = 0x40;
+        }
+    }
+    if (suppresssm)
+    {
+        p1 |= 0x20; // Suppress Secure Messaging (for Originality Check)
     }
 
     ByteVector cmd_vector = {
@@ -969,15 +994,18 @@ void DESFireISO7816Commands::sam_authenticate_p2(unsigned char keyno,
         THROW_EXCEPTION_WITH_LOG(CardException, "sam authenticate DES P2 failed.");
 
     if (getSAMChip()->getCardType() == "SAM_AV1")
+    {
         crypto->d_sessionKey =
             std::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1>>(
                 getSAMChip()->getCommands())
                 ->dumpSessionKey();
+    }
     else if (getSAMChip()->getCardType() == "SAM_AV2" || getSAMChip()->getCardType() == "SAM_AV3")
-        crypto->d_sessionKey =
-            std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(
-                getSAMChip()->getCommands())
-                ->dumpSessionKey();
+    {
+        auto data = std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(
+                        getSAMChip()->getCommands())->dumpSessionKey();
+        crypto->d_sessionKey = data;
+    }
     crypto->d_currentKeyNo = keyno;
 }
 

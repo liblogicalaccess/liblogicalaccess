@@ -345,7 +345,9 @@ class LLA_READERS_ISO7816_API DESFireISO7816Commands : public DESFireCommands
     void getKeyFromSAM(std::shared_ptr<DESFireKey> key, ByteVector diversify) const;
 
     ByteVector sam_authenticate_p1(std::shared_ptr<DESFireKey> key, ByteVector rndb,
-                                   ByteVector diversify) const;
+                                   ByteVector diversify, bool evxauth = false,
+                                   bool authfirst = true,
+                                   bool suppresssm = false) const;
 
     void sam_authenticate_p2(unsigned char keyno, ByteVector rndap) const;
 

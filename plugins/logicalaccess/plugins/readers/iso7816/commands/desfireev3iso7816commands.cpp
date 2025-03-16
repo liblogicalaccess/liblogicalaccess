@@ -362,4 +362,21 @@ ByteVector DESFireEV3ISO7816Commands::getFileCounters(unsigned char fileno)
     return transmit_full(DFEV3_INS_GET_FILE_COUNTERS, {}, params).getData();
 }
 
+bool DESFireEV3ISO7816Commands::performAESOriginalityCheck()
+{
+    EXCEPTION_ASSERT_WITH_LOG(getSAMChip() != nullptr && getSAMChip()->getCardType() == "SAM_AV3",
+                              LibLogicalAccessException,
+                              "SAM AV3 is needed for AES Originality Check");
+
+    auto key = std::make_shared<DESFireKey>();
+    key->setKeyType(DF_KEY_AES);
+    key->setKeyVersion(0);
+    auto ks = std::make_shared<SAMKeyStorage>();
+    ks->setKeySlot(1);
+    ks->setIsAbsolute(false);
+    key->setKeyStorage(ks);
+
+    authenticateEV2First(1, key);
+}
+
 }

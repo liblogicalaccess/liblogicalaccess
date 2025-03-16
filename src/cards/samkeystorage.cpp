@@ -13,6 +13,7 @@ SAMKeyStorage::SAMKeyStorage()
 {
     d_key_slot = 0x00;
     d_dumpKey  = false;
+    d_is_absolute = true;
 }
 
 KeyStorageType SAMKeyStorage::getType() const
@@ -25,6 +26,7 @@ void SAMKeyStorage::serialize(boost::property_tree::ptree &parentNode)
     boost::property_tree::ptree node;
     node.put("KeySlot", d_key_slot);
     node.put("DumpKey", d_dumpKey);
+    node.put("IsAbsolute", d_is_absolute);
 
     parentNode.add_child(getDefaultXmlNodeName(), node);
 }
@@ -37,6 +39,12 @@ void SAMKeyStorage::unSerialize(boost::property_tree::ptree &node)
     if (dumpKeyChild)
     {
         d_dumpKey = dumpKeyChild.get().get_value<bool>();
+    }
+    boost::optional<boost::property_tree::ptree &> isAbsoluteChild =
+        node.get_child_optional("IsAbsolute");
+    if (isAbsoluteChild)
+    {
+        d_is_absolute = isAbsoluteChild.get().get_value<bool>();
     }
 }
 

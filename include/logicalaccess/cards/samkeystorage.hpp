@@ -69,6 +69,16 @@ class LLA_CORE_API SAMKeyStorage : public KeyStorage
         d_dumpKey = dumpKey;
     }
 
+    bool getIsAbsolute() const
+    {
+        return d_is_absolute;
+    }
+
+    void setIsAbsolute(bool is_absolute)
+    {
+        d_is_absolute = is_absolute;
+    }
+
   protected:
     /**
      * \brief The key slot. Optional for most PICC operation, automatically detected
@@ -76,6 +86,8 @@ class LLA_CORE_API SAMKeyStorage : public KeyStorage
     unsigned char d_key_slot;
 
     bool d_dumpKey;
+
+    bool d_is_absolute;
 };
 }
 

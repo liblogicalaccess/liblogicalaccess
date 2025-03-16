@@ -88,30 +88,20 @@ void DESFireEV2ISO7816Commands::authenticate(unsigned char keyno,
 
     // ChangeKey PICC AES -> DES do not work with authenticateEV2First so we use
     // authenticateAES...
-    // ... but we don't care too much about this use case, and user call still
+    // ... but we don't care too much about this use case, and user can still
     // call authenticateAES on their own.
 
-    // We use by default the improved authenticateEV2First.
-    auto crypto =
-        std::dynamic_pointer_cast<DESFireEV2Crypto>(getDESFireChip()->getCrypto());
-    crypto->setKey(crypto->d_currentAid, 0, keyno, key);
-    authenticateEV2First(keyno, key);
-
-    // TODO use SAM AV3 with authenticateEV2First
-    /*	if (key->getKeyStorage()->getType() == KST_SAM
-                    &&
-       !std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage())->getDumpKey())
-            {
-                    auto crypto =
-       std::dynamic_pointer_cast<DESFireEV2Crypto>(getDESFireChip()->getCrypto());
-                    crypto->setKey(crypto->d_currentAid, 0, keyno, key);
-                    authenticateAES(keyno);
-                    //sam_authenticateEV2First(keyno, key);
-            }
-            else
-            {
-                    authenticateEV2First(keyno, key);
-            }*/
+    if (key->getKeyStorage()->getType() == KST_SAM &&
+        !std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage())->getDumpKey())
+    {
+            auto crypto = std::dynamic_pointer_cast<DESFireEV2Crypto>(getDESFireChip()->getCrypto());
+            crypto->setKey(crypto->d_currentAid, 0, keyno, key);
+            sam_authenticateEV2First(keyno, key);
+    }
+    else
+    {
+            authenticateEV2First(keyno, key);
+    }
 }
 
 void DESFireEV2ISO7816Commands::authenticateEV2First(
@@ -161,8 +151,6 @@ void DESFireEV2ISO7816Commands::authenticateEV2First(
     crypto->setKey(crypto->d_currentAid, 0, keyno, key);
 }
 
-
-// CLEANUP GENERATE FUNCTION DUPLICATE
 void DESFireEV2ISO7816Commands::sam_authenticateEV2First(uint8_t keyno,
                                                          std::shared_ptr<DESFireKey> key)
 {
@@ -170,9 +158,9 @@ void DESFireEV2ISO7816Commands::sam_authenticateEV2First(uint8_t keyno,
     EXCEPTION_ASSERT_WITH_LOG(key->getKeyType() == DESFireKeyType::DF_KEY_AES,
                               LibLogicalAccessException,
                               "Invalid key type: expected DF_KEY_AES");
-    EXCEPTION_ASSERT_WITH_LOG(getSAMChip()->getCardType() == "SAM_AV2",
+    EXCEPTION_ASSERT_WITH_LOG(getSAMChip() != nullptr && (getSAMChip()->getCardType() == "SAM_AV2" || getSAMChip()->getCardType() == "SAM_AV3"),
                               LibLogicalAccessException,
-                              "SAM AV2 is needed for DESFireEV2");
+                              "SAM AV2/AV3 is needed for DESFireEV2");
 
     auto crypto =
         std::dynamic_pointer_cast<DESFireEV2Crypto>(getDESFireChip()->getCrypto());
@@ -185,45 +173,83 @@ void DESFireEV2ISO7816Commands::sam_authenticateEV2First(uint8_t keyno,
             LibLogicalAccessException,
             "DESFireKey need a SAMKeyStorage to proceed a SAM Authenticate.");
 
-    // activate offline crypto with SAM
-    auto samAV2Cmd =
-        std::dynamic_pointer_cast<SAMAV2ISO7816Commands>(getSAMChip()->getCommands());
-    samAV2Cmd->activateOfflineKey(keystorage->getKeySlot(), key->getKeyVersion(),
-                                  diversify);
+            
+    const auto rndPcd = RandomHelper::bytes(16);
+    if (getSAMChip()->getCardType() == "SAM_AV2")
+    {
+        authenticateAES(keyno); // this should be removed, we keep it as a safekeeper for now to easer auth error analyze.
 
-    // Start DESFireEV2 auth
-    ByteVector cmd = {keyno, 0}; // LenCap
-    auto response  = transmit_plain(DFEV2_INS_AUTHENTICATE_EV2_FIRST, cmd);
-    EXCEPTION_ASSERT_WITH_LOG(response.getData().size() > 0, LibLogicalAccessException,
-                              "Response is too short");
+        // activate offline crypto with SAM
+        auto samAV2Cmd =
+            std::dynamic_pointer_cast<SAMAV2ISO7816Commands>(getSAMChip()->getCommands());
+        samAV2Cmd->activateOfflineKey(keystorage->getKeySlot(), key->getKeyVersion(),
+                                    diversify);
 
-    auto key_data   = key->getData();
-    const auto rnda = RandomHelper::bytes(16);
+        // Start DESFireEV2 auth
+        ByteVector cmd = {keyno, 0}; // LenCap
+        auto response  = transmit_plain(DFEV2_INS_AUTHENTICATE_EV2_FIRST, cmd);
+        EXCEPTION_ASSERT_WITH_LOG(response.getData().size() > 0, LibLogicalAccessException,
+                                "Response is too short");
 
-    // Get RNDB
-    const auto rndb = samAV2Cmd->decipherOfflineData(response.getData());
-    EXCEPTION_ASSERT_WITH_LOG(rndb.size() >= 16, LibLogicalAccessException,
-                              "Response is too short");
+        auto key_data   = key->getData();
 
-    // Get challenge_resp
-    auto challenge_resp = DESFireEV2Crypto::get_challenge_response(rndb, rnda);
-    challenge_resp      = samAV2Cmd->encipherOfflineData(challenge_resp);
-    EXCEPTION_ASSERT_WITH_LOG(challenge_resp.size() >= 0x20, LibLogicalAccessException,
-                              "Response is too short");
+        // Get RNDB
+        const auto rndPicc = samAV2Cmd->decipherOfflineData(response.getData());
+        EXCEPTION_ASSERT_WITH_LOG(rndPicc.size() >= 16, LibLogicalAccessException,
+                                "Response is too short");
 
-    response = transmit_plain(DF_INS_ADDITIONAL_FRAME, challenge_resp);
-    EXCEPTION_ASSERT_WITH_LOG(response.getData().size() >= 32, LibLogicalAccessException,
-                              "Response is too short");
+        // Get challenge_resp
+        auto challenge_resp = DESFireEV2Crypto::get_challenge_response(rndPicc, rndPcd);
+        challenge_resp      = samAV2Cmd->encipherOfflineData(challenge_resp);
+        EXCEPTION_ASSERT_WITH_LOG(challenge_resp.size() >= 0x20, LibLogicalAccessException,
+                                "Response is too short");
 
-    auto decdata = samAV2Cmd->decipherOfflineData(response.getData());
-    auto ti      = DESFireEV2Crypto::auth_ev2_part2(decdata, rnda);
+        response = transmit_plain(DF_INS_ADDITIONAL_FRAME, challenge_resp);
+        EXCEPTION_ASSERT_WITH_LOG(response.getData().size() >= 32, LibLogicalAccessException,
+                                "Response is too short");
 
-    crypto->setTI(ti);
-    crypto->setCmdCtr(0);
-    crypto->sam_generateSessionKey(rnda, rndb, samAV2Cmd);
+        auto decdata = samAV2Cmd->decipherOfflineData(response.getData());
+        auto ti      = DESFireEV2Crypto::auth_ev2_part2(decdata, rndPcd);
+
+        crypto->setTI(ti);
+        crypto->setCmdCtr(0);
+        crypto->sam_generateSessionKey(rndPcd, rndPicc, samAV2Cmd);
+    }
+    else
+    {
+        bool suppresssm = crypto->d_currentAid == 0 && keyno > 0 && !keystorage->getIsAbsolute(); // should only match Originality Keys
+        auto command = sam_authenticate_p1(key, rndPcd, diversify, true, true, suppresssm);
+        auto result = DESFireISO7816Commands::transmit(DF_INS_AUTHENTICATE, command);
+        if (result.getData().size() >= 8)
+        {
+            sam_authenticate_p2(keyno, result.getData(), true);
+        }
+        else
+        {
+            THROW_EXCEPTION_WITH_LOG(CardException, "DESFire authentication P2 failed: wrong length.");
+        }
+    }
 
     crypto->d_auth_method  = CryptoMethod::CM_EV2;
     crypto->d_currentKeyNo = keyno;
+}
+
+void DESFireEV2ISO7816Commands::sam_authenticate_p2(unsigned char keyno,
+    ByteVector rndap, bool authev2) const
+{
+    DESFireISO7816Commands::sam_authenticate_p2(keyno, rndap);
+    if (authev2)
+    {
+        auto crypto = std::dynamic_pointer_cast<DESFireEV2Crypto>(getDESFireChip()->getCrypto());
+        auto data = crypto->d_sessionKey;
+        EXCEPTION_ASSERT_WITH_LOG(data.size() >= 38, LibLogicalAccessException,
+                                "Response is too short");
+
+        crypto->d_sessionKey = ByteVector(data.begin(), data.begin() + 16);
+        crypto->d_macSessionKey = ByteVector(data.begin() + 16, data.begin() + 32);
+        crypto->setTI(ByteVector(data.begin() + 32, data.begin() + 36));
+        crypto->setCmdCtr(static_cast<uint16_t>(data.at(36) << 8 | data.at(37)));
+    }
 }
 
 ISO7816Response DESFireEV2ISO7816Commands::transmit(unsigned char cmd,
