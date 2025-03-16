@@ -98,9 +98,9 @@ bool SignatureHelper::verify_sha512(const std::string &data, const std::string &
                                       signature.size());
 }
 
-bool SignatureHelper::verify_ecdsa_secp224r1(const std::vector<uint8_t> &data,
-                                             const std::vector<uint8_t> &signature,
-                                             const std::vector<uint8_t> &pubkey)
+bool SignatureHelper::verify_ecdsa_secp224r1(const std::vector<unsigned char> &data,
+                                             const std::vector<unsigned char> &signature,
+                                             const std::vector<unsigned char> &pubkey)
 {
     bool ret;
     EVP_PKEY_CTX *ctx;
