@@ -1,5 +1,6 @@
 from conan import ConanFile
 from conan.tools.cmake import CMakeToolchain, CMakeDeps, CMake, cmake_layout
+from conan.tools.files import copy
 
 class LLAConan(ConanFile):
     name = "logicalaccess"
@@ -32,10 +33,6 @@ class LLAConan(ConanFile):
     
     def build_requirements(self):
         self.test_requires('gtest/1.15.0')
-
-    def imports(self):
-        if self.settings.os == "Windows":
-            self.copy("*.dll", "bin", "bin")
 
     def layout(self):
         cmake_layout(self)
@@ -70,6 +67,11 @@ class LLAConan(ConanFile):
         
         deps = CMakeDeps(self)
         deps.generate()
+
+        if self.settings.os == "Windows":
+            for dep in self.dependencies.values():
+                if len(dep.cpp_info.libdirs) > 0:
+                    copy(self, "*.dll", dep.cpp_info.libdirs[0], self.build_folder)
 
     def build(self):
         cmake = CMake(self)
