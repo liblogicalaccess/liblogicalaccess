@@ -1029,7 +1029,19 @@ ByteVector DESFireEV2ISO7816Commands::readSignature(unsigned char address)
 {
     ByteVector params;
     params.push_back(address);
-    transmit_full(DFEV2_INS_READ_SIG, {}, params);
+    std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
+
+    ISO7816Response r;
+    if (crypto->d_sessionKey.size() > 0)
+    {
+        r = transmit_full(DFEV2_INS_READ_SIG, {}, params);
+    }
+    else
+    {
+        r = transmit_plain(DFEV2_INS_READ_SIG, params);
+    }
+
+    return r.getData();
 }
 
 bool DESFireEV2ISO7816Commands::performECCOriginalityCheck()

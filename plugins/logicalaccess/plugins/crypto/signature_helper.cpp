@@ -2,10 +2,12 @@
 // Created by xaqq on 4/4/18.
 //
 
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/plugins/crypto/signature_helper.hpp>
 #include <stdexcept>
 #include <cassert>
 #include <openssl/core.h>
+#include <openssl/core_names.h>
 #include <openssl/evp.h>
 #include <openssl/pem.h>
 #include <openssl/param_build.h>
@@ -102,28 +104,87 @@ bool SignatureHelper::verify_ecdsa_secp224r1(const std::vector<unsigned char> &d
                                              const std::vector<unsigned char> &signature,
                                              const std::vector<unsigned char> &pubkey)
 {
-    bool ret;
+    bool ret = true;
     EVP_PKEY_CTX *ctx;
-    //EVP_PKEY *pkey = NULL;
+    EVP_PKEY *pkey = NULL;
     OSSL_PARAM_BLD *param_bld;
     OSSL_PARAM *params = NULL;
     param_bld = OSSL_PARAM_BLD_new();
     if (param_bld != NULL
-        && OSSL_PARAM_BLD_push_utf8_string(param_bld, "group", "secp224r1", 0)
-        && OSSL_PARAM_BLD_push_octet_string(param_bld, "pub", pubkey.data(), pubkey.size()))
+        && OSSL_PARAM_BLD_push_utf8_string(param_bld, OSSL_PKEY_PARAM_GROUP_NAME, "secp224r1", 0)
+        && OSSL_PARAM_BLD_push_octet_string(param_bld, OSSL_PKEY_PARAM_PUB_KEY, pubkey.data(), pubkey.size()))
     {
         params = OSSL_PARAM_BLD_to_param(param_bld);
     }
     ctx = EVP_PKEY_CTX_new_from_name(NULL, "EC", NULL);
-    if (ctx == NULL || params == NULL || EVP_PKEY_fromdata_init(ctx) <= 0 || EVP_PKEY_verify_init_ex(ctx, params) <= 0) //  || EVP_PKEY_fromdata(ctx, &pkey, EVP_PKEY_PUBLIC_KEY, params) <= 0
+    //EVP_PKEY_CTX_set_params(ctx, params);
+    if (ctx == NULL || params == NULL)
     {
+        LOG(LogLevel::ERRORS) << "Error when allocating EVP objects.";
+        ret = false;
+    }
+    else if (EVP_PKEY_fromdata_init(ctx) <= 0)
+    {
+        LOG(LogLevel::ERRORS) << "Error when initializing EVP PKEY from data.";
+        ret = false;
+    }
+    else if (EVP_PKEY_fromdata(ctx, &pkey, EVP_PKEY_PUBLIC_KEY, params) <= 0)
+    {
+        LOG(LogLevel::ERRORS) << "Error when initializing EVP PKEY public key.";
+        ret = false;
+    }
+
+    EVP_PKEY_CTX_free(ctx);
+    ctx = EVP_PKEY_CTX_new(pkey, NULL);
+    if (ctx == NULL)
+    {
+        LOG(LogLevel::ERRORS) << "Error when allocating EVP objects (2).";
+        ret = false;
+    }
+    else if (EVP_PKEY_verify_init(ctx) <= 0)
+    {
+        LOG(LogLevel::ERRORS) << "Error when initializing EVP PKEY for verify operation.";
         ret = false;
     }
     else
     {
-        ret = (EVP_PKEY_verify(ctx, signature.data(), signature.size(), data.data(), data.size()) == 1);
+        ByteVector sig;
+        if (signature.size() == 56) // raw format
+        {
+            // Convert to asn1 format
+            sig.push_back(0x30); // SEQUENCE tag
+            sig.push_back(0x3c); // length
+            sig.push_back(0x02); // INTEGER tag
+            sig.push_back(0x1c); // length
+            sig.insert(sig.end(), signature.begin(), signature.begin() + 28);
+            sig.push_back(0x02); // INTEGER tag
+            sig.push_back(0x1c); // length
+            sig.insert(sig.end(), signature.end() - 28, signature.end());
+        }
+        else if (signature.size() == 64) // asn1 format
+        {
+            sig = signature;
+        }
+        else
+        {
+            LOG(LogLevel::ERRORS) << "Unexpected signature size {" << signature.size() << "}. "
+                                  << "It should either be 56 (raw format) or 64 (asn1 format).";
+            ret = false;
+        }
+
+
+        if (sig.size() > 0)
+        {
+            int rcode = EVP_PKEY_verify(ctx, sig.data(), sig.size(), data.data(), data.size());
+            ret = (rcode == 1);
+            if (rcode < 0)
+            {
+                LOG(LogLevel::ERRORS) << "Error when running EVP verify operation {" << rcode << "}.";
+            }
+        }
     }
-    //EVP_PKEY_free(pkey);
+
+    EVP_PKEY_free(pkey);
     EVP_PKEY_CTX_free(ctx);
     OSSL_PARAM_free(params);
     OSSL_PARAM_BLD_free(param_bld);

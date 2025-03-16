@@ -158,6 +158,9 @@ ByteVector DESFireCrypto::desfireEncrypt(const ByteVector &data, const ByteVecto
 
 short DESFireCrypto::desfire_crc16(const void *data, size_t dataLength)
 {
+    if (dataLength == 0)
+        return 0;
+
     unsigned char first, second;
 
     ComputeCrc(CRC_A, reinterpret_cast<const unsigned char *>(data), dataLength, &first,
