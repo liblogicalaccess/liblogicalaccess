@@ -27,10 +27,7 @@ class LLA_CARDS_DESFIRE_API DESFireEV1NFCTag4CardService
      * \brief Constructor.
      * \param chip The chip.
      */
-    explicit DESFireEV1NFCTag4CardService(std::shared_ptr<Chip> chip)
-        : ISO7816NFCTag4CardService(chip)
-    {
-    }
+    explicit DESFireEV1NFCTag4CardService(std::shared_ptr<Chip> chip);
 
     ~DESFireEV1NFCTag4CardService()
     {
@@ -41,14 +38,13 @@ class LLA_CARDS_DESFIRE_API DESFireEV1NFCTag4CardService
         return NFC_CARDSERVICE_DESFIREEV1;
     }
 
-    void createNFCApplication(unsigned int aid, std::shared_ptr<DESFireKey> masterPICCKey,
+    void createNFCApplication(unsigned int aid,
                               unsigned short isoFIDApplication         = 0xe105,
                               unsigned short isoFIDCapabilityContainer = 0xe103,
                               unsigned short isoFIDNDEFFile            = 0xe104,
                               unsigned short NDEFFileSize              = 0xff);
 
-    void deleteNFCApplication(unsigned int aid,
-                              std::shared_ptr<DESFireKey> masterPICCKey) const;
+    void deleteNFCApplication(unsigned int aid) const;
 
     std::shared_ptr<NdefMessage>
     readNDEFFile(const ByteVector &appDFName = {0xD2, 0x76, 0x00, 0x00, 0x85, 0x01, 0x01},
@@ -58,6 +54,21 @@ class LLA_CARDS_DESFIRE_API DESFireEV1NFCTag4CardService
 
     void eraseNDEF() override;
 
+    void setPICCKey(std::shared_ptr<DESFireKey> key)
+    {
+        d_picc_key = key;
+    }
+
+    void setAppEmptyKey(std::shared_ptr<DESFireKey> key)
+    {
+        d_app_empty_key = key;
+    }
+
+    void setAppNewKey(std::shared_ptr<DESFireKey> key)
+    {
+        d_app_new_key = key;
+    }
+
   protected:
     std::shared_ptr<DESFireEV1Chip> getDESFireChip() const
     {
@@ -65,6 +76,12 @@ class LLA_CARDS_DESFIRE_API DESFireEV1NFCTag4CardService
     }
 
     std::shared_ptr<ISO7816Commands> getISO7816Commands() const override;
+
+    virtual void createNDEFFile(const DESFireAccessRights& dar, unsigned short isoFIDNDEFFile);
+
+    std::shared_ptr<DESFireKey> d_picc_key;
+    std::shared_ptr<DESFireKey> d_app_empty_key;
+    std::shared_ptr<DESFireKey> d_app_new_key;
 };
 }
 

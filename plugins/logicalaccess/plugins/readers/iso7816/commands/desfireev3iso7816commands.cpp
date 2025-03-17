@@ -250,11 +250,11 @@ void DESFireEV3ISO7816Commands::changeFileSettings(unsigned char fileno, Encrypt
         fileOpt |= 0x40;
 
         unsigned char sdmOpt = 0x00 |
-            sdmVCUID ? 0x80 : 0x00 |
-            sdmReadCtr ? 0x40 : 0x00 |
-            sdmReadCtrLimit ? 0x20 : 0x00 |
-            sdmEncFileData ? 0x10 : 0x00 |
-            asciiEncoding ? 0x01 : 00;
+            (sdmVCUID ? 0x80 : 0x00) |
+            (sdmReadCtr ? 0x40 : 0x00) |
+            (sdmReadCtrLimit ? 0x20 : 0x00) |
+            (sdmEncFileData ? 0x10 : 0x00) |
+            (asciiEncoding ? 0x01 : 0x00);
         command.push_back(sdmOpt);
         ar = AccessRightsInMemory(sdmAccessRights);
         BufferHelper::setUShort(command, ar);

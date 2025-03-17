@@ -10,6 +10,7 @@ target_link_libraries(basic
         logicalaccess
         iso7816cards
         iso7816readers
+        pcscreaders
         )
 
 install(TARGETS basic

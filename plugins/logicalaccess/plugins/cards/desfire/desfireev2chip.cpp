@@ -70,23 +70,23 @@ std::shared_ptr<CardService> DESFireEV2Chip::getService(CardServiceType serviceT
 
     switch (serviceType)
     {
-    case CST_ACCESS_CONTROL:
-    {
-        service = LibraryManager::getInstance()->getCardService(
-            shared_from_this(), CardServiceType::CST_ACCESS_CONTROL);
-        if (!service)
-            service.reset(new AccessControlCardService(shared_from_this()));
-    }
-    break;
-    case CST_STORAGE: { service.reset(new DESFireStorageCardService(shared_from_this()));
-    }
-    break;
-    default: break;
-    }
-
-    if (!service)
-    {
-        service = DESFireEV1Chip::getService(serviceType);
+        case CST_ACCESS_CONTROL:
+        {
+            service = LibraryManager::getInstance()->getCardService(shared_from_this(), CardServiceType::CST_ACCESS_CONTROL);
+            if (!service)
+                service.reset(new AccessControlCardService(shared_from_this()));
+        }
+        break;
+        case CST_STORAGE:
+        {
+            service.reset(new DESFireStorageCardService(shared_from_this()));
+        }
+        break;
+        default:
+        {
+            service = DESFireEV1Chip::getService(serviceType);
+            break;
+        }
     }
 
     return service;

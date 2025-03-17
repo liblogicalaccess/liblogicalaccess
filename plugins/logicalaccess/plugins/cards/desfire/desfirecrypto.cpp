@@ -43,27 +43,28 @@ DESFireCrypto::~DESFireCrypto()
 {
 }
 
-unsigned char DESFireCrypto::getMACSize() const
-{
-    return d_auth_method == CM_LEGACY ? 4 : 8;
-}
-
 void DESFireCrypto::appendDecipherData(const ByteVector &data)
 {
-    d_buf.insert(d_buf.end(), data.begin(), data.end());
+    if (data.size() > 0)
+    {
+        d_buf.insert(d_buf.end(), data.begin(), data.end());
+    }
 }
 
 ByteVector DESFireCrypto::desfireDecrypt(size_t length)
 {
     ByteVector ret;
 
-    if (d_auth_method == CM_LEGACY)
+    if (d_buf.size() > 0 || length > 0)
     {
-        ret = desfire_decrypt(d_sessionKey, d_buf, length);
-    }
-    else
-    {
-        ret = desfire_iso_decrypt(d_sessionKey, d_buf, d_cipher, length);
+        if (d_auth_method == CM_LEGACY)
+        {
+            ret = desfire_decrypt(d_sessionKey, d_buf, length);
+        }
+        else
+        {
+            ret = desfire_iso_decrypt(d_sessionKey, d_buf, d_cipher, length);
+        }
     }
 
     return ret;
@@ -86,17 +87,20 @@ void DESFireCrypto::initBuf()
 bool DESFireCrypto::verifyMAC(bool end, const ByteVector &data)
 {
     bool ret;
-    d_buf.insert(d_buf.end(), data.begin(), data.end());
+    if (data.size() > 0)
+    {
+        d_buf.insert(d_buf.end(), data.begin(), data.end());
+    }
 
     if (end)
     {
-        unsigned char msize = getMACSize();
-        EXCEPTION_ASSERT_WITH_LOG(d_buf.size() >= msize, LibLogicalAccessException, "Wrong MAC buffer length.");
+        EXCEPTION_ASSERT_WITH_LOG(d_buf.size() >= d_mac_size, LibLogicalAccessException, "Wrong MAC buffer length.");
 
         ByteVector mac;
-        mac.insert(mac.end(), d_buf.end() - msize, d_buf.end());
+        mac.insert(mac.end(), d_buf.end() - d_mac_size, d_buf.end());
         ByteVector ourMacBuf;
-        ourMacBuf.insert(ourMacBuf.end(), d_buf.begin(), d_buf.end() - msize);
+        ourMacBuf.insert(ourMacBuf.end(), d_buf.begin(), d_buf.end() - d_mac_size);
+        d_buf.clear();
 
         if (d_auth_method == CM_LEGACY) // Native DESFire mode
         {
@@ -109,8 +113,6 @@ bool DESFireCrypto::verifyMAC(bool end, const ByteVector &data)
             ByteVector ourMac = desfire_cmac(d_sessionKey, d_cipher, ourMacBuf);
             ret               = (mac == ourMac);
         }
-
-        d_buf.clear();
     }
     else
     {
@@ -502,9 +504,9 @@ ByteVector DESFireCrypto::desfire_decrypt(const ByteVector &key, const ByteVecto
                                           size_t datalen)
 {
     ByteVector ret;
-    size_t ll;
+    size_t ll = 0;
     ret = desfire_CBC_receive(key, ByteVector(), data);
-    if (datalen == 0)
+    if (datalen == 0 || data.size() == 0)
     {
         ll = ret.size() - 1;
 
@@ -522,6 +524,10 @@ ByteVector DESFireCrypto::desfire_decrypt(const ByteVector &key, const ByteVecto
     {
         ll = datalen;
     }
+
+    EXCEPTION_ASSERT_WITH_LOG (ret.size() >= ll + 2, LibLogicalAccessException,
+                               "Decrypted buffer is too small to have a CRC16.");
+
     unsigned short crc1 = desfire_crc16(&ret[0], ll);
     unsigned short crc2 = static_cast<unsigned short>(ret[ll] | (ret[ll + 1] << 8));
     char computationError[128];
@@ -1087,8 +1093,8 @@ ByteVector DESFireCrypto::desfire_iso_decrypt(
 		d_lastIV = ByteVector(data.end() - cipher->getBlockSize(), data.end());
 	}
 	
-    size_t ll;
-    if (datalen == 0)
+    size_t ll = 0;
+    if (datalen == 0 && decdata.size() > 0)
     {
         // Lets analyse the padding and find crc ourself
         ll = decdata.size() - 1;
@@ -1113,6 +1119,9 @@ ByteVector DESFireCrypto::desfire_iso_decrypt(
         ll = datalen;
     }
 
+    EXCEPTION_ASSERT_WITH_LOG (decdata.size() >= ll + 4, LibLogicalAccessException,
+                               "Decrypted buffer is too small to have a CRC32.");
+    
     ByteVector crcbuf = ByteVector(decdata.begin(), decdata.begin() + ll);
     crcbuf.push_back(0x00); // SW_OPERATION_OK
     uint32_t crc1 = desfire_crc32(&crcbuf[0], crcbuf.size());

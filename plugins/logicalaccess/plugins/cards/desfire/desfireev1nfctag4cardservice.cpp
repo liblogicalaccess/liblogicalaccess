@@ -8,8 +8,13 @@
 
 namespace logicalaccess
 {
-void DESFireEV1NFCTag4CardService::createNFCApplication(
-    unsigned int aid, std::shared_ptr<DESFireKey> masterPICCKey,
+DESFireEV1NFCTag4CardService::DESFireEV1NFCTag4CardService(std::shared_ptr<Chip> chip) : ISO7816NFCTag4CardService(chip)
+{
+    d_app_empty_key = std::make_shared<DESFireKey>("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00");
+    d_app_empty_key->setKeyType(DF_KEY_AES);
+}
+
+void DESFireEV1NFCTag4CardService::createNFCApplication(unsigned int aid,
     unsigned short isoFIDApplication, unsigned short isoFIDCapabilityContainer,
     unsigned short isoFIDNDEFFile, unsigned short NDEFFileSize)
 {
@@ -18,12 +23,12 @@ void DESFireEV1NFCTag4CardService::createNFCApplication(
     std::shared_ptr<DESFireEV1Commands> desfireev1command(
         std::dynamic_pointer_cast<DESFireEV1Commands>(getChip()->getCommands()));
 
-    desfirecommand->selectApplication(0x00);
-    if (masterPICCKey)
+    desfirecommand->selectApplication(0);
+    if (d_picc_key)
     {
         try
         {
-            desfirecommand->authenticate(0x00, masterPICCKey);
+            desfirecommand->authenticate(0, d_picc_key);
         }
         catch (std::exception &)
         {
@@ -32,45 +37,60 @@ void DESFireEV1NFCTag4CardService::createNFCApplication(
 
     unsigned char dfName[] = {0xD2, 0x76, 0x00, 0x00, 0x85, 0x01, 0x01};
     ByteVector dfNameVector(dfName, dfName + 7);
-    desfireev1command->createApplication(aid, KS_DEFAULT, 1, DF_KEY_DES, FIDS_ISO_FID,
+    desfireev1command->createApplication(aid, KS_DEFAULT, 3, d_app_empty_key->getKeyType(), FIDS_ISO_FID,
                                          isoFIDApplication, dfNameVector);
 
-    std::shared_ptr<DESFireKey> key(
-        new DESFireKey("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"));
-    key->setKeyType(DF_KEY_DES);
     desfirecommand->selectApplication(aid);
-    desfirecommand->authenticate(0x00, key);
+    desfirecommand->authenticate(0x00, d_app_empty_key);
 
     DESFireAccessRights dar;
     dar.changeAccess       = AR_KEY0;
     dar.readAccess         = AR_FREE;
     dar.readAndWriteAccess = AR_KEY0;
-    dar.writeAccess        = AR_KEY0;
-
+    dar.writeAccess        = AR_FREE; // AR_KEY0
     desfireev1command->createStdDataFile(0x01, CM_PLAIN, dar, 0x0f,
                                          isoFIDCapabilityContainer);
-    writeCapabilityContainer(isoFIDCapabilityContainer, isoFIDNDEFFile, NDEFFileSize);
-
+                                    
     dar.changeAccess       = AR_KEY0;
     dar.readAccess         = AR_FREE;
     dar.readAndWriteAccess = AR_FREE;
     dar.writeAccess        = AR_FREE;
+    createNDEFFile(dar, isoFIDNDEFFile);
 
-    desfireev1command->createStdDataFile(0x02, CM_PLAIN, dar, 0xff, isoFIDNDEFFile);
+    if (d_app_new_key)
+    {
+        desfirecommand->changeKey(2, d_app_new_key);
+        desfirecommand->changeKey(1, d_app_new_key);
+        desfirecommand->changeKey(0, d_app_new_key);
+    }
+
+    auto iso7816command = getISO7816Commands();
+    iso7816command->selectFile(dfNameVector);
+    writeCapabilityContainer(isoFIDCapabilityContainer, isoFIDNDEFFile, NDEFFileSize);
 }
 
-void DESFireEV1NFCTag4CardService::deleteNFCApplication(
-    unsigned int aid, std::shared_ptr<DESFireKey> masterPICCKey) const
+void DESFireEV1NFCTag4CardService::deleteNFCApplication(unsigned int aid) const
 {
     std::shared_ptr<DESFireCommands> desfirecommand(
         std::dynamic_pointer_cast<DESFireCommands>(getChip()->getCommands()));
 
-    desfirecommand->selectApplication(0x00);
-    if (masterPICCKey)
+    if (d_picc_key)
     {
-        desfirecommand->authenticate(0x00, masterPICCKey);
+        desfirecommand->selectApplication(0);
+        desfirecommand->authenticate(0, d_picc_key);
+    }
+    else
+    {
+        desfirecommand->selectApplication(aid);
+        desfirecommand->authenticate(0, d_app_new_key ? d_app_new_key : d_app_empty_key);
     }
     desfirecommand->deleteApplication(aid);
+}
+
+void DESFireEV1NFCTag4CardService::createNDEFFile(const DESFireAccessRights& dar, unsigned short isoFIDNDEFFile)
+{
+    auto df1cmd = std::dynamic_pointer_cast<DESFireEV1Commands>(getChip()->getCommands());
+    df1cmd->createStdDataFile(0x02, CM_PLAIN, dar, 0xff, isoFIDNDEFFile);
 }
 
 std::shared_ptr<NdefMessage>
@@ -80,15 +100,13 @@ DESFireEV1NFCTag4CardService::readNDEFFile(const ByteVector &appDFName,
     std::shared_ptr<DESFireCommands> desfirecommand(
         std::dynamic_pointer_cast<DESFireCommands>(getChip()->getCommands()));
 
-    desfirecommand->selectApplication(0x00);
+    desfirecommand->selectApplication(0);
     return ISO7816NFCTag4CardService::readNDEFFile(appDFName, isoFIDNDEFFile);
 }
 
 void DESFireEV1NFCTag4CardService::writeNDEF(std::shared_ptr<NdefMessage> records)
 {
-    std::shared_ptr<DESFireKey> picckey(
-        new DESFireKey("00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00"));
-    createNFCApplication(0x000001, picckey);
+    createNFCApplication(0x000001);
     writeNDEFFile(records);
 }
 
@@ -97,7 +115,7 @@ void DESFireEV1NFCTag4CardService::eraseNDEF()
     std::shared_ptr<DESFireCommands> desfirecommand(
         std::dynamic_pointer_cast<DESFireCommands>(getChip()->getCommands()));
     desfirecommand->selectApplication(0);
-    desfirecommand->authenticate(0);
+    desfirecommand->authenticate(0, d_picc_key);
     desfirecommand->erase();
 }
 

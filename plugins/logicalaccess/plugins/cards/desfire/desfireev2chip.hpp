@@ -53,8 +53,8 @@ class LLA_CARDS_DESFIRE_API DESFireEV2Chip : public DESFireEV1Chip
     std::shared_ptr<Location> createLocation() const override;
 
     /**
-     * \brief Get the DESFire card provider for I/O access.
-     * \return The DESFire card provider.
+     * \brief Get the DESFire EV2 card commands.
+     * \return The DESFire EV2 card commands.
      */
     std::shared_ptr<DESFireEV2Commands> getDESFireEV2Commands() const
     {

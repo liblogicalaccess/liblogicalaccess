@@ -163,12 +163,21 @@ bool DESFireEV2Crypto::verifyMAC(bool end, const ByteVector &data)
     if (d_auth_method != CryptoMethod::CM_EV2)
         return DESFireCrypto::verifyMAC(end, data);
 
-    if (data.size() < d_mac_size)
+    if (data.size() > 0)
+        d_buf.insert(d_buf.end(), data.begin(), data.end());
+
+    if (!end)
+        return true;
+
+    LOG(LogLevel::INFOS) << "Running VerifyMAC on buffer: " << d_buf;
+
+    if (d_buf.size() < d_mac_size)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                  "verifyMAC buffer param is too small.");
 
-    ByteVector mac            = ByteVector(data.end() - d_mac_size, data.end());
-    const ByteVector respData = ByteVector(data.begin(), data.end() - d_mac_size);
+    ByteVector mac            = ByteVector(d_buf.end() - d_mac_size, d_buf.end());
+    const ByteVector respData = ByteVector(d_buf.begin(), d_buf.end() - d_mac_size);
+    d_buf.clear();
 
     ++cmdctr_;
 
@@ -223,7 +232,8 @@ ByteVector DESFireEV2Crypto::desfireDecrypt(size_t length)
     if (d_auth_method != CryptoMethod::CM_EV2)
         return DESFireCrypto::desfireDecrypt(length);
 
-    verifyMAC(true, d_buf);
+    auto dd = d_buf;
+    verifyMAC(true, {});
 
     const auto IV = getIVEncrypt(false);
 
@@ -233,22 +243,34 @@ ByteVector DESFireEV2Crypto::desfireDecrypt(size_t length)
     const auto iv = std::make_shared<openssl::AESInitializationVector>(
         openssl::AESInitializationVector::createFromData(IV));
 
-    const auto encData = ByteVector(d_buf.begin(), d_buf.end() - d_mac_size);
-    ByteVector data, macCheck;
-
-    d_cipher->decipher(encData, data, *isokey, *iv, false);
-
-    size_t ll = data.size() - 1;
-
-    while (data[ll] == 0x00)
+    
+    ByteVector data;
+    const auto encData = ByteVector(dd.begin(), dd.end() - d_mac_size);
+    if (encData.size() > 0)
     {
-        --ll;
+        d_cipher->decipher(encData, data, *isokey, *iv, false);
+
+        size_t ll = 0;
+        if (length == 0)
+        {
+            ll = data.size() - 1;
+            while (data[ll] == 0x00)
+            {
+                --ll;
+            }
+
+            EXCEPTION_ASSERT_WITH_LOG(data[ll] == 0x80, LibLogicalAccessException,
+                                    "Incorrect FLT result");
+        }
+        else
+        {
+            ll = length;
+        }
+
+        EXCEPTION_ASSERT_WITH_LOG (data.size() >= ll, LibLogicalAccessException,
+                               "Decrypted buffer is too small.");
+        data.resize(ll);
     }
-
-    EXCEPTION_ASSERT_WITH_LOG(data[ll] == 0x80, LibLogicalAccessException,
-                              "Incorrect FLT result");
-
-    data.resize(ll);
 
     return data;
 }

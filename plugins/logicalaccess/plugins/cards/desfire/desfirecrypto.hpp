@@ -44,8 +44,6 @@ class LLA_CARDS_DESFIRE_API DESFireCrypto
      */
     virtual ~DESFireCrypto();
 
-    unsigned char getMACSize() const;
-
     /**
      * \brief Decipher data step 2.
      * \param data The data buffer

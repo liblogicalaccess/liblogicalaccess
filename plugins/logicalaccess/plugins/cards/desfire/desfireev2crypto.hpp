@@ -81,7 +81,7 @@ class LLA_CARDS_DESFIRE_API DESFireEV2Crypto : public DESFireCrypto
 
     /**
      * \brief Get the deciphered data into a buffer.
-     * \param length The excepted deciphared data buffer length, or 0 to automatic.
+     * \param length The excepted deciphered data buffer length, or 0 to automatic.
      * \return data The deciphered data buffer
      */
     ByteVector desfireDecrypt(size_t length) override;

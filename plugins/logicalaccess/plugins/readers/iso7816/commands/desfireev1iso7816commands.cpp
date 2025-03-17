@@ -130,7 +130,6 @@ void DESFireEV1ISO7816Commands::createApplication(
     {
         command.insert(command.end(), isoDFName.begin(), isoDFName.end());
     }
-
     transmit(DF_INS_CREATE_APPLICATION, command);
     crypto->createApplication(aid, 1, maxNbKeys, cryptoMethod);
 }
@@ -907,7 +906,7 @@ ByteVector DESFireEV1ISO7816Commands::handleReadData(unsigned char err,
     break;
     case CM_ENCRYPT:
     {
-        ret                        = crypto->desfireDecrypt(length);
+        ret = crypto->desfireDecrypt(length);
     }
     break;
     case CM_UNKNOWN:
@@ -1359,7 +1358,7 @@ ISO7816Response DESFireEV1ISO7816Commands::transmit(unsigned char cmd,
     ByteVector CMAC;
     std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
 
-    if (crypto->d_auth_method != CM_LEGACY && cmd != DF_INS_ADDITIONAL_FRAME)
+    if (crypto->d_auth_method != CM_LEGACY && cmd != DF_INS_ADDITIONAL_FRAME && crypto->d_sessionKey.size() > 0)
     {
         ByteVector apdu_command;
         apdu_command.push_back(cmd);
@@ -1369,7 +1368,8 @@ ISO7816Response DESFireEV1ISO7816Commands::transmit(unsigned char cmd,
 
     auto r = transmit_plain(cmd, buf, lc, forceLc);
     if (crypto->d_auth_method != CM_LEGACY && cmd != DF_INS_ADDITIONAL_FRAME &&
-        r.getData().size() >= 8 && r.getSW2() != DF_INS_ADDITIONAL_FRAME)
+        r.getData().size() >= 8 && r.getSW2() != DF_INS_ADDITIONAL_FRAME &&
+        crypto->d_sessionKey.size() > 0)
     {
         ByteVector response = ByteVector(r.getData().begin(), r.getData().end() - 8);
         response.push_back(r.getSW2());
@@ -1412,24 +1412,35 @@ ISO7816Response DESFireEV1ISO7816Commands::transmit_full(unsigned char cmd,
                                                          unsigned char lc, bool forceLc)
 {
     std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
-    ByteVector params;
-    params.insert(params.begin(), cmd);
-    ByteVector encBuffer = crypto->desfireEncrypt(buf, params);
+    ByteVector fparams = param;
+    fparams.insert(fparams.begin(), cmd);
+    ByteVector encBuffer = crypto->desfireEncrypt(buf, fparams);
     encBuffer.insert(encBuffer.begin(), param.begin(), param.end());
     ISO7816Response r = DESFireISO7816Commands::transmit(cmd, encBuffer, lc, forceLc);
-    if (r.getData().size() > 0)
+    ByteVector dd = r.getData();
+    if (dd.size() == 0)     
+    {
+        return r;
+    }
+
+    // MAC check is done inside desfireDecrypt on EV2 Crypto implementation
+    if (crypto->d_auth_method != CryptoMethod::CM_EV2)
     {
         // We directly check MAC and decipher the data
         // That means this helper doesn't support command chaining (0xAF) for now
-
-        if (!crypto->verifyMAC(true, r.getData()))
+        if (!crypto->verifyMAC(true, dd))
         {
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "MAC verification failed.");
         }
-
-        crypto->appendDecipherData(ByteVector(r.getData().begin(), r.getData().end() - crypto->getMACSize()));
-        return ISO7816Response(crypto->desfireDecrypt(0), r.getSW1(), r.getSW2());
+        // Remove MAC from message response
+        if (dd.size() >= crypto->d_mac_size)
+        {
+            dd.resize(dd.size() - crypto->d_mac_size);
+        }
     }
+
+    crypto->appendDecipherData(dd);
+    return ISO7816Response(crypto->desfireDecrypt(0), r.getSW1(), r.getSW2());
 }
 
 ISO7816Response DESFireEV1ISO7816Commands::transmit_nomacv(unsigned char cmd,

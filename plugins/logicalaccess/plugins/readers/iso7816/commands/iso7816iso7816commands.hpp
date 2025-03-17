@@ -81,7 +81,6 @@ class LLA_READERS_ISO7816_API ISO7816ISO7816Commands : public ISO7816Commands
     /**
      * \brief Update binary data.
      * \param data The buffer that contains data to update.
-     * \param dataLength The buffer length.
      * \param offset The update offset.
      * \param efid The EF identifier to set as current.
      * \return True on success, false otherwise.

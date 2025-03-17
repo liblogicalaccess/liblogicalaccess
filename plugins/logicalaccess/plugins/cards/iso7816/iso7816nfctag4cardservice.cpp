@@ -50,15 +50,15 @@ void ISO7816NFCTag4CardService::writeCapabilityContainer(unsigned short isoFID,
 void ISO7816NFCTag4CardService::writeNDEFFile(ByteVector recordsData,
                                               unsigned short isoFIDNDEFFile)
 {
-    std::shared_ptr<ISO7816Commands> iso7816command = getISO7816Commands();
+    auto iso7816cmd = getISO7816Commands();
     ByteVector data;
 
     data.push_back(static_cast<unsigned char>((recordsData.size() >> 8) & 0xff)); // NLEN
     data.push_back(static_cast<unsigned char>(recordsData.size() & 0xff)); // NDEF Length
     data.insert(data.end(), recordsData.begin(), recordsData.end());
 
-    iso7816command->selectFile(P1_SELECT_MF_DF_EF, P2_FIRST_RECORD, isoFIDNDEFFile);
-    iso7816command->updateBinary(data, 0, isoFIDNDEFFile);
+    iso7816cmd->selectFile(P1_SELECT_MF_DF_EF, P2_FIRST_RECORD, isoFIDNDEFFile);
+    iso7816cmd->updateBinary(data, 0, isoFIDNDEFFile);
 }
 
 void ISO7816NFCTag4CardService::writeNDEFFile(std::shared_ptr<NdefMessage> records,
