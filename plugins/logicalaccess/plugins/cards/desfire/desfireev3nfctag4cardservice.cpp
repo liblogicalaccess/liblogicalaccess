@@ -33,28 +33,29 @@ void DESFireEV3NFCTag4CardService::writeSDMFile(const std::string& baseUri,
         uri += "?";
     }
 
+    unsigned int recordOffset = 7;
     size_t vcuidOffset = 0;
     if (paramVcuid.size() > 0)
     {
-        vcuidOffset = uri.size() + paramVcuid.size() + 1;
+        vcuidOffset = recordOffset + uri.size() + paramVcuid.size() + 1;
         uri += paramVcuid + "=00000000000000&";
     }
     size_t piccOffset = 0;
     if (paramPicc.size() > 0)
     {
-        piccOffset = uri.size() + paramPicc.size() + 1;
+        piccOffset = recordOffset + uri.size() + paramPicc.size() + 1;
         uri += paramPicc + "=00000000000000000000000000000000&";
     }
     size_t readCtrOffset = 0;
     if (paramReadCtr.size() > 0)
     {
-        readCtrOffset = uri.size() + paramReadCtr.size() + 1;
+        readCtrOffset = recordOffset + uri.size() + paramReadCtr.size() + 1;
         uri += paramReadCtr + "=000000&";
     }
     size_t macOffset = 0;
     if (paramMAC.size() > 0)
     {
-        macOffset = uri.size() + paramMAC.size() + 1;
+        macOffset = recordOffset + uri.size() + paramMAC.size() + 1;
         uri += paramMAC + "=0000000000000000";
     }
 
@@ -71,7 +72,8 @@ void DESFireEV3NFCTag4CardService::writeSDMFile(const std::string& baseUri,
     dar.writeAccess        = AR_FREE;
 
     logicalaccess::DESFireAccessRights sdmar;
-    sdmar.readAccess = piccOffset > 0 ? logicalaccess::AR_KEY2 : logicalaccess::AR_FREE; // SDMMetaRead, Plain PICCData mirroring
+    sdmar.readAccess = piccOffset > 0 ? logicalaccess::AR_KEY2 :
+                       (vcuidOffset > 0 || readCtrOffset > 0 ? logicalaccess::AR_FREE : logicalaccess::AR_NEVER); // SDMMetaRead, Plain PICCData mirroring
     sdmar.writeAccess = logicalaccess::AR_KEY1; // SDMFileRead, 
     sdmar.readAndWriteAccess = logicalaccess::AR_NEVER; // RFU
     sdmar.changeAccess = logicalaccess::AR_FREE; // SDMCtrRet
@@ -79,6 +81,6 @@ void DESFireEV3NFCTag4CardService::writeSDMFile(const std::string& baseUri,
     writeNDEFFile(ndefmsg, isoFIDNDEFFile);
 
     dfcmd->authenticate(0, d_app_new_key ? d_app_new_key : d_app_empty_key);
-    df3cmd->changeFileSettings(2, logicalaccess::CM_PLAIN, { dar }, true, 0, vcuidOffset > 0, readCtrOffset > 0, 0, false, true, sdmar, vcuidOffset, readCtrOffset, piccOffset, 5, 0, 0, macOffset, 0);
+    df3cmd->changeFileSettings(2, logicalaccess::CM_PLAIN, { dar }, true, 0, vcuidOffset > 0 || piccOffset > 0, readCtrOffset > 0 || piccOffset > 0, false, false, true, sdmar, piccOffset == 0 ? vcuidOffset : 0, piccOffset == 0 ? readCtrOffset : 0, piccOffset, recordOffset, 0, 0, macOffset, 0);
 }
 }

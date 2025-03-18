@@ -226,23 +226,43 @@ void DESFireEV3ISO7816Commands::changeFileSettings(unsigned char fileno, Encrypt
                               LibLogicalAccessException,
                               "Invalid accessrights has been provided.");
 
-    if (accessRights.size() == 1)
-        return DESFireEV1ISO7816Commands::changeFileSettings(fileno, comSettings,
-                                                             accessRights[0], false);
+    LOG(LogLevel::INFOS) << "changeFileSettings with parameters:" << " - "
+                         << "fileno: " << fileno << " - "
+                         << "comSettings: " << comSettings << " - "
+                         << "accessRights: " << accessRights.size() << " - "
+                         << "sdmAndMirroring: " << sdmAndMirroring << " - "
+                         << "tmcLimit: " << tmcLimit << " - "
+                         << "sdmVCUID: " << sdmVCUID << " - "
+                         << "sdmReadCtr: " << sdmReadCtr << " - "
+                         << "sdmReadCtrLimit: " << sdmReadCtrLimit << " - "
+                         << "sdmEncFileData: " << sdmEncFileData << " - "
+                         << "asciiEncoding: " << asciiEncoding << " - "
+                         << "sdmAccessRights.SDMMetaRead: " << sdmAccessRights.readAccess << " - "
+                         << "sdmAccessRights.SDMFileRead: " << sdmAccessRights.writeAccess << " - "
+                         << "vcuidOffset: " << vcuidOffset << " - "
+                         << "sdmReadCtrOffset: " << sdmReadCtrOffset << " - "
+                         << "piccDataOffset: " << piccDataOffset << " - "
+                         << "sdmMacInputOffset: " << sdmMacInputOffset << " - "
+                         << "sdmEncOffset: " << sdmEncOffset << " - "
+                         << "sdmEncLength: " << sdmEncLength << " - "
+                         << "sdmMacOffset: " << sdmMacOffset << " - "
+                         << "sdmReadCtrLimitValue: " << sdmReadCtrLimitValue;
 
     ByteVector command;
-
     unsigned char fileOpt = static_cast<unsigned char>(comSettings);
-    fileOpt |= 0x80; // Multi access rights
 
     short ar = AccessRightsInMemory(accessRights[0]);
     BufferHelper::setUShort(command, ar);
-
-    command.push_back(static_cast<unsigned char>(accessRights.size() - 1));
-    for (int x = 1; x < static_cast<int>(accessRights.size()); ++x)
+    if (accessRights.size() > 1)
     {
-        ar = AccessRightsInMemory(accessRights[x]);
-        BufferHelper::setUShort(command, ar);
+        fileOpt |= 0x80; // Multi access rights
+
+        command.push_back(static_cast<unsigned char>(accessRights.size() - 1));
+        for (int x = 1; x < static_cast<int>(accessRights.size()); ++x)
+        {
+            ar = AccessRightsInMemory(accessRights[x]);
+            BufferHelper::setUShort(command, ar);
+        }
     }
 
     if (sdmAndMirroring)
@@ -261,48 +281,48 @@ void DESFireEV3ISO7816Commands::changeFileSettings(unsigned char fileno, Encrypt
 
         if (sdmVCUID && sdmAccessRights.readAccess == 0x0E) // SDMMetaRead
         {
-            command.push_back(static_cast<unsigned char>((vcuidOffset & 0xffffff) >> 16));
-            command.push_back(static_cast<unsigned char>((vcuidOffset & 0xffff) >> 8));
             command.push_back(static_cast<unsigned char>(vcuidOffset & 0xff));
+            command.push_back(static_cast<unsigned char>((vcuidOffset & 0xffff) >> 8));
+            command.push_back(static_cast<unsigned char>((vcuidOffset & 0xffffff) >> 16));
         }
         if (sdmReadCtr && sdmAccessRights.readAccess == 0x0E) // SDMMetaRead
         {
-            command.push_back(static_cast<unsigned char>((sdmReadCtrOffset & 0xffffff) >> 16));
-            command.push_back(static_cast<unsigned char>((sdmReadCtrOffset & 0xffff) >> 8));
             command.push_back(static_cast<unsigned char>(sdmReadCtrOffset & 0xff));
+            command.push_back(static_cast<unsigned char>((sdmReadCtrOffset & 0xffff) >> 8));
+            command.push_back(static_cast<unsigned char>((sdmReadCtrOffset & 0xffffff) >> 16));
         }
         if (sdmAccessRights.readAccess != 0x0E && sdmAccessRights.readAccess != 0x0F) // SDMMetaRead
         {
-            command.push_back(static_cast<unsigned char>((piccDataOffset & 0xffffff) >> 16));
-            command.push_back(static_cast<unsigned char>((piccDataOffset & 0xffff) >> 8));
             command.push_back(static_cast<unsigned char>(piccDataOffset & 0xff));
+            command.push_back(static_cast<unsigned char>((piccDataOffset & 0xffff) >> 8));
+            command.push_back(static_cast<unsigned char>((piccDataOffset & 0xffffff) >> 16));
         }
         if (sdmAccessRights.writeAccess != 0x0F) // SDMFileRead
         {
-            command.push_back(static_cast<unsigned char>((sdmMacInputOffset & 0xffffff) >> 16));
-            command.push_back(static_cast<unsigned char>((sdmMacInputOffset & 0xffff) >> 8));
             command.push_back(static_cast<unsigned char>(sdmMacInputOffset & 0xff));
+            command.push_back(static_cast<unsigned char>((sdmMacInputOffset & 0xffff) >> 8));
+            command.push_back(static_cast<unsigned char>((sdmMacInputOffset & 0xffffff) >> 16));
         }
         if (sdmEncFileData && sdmAccessRights.writeAccess != 0x0F) // SDMFileRead
         {
-            command.push_back(static_cast<unsigned char>((sdmEncOffset & 0xffffff) >> 16));
-            command.push_back(static_cast<unsigned char>((sdmEncOffset & 0xffff) >> 8));
             command.push_back(static_cast<unsigned char>(sdmEncOffset & 0xff));
-            command.push_back(static_cast<unsigned char>((sdmEncLength & 0xffffff) >> 16));
-            command.push_back(static_cast<unsigned char>((sdmEncLength & 0xffff) >> 8));
+            command.push_back(static_cast<unsigned char>((sdmEncOffset & 0xffff) >> 8));
+            command.push_back(static_cast<unsigned char>((sdmEncOffset & 0xffffff) >> 16));
             command.push_back(static_cast<unsigned char>(sdmEncLength & 0xff));
+            command.push_back(static_cast<unsigned char>((sdmEncLength & 0xffff) >> 8));
+            command.push_back(static_cast<unsigned char>((sdmEncLength & 0xffffff) >> 16));
         }
         if (sdmAccessRights.writeAccess != 0x0F) // SDMFileRead
         {
-            command.push_back(static_cast<unsigned char>((sdmMacOffset & 0xffffff) >> 16));
-            command.push_back(static_cast<unsigned char>((sdmMacOffset & 0xffff) >> 8));
             command.push_back(static_cast<unsigned char>(sdmMacOffset & 0xff));
+            command.push_back(static_cast<unsigned char>((sdmMacOffset & 0xffff) >> 8));
+            command.push_back(static_cast<unsigned char>((sdmMacOffset & 0xffffff) >> 16));
         }
-        if (sdmReadCtrLimitValue)
+        if (sdmReadCtrLimit)
         {
-            command.push_back(static_cast<unsigned char>((sdmReadCtrLimitValue & 0xffffff) >> 16));
-            command.push_back(static_cast<unsigned char>((sdmReadCtrLimitValue & 0xffff) >> 8));
             command.push_back(static_cast<unsigned char>(sdmReadCtrLimitValue & 0xff));
+            command.push_back(static_cast<unsigned char>((sdmReadCtrLimitValue & 0xffff) >> 8));
+            command.push_back(static_cast<unsigned char>((sdmReadCtrLimitValue & 0xffffff) >> 16));
         }
     }
 
@@ -310,10 +330,10 @@ void DESFireEV3ISO7816Commands::changeFileSettings(unsigned char fileno, Encrypt
     {
         fileOpt |= 0x20;
 
-        command.push_back(static_cast<unsigned char>((tmcLimit & 0xffffffff) >> 24));
-        command.push_back(static_cast<unsigned char>((tmcLimit & 0xffffff) >> 16));
-        command.push_back(static_cast<unsigned char>((tmcLimit & 0xffff) >> 8));
         command.push_back(static_cast<unsigned char>(tmcLimit & 0xff));
+        command.push_back(static_cast<unsigned char>((tmcLimit & 0xffff) >> 8));
+        command.push_back(static_cast<unsigned char>((tmcLimit & 0xffffff) >> 16));
+        command.push_back(static_cast<unsigned char>((tmcLimit & 0xffffffff) >> 24));
     }
 
     command.insert(command.begin(), fileOpt);
