@@ -68,8 +68,8 @@ void DESFireEV3NFCTag4CardService::writeSDMFile(const std::string& baseUri,
     logicalaccess::DESFireAccessRights dar;
     dar.changeAccess       = AR_KEY0;
     dar.readAccess         = AR_FREE;
-    dar.readAndWriteAccess = AR_FREE;
-    dar.writeAccess        = AR_FREE;
+    dar.readAndWriteAccess = AR_KEY0;
+    dar.writeAccess        = AR_KEY0;
 
     logicalaccess::DESFireAccessRights sdmar;
     sdmar.readAccess = piccOffset > 0 ? logicalaccess::AR_KEY2 :
