@@ -41,7 +41,7 @@ void STidSTRReaderUnitConfiguration::serialize(boost::property_tree::ptree &pare
     node.put("CommunicationType", d_communicationType);
     node.put("CommunicationMode", d_communicationMode);
     node.put("PN532Direct", d_pn532_direct);
-    node.put("Protocolversion", d_protocolVersion);
+    node.put("ProtocolVersion", d_protocolVersion);
     node.put("ScanMode", d_scan_mode);
     d_key_hmac->serialize(node);
     d_key_aes->serialize(node);

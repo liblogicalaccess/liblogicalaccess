@@ -83,11 +83,10 @@ bool STidSTRReaderProvider::refreshReaderList()
     for (std::vector<std::shared_ptr<SerialPortXml>>::iterator i = ports.begin();
          i != ports.end(); ++i)
     {
-        std::shared_ptr<STidSTRReaderUnit> unit(new STidSTRReaderUnit());
+        auto unit = createReaderUnit();
         std::shared_ptr<SerialPortDataTransport> dataTransport =
             std::dynamic_pointer_cast<SerialPortDataTransport>(unit->getDataTransport());
         dataTransport->setSerialPort(*i);
-        unit->setReaderProvider(std::weak_ptr<ReaderProvider>(shared_from_this()));
         d_readers.push_back(unit);
         // LOG(LogLevel::INFOS) << "--> Detected reader unit {%s}...",
         // dynamic_cast<XmlSerializable*>(&(*unit))->serialize().c_str());
