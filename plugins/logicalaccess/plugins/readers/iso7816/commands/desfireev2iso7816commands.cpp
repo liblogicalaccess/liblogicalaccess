@@ -102,6 +102,7 @@ void DESFireEV2ISO7816Commands::authenticate(unsigned char keyno,
     {
             authenticateEV2First(keyno, key);
     }
+    onAuthenticated();
 }
 
 void DESFireEV2ISO7816Commands::authenticateEV2First(
