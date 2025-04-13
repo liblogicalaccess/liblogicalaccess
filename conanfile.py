@@ -4,7 +4,7 @@ from conan.tools.files import copy
 
 class LLAConan(ConanFile):
     name = "logicalaccess"
-    version = "3.3.0"
+    version = "3.4.0"
     license = "https://github.com/liblogicalaccess/liblogicalaccess/blob/develop/LICENSE"
     url = "https://github.com/liblogicalaccess/liblogicalaccess"
     description = "LLA RFID library"
