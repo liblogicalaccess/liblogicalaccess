@@ -181,15 +181,18 @@ DESFireISO7816Commands::getChangeKeySAMCryptogram(unsigned char keyno,
             std::dynamic_pointer_cast<SAMKeyStorage>(oldkey->getKeyStorage());
         samck.currentKeySlotNo = oldsamks->getKeySlot();
         samck.currentKeySlotV  = oldkey->getKeyVersion();
+        
+        samck.oldKeyInvolvement = (keyno == 0xE) ? 1 : 0;
     }
     else
-        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                 "Current key required on SAM to change the key.");
-
-    if ((crypto->d_currentKeyNo == 0 && keyno == 0) || (keyno == 0xE))
+    {
+        if (crypto->d_currentKeyNo != keyno)
+        {
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                "Current key required on SAM to change the key.");
+        }
         samck.oldKeyInvolvement = 1;
-    else
-        samck.oldKeyInvolvement = 0;
+    }
 
     ByteVector diversify;
     if (key->getKeyDiversification())
@@ -313,14 +316,7 @@ bool DESFireISO7816Commands::checkChangeKeySAMKeyStorage(
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                  "Both keys need to be set in the SAM.");
 
-    if (!oldSamKeyStorage &&
-        !((crypto->d_currentKeyNo == 0 && keyno == 0) ||
-          (keyno == 0xE)) // oldKeyInvolvement false
-        && (newSamKeyStorage && !newSamKeyStorage->getDumpKey()))
-        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                 "Both keys need to be set in the SAM.");
-
-    return (oldSamKeyStorage && !oldSamKeyStorage->getDumpKey());
+    return (newSamKeyStorage && !newSamKeyStorage->getDumpKey());
 }
 
 void DESFireISO7816Commands::changeKey(unsigned char keyno,
