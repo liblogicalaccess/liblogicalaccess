@@ -464,14 +464,25 @@ class LLA_READERS_ISO7816_API SAMISO7816Commands : public SAMCommands<T, S>
     {
         unsigned char keyCompMeth = info.oldKeyInvolvement ? 0x01 : 0x00;
 
-        unsigned char cfg = info.desfireNumber & 0xf;
+        ByteVector data;
+        unsigned char cfg = 0x00;
+        if (info.useChangeKeyEV2)
+        {
+            cfg |= 0x20;
+            data.push_back(info.keysetNumber);
+            data.push_back(info.desfireNumber);
+        }
+        else
+        {
+            cfg |= (info.desfireNumber & 0xf);
+        }
         if (info.isMasterKey)
             cfg |= 0x10;
-        ByteVector data(4);
-        data[0] = info.currentKeySlotNo;
-        data[1] = info.currentKeySlotV;
-        data[2] = info.newKeySlotNo;
-        data[3] = info.newKeySlotV;
+
+        data.push_back(info.currentKeySlotNo);
+        data.push_back(info.currentKeySlotV);
+        data.push_back(info.newKeySlotNo);
+        data.push_back(info.newKeySlotV);
 
         if (diversifycation.divType != NO_DIV)
         {

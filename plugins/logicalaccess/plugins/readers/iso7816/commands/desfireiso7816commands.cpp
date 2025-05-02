@@ -146,7 +146,9 @@ std::vector<unsigned int> DESFireISO7816Commands::getApplicationIDs()
 
 ByteVector
 DESFireISO7816Commands::getChangeKeySAMCryptogram(unsigned char keyno,
-                                                  std::shared_ptr<DESFireKey> key) const
+                                                  std::shared_ptr<DESFireKey> key,
+                                                  bool changeKeyEV2,
+                                                  unsigned char keysetno) const
 {
     std::shared_ptr<SAMKeyStorage> samsks =
         std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage());
@@ -174,6 +176,8 @@ DESFireISO7816Commands::getChangeKeySAMCryptogram(unsigned char keyno,
     samck.newKeySlotNo     = samsks->getKeySlot();
     samck.newKeySlotV      = key->getKeyVersion();
     samck.desfireNumber    = keyno;
+    samck.useChangeKeyEV2  = changeKeyEV2;
+    samck.keysetNumber     = keysetno;
 
     if (oldkey && std::dynamic_pointer_cast<SAMKeyStorage>(oldkey->getKeyStorage()))
     {

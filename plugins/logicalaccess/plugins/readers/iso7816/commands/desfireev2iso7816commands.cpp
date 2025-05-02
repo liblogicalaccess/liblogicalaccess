@@ -32,13 +32,10 @@ DESFireEV2ISO7816Commands::DESFireEV2ISO7816Commands(const std::string &cmd_type
 void DESFireEV2ISO7816Commands::changeKeyEV2(uint8_t keysetno, uint8_t keyno,
                                              std::shared_ptr<DESFireKey> newkey)
 {
-    if (keysetno == 0) // it is the same as ChangeKey
-        return changeKey(keyno, newkey);
+    bool samChangeKey = checkChangeKeySAMKeyStorage(keyno, oldkey, key);
 
-    if (newkey->getKeyStorage()->getType() == KST_SAM)
-    {
-        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "SAM not supported.");
-    }
+    if (!samChangeKey && keysetno == 0) // it is the same as ChangeKey
+        return changeKey(keyno, newkey);
 
     std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
     std::shared_ptr<DESFireKey> key       = std::make_shared<DESFireKey>(*newkey);
@@ -52,9 +49,16 @@ void DESFireEV2ISO7816Commands::changeKeyEV2(uint8_t keysetno, uint8_t keyno,
         keynobyte |= key->getKeyType();
     }
 
-    // When changing key from another keyset, always force new + old key crypto
-    auto cryptogram = crypto->changeKey_PICC(keynobyte, oldKeyDiversify, key,
-                                             newKeyDiversify, keysetno);
+    ByteVector cryptogram;
+    if (samChangeKey)
+    {
+        cryptogram = getChangeKeySAMCryptogram(keyno, key, true, keysetno);
+    }
+    else
+    {
+        // When changing key from another keyset, always force new + old key crypto
+        cryptogram = crypto->changeKey_PICC(keynobyte, oldKeyDiversify, key, newKeyDiversify, keysetno);
+    }
 
     ByteVector data;
     data.push_back(keysetno);
@@ -424,22 +428,6 @@ void DESFireEV2ISO7816Commands::handleWriteData(unsigned char cmd,
 void DESFireEV2ISO7816Commands::changeKey(unsigned char keyno,
                                           std::shared_ptr<DESFireKey> newkey)
 {
-    auto crypto =
-        std::dynamic_pointer_cast<DESFireEV2Crypto>(getDESFireChip()->getCrypto());
-
-    if (crypto->d_auth_method == CryptoMethod::CM_EV2)
-    {
-        if (newkey->getKeyStorage()->getType() == KST_SAM &&
-            !std::dynamic_pointer_cast<logicalaccess::SAMKeyStorage>(
-                 newkey->getKeyStorage())
-                 ->getDumpKey())
-        {
-            THROW_EXCEPTION_WITH_LOG(
-                LibLogicalAccessException,
-                "SAM AV2 does not supported changekey for DESFireEV2 AES.");
-        }
-    }
-
     DESFireEV1ISO7816Commands::changeKey(keyno, newkey);
 }
 

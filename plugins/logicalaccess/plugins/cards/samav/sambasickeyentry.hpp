@@ -64,6 +64,7 @@ typedef struct s_changeKeyInfo
     unsigned char newKeySlotNo;
     unsigned char newKeySlotV;
     bool useChangeKeyEV2;
+    unsigned char keysetNumber;
 } ChangeKeyInfo;
 
 typedef enum { NO_DIV = 0, SAMAV1, SAMAV2 } NXPKeyDiversificationType;
