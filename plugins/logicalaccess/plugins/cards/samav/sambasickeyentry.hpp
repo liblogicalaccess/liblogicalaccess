@@ -57,12 +57,13 @@ typedef struct s_KeyEntryUpdateSettings
 typedef struct s_changeKeyInfo
 {
     unsigned char desfireNumber;
-    unsigned char isMasterKey;
-    unsigned char oldKeyInvolvement;
+    bool isMasterKey;
+    bool oldKeyInvolvement;
     unsigned char currentKeySlotNo;
     unsigned char currentKeySlotV;
     unsigned char newKeySlotNo;
     unsigned char newKeySlotV;
+    bool useChangeKeyEV2;
 } ChangeKeyInfo;
 
 typedef enum { NO_DIV = 0, SAMAV1, SAMAV2 } NXPKeyDiversificationType;

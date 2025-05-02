@@ -462,7 +462,7 @@ class LLA_READERS_ISO7816_API SAMISO7816Commands : public SAMCommands<T, S>
     ByteVector changeKeyPICC(const ChangeKeyInfo &info,
                              const ChangeKeyDiversification &diversifycation) override
     {
-        unsigned char keyCompMeth = info.oldKeyInvolvement;
+        unsigned char keyCompMeth = info.oldKeyInvolvement ? 0x01 : 0x00;
 
         unsigned char cfg = info.desfireNumber & 0xf;
         if (info.isMasterKey)

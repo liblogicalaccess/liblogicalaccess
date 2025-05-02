@@ -170,7 +170,7 @@ DESFireISO7816Commands::getChangeKeySAMCryptogram(unsigned char keyno,
     ChangeKeyInfo samck;
     memset(&samck, 0x00, sizeof(samck));
     samck.currentKeySlotNo = 0;
-    samck.isMasterKey      = (crypto->d_currentAid == 0 && keyno == 0x00) ? 1 : 0;
+    samck.isMasterKey      = (crypto->d_currentAid == 0 && keyno == 0x00);
     samck.newKeySlotNo     = samsks->getKeySlot();
     samck.newKeySlotV      = key->getKeyVersion();
     samck.desfireNumber    = keyno;
@@ -182,7 +182,7 @@ DESFireISO7816Commands::getChangeKeySAMCryptogram(unsigned char keyno,
         samck.currentKeySlotNo = oldsamks->getKeySlot();
         samck.currentKeySlotV  = oldkey->getKeyVersion();
         
-        samck.oldKeyInvolvement = (keyno == 0xE) ? 1 : 0;
+        samck.oldKeyInvolvement = (keyno == 0xE);
     }
     else
     {
@@ -191,7 +191,7 @@ DESFireISO7816Commands::getChangeKeySAMCryptogram(unsigned char keyno,
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                 "Current key required on SAM to change the key.");
         }
-        samck.oldKeyInvolvement = 1;
+        samck.oldKeyInvolvement = true;
     }
 
     ByteVector diversify;

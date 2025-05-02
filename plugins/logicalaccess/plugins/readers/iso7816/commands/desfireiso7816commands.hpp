@@ -354,7 +354,7 @@ class LLA_READERS_ISO7816_API DESFireISO7816Commands : public DESFireCommands
   protected:
     ByteVector getKeyInformations(std::shared_ptr<DESFireKey> key, uint8_t keyno) const;
 
-    ByteVector getChangeKeySAMCryptogram(unsigned char keyno,
+    virtual ByteVector getChangeKeySAMCryptogram(unsigned char keyno,
                                          std::shared_ptr<DESFireKey> key) const;
 
     /**
