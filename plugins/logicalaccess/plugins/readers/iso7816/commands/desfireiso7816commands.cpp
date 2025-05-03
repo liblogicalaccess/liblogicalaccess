@@ -179,22 +179,23 @@ DESFireISO7816Commands::getChangeKeySAMCryptogram(unsigned char keyno,
     samck.useChangeKeyEV2  = changeKeyEV2;
     samck.keysetNumber     = keysetno;
 
-    if (oldkey && std::dynamic_pointer_cast<SAMKeyStorage>(oldkey->getKeyStorage()))
+    
+    if (crypto->d_currentKeyNo != keyno)
     {
         const std::shared_ptr<SAMKeyStorage> oldsamks =
             std::dynamic_pointer_cast<SAMKeyStorage>(oldkey->getKeyStorage());
-        samck.currentKeySlotNo = oldsamks->getKeySlot();
-        samck.currentKeySlotV  = oldkey->getKeyVersion();
-        
-        samck.oldKeyInvolvement = (keyno == 0xE);
-    }
-    else
-    {
-        if (crypto->d_currentKeyNo != keyno)
+        if (!oldsamks)
         {
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                 "Current key required on SAM to change the key.");
         }
+        
+        samck.currentKeySlotNo = oldsamks->getKeySlot();
+        samck.currentKeySlotV  = oldkey->getKeyVersion();
+        samck.oldKeyInvolvement = (keyno == 0xE);
+    }
+    else
+    {
         samck.oldKeyInvolvement = true;
     }
 

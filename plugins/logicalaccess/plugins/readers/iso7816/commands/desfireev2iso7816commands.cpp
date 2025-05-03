@@ -32,12 +32,15 @@ DESFireEV2ISO7816Commands::DESFireEV2ISO7816Commands(const std::string &cmd_type
 void DESFireEV2ISO7816Commands::changeKeyEV2(uint8_t keysetno, uint8_t keyno,
                                              std::shared_ptr<DESFireKey> newkey)
 {
-    bool samChangeKey = checkChangeKeySAMKeyStorage(keyno, oldkey, key);
+    std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
+    std::shared_ptr<DESFireKey> oldkey =
+        std::dynamic_pointer_cast<DESFireKey>(crypto->getKey(keysetno, keyno));
+
+    bool samChangeKey = checkChangeKeySAMKeyStorage(keyno, oldkey, newkey);
 
     if (!samChangeKey && keysetno == 0) // it is the same as ChangeKey
         return changeKey(keyno, newkey);
 
-    std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
     std::shared_ptr<DESFireKey> key       = std::make_shared<DESFireKey>(*newkey);
 
     auto oldKeyDiversify = getKeyInformations(crypto->getKey(0, keyno), keyno);
