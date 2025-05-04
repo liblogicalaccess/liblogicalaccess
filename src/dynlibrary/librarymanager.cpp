@@ -388,8 +388,8 @@ ReaderServicePtr LibraryManager::getReaderService(ReaderUnitPtr reader,
 }
 
 std::shared_ptr<IAESCryptoService>
-LibraryManager::getPKCSAESCrypto(const std::string &env_PROTECCIO_CONF_DIR,
-                                 const std::string &pkcs_library_shared_object_path)
+LibraryManager::getPKCSAESCrypto(const std::string &pkcs_library_shared_object_path,
+                                 const std::unordered_map<std::string, std::string> &pkcs_properties)
 {
     std::lock_guard<std::recursive_mutex> lg(mutex_);
     IAESCryptoServicePtr pkcs_crypto;
@@ -408,8 +408,11 @@ LibraryManager::getPKCSAESCrypto(const std::string &env_PROTECCIO_CONF_DIR,
             fptr = reinterpret_cast<decltype(fptr)>(lib->getSymbol("getPKCSAESCrypto"));
             assert(fptr);
 
-            // Configure environment for Atos NetHSM.
-            portable_setenv("PROTECCIO_CONF_DIR", env_PROTECCIO_CONF_DIR.c_str(), 0);
+            // Configure environment for Atos NetHSM & cie
+            for (const std::pair<const std::string, std::string>& n : pkcs_properties)
+            {
+                portable_setenv(n.first.c_str(), n.second.c_str(), 0);
+            }
 
             fptr(pkcs_crypto, pkcs_library_shared_object_path);
             if (pkcs_crypto)

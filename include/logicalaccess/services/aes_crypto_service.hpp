@@ -9,7 +9,7 @@ namespace logicalaccess
  * Stateless service to perform AES cryptography against Key.
  *
  * The goal of this service is to perform an operation that is key-storage
- * agnostic. The service will delegate to either in memory crypto, PKCS, IKS, SAM
+ * agnostic. The service will delegate to either in memory crypto, PKCS, TPM, SAM
  * depending on the KeyStorage defined on the key.
  *
  * Note sure how to handle derivation yet.

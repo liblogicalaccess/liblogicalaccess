@@ -1,6 +1,7 @@
 #pragma once
 
 #include <logicalaccess/cards/keystorage.hpp>
+#include <unordered_map>
 
 namespace logicalaccess
 {
@@ -54,14 +55,14 @@ class LLA_CORE_API PKCSKeyStorage : public KeyStorage
         pkcs_session_password_ = pwd;
     }
 
-    const std::string &get_proteccio_conf_dir() const
+    const std::unordered_map<std::string, std::string> &get_pkcs_properties() const
     {
-        return env_PROTECCIO_CONF_DIR_;
+        return pkcs_properties_;
     }
 
-    void set_proteccio_conf_dir(const std::string &d)
+    void set_pkcs_properties(const std::unordered_map<std::string, std::string> &d)
     {
-        env_PROTECCIO_CONF_DIR_ = d;
+        pkcs_properties_ = d;
     }
 
     const std::string &get_pkcs_shared_object_path() const
@@ -101,9 +102,9 @@ class LLA_CORE_API PKCSKeyStorage : public KeyStorage
     // variable is already set.
 
     // The value that we will set to the PROTECCIO_CONF_DIR
-    // environment variable. This is needed by the atosnethsm PKCS
-    // library implementation.
-    std::string env_PROTECCIO_CONF_DIR_;
+    // environment variable (and others). This is needed by the
+    // atosnethsm PKCS library implementation.
+    std::unordered_map<std::string, std::string> pkcs_properties_;
 
     // Path to the PKCS shared object that the cppkcs library will use.
     std::string pkcs_library_shared_object_path_;

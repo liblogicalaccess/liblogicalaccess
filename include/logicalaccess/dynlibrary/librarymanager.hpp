@@ -3,6 +3,7 @@
 
 #include <string>
 #include <list>
+#include <unordered_map>
 #include <mutex>
 
 #include <logicalaccess/dynlibrary/idynlibrary.hpp>
@@ -50,14 +51,12 @@ class LLA_CORE_API LibraryManager
     /**
      * Retrieve an AESCryptoService backed by PKCS code.
      *
-     * The PROTECCIO_CONF_DIR variable is passed here, but shouldn't because
-     * this is specific to atosnethsm.
      * pkcs_library_shared_object_path is passed to our cppkcs library and will
      * be used as the underlying PKCS library implementation.
      */
     std::shared_ptr<IAESCryptoService>
-    getPKCSAESCrypto(const std::string &env_PROTECCIO_CONF_DIR,
-                     const std::string &pkcs_library_shared_object_path);
+    getPKCSAESCrypto(const std::string &pkcs_library_shared_object_path,
+                     const std::unordered_map<std::string, std::string> &pkcs_properties);
 
     static std::shared_ptr<DataTransport>
     getDataTransport(const std::string &transporttype);
