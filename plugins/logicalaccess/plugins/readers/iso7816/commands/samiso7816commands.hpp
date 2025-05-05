@@ -545,19 +545,37 @@ class LLA_READERS_ISO7816_API SAMISO7816Commands : public SAMCommands<T, S>
 
     void generateAuthEncKey(ByteVector keycipher, ByteVector rnd1, ByteVector rnd2)
     {
-        ByteVector SV1a(16), emptyIV(16);
+        ByteVector SV1a(16), SV1b(16), emptyIV(16);
 
         copy(rnd1.begin() + 7, rnd1.begin() + 12, SV1a.begin());
         copy(rnd2.begin() + 7, rnd2.begin() + 12, SV1a.begin() + 5);
         copy(rnd1.begin(), rnd1.begin() + 5, SV1a.begin() + 10);
 
+        copy(rnd1.begin() + 6, rnd1.begin() + 11, SV1b.begin());
+        copy(rnd2.begin() + 6, rnd2.begin() + 11, SV1b.begin() + 5);
+        copy(rnd1.begin() + 1, rnd1.begin() + 6, SV1b.begin() + 10);
+
         for (unsigned char x = 0; x <= 4; ++x)
         {
             SV1a[x + 10] ^= rnd2[x];
+            SV1b[x + 10] ^= rnd2[x + 1];
         }
 
-        SV1a[15] = 0x91; /* AES 128 */
-        /* TODO AES 192 */
+        if (keycipher.size() == 32) /* AES 256 */
+        {
+            SV1a[15] = 0x95;
+            SV1b[15] = 0x96;
+        }
+        else if (keycipher.size() == 24) /* AES 192 */
+        {
+            SV1a[15] = 0x93;
+            SV1b[15] = 0x93;
+        }
+        else /* AES 128 */
+        {
+            SV1a[15] = 0x91;
+            SV1b[15] = 0x00;
+        }
 
         std::shared_ptr<openssl::SymmetricKey> symkey(new openssl::AESSymmetricKey(
             openssl::AESSymmetricKey::createFromData(keycipher)));
@@ -566,7 +584,22 @@ class LLA_READERS_ISO7816_API SAMISO7816Commands : public SAMCommands<T, S>
                 openssl::AESInitializationVector::createFromData(emptyIV)));
         std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher(new openssl::AESCipher());
 
-        cipher->cipher(SV1a, d_authKey, *symkey.get(), *iv.get(), false);
+        ByteVector Kxea, Kxeb;
+        cipher->cipher(SV1a, Kxea, *symkey.get(), *iv.get(), false);
+        cipher->cipher(SV1b, Kxeb, *symkey.get(), *iv.get(), false);
+        d_authKey = Kxea;
+        if (keycipher.size() == 32)
+        {
+            d_authKey.insert(d_authKey.end(), Kxeb.begin(), Kxeb.end());
+        }
+        else if (keycipher.size() == 24)
+        {
+            for (unsigned char x = 0; x <= 7; ++x)
+            {
+                d_authKey[x + 8] ^= Kxeb[x];
+            }
+            d_authKey.insert(d_authKey.end(), Kxeb.end() - 8, Kxeb.end());
+        }
     }
 };
 }

@@ -97,6 +97,8 @@ class LLA_READERS_ISO7816_API SAMAV2ISO7816Commands
         return SAMISO7816Commands<KeyEntryAV2Information, SETAV2>::getReaderCardAdapter();
     }
 
+    void generateOfflineSessionKey(std::shared_ptr<DESFireKey> key, unsigned short changecnt);
+
   protected:
     void generateSessionKey(ByteVector rnd1, ByteVector rnd2);
 

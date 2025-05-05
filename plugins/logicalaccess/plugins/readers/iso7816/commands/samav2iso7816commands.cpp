@@ -42,29 +42,62 @@ SAMAV2ISO7816Commands::~SAMAV2ISO7816Commands()
 
 void SAMAV2ISO7816Commands::generateSessionKey(ByteVector rnda, ByteVector rndb)
 {
-    ByteVector SV1a(16), SV2a(16), SV1b(16), emptyIV(16);
+    ByteVector SV1a(16), SV2a(16), SV1b(16), SV2b(16), emptyIV(16);
 
     copy(rnda.begin() + 11, rnda.begin() + 16, SV1a.begin());
     copy(rndb.begin() + 11, rndb.begin() + 16, SV1a.begin() + 5);
     copy(rnda.begin() + 4, rnda.begin() + 9, SV1a.begin() + 10);
-
     for (unsigned char x = 4; x <= 9; ++x)
     {
         SV1a[x + 6] ^= rndb[x];
     }
 
+    copy(rnda.begin() + 10, rnda.begin() + 15, SV1b.begin());
+    copy(rndb.begin() + 10, rndb.begin() + 15, SV1b.begin() + 5);
+    copy(rnda.begin() + 5, rnda.begin() + 10, SV1b.begin() + 10);
+    for (unsigned char x = 5; x <= 10; ++x)
+    {
+        SV1b[x + 5] ^= rndb[x];
+    }
+
     copy(rnda.begin() + 7, rnda.begin() + 12, SV2a.begin());
     copy(rndb.begin() + 7, rndb.begin() + 12, SV2a.begin() + 5);
     copy(rnda.begin(), rnda.begin() + 5, SV2a.begin() + 10);
-
     for (unsigned char x = 0; x <= 5; ++x)
     {
         SV2a[x + 10] ^= rndb[x];
     }
 
-    SV1a[15] = 0x81; /* AES 128 */
-    SV2a[15] = 0x82; /* AES 128 */
-    /* TODO AES 192 */
+    copy(rnda.begin() + 6, rnda.begin() + 11, SV2b.begin());
+    copy(rndb.begin() + 6, rndb.begin() + 11, SV2b.begin() + 5);
+    copy(rnda.begin() + 1, rnda.begin() + 6, SV2b.begin() + 10);
+    for (unsigned char x = 1; x <= 6; ++x)
+    {
+        SV2b[x + 9] ^= rndb[x];
+    }
+
+    size_t sessionKeySize = d_macSessionKey.size();
+    if (sessionKeySize == 32) /* AES 256 */
+    {
+        SV1a[15] = 0x87;
+        SV1b[15] = 0x88;
+        SV2a[15] = 0x89;
+        SV2b[15] = 0x8a;
+    }
+    else if (sessionKeySize == 24) /* AES 192 */
+    {
+        SV1a[15] = 0x83;
+        SV1b[15] = 0x84;
+        SV2a[15] = 0x85;
+        SV2b[15] = 0x86;
+    }
+    else /* AES 128 */
+    {
+        SV1a[15] = 0x81; 
+        SV1b[15] = 0x00;
+        SV2a[15] = 0x82;
+        SV2b[15] = 0x00;
+    }
 
     std::shared_ptr<openssl::SymmetricKey> symkey(new openssl::AESSymmetricKey(
         openssl::AESSymmetricKey::createFromData(d_macSessionKey)));
@@ -72,9 +105,101 @@ void SAMAV2ISO7816Commands::generateSessionKey(ByteVector rnda, ByteVector rndb)
         new openssl::AESInitializationVector(
             openssl::AESInitializationVector::createFromData(emptyIV)));
     std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher(new openssl::AESCipher());
+    ByteVector Kea, Keb, Kma, Kmb;
 
-    cipher->cipher(SV1a, d_sessionKey, *symkey.get(), *iv.get(), false);
-    cipher->cipher(SV2a, d_macSessionKey, *symkey.get(), *iv.get(), false);
+    cipher->cipher(SV1a, Kea, *symkey.get(), *iv.get(), false);
+    cipher->cipher(SV1b, Keb, *symkey.get(), *iv.get(), false);
+
+    cipher->cipher(SV2a, Kma, *symkey.get(), *iv.get(), false);
+    cipher->cipher(SV2b, Kmb, *symkey.get(), *iv.get(), false);
+
+    d_sessionKey = Kea;
+    d_macSessionKey = Kma;
+    if (sessionKeySize == 32) /* AES 256 */
+    {
+        d_sessionKey.insert(d_sessionKey.end(), Keb.begin(), Keb.end());
+        d_macSessionKey.insert(d_macSessionKey.end(), Kmb.begin(), Kmb.end());
+    }
+    else if (sessionKeySize == 24) /* AES 192 */
+    {
+        for (unsigned char x = 0; x <= 7; ++x)
+        {
+            d_sessionKey[x + 8] ^= Keb[x];
+            d_macSessionKey[x + 8] ^= Kmb[x];
+        }
+        d_sessionKey.insert(d_sessionKey.end(), Keb.end() - 8, Keb.end());
+        d_macSessionKey.insert(d_macSessionKey.end(), Kmb.end() - 8, Kmb.end());
+    }
+}
+
+void SAMAV2ISO7816Commands::generateOfflineSessionKey(std::shared_ptr<DESFireKey> key, unsigned short changecnt)
+{
+    ByteVector SV1a, SV2a, SV1b, SV2b, emptyIV(16);
+
+    if (key->getKeyType() != DF_KEY_AES)
+    {
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+            "generateOfflineSessionKey Only AES Key allowed.");
+    }
+    auto keydata = key->getData();
+
+    SV1a.push_back(static_cast<unsigned char>((changecnt >> 8) & 0xff));
+    SV1a.push_back(static_cast<unsigned char>(changecnt & 0xff));
+    SV2a = SV1b = SV2b = SV1a;
+
+    if (keydata.size() == 32) /* AES 256 */
+    {
+        SV1a.resize(16, 0x77);
+        SV1b.resize(16, 0x78);
+        SV2a.resize(16, 0x79);
+        SV2b.resize(16, 0x7a);
+    }
+    else if (keydata.size() == 24) /* AES 192 */
+    {
+        SV1a.resize(16, 0x73);
+        SV1b.resize(16, 0x74);
+        SV2a.resize(16, 0x75);
+        SV2b.resize(16, 0x76);
+    }
+    else /* AES 128 */
+    {
+        SV1a.resize(16, 0x71);
+        SV1b.resize(16, 0x00);
+        SV2a.resize(16, 0x72);
+        SV2b.resize(16, 0x00);
+    }
+
+    std::shared_ptr<openssl::SymmetricKey> symkey(new openssl::AESSymmetricKey(
+        openssl::AESSymmetricKey::createFromData(keydata)));
+    std::shared_ptr<openssl::InitializationVector> iv(
+        new openssl::AESInitializationVector(
+            openssl::AESInitializationVector::createFromData(emptyIV)));
+    std::shared_ptr<openssl::OpenSSLSymmetricCipher> cipher(new openssl::AESCipher());
+    ByteVector Kea, Keb, Kma, Kmb;
+
+    cipher->cipher(SV1a, Kea, *symkey.get(), *iv.get(), false);
+    cipher->cipher(SV1b, Keb, *symkey.get(), *iv.get(), false);
+
+    cipher->cipher(SV2a, Kma, *symkey.get(), *iv.get(), false);
+    cipher->cipher(SV2b, Kmb, *symkey.get(), *iv.get(), false);
+
+    d_sessionKey = Kea;
+    d_macSessionKey = Kma;
+    if (keydata.size() == 32) /* AES 256 */
+    {
+        d_sessionKey.insert(d_sessionKey.end(), Keb.begin(), Keb.end());
+        d_macSessionKey.insert(d_macSessionKey.end(), Kmb.begin(), Kmb.end());
+    }
+    else if (keydata.size() == 24) /* AES 192 */
+    {
+        for (unsigned char x = 0; x <= 7; ++x)
+        {
+            d_sessionKey[x + 8] ^= Keb[x];
+            d_macSessionKey[x + 8] ^= Kmb[x];
+        }
+        d_sessionKey.insert(d_sessionKey.end(), Keb.end() - 8, Keb.end());
+        d_macSessionKey.insert(d_macSessionKey.end(), Kmb.end() - 8, Kmb.end());
+    }
 }
 
 void SAMAV2ISO7816Commands::authenticateHost(std::shared_ptr<DESFireKey> key,
