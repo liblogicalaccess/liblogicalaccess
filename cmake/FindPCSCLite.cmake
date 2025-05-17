@@ -1,9 +1,9 @@
-# - Find PCSC-Lite
-# Find the native PCSC-Lite includes and library
+# - Find PCSCLite
+# Find the native PCSCLite includes and library
 #
 #  PCSCLITE_INCLUDE_DIRS - where to find winscard.h, wintypes.h, etc.
-#  PCSCLITE_LIBRARIES   - List of libraries when using PCSC-Lite.
-#  PCSCLITE_FOUND       - True if PCSC-Lite found.
+#  PCSCLITE_LIBRARIES   - List of libraries when using PCSC/Lite.
+#  PCSCLITE_FOUND       - True if PCSCLite found.
 
 
 IF (PCSCLITE_INCLUDE_DIR AND PCSCLITE_LIBRARIES)
@@ -36,7 +36,7 @@ SET(PCSCLITE_LIBRARIES ${PCSCLITE_LIBRARY})
 # handle the QUIETLY and REQUIRED arguments and set PCSCLITE_FOUND to TRUE if
 # all listed variables are TRUE
 INCLUDE(FindPackageHandleStandardArgs)
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(PCSC-Lite DEFAULT_MSG PCSCLITE_LIBRARY PCSCLITE_INCLUDE_DIR)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(PCSCLite DEFAULT_MSG PCSCLITE_LIBRARY PCSCLITE_INCLUDE_DIR)
 
 MARK_AS_ADVANCED(PCSCLITE_LIBRARY PCSCLITE_INCLUDE_DIR)
 
