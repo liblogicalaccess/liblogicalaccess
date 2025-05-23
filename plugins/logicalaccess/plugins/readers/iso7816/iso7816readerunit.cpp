@@ -201,12 +201,12 @@ void ISO7816ReaderUnit::unlockSAM(std::shared_ptr<Chip> samchip)
         }
         else if (samchip->getCardType() == "SAM_AV2" || samchip->getCardType() == "SAM_AV3")
         {
-            auto av2cmd = std::dynamic_pointer_cast<SAMAV2ISO7816Commands>(getSAMChip()->getCommands());
+            auto av2cmd = std::dynamic_pointer_cast<SAMAV2ISO7816Commands>(samchip->getCommands());
             if (!av2cmd)
             {
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "No SAM AV2 commands.");
             }
-
+            
             if (getISO7816Configuration()->getUseSAMAuthenticateHost())
             {
                 av2cmd->authenticateHost(getISO7816Configuration()->getSAMUnLockKey(), getISO7816Configuration()->getSAMUnLockkeyNo());

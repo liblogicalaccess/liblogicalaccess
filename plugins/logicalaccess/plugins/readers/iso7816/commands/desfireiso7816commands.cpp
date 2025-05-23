@@ -293,17 +293,20 @@ uint8_t DESFireISO7816Commands::getKeyVersion(uint8_t keyno)
 ByteVector DESFireISO7816Commands::getKeyInformations(std::shared_ptr<DESFireKey> key,
                                                       uint8_t keyno) const
 {
-    auto crypto        = getDESFireChip()->getCrypto();
-    auto samKeyStorage = std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage());
-
     ByteVector diversify;
-    if (key->getKeyDiversification())
-        key->getKeyDiversification()->initDiversification(
-            crypto->getIdentifier(), crypto->d_currentAid, key, keyno, diversify);
+    auto crypto        = getDESFireChip()->getCrypto();
+    if (key)
+    {
+        auto samKeyStorage = std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage());
 
-    // get key value from SAM - But what to do if the initDiversification need the key ?
-    if (samKeyStorage && samKeyStorage->getDumpKey())
-        getKeyFromSAM(key, diversify);
+        if (key->getKeyDiversification())
+            key->getKeyDiversification()->initDiversification(
+                crypto->getIdentifier(), crypto->d_currentAid, key, keyno, diversify);
+
+        // get key value from SAM - But what to do if the initDiversification need the key ?
+        if (samKeyStorage && samKeyStorage->getDumpKey())
+            getKeyFromSAM(key, diversify);
+    }
 
     return diversify;
 }
@@ -313,10 +316,10 @@ bool DESFireISO7816Commands::checkChangeKeySAMKeyStorage(
     std::shared_ptr<DESFireKey> key)
 {
     std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
-    auto oldSamKeyStorage =
-        std::dynamic_pointer_cast<SAMKeyStorage>(oldkey->getKeyStorage());
-    auto newSamKeyStorage =
-        std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage());
+    std::shared_ptr<SAMKeyStorage> oldSamKeyStorage;
+    if (oldkey)
+        oldSamKeyStorage = std::dynamic_pointer_cast<SAMKeyStorage>(oldkey->getKeyStorage());
+    auto newSamKeyStorage = std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage());
     if ((oldSamKeyStorage && !oldSamKeyStorage->getDumpKey()) && !newSamKeyStorage)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                  "Both keys need to be set in the SAM.");
@@ -335,15 +338,14 @@ void DESFireISO7816Commands::changeKey(unsigned char keyno,
 
     bool samChangeKey = checkChangeKeySAMKeyStorage(keyno, oldkey, key);
 
-    auto oldKeyDiversify = getKeyInformations(oldkey, keyno);
-    auto newKeyDiversify = getKeyInformations(key, keyno);
-
     if (samChangeKey)
     {
         cryptogram = getChangeKeySAMCryptogram(keyno, key);
     }
     else
-    {
+    {    
+        auto oldKeyDiversify = getKeyInformations(oldkey, keyno);
+        auto newKeyDiversify = getKeyInformations(key, keyno);
         cryptogram = crypto->changeKey_PICC(keyno, oldKeyDiversify, key, newKeyDiversify);
     }
 
