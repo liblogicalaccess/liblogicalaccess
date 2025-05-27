@@ -195,7 +195,7 @@ bool PCSCCardProbe::has_desfire_random_uid(ByteVector *uid)
 		{
 			auto csn = pcsc_ru->getCardSerialNumber();
 			// 0x08 as first byte means random UID.
-			if (csn.at(0) == 0x08) {
+			if (csn.at(0) == 0x08 || csn.at(0) == 0x80 /* DESFire EV1 legacy random UID */) {
 				return true;
 			}
 			if (uid)
