@@ -24,7 +24,7 @@ PCSCReaderProvider::PCSCReaderProvider()
     : ISO7816ReaderProvider()
 {
     d_scc      = 0;
-    long scres = SCardEstablishContext(SCARD_SCOPE_USER, nullptr, nullptr, &d_scc);
+    long scres = SCardEstablishContext(Settings::getInstance()->SystemReaders ? SCARD_SCOPE_SYSTEM : SCARD_SCOPE_USER, nullptr, nullptr, &d_scc);
     if (scres != SCARD_S_SUCCESS)
     {
         char tmpbuf[128];

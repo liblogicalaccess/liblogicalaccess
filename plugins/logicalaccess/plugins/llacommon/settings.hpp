@@ -44,6 +44,7 @@ class LLA_COMMON_API Settings
     /* Default Reader */
     std::string DefaultReader;
     std::vector<std::string> PluginFolders;
+    bool SystemReaders;
 
     /* Networking */
 

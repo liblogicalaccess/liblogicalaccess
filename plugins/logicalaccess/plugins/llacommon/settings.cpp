@@ -151,6 +151,7 @@ void Settings::LoadSettings()
             pt.get<long int>("config.retrySerialConfiguration.timeout", 500);
 
         DefaultReader = pt.get<std::string>("config.reader.default", "PCSC");
+        SystemReaders = pt.get("config.reader.systemReaders", false);
 
         DataTransportTimeout = pt.get<int>("config.dataTransportTimeout", 3000);
         ProximityCheckResponseTimeMultiplier = pt.get<double>("config.proximityCheckResponseTimeMultiplier", 2);
@@ -208,6 +209,7 @@ void Settings::SaveSettings() const
         pt.put("config.retrySerialConfiguration.timeout", ConfigurationRetryTimeout);
 
         pt.put("config.reader.default", "PCSC");
+        pt.put("config.reader.systemReaders", SystemReaders);
 
         pt.put("config.dataTransportTimeout", DataTransportTimeout);
         pt.put("config.proximityCheckResponseTimeMultiplier", ProximityCheckResponseTimeMultiplier);
@@ -238,6 +240,7 @@ void Settings::reset()
     IsConfigurationRetryEnabled = false;
     ConfigurationRetryTimeout   = 500;
     DefaultReader               = "PCSC";
+    SystemReaders               = false;
     PluginFolders.clear();
     PluginFolders.push_back(getDllPath());
 
