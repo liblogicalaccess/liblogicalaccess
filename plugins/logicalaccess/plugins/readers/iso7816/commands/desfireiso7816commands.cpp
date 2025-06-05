@@ -15,6 +15,7 @@
 #include <logicalaccess/plugins/llacommon/settings.hpp>
 #include <logicalaccess/cards/computermemorykeystorage.hpp>
 #include <logicalaccess/dynlibrary/librarymanager.hpp>
+#include <algorithm>
 
 namespace logicalaccess
 {
@@ -79,20 +80,22 @@ void DESFireISO7816Commands::selectApplication(unsigned int aid)
 
     DESFireISO7816Commands::transmit(DF_INS_SELECT_APPLICATION, command);
 
-    /*
-     * We directly select the keyentry to use so no need to select the app
-      if (getSAMChip())
-     {
-     LOG(LogLevel::INFOS) << "SelectApplication on SAM chip...");
-     DESFireLocation::convertUIntToAid(aid, samaid);
-     std::reverse(samaid.begin(), samaid.end());
-     if (getSAMChip()->getCardType() == "SAM_AV1")
-     std::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1>
-     >(getSAMChip()->getCommands())->selectApplication(samaid);
-     else if (getSAMChip()->getCardType() == "SAM_AV2")
-     std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>
-     >(getSAMChip()->getCommands())->selectApplication(samaid);
-     }*/
+     // We directly select the keyentry to use so no need to select the app
+    if (getSAMChip())
+    {
+        LOG(LogLevel::INFOS) << "SelectApplication on SAM chip...";
+        ByteVector samaid;
+        DESFireLocation::convertUIntToAid(aid, samaid);
+        std::reverse(samaid.begin(), samaid.end());
+        try
+        {
+            if (getSAMChip()->getCardType() == "SAM_AV1")
+                std::dynamic_pointer_cast<SAMCommands<KeyEntryAV1Information, SETAV1> >(getSAMChip()->getCommands())->selectApplication(samaid);
+            else if (getSAMChip()->getCardType() == "SAM_AV2" || getSAMChip()->getCardType() == "SAM_AV3")
+                std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2> >(getSAMChip()->getCommands())->selectApplication(samaid);
+        }
+        catch(const std::exception&) { }
+    }
 
     getDESFireChip()->getCrypto()->selectApplication(aid);
 }

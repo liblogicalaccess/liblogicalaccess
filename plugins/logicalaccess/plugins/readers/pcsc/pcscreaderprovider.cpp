@@ -16,6 +16,7 @@
 #include <iomanip>
 
 #include <logicalaccess/plugins/readers/pcsc/pcscreaderunit.hpp>
+#include <logicalaccess/plugins/llacommon/settings.hpp>
 #include <logicalaccess/myexception.hpp>
 
 namespace logicalaccess

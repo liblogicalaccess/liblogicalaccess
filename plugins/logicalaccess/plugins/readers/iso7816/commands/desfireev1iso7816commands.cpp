@@ -372,20 +372,12 @@ void DESFireEV1ISO7816Commands::sam_iso_authenticate(std::shared_ptr<DESFireKey>
             crypto->getIdentifier(), crypto->d_currentAid, key, keyno, diversify);
     }
 
-    ByteVector apduresult;
-
-    ByteVector RPICC1 = getISO7816Commands()->getChallenge(16);
-
-    ByteVector data(2 + RPICC1.size());
-
     if (!std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()))
         THROW_EXCEPTION_WITH_LOG(
             LibLogicalAccessException,
             "DESFireKey need a SAMKeyStorage to proceed a SAM ISO Authenticate.");
 
-    if ((getSAMChip()->getCardType() == "SAM_AV2" || getSAMChip()->getCardType() == "SAM_AV3") &&
-        !std::dynamic_pointer_cast<NXPAV2KeyDiversification>(
-            key->getKeyDiversification()))
+    if (getSAMChip()->getCardType() == "SAM_AV2" && !std::dynamic_pointer_cast<NXPAV2KeyDiversification>(key->getKeyDiversification()))
     {
         LOG(LogLevel::INFOS) << "Start AuthenticationPICC in purpose to fix SAM state "
                                 "(NXP SAM Documentation 3.5)";
@@ -416,6 +408,14 @@ void DESFireEV1ISO7816Commands::sam_iso_authenticate(std::shared_ptr<DESFireKey>
         }
     }
 
+    
+
+    ByteVector apduresult;
+    ByteVector cmd_vector;
+
+    ByteVector RPICC1 = getISO7816Commands()->getChallenge(16);
+    ByteVector data(2 + RPICC1.size());
+
     data[0] =
         std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage())->getKeySlot();
     data[1] = key->getKeyVersion();
@@ -431,7 +431,7 @@ void DESFireEV1ISO7816Commands::sam_iso_authenticate(std::shared_ptr<DESFireKey>
     }
 
     unsigned char cmdp1[] = {0x80, 0x8e, p1, 0x00, (unsigned char)(data.size()), 0x00};
-    ByteVector cmd_vector(cmdp1, cmdp1 + 6);
+    cmd_vector.assign(cmdp1, cmdp1 + 6);
     cmd_vector.insert(cmd_vector.end() - 1, data.begin(), data.end());
 
     int trytoreconnect = 0;

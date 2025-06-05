@@ -239,6 +239,8 @@ void DESFireEV2ISO7816Commands::sam_authenticateEV2First(uint8_t keyno,
     }
 
     crypto->d_auth_method  = CryptoMethod::CM_EV2;
+    crypto->d_lastIV.clear();
+    crypto->d_lastIV.resize(crypto->d_cipher->getBlockSize(), 0x00);
     crypto->d_currentKeyNo = keyno;
 }
 
