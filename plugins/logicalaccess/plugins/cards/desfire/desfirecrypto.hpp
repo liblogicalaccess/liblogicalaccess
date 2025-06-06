@@ -23,9 +23,11 @@ namespace logicalaccess
  * \brief The cryptographic method.
  */
 typedef enum {
-    CM_LEGACY = 0x00, // D40
-    CM_ISO    = 0x01, // EV1
-    CM_EV2    = 0x02  // EV2
+    CM_LEGACY   = 0x00, // D40
+    CM_ISO      = 0x80, // ISO auth (flag)
+    CM_EV1      = 0x01, // EV1
+    CM_EV1_ISO  = CM_ISO | CM_EV1, // EV1 through mutual ISO auth
+    CM_EV2      = 0x02  // EV2
 } CryptoMethod;
 
 /**

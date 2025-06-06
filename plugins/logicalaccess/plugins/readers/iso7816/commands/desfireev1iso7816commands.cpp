@@ -298,29 +298,57 @@ void DESFireEV1ISO7816Commands::authenticate(unsigned char keyno,
     std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
     crypto->setKey(crypto->d_currentAid, 0, keyno, key);
 
-    // Get the appropriate authentification method and algorithm according to the key type
-    // (for 3DES we use legacy method instead of ISO).
+    if (key->getKeyStorage()->getType() != KST_COMPUTER_MEMORY && key->getKeyStorage()->getType() != KST_SAM)
+    {
+        iso_authenticate(keyno, key);
+    }
+    else
+    {
+        switch (key->getKeyType())
+        {
+        case DF_KEY_DES: DESFireISO7816Commands::authenticate(keyno, key);
+            break;
+        case DF_KEY_3K3DES:
+            authenticateISO(keyno, DF_ALG_3K3DES);
+            break;
+        case DF_KEY_AES:
+            authenticateAES(keyno);
+            break;
+        }
+    }
+    onAuthenticated();
+}
+
+void DESFireEV1ISO7816Commands::iso_authenticate(unsigned char keyno, std::shared_ptr<DESFireKey> key)
+{
+    if (!key)
+    {
+        key = DESFireCrypto::getDefaultKey(DF_KEY_DES);
+    }
+
+    std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
+    crypto->setKey(crypto->d_currentAid, 0, keyno, key);
 
     if (std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()) && !getSAMChip())
         THROW_EXCEPTION_WITH_LOG(
             LibLogicalAccessException,
-            "SAMKeyStorage set on the key but not SAM reader has been set.");
+            "SAMKeyStorage set on the key but no SAM reader has been set.");
 
+    bool isMasterKey = (crypto->d_currentAid == 0 && keyno == 0);
     if (std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage()) &&
-        !std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage())->getDumpKey() &&
-        key->getKeyType() != DF_KEY_DES)
+        !std::dynamic_pointer_cast<SAMKeyStorage>(key->getKeyStorage())->getDumpKey())
     {
-        if (key->getKeyType() == DF_KEY_3K3DES)
-            sam_iso_authenticate(key, DF_ALG_3K3DES,
-                                 (crypto->d_currentAid == 0 && keyno == 0), keyno);
+        if (key->getKeyType() == DF_KEY_DES)
+            sam_iso_authenticate(key, DF_ALG_2K3DES, isMasterKey, keyno);
+        else if (key->getKeyType() == DF_KEY_3K3DES)
+            sam_iso_authenticate(key, DF_ALG_3K3DES, isMasterKey, keyno);
         else
-            sam_iso_authenticate(key, DF_ALG_AES,
-                                 (crypto->d_currentAid == 0 && keyno == 0), keyno);
+            sam_iso_authenticate(key, DF_ALG_AES, isMasterKey, keyno);
     }
     else if (key->getKeyStorage()->getType() == KST_PKCS)
     {
         if (key->getKeyType() == DF_KEY_AES)
-            pkcs_iso_authenticate(key, (crypto->d_currentAid == 0 && keyno == 0), keyno);
+            pkcs_iso_authenticate(key, isMasterKey, keyno);
         else
         {
             THROW_EXCEPTION_WITH_LOG(
@@ -332,26 +360,15 @@ void DESFireEV1ISO7816Commands::authenticate(unsigned char keyno,
     {
         switch (key->getKeyType())
         {
-        case DF_KEY_DES: DESFireISO7816Commands::authenticate(keyno, key); break;
-
+        case DF_KEY_DES:
+            picc_iso_authenticate(key, DF_ALG_2K3DES, isMasterKey, keyno);
+            break;
         case DF_KEY_3K3DES:
-            iso_authenticate(key, DF_ALG_3K3DES,
-                             (crypto->d_currentAid == 0 && keyno == 0), keyno);
+            picc_iso_authenticate(key, DF_ALG_3K3DES, isMasterKey, keyno);
             break;
-
         case DF_KEY_AES:
-        {
-            // We are using authenticateAES instead of iso_authenticate.
-            // The reason is a firmware bug for EV2 chip in version 2.0 that causes
-            // failure on changeKey command when authenticated through ISO mode.
-            // This bug is fixed in EV2 firmware 2.1 but there seem to have quite
-            // a few of 2.0 in the field already.
-            auto crypto =
-                std::dynamic_pointer_cast<DESFireCrypto>(getDESFireChip()->getCrypto());
-            crypto->setKey(crypto->d_currentAid, 0, keyno, key);
-            authenticateAES(keyno);
+            picc_iso_authenticate(key, DF_ALG_AES, isMasterKey, keyno);
             break;
-        }
         }
     }
     onAuthenticated();
@@ -407,8 +424,6 @@ void DESFireEV1ISO7816Commands::sam_iso_authenticate(std::shared_ptr<DESFireKey>
         {
         }
     }
-
-    
 
     ByteVector apduresult;
     ByteVector cmd_vector;
@@ -546,7 +561,7 @@ void DESFireEV1ISO7816Commands::sam_iso_authenticate(std::shared_ptr<DESFireKey>
             std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(
                 getSAMChip()->getCommands())
                 ->dumpSessionKey();
-    crypto->d_auth_method = CM_ISO;
+    crypto->d_auth_method = CM_EV1_ISO;
 
     LOG(LogLevel::INFOS) << "Session key length: " << crypto->d_sessionKey.size();
 
@@ -564,7 +579,7 @@ void DESFireEV1ISO7816Commands::sam_iso_authenticate(std::shared_ptr<DESFireKey>
     crypto->d_lastIV.resize(crypto->d_cipher->getBlockSize(), 0x00);
 }
 
-void DESFireEV1ISO7816Commands::iso_authenticate(std::shared_ptr<DESFireKey> currentKey,
+void DESFireEV1ISO7816Commands::picc_iso_authenticate(std::shared_ptr<DESFireKey> currentKey,
                                                  DESFireISOAlgorithm algorithm,
                                                  bool isMasterCardKey,
                                                  unsigned char keyno)
@@ -672,7 +687,7 @@ void DESFireEV1ISO7816Commands::iso_authenticate(std::shared_ptr<DESFireKey> cur
     crypto->d_currentKeyNo = keyno;
 
     crypto->d_sessionKey.clear();
-    crypto->d_auth_method = CM_ISO;
+    crypto->d_auth_method = CM_EV1_ISO;
     if (algorithm == DF_ALG_2K3DES)
     {
         if (ByteVector(keydiv.begin(), keydiv.begin() + 8) ==
@@ -771,19 +786,30 @@ void DESFireEV1ISO7816Commands::authenticateISO(unsigned char keyno,
             crypto->getIdentifier(), crypto->d_currentAid, currentkey, keyno, diversify);
     }
 
+    auto samKeyStorage = std::dynamic_pointer_cast<SAMKeyStorage>(currentkey->getKeyStorage());
+    if (samKeyStorage && !getSAMChip())
+        THROW_EXCEPTION_WITH_LOG(
+            LibLogicalAccessException,
+            "SAMKeyStorage set on the key but no SAM reader has been set.");
+
     ISO7816Response result = transmit_plain(DFEV1_INS_AUTHENTICATE_ISO, data);
     EXCEPTION_ASSERT_WITH_LOG(result.getSW2() == DF_INS_ADDITIONAL_FRAME,
                               LibLogicalAccessException,
                               "No additional frame for ISO authentication.");
-
-    ByteVector response =
-        crypto->iso_authenticate_PICC1(keyno, diversify, result.getData(), random_len);
+    ByteVector response;
+    if (samKeyStorage)
+        response = sam_authenticate_p1(currentkey, result.getData(), diversify);
+    else
+        response = crypto->iso_authenticate_PICC1(keyno, diversify, result.getData(), random_len);
     result = transmit_plain(DF_INS_ADDITIONAL_FRAME, response);
     EXCEPTION_ASSERT_WITH_LOG(result.getData().size() >= random_len,
                               LibLogicalAccessException,
                               "ISO Authentication P2 failed: wrong length.");
 
-    crypto->iso_authenticate_PICC2(keyno, result.getData(), random_len);
+    if (samKeyStorage)
+        sam_authenticate_p2(keyno, result.getData());
+    else
+        crypto->iso_authenticate_PICC2(keyno, result.getData(), random_len);
 }
 
 void DESFireEV1ISO7816Commands::authenticateAES(unsigned char keyno)
@@ -826,7 +852,7 @@ void DESFireEV1ISO7816Commands::authenticateAES(unsigned char keyno)
         crypto->aes_authenticate_PICC2_GENERIC(keyno, key, result.getData());
 
     crypto->d_cipher.reset(new openssl::AESCipher());
-    crypto->d_auth_method = CM_ISO;
+    crypto->d_auth_method = CM_EV1;
     crypto->d_mac_size    = 8;
     crypto->d_lastIV.clear();
     crypto->d_lastIV.resize(crypto->d_cipher->getBlockSize(), 0x00);
@@ -1173,14 +1199,13 @@ void DESFireEV1ISO7816Commands::changeKey(unsigned char keyno,
     else
     {
         ByteVector dd = transmit_plain(DF_INS_CHANGE_KEY, data).getData();
-
-        // Don't check CMAC if master key.
-        if (dd.size() > 0 && keyno != 0)
+        // Don't check CMAC if master key on EV1.
+        if (dd.size() > 0 && ((crypto->d_auth_method & CM_EV1) != CM_EV1 || keyno != 0))
         {
             if (!crypto->verifyMAC(true, dd))
             {
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                         "MAC verification failed.");
+                                        "MAC verification failed.");
             }
         }
     }
@@ -1376,8 +1401,9 @@ ISO7816Response DESFireEV1ISO7816Commands::transmit(unsigned char cmd,
 
         CMAC = crypto->desfire_cmac(response);
 
-        EXCEPTION_ASSERT_WITH_LOG(ByteVector(r.getData().end() - 8, r.getData().end()) ==
-                                      CMAC,
+        auto rCMAC = ByteVector(r.getData().end() - 8, r.getData().end());
+        LOG(LogLevel::DEBUGS) << "Checking computed CMAC " << BufferHelper::getHex(CMAC) << " with received CMAC " << BufferHelper::getHex(rCMAC);
+        EXCEPTION_ASSERT_WITH_LOG(rCMAC == CMAC,
                                   LibLogicalAccessException, "Wrong CMAC.");
 
         r = ISO7816Response(ByteVector(r.getData().begin(), r.getData().end() - 8),
@@ -1546,7 +1572,7 @@ void DESFireEV1ISO7816Commands::pkcs_iso_authenticate(
     crypto->d_currentKeyNo = keyno;
 
     crypto->d_sessionKey.clear();
-    crypto->d_auth_method = CM_ISO;
+    crypto->d_auth_method = CM_EV1_ISO;
     crypto->d_sessionKey.insert(crypto->d_sessionKey.end(), RPCD1.begin(),
                                 RPCD1.begin() + 4);
     crypto->d_sessionKey.insert(crypto->d_sessionKey.end(), RPICC2.begin(),

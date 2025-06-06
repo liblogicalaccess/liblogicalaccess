@@ -896,7 +896,7 @@ void DESFireCrypto::iso_authenticate_PICC2(unsigned char keyno,
             "DESFire authentication failed - rnda are not the same.");
 
     d_cipher.reset(new openssl::DESCipher());
-    d_auth_method = CM_ISO;
+    d_auth_method = CM_EV1;
     d_mac_size    = 8;
     d_lastIV.clear();
     d_lastIV.resize(d_cipher->getBlockSize(), 0x00);

@@ -974,7 +974,7 @@ ByteVector DESFireISO7816Commands::sam_authenticate_p1(std::shared_ptr<DESFireKe
     } while (true);
 
     if (apduresult.size() <= 2)
-        THROW_EXCEPTION_WITH_LOG(CardException, "sam authenticate DES P1 failed.");
+        THROW_EXCEPTION_WITH_LOG(CardException, "sam authenticate P1 failed.");
 
     return ByteVector(apduresult.begin(), apduresult.end() - 2);
 }
@@ -997,7 +997,7 @@ void DESFireISO7816Commands::sam_authenticate_p2(unsigned char keyno,
                 getSAMChip()->getCommands())
                 ->transmit(cmd_vector, true, false);
     if (apduresult.size() != 2 || apduresult[0] != 0x90 || apduresult[1] != 0x00)
-        THROW_EXCEPTION_WITH_LOG(CardException, "sam authenticate DES P2 failed.");
+        THROW_EXCEPTION_WITH_LOG(CardException, "sam authenticate P2 failed.");
 
     if (getSAMChip()->getCardType() == "SAM_AV1")
     {

@@ -162,7 +162,7 @@ class LLA_READERS_ISO7816_API DESFireEV1ISO7816Commands : public DESFireISO7816C
      * false otherwise.
      * \param keyno The key number.
      */
-    virtual void iso_authenticate(std::shared_ptr<DESFireKey> key,
+    virtual void picc_iso_authenticate(std::shared_ptr<DESFireKey> key,
                                   DESFireISOAlgorithm algorithm = DF_ALG_2K3DES,
                                   bool isMasterCardKey          = true,
                                   unsigned char keyno           = 0x00);
@@ -177,6 +177,13 @@ class LLA_READERS_ISO7816_API DESFireEV1ISO7816Commands : public DESFireISO7816C
      * \param key The key.
      */
     void authenticate(unsigned char keyno, std::shared_ptr<DESFireKey> key) override;
+
+    /**
+     * \brief ISO Authenticate, given a key number.
+     * \param keyno The key number.
+     * \param key The key.
+     */
+    void iso_authenticate(unsigned char keyno, std::shared_ptr<DESFireKey> key);
 
     /**
      * \brief AuthenticateISO command.

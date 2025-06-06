@@ -182,10 +182,10 @@ void DESFireEV2ISO7816Commands::sam_authenticateEV2First(uint8_t keyno,
             "DESFireKey need a SAMKeyStorage to proceed a SAM Authenticate.");
 
             
-    const auto rndPcd = RandomHelper::bytes(16);
     if (getSAMChip()->getCardType() == "SAM_AV2")
     {
         authenticateAES(keyno); // this should be removed, we keep it as a safekeeper for now to easer auth error analyze.
+        const auto rndPcd = RandomHelper::bytes(16);
 
         // activate offline crypto with SAM
         auto samAV2Cmd =
@@ -225,9 +225,14 @@ void DESFireEV2ISO7816Commands::sam_authenticateEV2First(uint8_t keyno,
     }
     else
     {
+        ByteVector cmd = {keyno, 0}; // LenCap
+        auto response  = transmit_plain(DFEV2_INS_AUTHENTICATE_EV2_FIRST, cmd);
+        EXCEPTION_ASSERT_WITH_LOG(response.getData().size() > 0, LibLogicalAccessException,
+                                "Response is too short");
+
         bool suppresssm = crypto->d_currentAid == 0 && keyno > 0 && !keystorage->getIsAbsolute(); // should only match Originality Keys
-        auto command = sam_authenticate_p1(key, rndPcd, diversify, true, true, suppresssm);
-        auto result = DESFireISO7816Commands::transmit(DF_INS_AUTHENTICATE, command);
+        auto command = sam_authenticate_p1(key, response.getData(), diversify, true, true, suppresssm);
+        auto result = DESFireISO7816Commands::transmit(DF_INS_ADDITIONAL_FRAME, command);
         if (result.getData().size() >= 8)
         {
             sam_authenticate_p2(keyno, result.getData(), true);
@@ -239,7 +244,9 @@ void DESFireEV2ISO7816Commands::sam_authenticateEV2First(uint8_t keyno,
     }
 
     crypto->d_auth_method  = CryptoMethod::CM_EV2;
+    crypto->d_mac_size   = 8;
     crypto->d_lastIV.clear();
+    crypto->d_cipher.reset(new openssl::AESCipher());
     crypto->d_lastIV.resize(crypto->d_cipher->getBlockSize(), 0x00);
     crypto->d_currentKeyNo = keyno;
 }
@@ -255,10 +262,12 @@ void DESFireEV2ISO7816Commands::sam_authenticate_p2(unsigned char keyno,
         EXCEPTION_ASSERT_WITH_LOG(data.size() >= 38, LibLogicalAccessException,
                                 "Response is too short");
 
-        crypto->d_sessionKey = ByteVector(data.begin(), data.begin() + 16);
         crypto->d_macSessionKey = ByteVector(data.begin() + 16, data.begin() + 32);
         crypto->setTI(ByteVector(data.begin() + 32, data.begin() + 36));
         crypto->setCmdCtr(static_cast<uint16_t>(data.at(36) << 8 | data.at(37)));
+        crypto->d_sessionKey = ByteVector(data.begin(), data.begin() + 16);
+
+        LOG(LogLevel::DEBUGS) << "DESFireEV2 sam_authenticate_p2 done.";
     }
 }
 
@@ -770,7 +779,7 @@ std::pair<ByteVector, ByteVector> DESFireEV2ISO7816Commands::createDAMChallenge(
     else
     {
         cryptoTmp->d_cipher.reset(new openssl::DESCipher());
-        cryptoTmp->d_auth_method = CM_ISO;
+        cryptoTmp->d_auth_method = CM_EV1;
         cryptoTmp->d_mac_size    = 8;
     }
 
