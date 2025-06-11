@@ -202,14 +202,6 @@ DESFireISO7816Commands::getChangeKeySAMCryptogram(unsigned char keyno,
         samck.oldKeyInvolvement = true;
     }
 
-    ByteVector diversify;
-    if (key->getKeyDiversification())
-        key->getKeyDiversification()->initDiversification(
-            crypto->getIdentifier(), crypto->d_currentAid, key, keyno, diversify);
-    if (oldkey->getKeyDiversification())
-        oldkey->getKeyDiversification()->initDiversification(
-            crypto->getIdentifier(), crypto->d_currentAid, oldkey, keyno, diversify);
-
     ChangeKeyDiversification keyDiv;
     memset(&keyDiv, 0x00, sizeof(keyDiv));
     if (std::dynamic_pointer_cast<NXPKeyDiversification>(key->getKeyDiversification()) ||
@@ -232,7 +224,7 @@ DESFireISO7816Commands::getChangeKeySAMCryptogram(unsigned char keyno,
         if (oldnxpdiv)
         {
             oldnxpdiv->initDiversification(crypto->getIdentifier(), crypto->d_currentAid,
-                                           key, keyno, diversifyOld);
+                                           oldkey, keyno, diversifyOld);
             if (!keyDiv.divInput)
             {
                 keyDiv.divInput = new unsigned char[diversifyOld.size()];
