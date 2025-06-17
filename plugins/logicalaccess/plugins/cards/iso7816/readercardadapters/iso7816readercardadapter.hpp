@@ -89,6 +89,8 @@ class LLA_CARDS_ISO7816_API ISO7816ReaderCardAdapter : public ReaderCardAdapter
 
     void setCrypto(std::shared_ptr<ISO24727Crypto> crypto);
 
+    unsigned char getLatestSW2() const;
+
   private:
     /**
      * The cryptographic object that maintain the state.

@@ -801,15 +801,28 @@ void DESFireEV1ISO7816Commands::authenticateISO(unsigned char keyno,
         response = sam_authenticate_p1(currentkey, result.getData(), diversify);
     else
         response = crypto->iso_authenticate_PICC1(keyno, diversify, result.getData(), random_len);
-    result = transmit_plain(DF_INS_ADDITIONAL_FRAME, response);
-    EXCEPTION_ASSERT_WITH_LOG(result.getData().size() >= random_len,
-                              LibLogicalAccessException,
-                              "ISO Authentication P2 failed: wrong length.");
+    
+    ByteVector rndap;
+    try
+    {
+        result = transmit_plain(DF_INS_ADDITIONAL_FRAME, response);
+        EXCEPTION_ASSERT_WITH_LOG(result.getData().size() >= random_len,
+                                LibLogicalAccessException,
+                                "ISO Authentication P2 failed: wrong length.");
+        rndap = result.getData();
+    }
+    catch (CardException&)
+    {
+        if (samKeyStorage)
+            rndap = { getISO7816ReaderCardAdapter()->getLatestSW2() };
+        else
+            throw;
+    }
 
     if (samKeyStorage)
-        sam_authenticate_p2(keyno, result.getData());
+        sam_authenticate_p2(keyno, rndap);
     else
-        crypto->iso_authenticate_PICC2(keyno, result.getData(), random_len);
+        crypto->iso_authenticate_PICC2(keyno, rndap, random_len);
 }
 
 void DESFireEV1ISO7816Commands::authenticateAES(unsigned char keyno)
@@ -842,14 +855,27 @@ void DESFireEV1ISO7816Commands::authenticateAES(unsigned char keyno)
         response = crypto->aes_authenticate_PICC1(keyno, diversify, result.getData());
     else
         response = crypto->aes_authenticate_PICC1_GENERIC(keyno, key, result.getData());
-    result = transmit_plain(DF_INS_ADDITIONAL_FRAME, response);
+    
+    ByteVector rndap;
+    try
+    {
+        result = transmit_plain(DF_INS_ADDITIONAL_FRAME, response);
+        rndap = result.getData();
+    }
+    catch (CardException&)
+    {
+        if (samKeyStorage)
+            rndap = { getISO7816ReaderCardAdapter()->getLatestSW2() };
+        else
+            throw;
+    }
 
     if (samKeyStorage)
-        sam_authenticate_p2(keyno, result.getData());
+        sam_authenticate_p2(keyno, rndap);
     else if (std::dynamic_pointer_cast<ComputerMemoryKeyStorage>(key->getKeyStorage()))
-        crypto->aes_authenticate_PICC2(keyno, result.getData());
+        crypto->aes_authenticate_PICC2(keyno, rndap);
     else
-        crypto->aes_authenticate_PICC2_GENERIC(keyno, key, result.getData());
+        crypto->aes_authenticate_PICC2_GENERIC(keyno, key, rndap);
 
     crypto->d_cipher.reset(new openssl::AESCipher());
     crypto->d_auth_method = CM_EV1;

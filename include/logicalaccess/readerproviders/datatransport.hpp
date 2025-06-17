@@ -82,7 +82,7 @@ class LLA_CORE_API DataTransport : public XmlSerializable
      * \brief Get the last command.
      * \return The last command.
      */
-    virtual ByteVector getLastCommand()
+    virtual ByteVector getLastCommand() const
     {
         return d_lastCommand;
     }
@@ -91,7 +91,7 @@ class LLA_CORE_API DataTransport : public XmlSerializable
      * \brief Get the last command result.
      * \return The last command result.
      */
-    virtual ByteVector getLastResult()
+    virtual ByteVector getLastResult() const
     {
         return d_lastResult;
     }

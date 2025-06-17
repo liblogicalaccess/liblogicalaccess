@@ -1040,16 +1040,29 @@ void DESFireISO7816Commands::authenticate(unsigned char keyno,
             rndAB = sam_authenticate_p1(key, result.getData(), diversify);
         else
             rndAB = crypto->authenticate_PICC1(keyno, diversify, result.getData());
-        result    = DESFireISO7816Commands::transmit(DF_INS_ADDITIONAL_FRAME, rndAB);
-        if (result.getData().size() >= 8)
+
+        ByteVector rndap;
+        try
+        {
+            result = DESFireISO7816Commands::transmit(DF_INS_ADDITIONAL_FRAME, rndAB);
+            if (result.getData().size() < 8)
+            {
+                THROW_EXCEPTION_WITH_LOG(CardException, "DESFire authentication P2 failed: wrong length.");
+            }
+            rndap = result.getData();
+        }
+        catch (CardException&)
         {
             if (samKeyStorage)
-                sam_authenticate_p2(keyno, result.getData());
+                rndap = { getISO7816ReaderCardAdapter()->getLatestSW2() };
             else
-                crypto->authenticate_PICC2(keyno, result.getData());
+                throw;
         }
+
+        if (samKeyStorage)
+            sam_authenticate_p2(keyno, rndap);
         else
-            THROW_EXCEPTION_WITH_LOG(CardException, "DESFire authentication P2 failed: wrong length.");
+            crypto->authenticate_PICC2(keyno, rndap);
     }
     else
         THROW_EXCEPTION_WITH_LOG(CardException, "DESFire authentication P1 failed.");

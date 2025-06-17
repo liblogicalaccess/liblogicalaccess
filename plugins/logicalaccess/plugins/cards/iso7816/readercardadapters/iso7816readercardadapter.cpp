@@ -169,4 +169,16 @@ void ISO7816ReaderCardAdapter::setCrypto(std::shared_ptr<ISO24727Crypto> crypto)
 {
     crypto_ = crypto;
 }
+
+unsigned char ISO7816ReaderCardAdapter::getLatestSW2() const
+{
+    if (getDataTransport())
+    {
+        auto result = getDataTransport()->getLastResult();
+        if (result.size() > 0)
+            return result.back();
+    }
+
+    return 0x00;
+}
 }

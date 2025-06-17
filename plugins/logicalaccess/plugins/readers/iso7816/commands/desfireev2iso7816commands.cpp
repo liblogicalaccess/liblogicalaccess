@@ -232,15 +232,22 @@ void DESFireEV2ISO7816Commands::sam_authenticateEV2First(uint8_t keyno,
 
         bool suppresssm = crypto->d_currentAid == 0 && keyno > 0 && !keystorage->getIsAbsolute(); // should only match Originality Keys
         auto command = sam_authenticate_p1(key, response.getData(), diversify, true, true, suppresssm);
-        auto result = DESFireISO7816Commands::transmit(DF_INS_ADDITIONAL_FRAME, command);
-        if (result.getData().size() >= 8)
+        ByteVector rndap;
+        try
         {
-            sam_authenticate_p2(keyno, result.getData(), true);
+            auto result = DESFireISO7816Commands::transmit(DF_INS_ADDITIONAL_FRAME, command);
+            if (result.getData().size() < 8)
+            {
+                THROW_EXCEPTION_WITH_LOG(CardException, "DESFire authentication P2 failed: wrong length.");
+            }
+            rndap = result.getData();
         }
-        else
+        catch (CardException&)
         {
-            THROW_EXCEPTION_WITH_LOG(CardException, "DESFire authentication P2 failed: wrong length.");
+            rndap = { getISO7816ReaderCardAdapter()->getLatestSW2() };
         }
+        
+        sam_authenticate_p2(keyno, rndap, true);
     }
 
     crypto->d_auth_method  = CryptoMethod::CM_EV2;
