@@ -351,6 +351,8 @@ class LLA_READERS_ISO7816_API DESFireISO7816Commands : public DESFireCommands
 
     void sam_authenticate_p2(unsigned char keyno, ByteVector rndap) const;
 
+    void authenticate_crypto_finalize(std::shared_ptr<DESFireKey> key, CryptoMethod cm) const;
+
   protected:
     ByteVector getKeyInformations(std::shared_ptr<DESFireKey> key, uint8_t keyno) const;
 

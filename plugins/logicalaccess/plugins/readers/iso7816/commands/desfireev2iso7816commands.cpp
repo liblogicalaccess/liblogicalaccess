@@ -250,12 +250,8 @@ void DESFireEV2ISO7816Commands::sam_authenticateEV2First(uint8_t keyno,
         sam_authenticate_p2(keyno, rndap, true);
     }
 
-    crypto->d_auth_method  = CryptoMethod::CM_EV2;
-    crypto->d_mac_size   = 8;
-    crypto->d_lastIV.clear();
-    crypto->d_cipher.reset(new openssl::AESCipher());
-    crypto->d_lastIV.resize(crypto->d_cipher->getBlockSize(), 0x00);
     crypto->d_currentKeyNo = keyno;
+    authenticate_crypto_finalize(key, CryptoMethod::CM_EV2);
 }
 
 void DESFireEV2ISO7816Commands::sam_authenticate_p2(unsigned char keyno,

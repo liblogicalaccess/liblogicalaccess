@@ -267,10 +267,12 @@ DESFireISO7816Commands::getChangeKeySAMCryptogram(unsigned char keyno,
     if (keyDiv.divInput != nullptr)
         delete[] keyDiv.divInput;
 
-    crypto->d_lastIV.clear();
-    crypto->d_lastIV.resize(crypto->d_cipher->getBlockSize());
-    copy(ret.end() - crypto->d_cipher->getBlockSize(), ret.end(),
-         crypto->d_lastIV.begin());
+    if (crypto->d_cipher)
+    {
+        crypto->d_lastIV.clear();
+        crypto->d_lastIV.resize(crypto->d_cipher->getBlockSize());
+        copy(ret.end() - crypto->d_cipher->getBlockSize(), ret.end(), crypto->d_lastIV.begin());
+    }
     return ret;
 }
 
@@ -1005,6 +1007,24 @@ void DESFireISO7816Commands::sam_authenticate_p2(unsigned char keyno,
         crypto->d_sessionKey = data;
     }
     crypto->d_currentKeyNo = keyno;
+}
+
+void DESFireISO7816Commands::authenticate_crypto_finalize(std::shared_ptr<DESFireKey> key, CryptoMethod cm) const
+{
+    std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
+    if (key)
+    {
+        if (key->getKeyType() == DF_KEY_3K3DES || key->getKeyType() == DF_KEY_DES)
+            crypto->d_cipher.reset(new openssl::DESCipher());
+        else
+            crypto->d_cipher.reset(new openssl::AESCipher());
+        
+        crypto->d_lastIV.clear();
+        crypto->d_lastIV.resize(crypto->d_cipher->getBlockSize(), 0x00);
+    }
+    
+    crypto->d_auth_method = cm;
+    crypto->d_mac_size = (cm == CM_LEGACY) ? 4 : 8;
 }
 
 void DESFireISO7816Commands::authenticate(unsigned char keyno,

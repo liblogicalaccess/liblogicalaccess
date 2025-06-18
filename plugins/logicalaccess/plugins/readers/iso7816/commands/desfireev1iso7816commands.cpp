@@ -561,22 +561,9 @@ void DESFireEV1ISO7816Commands::sam_iso_authenticate(std::shared_ptr<DESFireKey>
             std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(
                 getSAMChip()->getCommands())
                 ->dumpSessionKey();
-    crypto->d_auth_method = CM_EV1_ISO;
 
     LOG(LogLevel::INFOS) << "Session key length: " << crypto->d_sessionKey.size();
-
-    if (key->getKeyType() == DF_KEY_3K3DES || key->getKeyType() == DF_KEY_DES)
-    {
-        crypto->d_cipher.reset(new openssl::DESCipher());
-        crypto->d_mac_size = 8;
-    }
-    else
-    {
-        crypto->d_cipher.reset(new openssl::AESCipher());
-        crypto->d_mac_size = 8;
-    }
-    crypto->d_lastIV.clear();
-    crypto->d_lastIV.resize(crypto->d_cipher->getBlockSize(), 0x00);
+    authenticate_crypto_finalize(key, CryptoMethod::CM_EV1_ISO);
 }
 
 void DESFireEV1ISO7816Commands::picc_iso_authenticate(std::shared_ptr<DESFireKey> currentKey,
@@ -820,9 +807,14 @@ void DESFireEV1ISO7816Commands::authenticateISO(unsigned char keyno,
     }
 
     if (samKeyStorage)
+    {
         sam_authenticate_p2(keyno, rndap);
+        authenticate_crypto_finalize(currentkey, CryptoMethod::CM_EV1);
+    }
     else
+    {
         crypto->iso_authenticate_PICC2(keyno, rndap, random_len);
+    }
 }
 
 void DESFireEV1ISO7816Commands::authenticateAES(unsigned char keyno)
@@ -877,12 +869,8 @@ void DESFireEV1ISO7816Commands::authenticateAES(unsigned char keyno)
     else
         crypto->aes_authenticate_PICC2_GENERIC(keyno, key, rndap);
 
-    crypto->d_cipher.reset(new openssl::AESCipher());
-    crypto->d_auth_method = CM_EV1;
-    crypto->d_mac_size    = 8;
-    crypto->d_lastIV.clear();
-    crypto->d_lastIV.resize(crypto->d_cipher->getBlockSize(), 0x00);
-
+    
+    authenticate_crypto_finalize(key, CryptoMethod::CM_EV1);
     onAuthenticated();
 }
 
@@ -1598,7 +1586,6 @@ void DESFireEV1ISO7816Commands::pkcs_iso_authenticate(
     crypto->d_currentKeyNo = keyno;
 
     crypto->d_sessionKey.clear();
-    crypto->d_auth_method = CM_EV1_ISO;
     crypto->d_sessionKey.insert(crypto->d_sessionKey.end(), RPCD1.begin(),
                                 RPCD1.begin() + 4);
     crypto->d_sessionKey.insert(crypto->d_sessionKey.end(), RPICC2.begin(),
@@ -1608,13 +1595,7 @@ void DESFireEV1ISO7816Commands::pkcs_iso_authenticate(
     crypto->d_sessionKey.insert(crypto->d_sessionKey.end(), RPICC2.begin() + 12,
                                 RPICC2.begin() + 16);
 
-    crypto->d_cipher.reset(new openssl::AESCipher());
-    crypto->d_authkey  = keydiv;
-    crypto->d_mac_size = 8;
-
-    crypto->d_lastIV.clear();
-    crypto->d_lastIV.resize(crypto->d_cipher->getBlockSize(), 0x00);
-
+    authenticate_crypto_finalize(key, CryptoMethod::CM_EV1_ISO);
     onAuthenticated();
 }
 }
