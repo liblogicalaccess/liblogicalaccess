@@ -1457,29 +1457,20 @@ ISO7816Response DESFireEV1ISO7816Commands::transmit_full(unsigned char cmd,
     ByteVector encBuffer = crypto->desfireEncrypt(buf, fparams);
     encBuffer.insert(encBuffer.begin(), param.begin(), param.end());
     ISO7816Response r = DESFireISO7816Commands::transmit(cmd, encBuffer, lc, forceLc);
-    ByteVector dd = r.getData();
-    if (dd.size() == 0)     
-    {
-        return r;
-    }
 
     // MAC check is done inside desfireDecrypt on EV2 Crypto implementation
-    if (crypto->d_auth_method != CryptoMethod::CM_EV2)
+    // We directly check MAC and decipher the data
+    if ((crypto->d_auth_method & CryptoMethod::CM_EV1) == CryptoMethod::CM_EV1 && r.getData().size() == crypto->d_mac_size)
     {
-        // We directly check MAC and decipher the data
         // That means this helper doesn't support command chaining (0xAF) for now
-        if (!crypto->verifyMAC(true, dd))
+        if (!crypto->verifyMAC(true, { r.getSW2() }))
         {
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "MAC verification failed.");
         }
-        // Remove MAC from message response
-        if (dd.size() >= crypto->d_mac_size)
-        {
-            dd.resize(dd.size() - crypto->d_mac_size);
-        }
+        return ISO7816Response({}, r.getSW1(), r.getSW2());
     }
 
-    crypto->appendDecipherData(dd);
+    crypto->appendDecipherData(r.getData());
     return ISO7816Response(crypto->desfireDecrypt(0), r.getSW1(), r.getSW2());
 }
 
