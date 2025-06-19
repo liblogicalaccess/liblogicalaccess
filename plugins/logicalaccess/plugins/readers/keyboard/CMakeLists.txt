@@ -30,7 +30,7 @@ SET_TARGET_PROPERTIES(keyboardreaders PROPERTIES VERSION ${LIBLOGICALACCESS_VERS
 target_link_libraries(keyboardreaders
 	logicalaccess
 	UserEnv)
-set(HEADER_RELATIVE_INSTALL_DIR "include/logicalaccess/plugins/cards/keyboard")
+set(HEADER_RELATIVE_INSTALL_DIR "include/logicalaccess/plugins/readers/keyboard")
 LLA_GENERATE_EXPORTS(LLA_READERS_PRIVATE_KEYBOARD)
 
 install ( FILES ${include} ${includepp} DESTINATION include/logicalaccess/plugins/readers/keyboard )
