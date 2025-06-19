@@ -1462,8 +1462,9 @@ ISO7816Response DESFireEV1ISO7816Commands::transmit_full(unsigned char cmd,
     // We directly check MAC and decipher the data
     if ((crypto->d_auth_method & CryptoMethod::CM_EV1) == CryptoMethod::CM_EV1 && r.getData().size() == crypto->d_mac_size)
     {
+        crypto->initBuf();
         // That means this helper doesn't support command chaining (0xAF) for now
-        if (!crypto->verifyMAC(true, { r.getSW2() }))
+        if (!crypto->verifyMAC(true, r.getData()))
         {
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "MAC verification failed.");
         }
