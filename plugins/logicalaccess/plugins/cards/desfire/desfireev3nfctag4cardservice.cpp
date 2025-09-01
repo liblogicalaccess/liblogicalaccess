@@ -79,8 +79,6 @@ void DESFireEV3NFCTag4CardService::writeSDMFile(const std::string& baseUri,
     sdmar.changeAccess = logicalaccess::AR_FREE; // SDMCtrRet
 
     writeNDEFFile(ndefmsg, isoFIDNDEFFile);
-
-    dfcmd->authenticate(0, d_app_new_key ? d_app_new_key : d_app_empty_key);
     df3cmd->changeFileSettings(2, logicalaccess::CM_PLAIN, { dar }, true, 0, vcuidOffset > 0 || piccOffset > 0, readCtrOffset > 0 || piccOffset > 0, false, false, true, sdmar, piccOffset == 0 ? vcuidOffset : 0, piccOffset == 0 ? readCtrOffset : 0, piccOffset, recordOffset, 0, 0, macOffset, 0);
 }
 }

@@ -62,6 +62,7 @@ void DESFireEV1NFCTag4CardService::createNFCApplication(unsigned int aid,
         desfirecommand->changeKey(2, d_app_new_key);
         desfirecommand->changeKey(1, d_app_new_key);
         desfirecommand->changeKey(0, d_app_new_key);
+        desfirecommand->authenticate(0, d_app_new_key);
     }
 
     auto iso7816command = getISO7816Commands();
