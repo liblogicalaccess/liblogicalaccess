@@ -157,6 +157,12 @@ class LLA_READERS_STIDSTR_API STidSTRReaderUnitConfiguration
     std::shared_ptr<AES128Key> getAESKey() const;
 
     /**
+     * \brief Get the key used for AES enciphering (SSCP v1) or authentication (SSCP v2). Fallback to a default key if none is set.
+     * \return The key.
+     */
+    std::shared_ptr<AES128Key> getAESKeyOrDefault() const;
+
+    /**
      * \brief Set the key used for AES enciphering (SSCP v1) or authentication (SSCP v2).
      * \param key The key.
      */

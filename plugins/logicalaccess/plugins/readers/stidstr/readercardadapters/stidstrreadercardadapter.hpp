@@ -84,9 +84,10 @@ class LLA_READERS_STIDSTR_API STidSTRReaderCardAdapter : public ISO7816ReaderCar
      * \param commandCode The command code.
      * \param command The command buffer.
      * \param protocolMode Temporary override the default RCA protocol mode for this command.
+     * \param timeout The command timeout.
      * \return The result of the command.
      */
-    virtual ByteVector sendCommand(unsigned short commandCode, const ByteVector &command, STidProtocolMode protocolMode);
+    virtual ByteVector sendCommand(unsigned short commandCode, const ByteVector &command, STidProtocolMode protocolMode, long timeout = -1);
 
     /**
      * \brief Send a command to the reader.
@@ -113,7 +114,7 @@ class LLA_READERS_STIDSTR_API STidSTRReaderCardAdapter : public ISO7816ReaderCar
 
     void unsignMessage(ByteVector& data) const;
 
-    ByteVector cipherMessage(const ByteVector& data);
+    ByteVector cipherMessage(const ByteVector& data, bool includesIV = false);
 
     ByteVector uncipherMessage(const ByteVector& data);
 

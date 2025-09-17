@@ -101,7 +101,8 @@ ByteVector STidSTRReaderCardAdapter::sendMessage(unsigned short commandCode,
     LOG(LogLevel::COMS) << "Sending message with command code {0x" << std::hex
                         << commandCode << std::dec << "(" << commandCode << ")} command "
                         << BufferHelper::getHex(command) << " command size {"
-                        << command.size() << "}...";
+                        << command.size() << "} protocol mode {"
+                        << d_protocolMode << "}...";
     ByteVector processedMsg;
     std::shared_ptr<STidSTRReaderUnitConfiguration> readerConfig =
         getSTidSTRReaderUnit()->getSTidSTRConfiguration();
@@ -156,18 +157,18 @@ ByteVector STidSTRReaderCardAdapter::sendMessage(unsigned short commandCode,
         if (d_protocolMode != STID_PM_AUTH_REQUEST)
         {
             int counter = getSTidSTRReaderUnit()->getCommandCounter(true);
-            processedMsg.insert(processedMsg.begin(), static_cast<uint8_t>(processedMsg.size() & 0xff));
-            processedMsg.insert(processedMsg.begin(), static_cast<uint8_t>((processedMsg.size() & 0xff00) >> 8));
-            processedMsg.insert(processedMsg.begin(), static_cast<uint8_t>((processedMsg.size() & 0xff0000) >> 16));
-            processedMsg.insert(processedMsg.begin(), static_cast<uint8_t>((processedMsg.size() & 0xff000000) >> 24));
+            processedMsg.insert(processedMsg.begin(), static_cast<uint8_t>(counter & 0xff));
+            processedMsg.insert(processedMsg.begin(), static_cast<uint8_t>((counter & 0xff00) >> 8));
+            processedMsg.insert(processedMsg.begin(), static_cast<uint8_t>((counter & 0xff0000) >> 16));
+            processedMsg.insert(processedMsg.begin(), static_cast<uint8_t>((counter & 0xff000000) >> 24));
 
             signMessage(processedMsg);
-            processedMsg = cipherMessage(processedMsg);
+            processedMsg = cipherMessage(processedMsg, true);
         }
     }
 
     LOG(LogLevel::COMS) << "Final message " << BufferHelper::getHex(processedMsg)
-                        << " message size {" << processedMsg.size();
+                        << " message size {" << processedMsg.size() << "}";
 
     return processedMsg;
 }
@@ -198,7 +199,7 @@ void STidSTRReaderCardAdapter::unsignMessage(ByteVector& data) const
                         << BufferHelper::getHex(data);
 }
 
-ByteVector STidSTRReaderCardAdapter::cipherMessage(const ByteVector& data)
+ByteVector STidSTRReaderCardAdapter::cipherMessage(const ByteVector& data, bool includesIV)
 {
     LOG(LogLevel::COMS) << "Need to cipher data ! Ciphering with AES...";
     LOG(LogLevel::COMS) << "Message before ciphering {"
@@ -220,6 +221,10 @@ ByteVector STidSTRReaderCardAdapter::cipherMessage(const ByteVector& data)
     if (encProcessedMsg.size() >= 16)
     {
         d_lastIV = ByteVector(encProcessedMsg.end() - 16, encProcessedMsg.end());
+    }
+    if (includesIV)
+    {
+        encProcessedMsg.insert(encProcessedMsg.end(), iv.begin(), iv.end());
     }
 
     LOG(LogLevel::COMS) << "Message after ciphering {"
@@ -264,21 +269,23 @@ ByteVector STidSTRReaderCardAdapter::getIV()
 
 ByteVector STidSTRReaderCardAdapter::sendCommand(unsigned short commandCode,
                                                  const ByteVector &command,
-                                                 STidProtocolMode protocolMode)
+                                                 STidProtocolMode protocolMode,
+                                                 long int timeout)
 {
      
     STidProtocolMode pm = d_protocolMode;
     try
     {
         d_protocolMode = protocolMode;
-        return sendCommand(commandCode, command);
+        auto r = sendCommand(commandCode, command, timeout);        
+        d_protocolMode = pm;
+        return r;
     }
     catch (std::exception &)
     {
         d_protocolMode = pm;
         throw;
     }
-    d_protocolMode = pm;
 }
 
 ByteVector STidSTRReaderCardAdapter::sendCommand(unsigned short commandCode,
@@ -423,7 +430,6 @@ ByteVector STidSTRReaderCardAdapter::receiveMessage(const ByteVector &data,
                                     "The buffer is too short to contains the IV.");
 
             tmpData = uncipherMessage(tmpData);
-            unsignMessage(tmpData);
         }
     }
 
@@ -476,9 +482,17 @@ ByteVector STidSTRReaderCardAdapter::receiveMessage(const ByteVector &data,
                                 "Bad message type for this reader/card adapter.");
 
         statusCode = tmpData[offset++];
-        LOG(LogLevel::COMS) << "Plain data status code {0x" << std::hex << statusCode
+        LOG(LogLevel::COMS) << "Plain data status code {" << std::hex << statusCode
                             << std::dec << "(" << statusCode << ")}";
         CheckError(statusCode);
+
+        if (readerConfig->getProtocolVersion() == STID_SSCP_V2 && d_protocolMode != STID_PM_AUTH_REQUEST)
+        {
+            auto maclen = getSTidSTRReaderUnit()->getHMACLength();
+            EXCEPTION_ASSERT_WITH_LOG(offset + maclen <= tmpData.size(), LibLogicalAccessException, "The buffer is too short to contains the HMAC signature.");
+            tmpData.resize(offset + maclen); // Remove padding
+            unsignMessage(tmpData);
+        }
     }
     else
     {

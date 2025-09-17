@@ -897,13 +897,7 @@ void STidSTRReaderUnit::authenticateAES()
                                  "Cannot retrieve cryptographically strong bytes");
     }
 
-    std::shared_ptr<AES128Key> key = getSTidSTRConfiguration()->getAESKey();
-    if (key->isEmpty())
-    {
-        LOG(LogLevel::INFOS) << "Empty key... using the default one !";
-        key.reset(new AES128Key("E7 4A 54 0F A0 7C 4D B1 B4 64 21 12 6D F7 AD 36"));
-    }
-
+    std::shared_ptr<AES128Key> key = getSTidSTRConfiguration()->getAESKeyOrDefault();
     openssl::AESSymmetricKey aeskey = openssl::AESSymmetricKey::createFromData(key->getData());
     openssl::AESInitializationVector aesiv =
         openssl::AESInitializationVector::createNull();
@@ -1029,8 +1023,8 @@ void STidSTRReaderUnit::authenticateReader()
         if (ret.size() < 40)
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Unexpected response size");
         
-        ByteVector idA2 = ByteVector(ret.begin(), ret.begin() + 4);
-        ByteVector idB2 = ByteVector(ret.begin() + 4, ret.begin() + 8);
+        ByteVector idB2 = ByteVector(ret.begin(), ret.begin() + 4);
+        ByteVector idA2 = ByteVector(ret.begin() + 4, ret.begin() + 8);
         ByteVector rndA2 = ByteVector(ret.begin() + 8, ret.begin() + 24);
         ByteVector rndB = ByteVector(ret.begin() + 24, ret.begin() + 40);
         ByteVector signature = ByteVector(ret.begin() + 40, ret.end());
@@ -1054,7 +1048,7 @@ void STidSTRReaderUnit::authenticateReader()
         EXCEPTION_ASSERT_WITH_LOG(ret[4] == 0x00 && ret[5] == 0x08, LibLogicalAccessException,
                               "Wrong authentication status code.");
 
-        ByteVector w = calculateHMAC(rndB, STID_KEYCTX_AUTH2);
+        ByteVector w = cipherData(rndB, ByteVector(), STID_KEYCTX_AUTH2);
         ByteVector info1 = { 0x02, 0x6a, 0x53, 0x82, 0xe6, 0x53};
         ByteVector info2 = { 0x02, 0x6a};
 
@@ -1114,10 +1108,10 @@ ByteVector STidSTRReaderUnit::getKeyFromContext(STidKeyContext kctx) const
 {
     ByteVector key;
     if ((kctx & STID_KEYCTX_AUTH) == STID_KEYCTX_AUTH)
-        key = getSTidSTRConfiguration()->getAESKey()->getData();
-    else if ((kctx & STID_KEYCTX_AUTH2) == STID_KEYCTX_AUTH)
-        key = cipherData(getSTidSTRConfiguration()->getAESKey()->getData(), ByteVector(), static_cast<STidKeyContext>(STID_KEYCTX_AUTH | STID_KEYCTX_AES));
-    else if ((kctx & STID_KEYCTX_B_TO_A) == STID_KEYCTX_AUTH)
+        key = getSTidSTRConfiguration()->getAESKeyOrDefault()->getData();
+    else if ((kctx & STID_KEYCTX_AUTH2) == STID_KEYCTX_AUTH2)
+        key = cipherData(getSTidSTRConfiguration()->getAESKeyOrDefault()->getData(), ByteVector(), static_cast<STidKeyContext>(STID_KEYCTX_AUTH | STID_KEYCTX_AES));
+    else if ((kctx & STID_KEYCTX_B_TO_A) == STID_KEYCTX_B_TO_A)
     {
         if ((kctx & STID_KEYCTX_AES) == STID_KEYCTX_AES)
             key = d_sessionKey_aes_ba;
@@ -1208,7 +1202,7 @@ STidSTRReaderUnit::STidSTRInformation STidSTRReaderUnit::getReaderInformaton()
         getDefaultSTidSTRReaderCardAdapter()->sendCommand(0x0008, ByteVector());
 
     EXCEPTION_ASSERT_WITH_LOG(response.size() >= 5, LibLogicalAccessException,
-                              "The GetInfos response should be 5-byte long.");
+                              "The nfos response should be 5-byte long.");
 
     STidSTRInformation readerInfo;
     readerInfo.version      = response[0];

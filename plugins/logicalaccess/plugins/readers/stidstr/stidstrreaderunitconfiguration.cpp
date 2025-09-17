@@ -265,6 +265,17 @@ std::shared_ptr<AES128Key> STidSTRReaderUnitConfiguration::getAESKey() const
     return d_key_aes;
 }
 
+std::shared_ptr<AES128Key> STidSTRReaderUnitConfiguration::getAESKeyOrDefault() const
+{
+    auto key = getAESKey();
+    if (key->isEmpty())
+    {
+        LOG(LogLevel::INFOS) << "Empty key... using the default one !";
+        key.reset(new AES128Key("E7 4A 54 0F A0 7C 4D B1 B4 64 21 12 6D F7 AD 36"));
+    }
+    return key;
+}
+
 void STidSTRReaderUnitConfiguration::setAESKey(std::shared_ptr<AES128Key> key)
 {
     if (key)

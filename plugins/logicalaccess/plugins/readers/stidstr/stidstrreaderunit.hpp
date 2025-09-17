@@ -42,8 +42,8 @@ typedef enum {
     STID_KEYCTX_UNDEFINED = 0x00, /**< Undefined context */
     STID_KEYCTX_AUTH = 0x01, /** Authentication context */
     STID_KEYCTX_AUTH2 = 0x02, /** Authentication context with K2 */
-    STID_KEYCTX_A_TO_B = 0x03, /**< Command from A to B */
-    STID_KEYCTX_B_TO_A  = 0x04,  /**< Command from B to A */
+    STID_KEYCTX_A_TO_B = 0x04, /**< Command from A to B */
+    STID_KEYCTX_B_TO_A  = 0x08,  /**< Command from B to A */
     STID_KEYCTX_AES = 0x80 /** AES key type */
 } STidKeyContext;
 
