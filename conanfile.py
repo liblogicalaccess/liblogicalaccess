@@ -4,12 +4,12 @@ from conan.tools.files import copy
 
 class LLAConan(ConanFile):
     name = "logicalaccess"
-    version = "3.5.2"
+    version = "3.6.0"
     license = "https://github.com/liblogicalaccess/liblogicalaccess/blob/develop/LICENSE"
     url = "https://github.com/liblogicalaccess/liblogicalaccess"
     description = "LLA RFID library"
     settings = "os", "compiler", "build_type", "arch"
-    requires = 'boost/1.83.0', 'openssl/3.4.1', 'nlohmann_json/3.11.3', 'zlib/1.3.1'
+    requires = 'boost/1.88.0', 'openssl/3.6.0', 'nlohmann_json/3.12.0', 'zlib/1.3.1'
     options = {'LLA_BUILD_PKCS': [True, False], 'LLA_BUILD_LIBUSB': [True, False]}
     revision_mode = "scm"
     exports_sources = "plugins*", "src*", "include*", "CMakeLists.txt", "cmake*", "liblogicalaccess.config", "tests*", "samples*"
