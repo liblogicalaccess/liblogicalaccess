@@ -355,7 +355,10 @@ void DESFireEV2Crypto::duplicateKeySet(uint8_t keySetNbToDuplicate, uint8_t keyS
     }
 
     for (auto x = 0; x <= nbKeys; ++x)
-        d_keys[std::make_tuple(d_currentAid, keySetNb, x)] = std::make_shared<DESFireKey>(
-            *d_keys[std::make_tuple(d_currentAid, keySetNbToDuplicate, x)]);
+    {
+        auto oIndex = std::make_tuple(d_currentAid, keySetNbToDuplicate, x);
+        if (d_keys.find(oIndex) != d_keys.end())
+            d_keys[std::make_tuple(d_currentAid, keySetNb, x)] = std::make_shared<DESFireKey>(*d_keys[oIndex]);
+    }
 }
 } // namespace logicalaccess

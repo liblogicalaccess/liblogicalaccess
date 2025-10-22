@@ -539,8 +539,7 @@ void DESFireEV2ISO7816Commands::rollKeySet(uint8_t keySetNo)
 
     handleWriteData(DFEV2_INS_ROLLKEYSET, parameters, {}, CM_MAC);
 
-    std::dynamic_pointer_cast<DESFireEV2Crypto>(getDESFireChip()->getCrypto())
-        ->duplicateKeySet(0, keySetNo);
+    crypto->duplicateKeySet(0, keySetNo);
 }
 
 void DESFireEV2ISO7816Commands::finalizeKeySet(uint8_t keySetNo, uint8_t keySetVersion)
