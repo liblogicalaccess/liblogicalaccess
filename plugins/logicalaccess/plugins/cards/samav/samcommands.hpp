@@ -94,7 +94,7 @@ class SAMCommands : public Commands
     virtual void lockUnlock(std::shared_ptr<DESFireKey> masterKey, SAMLockUnlock state,
                             unsigned char keyno, unsigned char unlockkeyno,
                             unsigned char unlockkeyversion) = 0;
-    virtual ByteVector transmit(ByteVector cmd, bool first = true, bool last = true) = 0;
+    virtual ByteVector transmit(ByteVector cmd, bool first = true, bool last = true, bool s_mode = false) = 0;
 };
 }
 

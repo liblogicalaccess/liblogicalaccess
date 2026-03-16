@@ -134,7 +134,7 @@ class LLA_READERS_ISO7816_API SAMISO7816Commands : public SAMCommands<T, S>
     }
 
     ByteVector transmit(ByteVector cmd, bool /*first*/ = true,
-                        bool /*last*/ = true) override
+                        bool /*last*/ = true, bool /*s_mode*/ = false) override
     {
         return getISO7816ReaderCardAdapter()->sendCommand(cmd);
     }

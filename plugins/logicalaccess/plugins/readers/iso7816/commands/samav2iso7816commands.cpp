@@ -556,7 +556,7 @@ ByteVector SAMAV2ISO7816Commands::generateEncIV(bool encrypt) const
     return encIV;
 }
 
-ByteVector SAMAV2ISO7816Commands::transmit(ByteVector cmd, bool first, bool last)
+ByteVector SAMAV2ISO7816Commands::transmit(ByteVector cmd, bool first, bool last, bool s_mode)
 {
     ByteVector result;
 
@@ -564,8 +564,10 @@ ByteVector SAMAV2ISO7816Commands::transmit(ByteVector cmd, bool first, bool last
     {
         try
         {
-            result =
-                getISO7816ReaderCardAdapter()->sendCommand(createfullProtectionCmd(cmd));
+            if (first || !s_mode)
+                result = getISO7816ReaderCardAdapter()->sendCommand(createfullProtectionCmd(cmd));
+            else
+                result = getISO7816ReaderCardAdapter()->sendCommand(cmd);
         }
         catch (std::exception)
         {
@@ -580,9 +582,11 @@ ByteVector SAMAV2ISO7816Commands::transmit(ByteVector cmd, bool first, bool last
         {
             fill(d_LastSessionIV.begin(), d_LastSessionIV.end(), 0x00);
             fill(d_lastMacIV.begin(), d_lastMacIV.end(), 0);
-            ++d_cmdCtr;
         }
-        result = verifyAndDecryptResponse(result);
+        if (first || s_mode)
+            ++d_cmdCtr;
+        if (last || !s_mode)
+            result = verifyAndDecryptResponse(result);
         if (last)
         {
             fill(d_LastSessionIV.begin(), d_LastSessionIV.end(), 0x00);

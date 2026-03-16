@@ -67,7 +67,7 @@ class LLA_READERS_ISO7816_API SAMAV2ISO7816Commands
                    std::shared_ptr<SAMKeyEntry<KeyEntryAV2Information, SETAV2>> keyentry,
                    std::shared_ptr<DESFireKey> key) override;
 
-    ByteVector transmit(ByteVector cmd, bool first = true, bool last = true) override;
+    ByteVector transmit(ByteVector cmd, bool first = true, bool last = true, bool s_mode = false) override;
 
     ByteVector dumpSecretKey(unsigned char keyno, unsigned char keyversion,
                              ByteVector divInput) override;
