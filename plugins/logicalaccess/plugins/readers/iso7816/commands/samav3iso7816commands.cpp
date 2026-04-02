@@ -47,7 +47,7 @@ ByteVector SAMAV3ISO7816Commands::encipherKeyEntry(unsigned char keyno,
 {
     unsigned char p2 = 0x00;
     ByteVector data;
-    data.push_back(static_cast<unsigned char>(0x80 & channel));
+    data.push_back(static_cast<unsigned char>(0x80 | (channel & 0x03)));
     data.push_back(targetKeyno);
     data.push_back(static_cast<unsigned char>(0xff & (changeCounter >> 8)));
     data.push_back(static_cast<unsigned char>(0xff & changeCounter));
