@@ -913,8 +913,12 @@ std::shared_ptr<Chip> PCSCReaderUnit::createChip(std::string type)
                     std::dynamic_pointer_cast<SAMAV1ISO7816Commands>(
                         dcmd->getSAMChip()->getCommands())
                         ->setCrypto(samcrypto);
-                else if (dcmd->getSAMChip()->getCardType() == CHIP_SAMAV2 || dcmd->getSAMChip()->getCardType() == CHIP_SAMAV3)
+                else if (dcmd->getSAMChip()->getCardType() == CHIP_SAMAV2)
                     std::dynamic_pointer_cast<SAMAV2ISO7816Commands>(
+                        dcmd->getSAMChip()->getCommands())
+                        ->setCrypto(samcrypto);
+                else if (dcmd->getSAMChip()->getCardType() == CHIP_SAMAV3)
+                    std::dynamic_pointer_cast<SAMAV3ISO7816Commands>(
                         dcmd->getSAMChip()->getCommands())
                         ->setCrypto(samcrypto);
             }
