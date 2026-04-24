@@ -122,7 +122,7 @@ class LLA_CORE_API UDPDataTransport : public DataTransport
     /**
      * \brief Provides core I/O functionality
      */
-    boost::asio::io_service ios;
+    boost::asio::io_context ios;
 
     /**
      * \brief The ip address

@@ -80,7 +80,7 @@ bool SerialPortXml::EnumerateUsingCreateFile(
 
                 try
                 {
-                    boost::asio::io_service service;
+                    boost::asio::io_context service;
                     boost::asio::serial_port sp(service, p);
                     if (sp.is_open())
                     {

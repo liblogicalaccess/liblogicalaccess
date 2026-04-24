@@ -65,7 +65,7 @@ bool TCPDataTransport::connect(long int timeout)
 
     try
     {
-        d_ios.reset();
+        d_ios.restart();
         d_timer.expires_from_now(boost::posix_time::milliseconds(timeout));
         d_timer.async_wait(boost::bind(&TCPDataTransport::time_out, this,
                                        boost::asio::placeholders::error));
@@ -155,10 +155,9 @@ void TCPDataTransport::time_out(const boost::system::error_code &error)
 ByteVector TCPDataTransport::receive(long int timeout)
 {
     ByteVector recv(256);
-    d_ios.reset();
     d_bytes_transferred = 0;
 
-    d_ios.reset();
+    d_ios.restart();
     d_socket.async_receive(boost::asio::buffer(recv),
                            boost::bind(&TCPDataTransport::read_complete, this,
                                        boost::asio::placeholders::error,

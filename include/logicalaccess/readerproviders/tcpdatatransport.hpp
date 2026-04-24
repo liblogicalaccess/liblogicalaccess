@@ -149,7 +149,7 @@ class LLA_CORE_API TCPDataTransport : public DataTransport
     /**
      * \brief Provides core I/O functionality
      */
-    boost::asio::io_service d_ios;
+    boost::asio::io_context d_ios;
 
     /**
      * \brief TCP Socket

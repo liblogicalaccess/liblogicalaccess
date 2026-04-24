@@ -63,7 +63,7 @@ void SerialPort::open()
             boost::bind(&SerialPort::do_read, this, boost::asio::placeholders::error,
                         boost::asio::placeholders::bytes_transferred));
         m_thread_reader.reset(
-            new std::thread(boost::bind(&boost::asio::io_service::run, &m_io)));
+            new std::thread(boost::bind(&boost::asio::io_context::run, &m_io)));
     }
 }
 
@@ -75,11 +75,11 @@ void SerialPort::reopen()
 
 void SerialPort::close()
 {
-    m_io.post(boost::bind(&SerialPort::do_close, this, boost::system::error_code()));
+    boost::asio::post(m_io, boost::bind(&SerialPort::do_close, this, boost::system::error_code()));
     if (m_thread_reader)
         m_thread_reader->join();
 
-    m_io.reset();
+    m_io.restart();
     m_thread_reader.reset();
     m_circular_read_buffer.clear();
     m_read_buffer.clear();
@@ -226,7 +226,7 @@ size_t SerialPort::write(const ByteVector &buf)
     EXCEPTION_ASSERT(isOpen(), LibLogicalAccessException,
                      "Cannot write on a closed device");
 
-    m_io.post(boost::bind(&SerialPort::do_write, this, buf));
+    boost::asio::post(m_io, boost::bind(&SerialPort::do_write, this, buf));
     return buf.size();
 }
 
