@@ -10,7 +10,7 @@ class LLAConan(ConanFile):
     description = "LLA RFID library"
     settings = "os", "compiler", "build_type", "arch"
     requires = 'boost/1.88.0', 'openssl/3.6.0', 'nlohmann_json/3.12.0', 'zlib/1.3.1'
-    options = {'LLA_BUILD_PKCS': [True, False], 'LLA_BUILD_LIBUSB': [True, False]}
+    options = {'LLA_BUILD_PKCS': [True, False], 'LLA_BUILD_RFIDEAS': [True, False], 'LLA_BUILD_LIBUSB': [True, False]}
     revision_mode = "scm"
     exports_sources = "plugins*", "src*", "include*", "CMakeLists.txt", "cmake*", "liblogicalaccess.config", "tests*", "samples*"
     
@@ -20,6 +20,7 @@ class LLAConan(ConanFile):
         self.options['openssl'].shared = True
         self.options['gtest'].shared = True
         if self.settings.os == "Windows":
+            self.options.LLA_BUILD_RFIDEAS = True
             self.options['openssl'].no_asm = True
             self.options['boost'].shared = False
         else:
@@ -62,6 +63,10 @@ class LLAConan(ConanFile):
         if self.settings.os == "Windows":
             # For MSVC we need to restrict configuration type to avoid issues.
             tc.variables['CMAKE_CONFIGURATION_TYPES'] = self.settings.build_type
+            if self.options.LLA_BUILD_RFIDEAS:
+                tc.variables['LLA_BUILD_RFIDEAS'] = True
+            else:
+                tc.variables['LLA_BUILD_RFIDEAS'] = False
         
         tc.generate()
         
@@ -104,6 +109,9 @@ class LLAConan(ConanFile):
                 self.cpp_info.libs.append('islogkbdhooklib64')
             else:
                 self.cpp_info.libs.append('islogkbdhooklib32')
+            
+            if self.options.LLA_BUILD_RFIDEAS:
+                self.cpp_info.libs.append('rfideasreaders')
         
         # Linux / Windows common plugins.
         self.cpp_info.libs.append('llacommon')
