@@ -21,6 +21,23 @@
 
 namespace logicalaccess
 {
+
+namespace sam
+{
+constexpr std::size_t MAX_APDU_DATA_SIZE = 0xFF;
+enum class HostMode : unsigned char
+{
+    Plain       = 0x00,
+    MAC         = 0x01,
+    FullProtect = 0x02
+};
+
+constexpr unsigned char toByte(HostMode mode)
+{
+    return static_cast<unsigned char>(mode);
+}
+}
+
 #define AV2_HEADER_LENGTH 0x05
 #define AV2_HEADER_LENGTH_WITH_LE 0x06
 #define AV2_LC_POS 0x04
@@ -55,6 +72,9 @@ class LLA_READERS_ISO7816_API SAMAV2ISO7816Commands
     virtual ~SAMAV2ISO7816Commands();
 
     void authenticateHost(std::shared_ptr<DESFireKey> key, unsigned char keyno) override;
+
+    void authenticateHost(std::shared_ptr<DESFireKey> key, unsigned char keyno,
+                          sam::HostMode hostmode);
 
     std::shared_ptr<SAMKeyEntry<KeyEntryAV2Information, SETAV2>>
     getKeyEntry(unsigned char keyno) override;
@@ -99,16 +119,117 @@ class LLA_READERS_ISO7816_API SAMAV2ISO7816Commands
 
     void generateOfflineSessionKey(std::shared_ptr<DESFireKey> key, unsigned short changecnt);
 
+    
+    void PKI_GenerateKeyPair(unsigned char keyNo, unsigned short configSettings,
+                             unsigned char keyNoCEK, unsigned char keyNoVCEK,
+                             unsigned char keyNoRef, unsigned char *keyNoAEK = nullptr,
+                             unsigned char *keyVAEK = nullptr, unsigned short nLen = 0x40,
+                             const ByteVector &pki_e = {},
+                             bool includeAccess      = false) override;
+
+    void PKI_ImportKey(unsigned char keyNo, unsigned short configSettings,
+                       unsigned char keyNoCEK, unsigned char keyNoVCEK,
+                       unsigned char refNoKUC, const ByteVector &pki_n,
+                       const ByteVector &pki_e, const ByteVector &pki_p = {},
+                       const ByteVector &pki_q = {}, const ByteVector &pki_dP = {},
+                       const ByteVector &pki_dQ = {}, const ByteVector &pki_ipq = {},
+                       unsigned char *keyNoAEK = nullptr,
+                       unsigned char *keyVAEK = nullptr, bool includeAccess = false,
+                       bool updateSettingsOnly = false) override;
+
+    ByteVector PKI_ExportPrivateKey(unsigned char keyNo, bool returnAEK = false) override;
+
+    ByteVector PKI_ExportPublicKey(unsigned char keyNo, bool returnAEK = false) override;
+
+    ByteVector
+    PKI_UpdateKeyEntries(EVP_PKEY *encKey, EVP_PKEY *signKey, unsigned char keyNoEnc,
+                         unsigned char keyNoSign, unsigned char keyNoAck,
+                         unsigned char hashAlgo,
+                         const std::vector<std::shared_ptr<SAMBasicKeyEntry>> &entries,
+                         uint16_t changeCounter) override;
+
+    ByteVector PKI_UpdateKeyEntries(unsigned char keyNoEnc, unsigned char keyNoSign,
+                                    unsigned char keyNoAck, unsigned char hashAlgo,
+                                    unsigned char nbKeyEntries,
+                                    const ByteVector &encKeyFrame,
+                                    const ByteVector &signature) override;
+
+
+    ByteVector PKI_EncipherKeyEntries(
+        unsigned char hashAlgo, unsigned char keyNoEnc, unsigned char keyNoSign,
+        unsigned char keyNoDec, unsigned char keyNoVerif, unsigned short persoCtr,
+        const std::vector<std::pair<unsigned char, unsigned char>> &keyEntries,
+        const ByteVector &divInput = {}) override;
+
+    ByteVector PKI_GenerateHash(unsigned char hashAlgo,
+                                const ByteVector &message) override;
+
+    void PKI_GenerateSignature(unsigned char hashAlgo, unsigned char keyNoSign,
+                               const ByteVector &hash) override;
+
+    ByteVector PKI_SendSignature() override;
+
+    void PKI_VerifySignature(unsigned char hashAlgo, unsigned char keyNoVerif,
+                             const ByteVector &hash,
+                             const ByteVector &signature) override;
+
+    ByteVector PKI_EncipherData(unsigned char hashAlgo, unsigned char keyNoEnc,
+                                const ByteVector &plainData) override;
+
+    ByteVector PKI_DecipherData(unsigned char hashAlgo, unsigned char keyNoDec,
+                                const ByteVector &encData) override;
+
+    void PKI_ImportEccKey(unsigned char keyNo, unsigned short eccSet,
+                          unsigned char keyNoCEK, unsigned char keyNoVCEK,
+                          unsigned char keyNoKUC, unsigned char keyNoAEK,
+                          unsigned char keyNoVAEK,
+                          const ByteVector &eccPublicKey = ByteVector(),
+                          bool settingsOnly              = false) override;
+
+    void PKI_ImportEccCurve(unsigned char curveNo, unsigned char keyNoCCK,
+                            unsigned char keyNoVCCK,
+                            const ByteVector &eccCurve = ByteVector(),
+                            bool settingsOnly          = false) override;
+
+    ByteVector PKI_ExportEccPublicKey(unsigned char keyNo) override;
+
+    void PKI_VerifyEccSignature(unsigned char keyNo, unsigned char curveNo,
+                                const ByteVector &message,
+                                const ByteVector &signature) override;
+
+
   protected:
     void generateSessionKey(ByteVector rnd1, ByteVector rnd2);
 
-    ByteVector createfullProtectionCmd(ByteVector cmd);
+    ByteVector createfullProtectionCmd(const ByteVector &cmd);
+    ByteVector createMacProtectionCmd(const ByteVector &cmd);
 
-    ByteVector verifyAndDecryptResponse(ByteVector response);
+    ByteVector transmitSecureChained(const ByteVector &cmd, unsigned char PxIndex = 3, bool hasLe = false);
+    
+    std::pair<ByteVector, ByteVector> prepareSecureChainedPayload(const ByteVector &payload, bool le = false);
+    std::vector<ByteVector> createSecureChainedApduFrames(const ByteVector &cmd,
+                                                          const ByteVector &encData,
+                                                          const ByteVector &mac,
+                                                          unsigned char PxIndex,
+                                                          bool le = false);
 
-    static void getLcLe(ByteVector cmd, bool &lc, unsigned char &lcvalue, bool &le);
+    ByteVector verifyAndDecryptResponse(const ByteVector &response);
+    ByteVector verifyAndDecryptMacResponse(const ByteVector &response);
+
+    static void getLcLe(const ByteVector &cmd, bool &lc, unsigned char &lcvalue);
 
     ByteVector generateEncIV(bool encrypt) const;
+
+    ByteVector buildPlaintext(uint16_t changeCtr, const std::vector<std::shared_ptr<SAMBasicKeyEntry>> &entries);
+    ByteVector rsa_oaep_encrypt(EVP_PKEY *pubKey, const ByteVector &plaintext, const EVP_MD *md);
+    ByteVector rsa_pss_sign(EVP_PKEY *privKey, const ByteVector &data, const EVP_MD *md);
+    const EVP_MD *getHash(uint8_t hashAlgo);
+    void buildCryptogram(EVP_PKEY *encKey, EVP_PKEY *signKey, uint8_t keyNoEnc, uint8_t keyNoSign, uint16_t changeCtr,
+        const std::vector<std::shared_ptr<SAMBasicKeyEntry>> &entries,
+        uint8_t hashAlgo, ByteVector &encFrame, ByteVector &signature);
+
+    void resetIVs();
+    void secureZero(ByteVector &vec);
 
     ByteVector d_macSessionKey;
 

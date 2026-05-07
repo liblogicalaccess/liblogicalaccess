@@ -10,7 +10,7 @@ namespace logicalaccess
 {
 ACSACRResultChecker::ACSACRResultChecker()
 {
-    AddCheck(0x63, 0x00, "The operation failed.", CardException::UNKOWN_ERROR);
+    AddCheck(0x63, 0x00, "The operation failed.", CardException::UNKNOWN_ERROR);
 }
 
 ACSACRResultChecker::~ACSACRResultChecker()

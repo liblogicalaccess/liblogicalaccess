@@ -89,7 +89,7 @@ class CardException : public LibLogicalAccessException
         WRONG_INSTRUCTION,
         WRONG_CLASS,
         AID_NOT_FOUND,
-        UNKOWN_ERROR // Operation failed, no precise diagnosis
+        UNKNOWN_ERROR // Operation failed, no precise diagnosis
     };
 
     CardException(const std::string &message, ErrorType error)
