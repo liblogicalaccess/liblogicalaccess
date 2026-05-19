@@ -463,7 +463,7 @@ void DESFireEV1ISO7816Commands::sam_iso_authenticate(std::shared_ptr<DESFireKey>
                 apduresult = std::dynamic_pointer_cast<
                                  SAMCommands<KeyEntryAV2Information, SETAV2>>(
                                  getSAMChip()->getCommands())
-                                 ->transmit(cmd_vector, true, false);
+                                 ->transmit(cmd_vector, true, false, true);
             break;
         }
         catch (CardException &ex)
@@ -545,7 +545,7 @@ void DESFireEV1ISO7816Commands::sam_iso_authenticate(std::shared_ptr<DESFireKey>
         apduresult =
             std::dynamic_pointer_cast<SAMCommands<KeyEntryAV2Information, SETAV2>>(
                 getSAMChip()->getCommands())
-                ->transmit(cmd_vector);
+                ->transmit(cmd_vector, false, true, true);
     if (apduresult.size() <= 2 && apduresult[apduresult.size() - 2] != 0x90 &&
         apduresult[apduresult.size() - 2] != 0x00)
         THROW_EXCEPTION_WITH_LOG(CardException, "sam_iso_authenticate P2 failed.");
