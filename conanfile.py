@@ -11,20 +11,19 @@ class LLAConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
     requires = 'boost/1.88.0', 'openssl/3.6.0', 'nlohmann_json/3.12.0', 'zlib/1.3.1'
     options = {'LLA_BUILD_PKCS': [True, False], 'LLA_BUILD_RFIDEAS': [True, False], 'LLA_BUILD_LIBUSB': [True, False]}
+    default_options = { 'LLA_BUILD_PKCS': True, 'LLA_BUILD_LIBUSB': False, 'LLA_BUILD_RFIDEAS': True }
     revision_mode = "scm"
     exports_sources = "plugins*", "src*", "include*", "CMakeLists.txt", "cmake*", "liblogicalaccess.config", "tests*", "samples*"
     
     def config_options(self):
-        self.options.LLA_BUILD_PKCS = True
-        self.options.LLA_BUILD_LIBUSB = False
         self.options['openssl'].shared = True
         self.options['gtest'].shared = True
         if self.settings.os == "Windows":
-            self.options.LLA_BUILD_RFIDEAS = True
             self.options['openssl'].no_asm = True
             self.options['boost'].shared = False
         else:
             self.options['boost'].shared = True
+            del self.options.LLA_BUILD_RFIDEAS
        
     def requirements(self):
         if self.options.LLA_BUILD_PKCS:
