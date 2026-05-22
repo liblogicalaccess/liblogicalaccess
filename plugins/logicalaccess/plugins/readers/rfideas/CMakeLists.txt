@@ -9,7 +9,7 @@ endif ()
 set(HEADER_RELATIVE_INSTALL_DIR "include/logicalaccess/plugins/readers/rfideas")
 
 file(GLOB SRCS *.cpp)
-file(GLOB include *.hpp)
+file(GLOB include *.hpp *.h)
 
 set(INCLUDE_LIB ${include} ${include_core})
 set(SOURCE_LIB ${SRCS})
