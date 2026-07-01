@@ -335,204 +335,114 @@ void SAMAV2ISO7816Commands::authenticateHost(std::shared_ptr<DESFireKey> key,
     OPENSSL_cleanse(macHost.data(), macHost.size());
 }
 
-std::pair<ByteVector, ByteVector>
-SAMAV2ISO7816Commands::prepareSecureChainedPayload(const ByteVector &payload, bool le)
+sam::ApduResult SAMAV2ISO7816Commands::createfullProtectionCmd(const ByteVector &cmd, sam::ApduFormat format)
 {
-    if (payload.size() < AV2_HEADER_LENGTH)
+    if (cmd.size() < AV2_HEADER_LENGTH)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                  "createfullProtectionCmd Invalid command size.");
 
-    size_t lcvalue = payload.size();
-    if (le)
-        lcvalue--;
-    ByteVector protectedCmd = payload;
-    ByteVector encData;
+    constexpr size_t AES_BLOCK_SIZE         = 16;
+    constexpr unsigned char ISO7816_PADDING = 0x80;
+    ByteVector protectedCmd, encData;
 
-    ByteVector data(payload.begin() + AV2_HEADER_LENGTH, payload.begin() + lcvalue);
-    protectedCmd.erase(protectedCmd.begin() + AV2_HEADER_LENGTH,
-                       protectedCmd.begin() + lcvalue);
-
-    if (data.size() % 16 != 0)
-    {
-        data.push_back(0x80);
-        if (data.size() % 16 != 0)
-            data.resize((unsigned char)(data.size() / 16 + 1) * 16, 0x00);
-    }
-
-    /* generate IV because first encrypt */
-    d_LastSessionIV    = generateEncIV(true);
-    auto cipher        = std::make_shared<openssl::AESCipher>();
-    auto symkeySession = openssl::AESSymmetricKey::createFromData(d_sessionKey);
-    auto ivSession = openssl::AESInitializationVector::createFromData(d_LastSessionIV);
-    cipher->cipher(data, encData, symkeySession, ivSession, false);
-    protectedCmd.insert(protectedCmd.begin() + AV2_HEADER_LENGTH, encData.begin(),
-                        encData.end());
-    if (data.size() < 0xEF)
-        protectedCmd[AV2_LC_POS] = static_cast<unsigned char>(encData.size() + 8);
+    bool lc = false, le = false;
+    if (format == sam::ApduFormat::Standard)
+        getLcLe(cmd, lc, le);
     else
-        protectedCmd[AV2_LC_POS] = static_cast<unsigned char>(0x00);
-    ByteVector finalCmd = protectedCmd;
-
-    /* Set counter*/
-    ByteVector cmdCtrVector;
-    BufferHelper::setUInt32(cmdCtrVector, d_cmdCtr);
-    std::reverse(cmdCtrVector.begin(), cmdCtrVector.end());
-    protectedCmd.insert(protectedCmd.begin() + 2, cmdCtrVector.begin(),
-                        cmdCtrVector.end());
-
-    /* Creater our cipher buffer and keep last block */
-    auto symkeyMac = openssl::AESSymmetricKey::createFromData(d_macSessionKey);
-    auto ivMac     = openssl::AESInitializationVector::createFromData(d_lastMacIV);
-    const size_t blockReady = (protectedCmd.size() / 16) * 16;
-    if (blockReady >= 16)
     {
-        ByteVector encMac(protectedCmd.begin(), protectedCmd.begin() + blockReady);
-        ByteVector tmp(encMac.size());
-        protectedCmd.erase(protectedCmd.begin(), protectedCmd.begin() + blockReady);
-        cipher->cipher(encMac, tmp, symkeyMac, ivMac, false);
-        EXCEPTION_ASSERT_WITH_LOG(tmp.size() >= 16, LibLogicalAccessException,
-                                  "Cipher output error.");
-        d_lastMacIV.assign(tmp.end() - 16, tmp.end());
+        lc = true;
+        le = (format == sam::ApduFormat::ExtendedWithLe);
     }
-    ByteVector macFull =
-        openssl::CMACCrypto::cmac(d_macSessionKey, cipher, protectedCmd, d_lastMacIV, 16);
-    truncateMacBuffer(macFull);
-    return {encData, macFull};
-}
 
-std::vector<ByteVector> SAMAV2ISO7816Commands::createSecureChainedApduFrames(
-    const ByteVector &cmd, const ByteVector &encData, const ByteVector &mac,
-    unsigned char PxIndex, bool le)
-{
-    if (cmd.size() < AV2_HEADER_LENGTH)
-        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Invalid APDU : too short");
-
-    constexpr size_t MAX_CHUNK = sam::MAX_APDU_DATA_SIZE;
-    std::vector<ByteVector> frames;
-    size_t offset = 0;
-    bool isHead   = true;
-
-    while (offset < encData.size())
-    {
-        const size_t chunkSize = (std::min)(isHead ? MAX_CHUNK - 8 : MAX_CHUNK, encData.size() - offset);
-        const bool isLastChunk = (offset + chunkSize >= encData.size());
-
-        ByteVector frame;
-        frame.push_back(cmd[0]);
-        frame.push_back(cmd[1]);
-        frame.push_back(cmd[2]);
-        // if (!isLastChunk) //Keep and correct later. Only first frame can have value != 0x00
-        //     frame[2] = 0;
-        frame.push_back(cmd[3]);
-        unsigned char p = static_cast<unsigned char>(isHead ? 0x00 : 0xAF);
-        frame[PxIndex] = p;
-        frame.push_back(0x00);
-        frame.insert(frame.end(), encData.begin() + offset,
-                     encData.begin() + offset + chunkSize);
-        if (isHead)
-            frame.insert(frame.end(), mac.begin(), mac.begin() + 8);
-        frame[AV2_LC_POS] = static_cast<unsigned char>(frame.size() - AV2_HEADER_LENGTH);
-        isHead = false;
-        if (le)
-            frame.push_back(cmd.back());
-        frames.push_back(std::move(frame));
-        offset += chunkSize;
-    }
-    return frames;
-}
-
-ByteVector SAMAV2ISO7816Commands::createfullProtectionCmd(const ByteVector &cmd)
-{
-    if (cmd.size() < AV2_HEADER_LENGTH)
-        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                 "createfullProtectionCmd Invalid command size.");
-
-    bool lc = false;
-    unsigned char lcvalue = 0;
-    getLcLe(cmd, lc, lcvalue);
-    auto cipher             = std::make_shared<openssl::AESCipher>();
-    ByteVector protectedCmd = cmd;
-    ByteVector encData;
+    auto cipher = std::make_shared<openssl::AESCipher>();
 
     if (!lc)
     {
+        protectedCmd = cmd;
         protectedCmd.insert(protectedCmd.begin() + AV2_LC_POS, 0x08);
     }
     else
     {
-        ByteVector data(cmd.begin() + AV2_HEADER_LENGTH,
-                        cmd.begin() + AV2_HEADER_LENGTH + lcvalue);
-        protectedCmd.erase(protectedCmd.begin() + AV2_HEADER_LENGTH,
-                           protectedCmd.begin() + AV2_HEADER_LENGTH + lcvalue);
-
-        if (data.size() % 16 != 0)
+        const size_t dataEnd = cmd.size() - (le ? 1u : 0u);
+        protectedCmd.insert(protectedCmd.end(), cmd.begin(), cmd.begin() + AV2_HEADER_LENGTH);
+        if (le)
+            protectedCmd.push_back(cmd.back());
+        ByteVector data(cmd.begin() + AV2_HEADER_LENGTH, cmd.begin() + dataEnd);
+        if (data.size() % AES_BLOCK_SIZE != 0)
         {
-            data.push_back(0x80);
-            if (data.size() % 16 != 0)
-                data.resize((unsigned char)(data.size() / 16 + 1) * 16, 0x00);
+            data.push_back(ISO7816_PADDING);
+            data.resize(((data.size() + AES_BLOCK_SIZE - 1) / AES_BLOCK_SIZE) * AES_BLOCK_SIZE, 0x00);
         }
         /* generate IV because first encrypt */
         d_LastSessionIV = generateEncIV(true);
-        auto symkeySession = openssl::AESSymmetricKey::createFromData(d_sessionKey);
-        auto ivSession = openssl::AESInitializationVector::createFromData(d_LastSessionIV);
+        const auto symkeySession = openssl::AESSymmetricKey::createFromData(d_sessionKey);
+        const auto ivSession = openssl::AESInitializationVector::createFromData(d_LastSessionIV);
         cipher->cipher(data, encData, symkeySession, ivSession, false);
-        protectedCmd.insert(protectedCmd.begin() + AV2_HEADER_LENGTH, encData.begin(),
-                            encData.end());
-        protectedCmd[AV2_LC_POS] = static_cast<unsigned char>(encData.size() + 8);
+        protectedCmd.insert(protectedCmd.begin() + AV2_HEADER_LENGTH, encData.begin(), encData.end());
+        protectedCmd[AV2_LC_POS] =
+            (encData.size() > sam::SAM_SECURE_CHANNEL_MAX_PLAIN_LC) ? 0x00 : static_cast<unsigned char>(encData.size() + 8);
     }
-    ByteVector finalCmd = protectedCmd;
 
-    /* Set counter*/
-    ByteVector cmdCtrVector;
-    BufferHelper::setUInt32(cmdCtrVector, d_cmdCtr);
-    std::reverse(cmdCtrVector.begin(), cmdCtrVector.end());
-    protectedCmd.insert(protectedCmd.begin() + 2, cmdCtrVector.begin(),
-                        cmdCtrVector.end());
+    /* Set counter */
+    ByteVector cmdCtr;
+    cmdCtr.reserve(4);
+    BufferHelper::setUInt32(cmdCtr, d_cmdCtr);
+    std::reverse(cmdCtr.begin(), cmdCtr.end());
+    protectedCmd.insert(protectedCmd.begin() + 2, cmdCtr.begin(), cmdCtr.end());
 
-    /* Creater our cipher buffer and keep last block */
-    auto symkeyMac = openssl::AESSymmetricKey::createFromData(d_macSessionKey);
-    auto ivMac     = openssl::AESInitializationVector::createFromData(d_lastMacIV);
-    const size_t blockReady = (protectedCmd.size() / 16) * 16;
-    if (blockReady >= 16)
+    const size_t blockReady = (protectedCmd.size() / AES_BLOCK_SIZE) * AES_BLOCK_SIZE;
+    if (blockReady >= AES_BLOCK_SIZE)
     {
-        ByteVector encMac(protectedCmd.begin(), protectedCmd.begin() + blockReady);
-        ByteVector tmp(encMac.size());
+        /* Creater our cipher buffer and keep last block */
+        const auto symkeyMac = openssl::AESSymmetricKey::createFromData(d_macSessionKey);
+        const auto ivMac = openssl::AESInitializationVector::createFromData(d_lastMacIV);
+        ByteVector macInput(protectedCmd.begin(), protectedCmd.begin() + blockReady);
+        ByteVector macCiphertext(macInput.size());
         protectedCmd.erase(protectedCmd.begin(), protectedCmd.begin() + blockReady);
-        cipher->cipher(encMac, tmp, symkeyMac, ivMac, false);
-        EXCEPTION_ASSERT_WITH_LOG(tmp.size() >= 16, LibLogicalAccessException,
-                                  "Cipher output too small.");
-        d_lastMacIV.assign(tmp.end() - 16, tmp.end());
+        cipher->cipher(macInput, macCiphertext, symkeyMac, ivMac, false);
+        EXCEPTION_ASSERT_WITH_LOG(macCiphertext.size() >= AES_BLOCK_SIZE, LibLogicalAccessException, "Cipher output error.");
+        d_lastMacIV.assign(macCiphertext.end() - AES_BLOCK_SIZE, macCiphertext.end());
     }
-    ByteVector encProtectedCmd = openssl::CMACCrypto::cmac(d_macSessionKey, cipher, protectedCmd, d_lastMacIV, 16);
-    truncateMacBuffer(encProtectedCmd);
-    finalCmd.insert(finalCmd.begin() + AV2_HEADER_LENGTH + encData.size(), encProtectedCmd.begin(), encProtectedCmd.begin() + 8);
-    return finalCmd;
+    ByteVector macFull = openssl::CMACCrypto::cmac(d_macSessionKey, cipher, protectedCmd, d_lastMacIV, AES_BLOCK_SIZE);
+    truncateMacBuffer(macFull);
+    return {encData, macFull, le};
 }
 
-void SAMAV2ISO7816Commands::getLcLe(const ByteVector &cmd, bool &lc, unsigned char &lcvalue)
+void SAMAV2ISO7816Commands::getLcLe(const ByteVector &cmd, bool &lc, bool &le)
 {
     const size_t cmdSize = cmd.size();
 
     if (cmdSize < AV2_HEADER_LENGTH)
-        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "getLcLe cmd param is too small.");
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "getLcLe cmd param is too small.");
 
-    lc      = false;
-    lcvalue = 0;
+    lc = false;
+    le = false;
 
-    // [CLA INS P1 P2] or [CLA INS P1 P2 LE]
-    if (cmdSize <= AV2_HEADER_LENGTH)
+    // [CLA INS P1 P2]
+    if (cmdSize == AV2_LC_POS)
         return;
-    const unsigned char lcByte  = cmd[AV2_LC_POS];
-    // [CLA INS P1 P2 LC DATA] or [CLA INS P1 P2 LC DATA LE]
-    if (cmdSize == static_cast<size_t>(lcByte) + AV2_HEADER_LENGTH ||
-        cmdSize == static_cast<size_t>(lcByte) + AV2_HEADER_LENGTH_WITH_LE)
+    // [CLA INS P1 P2 LE]
+    if (cmdSize == AV2_HEADER_LENGTH)
     {
-        lc      = true;
-        lcvalue = lcByte;
+        le = true;
         return;
     }
-    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                             "getLcLe invalid command structure (size mismatch).");
+    const unsigned char lcByte = cmd[AV2_LC_POS];
+    // [CLA INS P1 P2 LC DATA]
+    if (cmdSize == static_cast<size_t>(lcByte) + AV2_HEADER_LENGTH)
+    {
+        lc = true;
+        return;
+    }
+    // [CLA INS P1 P2 LC DATA LE]
+    if (cmdSize == static_cast<size_t>(lcByte) + AV2_HEADER_LENGTH_WITH_LE)
+    {
+        lc = true;
+        le = true;
+        return;
+    }
+    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "getLcLe invalid command structure (size mismatch).");
 }
 
 ByteVector SAMAV2ISO7816Commands::verifyAndDecryptResponse(const ByteVector &response)
@@ -552,7 +462,7 @@ ByteVector SAMAV2ISO7816Commands::verifyAndDecryptResponse(const ByteVector &res
     myMac.push_back(response[response.size() - 2]);
     myMac.push_back(response[response.size() - 1]);
 
-    /* Set counter*/
+    /* Set counter */
     BufferHelper::setUInt32(cmdCtrVector, d_cmdCtr);
     std::reverse(cmdCtrVector.begin(), cmdCtrVector.end());
     myMac.insert(myMac.end(), cmdCtrVector.begin(), cmdCtrVector.end());
@@ -562,8 +472,7 @@ ByteVector SAMAV2ISO7816Commands::verifyAndDecryptResponse(const ByteVector &res
         /* We have data Creater our cipher buffer and keep last block */
         auto symkeyMac = openssl::AESSymmetricKey::createFromData(d_macSessionKey);
         auto ivMac     = openssl::AESInitializationVector::createFromData(d_lastMacIV);
-        myMac.insert(myMac.end(), response.begin(),
-                     response.end() - MAC_SIZE - STATUS_SIZE);
+        myMac.insert(myMac.end(), response.begin(), response.end() - MAC_SIZE - STATUS_SIZE);
         const size_t blockReady = (myMac.size() / 16) * 16;
         ByteVector lastBlock(myMac.begin() + blockReady, myMac.end());
         myMac.erase(myMac.begin() + blockReady, myMac.end());
@@ -583,7 +492,6 @@ ByteVector SAMAV2ISO7816Commands::verifyAndDecryptResponse(const ByteVector &res
     if (response.size() > MAC_SIZE + STATUS_SIZE)
     {
         /* begin decrypt */
-
         /* generate IV because first decrypt */
         auto symkeySession = openssl::AESSymmetricKey::createFromData(d_sessionKey);
         d_LastSessionIV    = generateEncIV(false);
@@ -603,16 +511,16 @@ ByteVector SAMAV2ISO7816Commands::verifyAndDecryptResponse(const ByteVector &res
     return data;
 }
 
-// TODO make more tests for this function after multi frames is stable
+// TODO update this function
 ByteVector SAMAV2ISO7816Commands::createMacProtectionCmd(const ByteVector &cmd)
 {
     if (cmd.size() < AV2_HEADER_LENGTH)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                  "createMacProtectionCmd Invalid command size.");
     constexpr unsigned char MAC_SIZE = 8;
-    bool lc = false;
-    unsigned char lcvalue = 0;
-    getLcLe(cmd, lc, lcvalue);
+    bool lc = false, le = false;
+    bool lcvalue = 0; //TODO placeholder
+    getLcLe(cmd, lc, le);
     auto cipher = std::make_shared<openssl::AESCipher>();
     ByteVector protectedCmd = cmd;
 
@@ -641,8 +549,7 @@ ByteVector SAMAV2ISO7816Commands::createMacProtectionCmd(const ByteVector &cmd)
         ByteVector tmp(encMac.size());
         protectedCmd.erase(protectedCmd.begin(), protectedCmd.begin() + blockReady);
         cipher->cipher(encMac, tmp, symkeyMac, ivMac, false);
-        EXCEPTION_ASSERT_WITH_LOG(tmp.size() >= 16, LibLogicalAccessException,
-                                  "Cipher output too small.");
+        EXCEPTION_ASSERT_WITH_LOG(tmp.size() >= 16, LibLogicalAccessException, "Cipher output too small.");
         d_lastMacIV.assign(tmp.end() - 16, tmp.end());
     }
 
@@ -654,7 +561,6 @@ ByteVector SAMAV2ISO7816Commands::createMacProtectionCmd(const ByteVector &cmd)
     return finalCmd;
 }
 
-// TODO make more tests for this function after multi frames is stable
 ByteVector SAMAV2ISO7816Commands::verifyAndDecryptMacResponse(const ByteVector &response)
 {
     constexpr size_t MAC_SIZE    = 8;
@@ -730,39 +636,178 @@ ByteVector SAMAV2ISO7816Commands::generateEncIV(bool encrypt) const
     return encIV;
 }
 
-//TODO basic function (keep as is for now, will be reworked later), remove static when stable
-static ByteVector parseSecureResponseStatus(const ByteVector &response)
-{
-    constexpr size_t STATUS_SIZE = 2;
-
-    if (response.size() < STATUS_SIZE)
-        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Invalid response size");
-
-    return ByteVector(response.end() - STATUS_SIZE, response.end());
-}
-
-ByteVector SAMAV2ISO7816Commands::transmitSecureChained(const ByteVector &cmd,
-                                                        unsigned char PxIndex, bool hasLe)
+//TODO merge (for single transmit func)
+ByteVector SAMAV2ISO7816Commands::transmitSecureChained(const ByteVector &cmd, sam::ApduFormat format, const sam::ChainingLayout &layout)
 {
     if (cmd.size() < AV2_HEADER_LENGTH)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Invalid APDU : too short");
 
+    try
+    {
+        auto protection = createfullProtectionCmd(cmd, format);
+        auto frames = createChainedApduFrames(cmd, protection.encData, protection.mac, layout, protection.hasLe);
+        ByteVector response = sendChainedFrames(frames, cmd[1]);
+        return finalizeSecureResponse(std::move(response));
+    }
+    catch (const std::exception &e)
+    {
+        secureZero(d_sessionKey);
+        secureZero(d_macSessionKey);
+        resetIVs();
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, std::string("SAM transmit failed : ") + e.what());
+    }
+}
+
+std::vector<ByteVector> SAMAV2ISO7816Commands::createChainedApduFrames(const ByteVector &cmd, const ByteVector &encData,
+    const ByteVector &mac, const sam::ChainingLayout &layout, bool le)
+{
+    if (cmd.size() < AV2_HEADER_LENGTH)
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Invalid APDU : too short");
+
+    constexpr size_t MAX_CHUNK_SIZE = sam::SAM_SECURE_CHANNEL_MAX_PLAIN_LC;
+    constexpr size_t MAC_SIZE       = 8;
+    constexpr unsigned char PX_MORE = 0xAF;
+    constexpr unsigned char PX_LAST = 0x00;
+
+    const unsigned char cla = cmd[0];
+    const unsigned char ins = cmd[1];
+    const unsigned char p1  = cmd[2];
+    const unsigned char p2  = cmd[3];
+
+    if (mac.size() < MAC_SIZE)
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "MAC too short for final frame");
+
+    std::vector<ByteVector> frames;
+    const size_t frameCount = (encData.size() + MAX_CHUNK_SIZE - 1) / MAX_CHUNK_SIZE;
+    frames.reserve(frameCount);
+    auto buildFrame = [&](size_t offset, size_t chunkSize, bool isLastChunk) -> ByteVector
+    {
+        ByteVector frame;
+        frame.reserve(AV2_HEADER_LENGTH + chunkSize + (isLastChunk ? MAC_SIZE : 0));
+        frame.push_back(cla);
+        frame.push_back(ins);
+        frame.push_back(p1);
+        frame.push_back(p2);
+        frame.push_back(0x00);
+        auto it = encData.begin() + offset;
+        frame.insert(frame.end(), it, it + chunkSize);
+        if (isLastChunk)
+            frame.insert(frame.end(), mac.begin(), mac.begin() + MAC_SIZE);
+        frame[layout.lastFrameIndex] = static_cast<unsigned char>(isLastChunk ? PX_LAST : PX_MORE);
+        if (offset > 0)
+            frame[layout.modeIndex] = 0x00;
+        const size_t lc = frame.size() - AV2_HEADER_LENGTH;
+        if (lc > sam::MAX_APDU_DATA_SIZE)
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "LC overflow in APDU frame");
+        frame[AV2_LC_POS] = static_cast<unsigned char>(lc);
+        return frame;
+    };
+
+    size_t offset = 0;
+    while (offset < encData.size())
+    {
+        const size_t remaining = encData.size() - offset;
+        const size_t chunkSize = (std::min)(MAX_CHUNK_SIZE, remaining);
+        const bool isFirstChunk = (offset == 0);
+        const bool isLastChunk = (offset + chunkSize >= encData.size());
+        frames.emplace_back(buildFrame(offset, chunkSize, isLastChunk));
+        offset += chunkSize;
+    }
+
+    if (le && !frames.empty())
+        frames.back().push_back(cmd.back());
+
+    return frames;
+}
+
+ByteVector SAMAV2ISO7816Commands::sendChainedFrames(const std::vector<ByteVector> &frames, unsigned char ins)
+{
+    constexpr unsigned char SW1_SUCCESS = 0x90;
+    constexpr unsigned char SW2_MORE    = 0xAF;
+
     auto adapter = getISO7816ReaderCardAdapter();
+
+    ByteVector response;
+
+    unsigned char sw1 = 0;
+    unsigned char sw2 = 0;
+    for (size_t i = 0; i < frames.size(); ++i)
+    {
+        auto r = adapter->sendCommand(frames[i]);
+        if (r.size() < 2)
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Invalid response");
+        sw1 = r[r.size() - 2];
+        sw2 = r[r.size() - 1];
+        const bool lastFrame = (i + 1 == frames.size());
+        response.insert(response.end(), r.begin(), r.end() - 2);
+        if (!lastFrame && !(sw1 == SW1_SUCCESS && sw2 == SW2_MORE))
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Expected 90AF for intermediate frame");
+    }
+    return receiveChainedResponse(ins, std::move(response), sw1, sw2);
+}
+
+ByteVector SAMAV2ISO7816Commands::receiveChainedResponse(unsigned char ins, ByteVector response, unsigned char sw1, unsigned char sw2)
+{
+    constexpr unsigned char SW1_SUCCESS = 0x90;
+    constexpr unsigned char SW2_MORE    = 0xAF;
+    constexpr unsigned char SW2_OK      = 0x00;
+
+    auto adapter = getISO7816ReaderCardAdapter();
+
+    const ByteVector continueApdu = {d_cla, ins, 0x00, 0x00, 0x00};
+
+    while (sw1 == SW1_SUCCESS && sw2 == SW2_MORE)
+    {
+        auto r = adapter->sendCommand(continueApdu);
+
+        if (r.size() < 2)
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Invalid AF response");
+
+        sw1 = r[r.size() - 2];
+        sw2 = r[r.size() - 1];
+
+        response.insert(response.end(), r.begin(), r.end() - 2);
+
+        if (sw1 != SW1_SUCCESS)
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                     "Unexpected status during response chaining");
+
+        if (sw2 == SW2_MORE)
+            continue;
+
+        if (sw2 == SW2_OK)
+            break;
+
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "Unexpected status during response chaining");
+    }
+    if (!(sw1 == SW1_SUCCESS && sw2 == SW2_OK))
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Expected final 9000");
+    response.push_back(sw1);
+    response.push_back(sw2);
+    return response;
+}
+
+ByteVector SAMAV2ISO7816Commands::finalizeSecureResponse(ByteVector response)
+{
+    resetIVs();
+    ++d_cmdCtr;
+    response = verifyAndDecryptResponse(response);
+    resetIVs(); // Necessary if function returns non-empty payload
+    return response;
+}
+
+//TODO merge (for single transmit func)
+ByteVector SAMAV2ISO7816Commands::transmitSecureResponseChained(const ByteVector &cmd, const sam::ChainingLayout &layout)
+{
+    if (cmd.size() < AV2_HEADER_LENGTH)
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Invalid APDU : too short");
 
     try
     {
-        auto vec           = prepareSecureChainedPayload(cmd, hasLe);
-        ByteVector encData = vec.first;
-        ByteVector mac     = vec.second;
-        auto frames = createSecureChainedApduFrames(cmd, encData, mac, PxIndex, hasLe);
-        ByteVector response;
-        std::reverse(frames.begin(), frames.end());
-        for (auto &frame : frames) //TODO add 0x90AF check after version is stable
-            response = adapter->sendCommand(frame); //TODO rework this after version is stable
-        ++d_cmdCtr;
-        resetIVs();
-        response = verifyAndDecryptResponse(response); // TODO rework this with parseSecureResponseStatus
-        return response;
+        auto protection = createfullProtectionCmd(cmd);
+        ByteVector response = sendChainedRespApdu(cmd, protection.encData, protection.mac, layout, protection.hasLe);
+        return finalizeSecureResponse(std::move(response));
     }
     catch (const std::exception &e)
     {
@@ -774,6 +819,67 @@ ByteVector SAMAV2ISO7816Commands::transmitSecureChained(const ByteVector &cmd,
     }
 }
 
+ByteVector SAMAV2ISO7816Commands::sendChainedRespApdu(
+    const ByteVector &cmd, const ByteVector &encData, const ByteVector &mac, const sam::ChainingLayout &layout, bool le)
+{
+    if (cmd.size() < AV2_HEADER_LENGTH)
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Invalid APDU : too short");
+    
+    auto adapter = getISO7816ReaderCardAdapter();
+
+    ByteVector first;
+    first.push_back(cmd[0]);
+    first.push_back(cmd[1]);
+    first.push_back(cmd[2]);
+    first.push_back(cmd[3]);
+    first.push_back(0x00);
+    first.insert(first.end(), encData.begin(), encData.begin() + encData.size());
+    first.insert(first.end(), mac.begin(), mac.begin() + 8);
+    first[AV2_LC_POS] = static_cast<unsigned char>(first.size() - AV2_HEADER_LENGTH);
+    if (le)
+        first.push_back(cmd.back());
+    ByteVector repeat;
+    repeat.push_back(cmd[0]);
+    repeat.push_back(cmd[1]);
+    repeat.push_back(0x00);
+    repeat.push_back(0x00);
+    repeat.push_back(0x00);
+
+    ByteVector response;
+    bool firstFrame = true;
+
+    while (true)
+    {
+        ByteVector result;
+        if (firstFrame)
+            result = adapter->sendCommand(first);
+        else
+            result = adapter->sendCommand(repeat);
+        if (result.size() < 2)
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                     "Invalid response length.");
+        uint8_t sw1 = result[result.size() - 2];
+        uint8_t sw2 = result[result.size() - 1];
+
+        bool isFinal = (sw2 == 0x00);
+        bool isMore  = (sw2 == 0xAF);
+
+        if (!(sw1 == 0x90 && (isMore || isFinal)))
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                     "Invalid chaining status word");
+
+        if (isFinal)
+        {
+            response.insert(response.end(), result.begin(), result.end());
+            return response;
+        }
+        response.insert(response.end(), result.begin(), result.end() - 2);
+        firstFrame = false;
+    }
+    return response;
+}
+
+//TODO merge (for single transmit func)
 ByteVector SAMAV2ISO7816Commands::transmit(ByteVector cmd, bool first, bool last, bool s_mode)
 {
     if (cmd.size() < AV2_HEADER_LENGTH)
@@ -788,13 +894,13 @@ ByteVector SAMAV2ISO7816Commands::transmit(ByteVector cmd, bool first, bool last
 
     try
     {
-        /*if (protect == sam::HostMode::MAC) // TODO test with release version
+        /*if (protect == sam::HostMode::MAC) // TODO
         {
             protectedCmd = createMacProtectionCmd(cmd);
             ++d_cmdCtr;
         }*/
-        if (first || s_mode)
-            cmd = createfullProtectionCmd(cmd);
+        if (first || !s_mode)
+            cmd = createfullProtectionCmd(cmd).encData;
         result = adapter->sendCommand(cmd);
         if (first)
             resetIVs();
@@ -1162,19 +1268,17 @@ ByteVector SAMAV2ISO7816Commands::cmacOffline(const ByteVector &data)
     return cmac;
 }
 
-
 void SAMAV2ISO7816Commands::PKI_GenerateKeyPair(
     unsigned char keyNo, unsigned short configSettings, unsigned char keyNoCEK,
-    unsigned char keyNoVCEK, unsigned char keyNoRef, unsigned char *keyNoAEK,
-    unsigned char *keyVAEK, unsigned short nLen, const ByteVector &pki_e,
+    unsigned char keyNoVCEK, unsigned char keyNoRef, const sam::AEKVAEK &accessKeys,
+    unsigned short nLen, const ByteVector &pki_e,
     bool includeAccess)
 {
     if (keyNo > 0x01)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                  "PKI_GenerateKeyPair : invalid keyNo");
     if (nLen < 0x40 || nLen > 0x100 || (nLen % 8) != 0)
-        THROW_EXCEPTION_WITH_LOG(
-            LibLogicalAccessException,
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
             "PKI_GenerateKeyPair : invalid RSA modulus length (nLen).");
 
     const bool provideE = !pki_e.empty();
@@ -1195,59 +1299,47 @@ void SAMAV2ISO7816Commands::PKI_GenerateKeyPair(
     if (includeAccess)
     {
         effectiveConfig &= ~0x0004;
-        if (!keyNoAEK || !keyVAEK)
+        if (!accessKeys)
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                      "AEK/VAEK required but null");
     }
 
-    unsigned char p1 = 0x00;
-    if (provideE)
-        p1 |= 0x01;
-    if (includeAccess)
-        p1 |= 0x02;
-    p1 &= 0x03;
-    ByteVector payload;
+    const unsigned char p1 = (provideE ? 0x01 : 0x00) | (includeAccess ? 0x02 : 0x00);
 
+    ByteVector payload;
+    payload.reserve(includeAccess ? 12 + pki_e.size() : 10 + pki_e.size());
     payload.push_back(keyNo);
-    payload.push_back(static_cast<unsigned char>((effectiveConfig >> 8) & 0xFF));
-    payload.push_back(static_cast<unsigned char>(effectiveConfig & 0xFF));
+    sam::appendUInt16BE(payload, effectiveConfig);
     payload.push_back(keyNoCEK);
     payload.push_back(keyNoVCEK);
     payload.push_back(keyNoRef);
     if (includeAccess)
     {
-        payload.push_back(*keyNoAEK);
-        payload.push_back(*keyVAEK);
+        payload.push_back(accessKeys.keyNoAEK);
+        payload.push_back(accessKeys.keyVAEK);
     }
-    payload.push_back(static_cast<unsigned char>((nLen >> 8) & 0xFF));
-    payload.push_back(static_cast<unsigned char>(nLen & 0xFF));
-    payload.push_back(static_cast<unsigned char>((eLen >> 8) & 0xFF));
-    payload.push_back(static_cast<unsigned char>(eLen & 0xFF));
+    sam::appendUInt16BE(payload, nLen);
+    sam::appendUInt16BE(payload, eLen);
     if (provideE)
         payload.insert(payload.end(), pki_e.begin(), pki_e.end());
 
-    const size_t size = payload.size();
-
-    auto buildAPDU = [&](const ByteVector &data) -> ByteVector
-    {
-        ByteVector apdu;
-        apdu.push_back(d_cla);
-        apdu.push_back(0x15);
-        apdu.push_back(p1);
+    ByteVector apdu;
+    apdu.push_back(d_cla);
+    apdu.push_back(0x15);
+    apdu.push_back(p1);
+    apdu.push_back(0x00);
+    if (payload.size() > sam::SAM_SECURE_CHANNEL_MAX_PLAIN_LC)
         apdu.push_back(0x00);
-        if (data.size() > sam::MAX_APDU_DATA_SIZE)
-            apdu.push_back(0x00);
-        else
-            apdu.push_back(static_cast<unsigned char>(data.size()));
-        apdu.insert(apdu.end(), data.begin(), data.end());
-        return apdu;
-    };
-    const ByteVector fullPayload = buildAPDU(payload);
-    const ByteVector resp = transmitSecureChained(fullPayload); // TODO : keep for testing
+    else
+        apdu.push_back(static_cast<unsigned char>(payload.size()));
+    apdu.insert(apdu.end(), payload.begin(), payload.end());
+
+    const ByteVector resp = transmitSecureChained(apdu, sam::ApduFormat::Extended);
     if (resp.size() < 2)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                  "PKI_GenerateKeyPair : invalid response length");
-    const uint16_t sw = (resp[resp.size() - 2] << 8) | resp[resp.size() - 1];
+
+    const uint16_t sw = sam::parseStatusWord(resp);
     if (sw == 0x9000)
         return;
     if (sw == 0x6A80)
@@ -1262,29 +1354,16 @@ void SAMAV2ISO7816Commands::PKI_ImportKey(
     unsigned char keyNoVCEK, unsigned char refNoKUC, const ByteVector &pki_n,
     const ByteVector &pki_e, const ByteVector &pki_p, const ByteVector &pki_q,
     const ByteVector &pki_dP, const ByteVector &pki_dQ, const ByteVector &pki_ipq,
-    unsigned char *keyNoAEK, unsigned char *keyVAEK, bool includeAccess,
-    bool updateSettingsOnly)
+    const sam::AEKVAEK &accessKeys, bool includeAccess, bool updateSettingsOnly)
 {
     const bool hasPrivate = !pki_p.empty();
 
-    if (hasPrivate)
-    {
-        if (keyNo > 0x01)
-            THROW_EXCEPTION_WITH_LOG(
-                LibLogicalAccessException,
-                "PKI_ImportKey : keyNo out of range for private key.");
-    }
-    else
-    {
-        if (keyNo > 0x02)
-            THROW_EXCEPTION_WITH_LOG(
-                LibLogicalAccessException,
-                "PKI_ImportKey : keyNo out of range for public key.");
-    }
+    if (keyNo > (hasPrivate ? 0x01 : 0x02))
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "PKI_ImportKey : keyNo out of range.");
 
     const size_t nLen = pki_n.size();
-    size_t eLen;
-    ByteVector normalizedE = pki_e;
+    const size_t eLen = pki_e.size();
 
     if (!updateSettingsOnly)
     {
@@ -1296,24 +1375,16 @@ void SAMAV2ISO7816Commands::PKI_ImportKey(
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                      "PKI_ImportKey : invalid modulus length.");
 
-        if (nLen < 4 || (pki_n[0] == 0x00 && pki_n[1] == 0x00 && pki_n[2] == 0x00 &&
-                         pki_n[3] == 0x00))
+        if (nLen < 4 || (pki_n[0] == 0x00 && pki_n[1] == 0x00 &&
+                         pki_n[2] == 0x00 && pki_n[3] == 0x00))
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                      "PKI_ImportKey : modulus MSW must not be zero.");
-
-        if (!normalizedE.empty() && (normalizedE.size() % 4) != 0)
-        {
-            const size_t pad = 4 - (normalizedE.size() % 4);
-            normalizedE.insert(normalizedE.begin(), pad, 0x00);
-        }
-
-        eLen = normalizedE.size();
 
         if (eLen < 0x04 || eLen > 0x100 || (eLen % 4) != 0 || eLen > nLen)
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                      "PKI_ImportKey : invalid exponent length.");
 
-        if ((normalizedE.back() & 0x01) == 0)
+        if ((pki_e.back() & 0x01) == 0)
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                      "PKI_ImportKey : exponent must be odd.");
 
@@ -1324,6 +1395,18 @@ void SAMAV2ISO7816Commands::PKI_ImportKey(
 
     if (hasPrivate)
     {
+        if (pki_dP.size() != pki_p.size())
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                     "PKI_ImportKey : dP length must equal p length.");
+
+        if (pki_dQ.size() != pki_q.size())
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                     "PKI_ImportKey : dQ length must equal q length.");
+
+        if (pki_ipq.size() != pki_q.size())
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                     "PKI_ImportKey : ipq length must equal q length.");
+
         if (pki_q.empty() || pki_dP.empty() || pki_dQ.empty() || pki_ipq.empty())
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                      "PKI_ImportKey : incomplete CRT key.");
@@ -1331,9 +1414,11 @@ void SAMAV2ISO7816Commands::PKI_ImportKey(
         if (pki_p[0] == 0x00 || pki_q[0] == 0x00)
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                      "PKI_ImportKey : invalid CRT primes MSB.");
+
         const size_t nWords = (nLen + 3) / 4;
         const size_t pWords = (pki_p.size() + 3) / 4;
         const size_t qWords = (pki_q.size() + 3) / 4;
+
         if ((pWords + 2 > nWords) || (qWords + 2 > nWords))
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                      "PKI_ImportKey : invalid CRT size relation.");
@@ -1341,70 +1426,46 @@ void SAMAV2ISO7816Commands::PKI_ImportKey(
 
     const bool disableRequested    = (configSettings & 0x0004) != 0;
     unsigned short effectiveConfig = configSettings;
+
     if (includeAccess)
     {
         if (disableRequested)
             LOG(LogLevel::WARNINGS)
                 << "PKI_ImportKey : overriding PKI_SET disable bit due to AEK.";
         effectiveConfig &= ~0x0004;
+
+        if (!accessKeys)
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                     "PKI_ImportKey : AEK/VAEK required.");
     }
 
-    if (includeAccess && (!keyNoAEK || !keyVAEK))
-    {
-        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                 "PKI_ImportKey : AEK/VAEK required.");
-    }
-
-    unsigned char p1 = 0x00;
-
-    if (updateSettingsOnly)
-        p1 |= 0x01;
-    if (includeAccess)
-        p1 |= 0x02;
-    p1 &= 0x03;
+    const unsigned char p1 = (updateSettingsOnly ? 0x01 : 0x00) | (includeAccess ? 0x02 : 0x00);
 
     ByteVector payload;
     payload.push_back(keyNo);
-    payload.push_back(static_cast<unsigned char>((effectiveConfig >> 8) & 0xFF));
-    payload.push_back(static_cast<unsigned char>(effectiveConfig & 0xFF));
+    sam::appendUInt16BE(payload, effectiveConfig);
     payload.push_back(keyNoCEK);
     payload.push_back(keyNoVCEK);
     payload.push_back(refNoKUC);
-
     if (includeAccess)
     {
-        payload.push_back(*keyNoAEK);
-        payload.push_back(*keyVAEK);
+        payload.push_back(accessKeys.keyNoAEK);
+        payload.push_back(accessKeys.keyVAEK);
     }
-
     if (!updateSettingsOnly)
     {
-        payload.push_back(static_cast<unsigned char>((nLen >> 8) & 0xFF));
-        payload.push_back(static_cast<unsigned char>(nLen & 0xFF));
-        payload.push_back(static_cast<unsigned char>((normalizedE.size() >> 8) & 0xFF));
-        payload.push_back(static_cast<unsigned char>(normalizedE.size() & 0xFF));
-
+        sam::appendUInt16BE(payload, static_cast<uint16_t>(nLen));
+        sam::appendUInt16BE(payload, static_cast<uint16_t>(eLen));
         if (hasPrivate)
         {
-            const auto pSize = pki_p.size();
-            const auto qSize = pki_q.size();
-
-            if (pSize > 0xFFFF || qSize > 0xFFFF)
+            if (pki_p.size() > 0xFFFF || pki_q.size() > 0xFFFF)
                 THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                          "PKI_ImportKey : invalid CRT length overflow.");
-
-            const uint16_t pLen = static_cast<uint16_t>(pSize);
-            const uint16_t qLen = static_cast<uint16_t>(qSize);
-
-            payload.push_back(static_cast<unsigned char>((pLen >> 8) & 0xFF));
-            payload.push_back(static_cast<unsigned char>(pLen & 0xFF));
-            payload.push_back(static_cast<unsigned char>((qLen >> 8) & 0xFF));
-            payload.push_back(static_cast<unsigned char>(qLen & 0xFF));
+            sam::appendUInt16BE(payload, static_cast<uint16_t>(pki_p.size()));
+            sam::appendUInt16BE(payload, static_cast<uint16_t>(pki_q.size()));
         }
-
         payload.insert(payload.end(), pki_n.begin(), pki_n.end());
-        payload.insert(payload.end(), normalizedE.begin(), normalizedE.end());
-
+        payload.insert(payload.end(), pki_e.begin(), pki_e.end());
         if (hasPrivate)
         {
             payload.insert(payload.end(), pki_p.begin(), pki_p.end());
@@ -1415,80 +1476,35 @@ void SAMAV2ISO7816Commands::PKI_ImportKey(
         }
     }
 
-    size_t offset = 0;
-    bool success  = false;
+    ByteVector apdu;
+    apdu.push_back(d_cla);
+    apdu.push_back(0x19);
+    apdu.push_back(p1);
+    apdu.push_back(0x00);
+    apdu.push_back(payload.size() > sam::SAM_SECURE_CHANNEL_MAX_PLAIN_LC ? 0x00 : static_cast<unsigned char>(payload.size()));
+    apdu.insert(apdu.end(), payload.begin(), payload.end());
 
-    auto buildAPDU = [&](unsigned char p1, unsigned char p2, const ByteVector &data,
-                         bool first, bool last)
-    {
-        ByteVector apdu;
-        apdu.push_back(d_cla);
-        apdu.push_back(0x19);
-        apdu.push_back(p1);
-        apdu.push_back(0x00);
-        apdu.push_back(static_cast<unsigned char>(data.size()));
-        apdu.insert(apdu.end(), data.begin(), data.end());
-        return transmitSecureChained(apdu); // TODO : keep for testing
-    };
-
-    auto guardFailure = [&](const std::string &msg)
-    {
-        if (!success)
-        {
-            LOG(LogLevel::WARNINGS)
-                << "PKI_ImportKey : failure → key likely disabled (keyNo = "
-                << static_cast<int>(keyNo) << ")";
-        }
-        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, msg);
-    };
-
-
-    while (offset < payload.size())
-    {
-        const size_t remaining  = payload.size() - offset;
-        const size_t frameSize  = (std::min)(remaining, sam::MAX_APDU_DATA_SIZE);
-        const bool isFirstFrame = (offset == 0);
-        const bool isLastFrame  = (remaining <= sam::MAX_APDU_DATA_SIZE);
-
-        ByteVector chunk(payload.begin() + offset, payload.begin() + offset + frameSize);
-
-        const unsigned char p2 = isLastFrame ? 0x00 : 0xAF;
-        offset += frameSize;
-
-        const ByteVector resp = buildAPDU(p1, p2, chunk, isFirstFrame, isLastFrame);
-
-        if (resp.size() < 2)
-            guardFailure("PKI_ImportKey : invalid response.");
-
-        uint16_t sw = (resp[resp.size() - 2] << 8) | resp.back();
-
-        if (!isLastFrame)
-        {
-            if (sw != 0x90AF)
-                guardFailure("PKI_ImportKey : chaining error.");
-            continue;
-        }
-
-        if (sw == 0x9000)
-        {
-            success = true;
-            return;
-        }
-
-        if (sw == 0x6A80)
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                     "PKI_ImportKey : Key ref out of range.");
-
+    const ByteVector resp = transmitSecureChained(apdu, sam::ApduFormat::Extended);
+    if (resp.size() < 2)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                 "PKI_ImportKey : unexpected status word.");
-    }
+                                 "PKI_ImportKey : invalid response length");
+    const uint16_t sw = sam::parseStatusWord(resp);
+
+    if (sw == 0x9000)
+        return;
+    if (sw == 0x6A80)
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "PKI_ImportKey : Key ref out of range.");
+
+    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                             "PKI_ImportKey : unexpected status word.");
 }
 
 ByteVector SAMAV2ISO7816Commands::PKI_ExportPrivateKey(unsigned char keyNo,
                                                        bool returnAEK)
 {
-    constexpr size_t MIN_RESPONSE_SIZE = 3;
-    constexpr size_t MIN_KEY_DATA_SIZE = 13;
+    //constexpr size_t MIN_RESPONSE_SIZE = 3;
+    //constexpr size_t MIN_KEY_DATA_SIZE = 13;
 
     if (keyNo > 0x01)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
@@ -1501,45 +1517,28 @@ ByteVector SAMAV2ISO7816Commands::PKI_ExportPrivateKey(unsigned char keyNo,
     apdu.push_back(keyNo);
     apdu.push_back(returnAEK ? 0x80 : 0x00);
     apdu.push_back(0x00);
-    ByteVector fullResponse;
-    bool firstFrame = true;
 
-    while (true)
-    {
-        ByteVector resp = transmit(apdu, firstFrame, !firstFrame, false);
-        if (resp.size() < MIN_RESPONSE_SIZE)
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                     "PKI_ExportPrivateKey : invalid response length.");
-        const uint16_t sw = (resp[resp.size() - 2] << 8) | resp[resp.size() - 1];
-        resp.resize(resp.size() - 2);
-        fullResponse.insert(fullResponse.end(), resp.begin(), resp.end());
-
-        if (sw == 0x90AF)
-        {
-            firstFrame = false;
-            continue;
-        }
-        if (sw == 0x9000)
-            break;
-        if (sw == 0x6986)
-            THROW_EXCEPTION_WITH_LOG(
-                LibLogicalAccessException,
-                "PKI_ExportPrivateKey : private key export not allowed.");
-
+    ByteVector resp = transmitSecureResponseChained(apdu);
+    if (resp.size() < 2)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                 "PKI_ExportPrivateKey : unexpected status word.");
+                                 "PKI_ExportPrivateKey : invalid response length");
+    const uint16_t sw = sam::parseStatusWord(resp);
+    if (sw == 0x9000)
+    {
+        resp.resize(resp.size() - 2);
+        return resp;
     }
-    return fullResponse;
+    if (sw == 0x6986)
+        THROW_EXCEPTION_WITH_LOG(
+            LibLogicalAccessException,
+            "PKI_ExportPrivateKey : private key export not allowed.");
+
+    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                             "PKI_ExportPrivateKey : unexpected status word.");
 }
 
 ByteVector SAMAV2ISO7816Commands::PKI_ExportPublicKey(unsigned char keyNo, bool returnAEK)
 {
-    // TODO : add this in header
-    constexpr uint16_t SW_MORE_DATA          = 0x90AF;
-    constexpr uint16_t SW_SUCCESS            = 0x9000;
-    constexpr size_t MIN_FIRST_RESPONSE_SIZE = 9;
-    constexpr size_t MIN_RESPONSE_SIZE       = 3;
-
     if (keyNo > 0x02)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                  "PKI_ExportPublicKey : keyNo out of range.");
@@ -1552,39 +1551,21 @@ ByteVector SAMAV2ISO7816Commands::PKI_ExportPublicKey(unsigned char keyNo, bool 
     apdu.push_back(returnAEK ? 0x80 : 0x00);
     apdu.push_back(0x00);
 
-    ByteVector result;
-    bool firstFrame = true;
-
-    while (true)
-    {
-        ByteVector resp = transmit(apdu, firstFrame, !firstFrame, false);
-
-        if (resp.size() < MIN_RESPONSE_SIZE)
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                     "PKI_ExportPublicKey : invalid response size.");
-
-        if (firstFrame && resp.size() < MIN_FIRST_RESPONSE_SIZE)
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                     "PKI_ExportPublicKey : incomplete first response.");
-
-        const uint16_t sw =
-            static_cast<uint16_t>(resp[resp.size() - 2]) << 8 | resp.back();
-        result.insert(result.end(), resp.begin(), resp.end() - 2);
-
-        if (sw == SW_MORE_DATA)
-        {
-            firstFrame = false;
-            continue;
-        }
-        if (sw == SW_SUCCESS)
-            return result;
-        if (sw == 0x6986)
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                     "PKI_ExportPublicKey : export not allowed.");
-
+    ByteVector resp = transmitSecureResponseChained(apdu);
+    if (resp.size() < 2)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                 "PKI_ExportPublicKey : unexpected status word.");
+                                 "PKI_ExportPublicKey : invalid response size.");
+    const uint16_t sw = sam::parseStatusWord(resp);
+    if (sw == 0x9000)
+    {
+        resp.resize(resp.size() - 2);
+        return resp;
     }
+    if (sw == 0x6986)
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+            "PKI_ExportPublicKey : export not allowed.");
+
+    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "PKI_ExportPublicKey : unexpected status word.");
 }
 
 ByteVector SAMAV2ISO7816Commands::buildPlaintext(uint16_t changeCtr, const std::vector<std::shared_ptr<SAMBasicKeyEntry>> &entries)
@@ -1596,20 +1577,14 @@ ByteVector SAMAV2ISO7816Commands::buildPlaintext(uint16_t changeCtr, const std::
 
     for (const auto &entry : entries)
     {
-
         if (!entry)
-        {
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Null SAMBasicKeyEntry");
-        }
 
-        auto *avEntry =
-            dynamic_cast<SAMKeyEntry<KeyEntryAV2Information, SETAV2> *>(entry.get());
-
+        //TODO : SAM must support both AV2 compatible (61 bytes) and AV3 (64 bytes) key entries
+        auto *avEntry = dynamic_cast<SAMKeyEntry<KeyEntryAV2Information, SETAV2> *>(entry.get());
         if (!avEntry)
-        {
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                      "Entry is not a SAMKeyEntry AV2 type");
-        }
 
         uint8_t keyNo  = avEntry->getKeyEntryInformation().desfirekeyno;
         uint8_t proMas = entry->getUpdateMask();
@@ -1621,7 +1596,6 @@ ByteVector SAMAV2ISO7816Commands::buildPlaintext(uint16_t changeCtr, const std::
         pt.push_back(proMas);
         pt.insert(pt.end(), data, data + len);
     }
-
     return pt;
 }
 
@@ -1716,13 +1690,13 @@ ByteVector SAMAV2ISO7816Commands::rsa_pss_sign(EVP_PKEY *privKey, const ByteVect
     return sig;
 }
 
-const EVP_MD *SAMAV2ISO7816Commands::getHash(uint8_t hashAlgo)
+const EVP_MD *SAMAV2ISO7816Commands::getHash(sam::HashAlgo hashAlgo)
 {
-    switch (hashAlgo & 0x03)
+    switch (hashAlgo)
     {
-    case 0x00: return EVP_sha1();
-    case 0x01: return EVP_sha224();
-    case 0x02: return EVP_sha256();
+    case sam::HashAlgo::SHA1: return EVP_sha1();
+    case sam::HashAlgo::SHA224: return EVP_sha224();
+    case sam::HashAlgo::SHA256: return EVP_sha256();
     default: throw std::runtime_error("Invalid hash");
     }
 }
@@ -1732,7 +1706,11 @@ void SAMAV2ISO7816Commands::buildCryptogram(
     uint16_t changeCtr, const std::vector<std::shared_ptr<SAMBasicKeyEntry>> &entries,
     uint8_t hashAlgo, ByteVector &encFrame, ByteVector &signature)
 {
-    const EVP_MD *md = getHash(hashAlgo);
+    if (!sam::isSupportedHashAlgo(hashAlgo))
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "PKI_UpdateKeyEntries : unsupported or RFU hash algorithm.");
+
+    const EVP_MD *md = getHash(static_cast<sam::HashAlgo>(hashAlgo));
 
     if (!md)
         throw std::runtime_error("Invalid hash algorithm");
@@ -1753,144 +1731,109 @@ void SAMAV2ISO7816Commands::buildCryptogram(
 }
 
 ByteVector SAMAV2ISO7816Commands::PKI_UpdateKeyEntries(
-    EVP_PKEY *encKey, EVP_PKEY *signKey, unsigned char keyNoEnc, unsigned char keyNoSign,
-    unsigned char keyNoAck, unsigned char hashAlgo,
+    EVP_PKEY &encKey, EVP_PKEY &signKey, unsigned char keyNoEnc, unsigned char keyNoSign,
+    bool requestAck, unsigned char keyNoAck, unsigned char hashAlgo,
     const std::vector<std::shared_ptr<SAMBasicKeyEntry>> &entries, uint16_t changeCounter)
 {
     if (entries.empty() || entries.size() > 3)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                  "PKI_UpdateKeyEntries : invalid number of entries");
 
-    if (!encKey || !signKey)
+    EVP_PKEY *enc = &encKey;  //To avoid pointer as arg
+    EVP_PKEY *sig = &signKey; //To avoid pointer as arg
+
+    if (!enc || !sig)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Invalid ENC or SIGN key");
 
     ByteVector encFrame;
     ByteVector signature;
 
-    buildCryptogram(encKey, signKey, keyNoEnc, keyNoSign, changeCounter, entries,
+    buildCryptogram(enc, sig, keyNoEnc, keyNoSign, changeCounter, entries,
                     hashAlgo, encFrame, signature);
 
-    return PKI_UpdateKeyEntries(keyNoEnc, keyNoSign, keyNoAck, hashAlgo,
+    return PKI_UpdateKeyEntries(keyNoEnc, keyNoSign, requestAck, keyNoAck, hashAlgo,
                                 static_cast<unsigned char>(entries.size()), encFrame,
                                 signature);
 }
 
 ByteVector SAMAV2ISO7816Commands::PKI_UpdateKeyEntries(
-    unsigned char keyNoEnc, unsigned char keyNoSign, unsigned char keyNoAck,
+    unsigned char keyNoEnc, unsigned char keyNoSign, bool requestAck, unsigned char keyNoAck,
     unsigned char hashAlgo, unsigned char nbKeyEntries, const ByteVector &encKeyFrame,
     const ByteVector &signature)
 {
     if (hashAlgo > 0x03)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                 "Invalid hashAlgo (must be 0..3)");
+                                 "PKI_UpdateKeyEntries : invalid hashAlgo (must be 0...3)");
 
     if (nbKeyEntries == 0 || nbKeyEntries > 3)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                 "Invalid nbKeys (must be 1..3)");
+                                 "PKI_UpdateKeyEntries : invalid nbKeys (must be 1...3)");
+
+    if (keyNoEnc > 0x01)
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "PKI_UpdateKeyEntries : invalid keyNoEnc.");
+    
+    if (keyNoSign > 0x02)
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "PKI_UpdateKeyEntries : invalid keyNoSign.");
+    
+    if (requestAck && keyNoAck > 0x01)
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "PKI_UpdateKeyEntries : invalid keyNoAck.");
 
     if (encKeyFrame.empty())
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                 "EncKeyFrame cannot be empty");
+                                 "PKI_UpdateKeyEntries : encKeyFrame cannot be empty");
 
     if (signature.empty())
-        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Signature cannot be empty");
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "PKI_UpdateKeyEntries : signature cannot be empty");
 
-    uint8_t p1 = (hashAlgo & 0x03) | ((nbKeyEntries & 0x03) << 2);
+    unsigned char p1 = (hashAlgo & 0x03) | ((nbKeyEntries & 0x03) << 2);
 
     ByteVector payload;
-
     payload.push_back(keyNoEnc);
     payload.push_back(keyNoSign);
+    if (requestAck)
+        payload.push_back(keyNoAck);
     payload.insert(payload.end(), encKeyFrame.begin(), encKeyFrame.end());
     payload.insert(payload.end(), signature.begin(), signature.end());
-
-    const size_t MAX_FRAME_SIZE = 0xFF;
 
     size_t offset = 0;
     bool success  = false;
     ByteVector result;
 
-    auto buildAPDU = [&](unsigned char p2, const ByteVector &data, bool first,
-                         bool last) -> ByteVector
+    auto buildAPDU = [&](const ByteVector &data) -> ByteVector
     {
         ByteVector apdu;
         apdu.push_back(d_cla);
         apdu.push_back(0x1D);
         apdu.push_back(p1);
-        apdu.push_back(p2);
-
-        ByteVector frameData = data;
-        if (last)
-            frameData.insert(frameData.begin() + 2, keyNoAck);
-        if (frameData.size() > 0xFF)
-            THROW_EXCEPTION_WITH_LOG(
-                LibLogicalAccessException,
-                "PKI_UpdateKeyEntries : frame too large for Lc (max 255).");
-        apdu.push_back(static_cast<unsigned char>(frameData.size()));
-        apdu.insert(apdu.end(), frameData.begin(), frameData.end());
-        if (last)
+        apdu.push_back(0x00);
+        if (data.size() > sam::SAM_SECURE_CHANNEL_MAX_PLAIN_LC)
             apdu.push_back(0x00);
-        return transmit(apdu, first, last);
-    };
-
-    auto guardFailure = [&](const std::string &msg)
-    {
-        if (!success)
-        {
-            LOG(LogLevel::WARNINGS)
-                << "PKI_UpdateKeyEntries : failure, no successful update committed.";
-        }
-        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, msg);
-    };
-
-    while (offset < payload.size())
-    {
-        size_t remaining  = payload.size() - offset;
-        size_t frameSize  = (std::min)(remaining, MAX_FRAME_SIZE);
-        bool isFirstFrame = (offset == 0);
-        bool isLastFrame  = (remaining <= MAX_FRAME_SIZE);
-
-        ByteVector chunk(payload.begin() + offset, payload.begin() + offset + frameSize);
-
-        unsigned char p2 = isLastFrame ? 0x00 : 0xAF;
-        offset += frameSize;
-
-        ByteVector resp = buildAPDU(p2, chunk, isFirstFrame, isLastFrame);
-
-        if (resp.size() < 2)
-            guardFailure("PKI_UpdateKeyEntries : response too short");
-
-        uint8_t sw1 = resp[resp.size() - 2];
-        uint8_t sw2 = resp[resp.size() - 1];
-
-        if (!isLastFrame)
-        {
-            if (!(sw1 == 0x90 && sw2 == 0xAF))
-                THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                         "PKI_UpdateKeyEntries : chaining failed");
-        }
         else
-        {
-            if (sw1 == 0x90 && sw2 == 0x00)
-            {
-                result  = resp;
-                success = true;
-            }
-            else if (sw1 == 0x6A && sw2 == 0x80)
-            {
-                THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                         "PKI_UpdateKeyEntries : incorrect ChangeCtr");
-            }
-            else
-            {
-                THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                         "PKI_UpdateKeyEntries : unexpected status word");
-            }
-        }
-    }
-    if (result.size() > 2)
-        return ByteVector(result.begin(), result.end() - 2);
-    return result;
+            apdu.push_back(static_cast<unsigned char>(data.size()));
+        apdu.insert(apdu.end(), data.begin(), data.end());
+        if (requestAck)
+            apdu.push_back(0x00);
+        return apdu;
+    };
+
+    const ByteVector fullPayload = buildAPDU(payload);
+    ByteVector resp = transmitSecureChained(fullPayload, sam::ApduFormat::ExtendedWithLe);
+    if (resp.size() < 2)
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "PKI_UpdateKeyEntries : response too short");
+
+    const uint16_t sw = sam::parseStatusWord(resp);
+    resp.resize(resp.size() - 2);
+    if (sw == 0x9000)
+        return resp;
+    if (sw == 0x6A80)
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "PKI_UpdateKeyEntries : incorrect ChangeCtr");
+    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                             "PKI_UpdateKeyEntries : unexpected status word");
 }
 
 ByteVector SAMAV2ISO7816Commands::PKI_EncipherKeyEntries(
@@ -1899,22 +1842,33 @@ ByteVector SAMAV2ISO7816Commands::PKI_EncipherKeyEntries(
     const std::vector<std::pair<unsigned char, unsigned char>> &keyEntries,
     const ByteVector &divInput)
 {
+    if (!sam::isSupportedHashAlgo(hashAlgo))
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "PKI_EncipherKeyEntries : unsupported or RFU hash algorithm.");
+
     if (keyEntries.empty() || keyEntries.size() > 3)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                  "PKI_EncipherKeyEntries : 1 to 3 key entries allowed");
 
-    if (hashAlgo > 0x03)
-        THROW_EXCEPTION_WITH_LOG(
-            LibLogicalAccessException,
-            "PKI_EncipherKeyEntries : invalid hash algorithm selector");
-
     if (!divInput.empty() && divInput.size() > 31)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                 "PKI_EncipherKeyEntries : DivInput must be 1..31 bytes");
+                                 "PKI_EncipherKeyEntries : DivInput must be 1...31 bytes");
 
-    if (keyNoEnc > 0x02 || keyNoVerif > 0x02 || keyNoSign > 0x01 || keyNoDec > 0x01)
+    if (keyNoEnc > 0x02)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                 "PKI_EncipherKeyEntries : invalid key reference");
+                                 "PKI_EncipherKeyEntries : invalid keyNoEnc.");
+
+    if (keyNoSign > 0x01)
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "PKI_EncipherKeyEntries : invalid keyNoSign.");
+
+    if (keyNoDec > 0x01)
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "PKI_EncipherKeyEntries : invalid keyNoDec.");
+
+    if (keyNoVerif > 0x02)
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "PKI_EncipherKeyEntries : invalid keyNoVerif.");
 
     for (const auto &k : keyEntries)
     {
@@ -1923,20 +1877,17 @@ ByteVector SAMAV2ISO7816Commands::PKI_EncipherKeyEntries(
                                      "PKI_EncipherKeyEntries : invalid key entry pair");
     }
 
-    unsigned char p1 = 0x00;
-
-    p1 |= (hashAlgo & 0x03);
-    p1 |= (static_cast<unsigned char>(keyEntries.size()) & 0x03) << 2;
-    if (!divInput.empty())
-        p1 |= 0x10;
+    const unsigned char p1 = (hashAlgo & 0x03) |
+                             (static_cast<unsigned char>(keyEntries.size()) << 2) |
+                             (!divInput.empty() ? 0x10 : 0x00);
 
     ByteVector payload;
+    payload.reserve(6 + keyEntries.size() * 2 + divInput.size());
     payload.push_back(keyNoEnc);
     payload.push_back(keyNoSign);
     payload.push_back(keyNoDec);
     payload.push_back(keyNoVerif);
-    payload.push_back(static_cast<unsigned char>((persoCtr >> 8) & 0xFF));
-    payload.push_back(static_cast<unsigned char>(persoCtr & 0xFF));
+    sam::appendUInt16BE(payload, persoCtr);
     for (const auto &entry : keyEntries)
     {
         payload.push_back(entry.first);
@@ -1945,227 +1896,116 @@ ByteVector SAMAV2ISO7816Commands::PKI_EncipherKeyEntries(
     if (!divInput.empty())
         payload.insert(payload.end(), divInput.begin(), divInput.end());
 
-    size_t offset = 0;
-    bool success  = false;
-    ByteVector fullResponse;
-
-    auto buildAPDU = [&](unsigned char p2, const ByteVector &data, bool first,
-                         bool last) -> ByteVector
-    {
-        ByteVector apdu;
-        apdu.push_back(d_cla);
-        apdu.push_back(0x12);
-        apdu.push_back(p1);
-        apdu.push_back(p2);
-
-        if (data.size() > sam::MAX_APDU_DATA_SIZE)
-        {
-            THROW_EXCEPTION_WITH_LOG(
-                LibLogicalAccessException,
-                "PKI_EncipherKeyEntries : frame too large for Lc (max 255).");
-        }
-        apdu.push_back(static_cast<unsigned char>(data.size()));
-        apdu.insert(apdu.end(), data.begin(), data.end());
+    ByteVector apdu;
+    apdu.push_back(d_cla);
+    apdu.push_back(0x12);
+    apdu.push_back(p1);
+    apdu.push_back(0x00);
+    if (payload.size() > sam::SAM_SECURE_CHANNEL_MAX_PLAIN_LC)
         apdu.push_back(0x00);
-        return transmit(apdu, first, last);
-    };
+    else
+        apdu.push_back(static_cast<unsigned char>(payload.size()));
+    apdu.insert(apdu.end(), payload.begin(), payload.end());
+    apdu.push_back(0x00);
 
-    auto guardFailure = [&](const std::string &msg)
-    {
-        if (!success)
-        {
-            LOG(LogLevel::WARNINGS)
-                << "PKI_EncipherKeyEntries : failure, no successful update committed.";
-        }
-        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, msg);
-    };
-
-    while (offset < payload.size())
-    {
-        const size_t remaining  = payload.size() - offset;
-        const size_t frameSize  = (std::min)(remaining, sam::MAX_APDU_DATA_SIZE);
-        const bool isFirstFrame = (offset == 0);
-        const bool isLastFrame  = (remaining <= sam::MAX_APDU_DATA_SIZE);
-
-        ByteVector chunk(payload.begin() + offset, payload.begin() + offset + frameSize);
-
-        const unsigned char p2 = isLastFrame ? 0x00 : 0xAF;
-        offset += frameSize;
-
-        ByteVector resp = buildAPDU(p2, chunk, isFirstFrame, isLastFrame);
-        fullResponse.insert(fullResponse.end(), resp.begin(), resp.end() - 2);
-
-        if (resp.size() < 2)
-            guardFailure("PKI_EncipherKeyEntries : response too short");
-
-        const uint16_t sw = (resp[resp.size() - 2] << 8) | resp[resp.size() - 1];
-
-        if (!isLastFrame)
-        {
-            if (sw != 0x90AF)
-                THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                         "PKI_EncipherKeyEntries : chaining failed");
-            continue;
-        }
-        if (sw == 0x9000)
-        {
-            success = true;
-            return fullResponse;
-        }
-        if (sw == 0x6A80)
-            THROW_EXCEPTION_WITH_LOG(
-                LibLogicalAccessException,
-                "PKI_EncipherKeyEntries : at least one selected key not reserved");
-
+    ByteVector resp = transmitSecureChained(apdu, sam::ApduFormat::ExtendedWithLe);
+    if (resp.size() < 2)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                 "PKI_EncipherKeyEntries : unexpected status word");
+                                 "PKI_EncipherKeyEntries : response too short.");
+
+    const uint16_t sw = sam::parseStatusWord(resp);
+
+    if (sw == 0x9000)
+    {
+        resp.resize(resp.size() - 2);
+        return resp;
     }
 
+    if (sw == 0x6A80)
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "PKI_EncipherKeyEntries : at least one selected PKI key is not "
+                                 "reserved for personalization.");
+
     THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                             "PKI_EncipherKeyEntries : incomplete execution");
+                             "PKI_EncipherKeyEntries : unexpected status word.");
 }
 
 ByteVector SAMAV2ISO7816Commands::PKI_GenerateHash(unsigned char hashAlgo,
                                                    const ByteVector &message)
 {
+    if (!sam::isSupportedHashAlgo(hashAlgo))
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "PKI_GenerateHash : unsupported or RFU hash algorithm.");
+
     if (message.empty())
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                  "PKI_GenerateHash : message cannot be empty.");
 
-    const unsigned char p1 = (hashAlgo & 0x03);
+    const uint32_t messageLen = static_cast<uint32_t>(message.size());
 
-    size_t offset   = 0;
-    bool firstFrame = true;
+    ByteVector apdu;
+    apdu.reserve(5 + 4 + message.size() + 1);
+    apdu.push_back(d_cla);
+    apdu.push_back(0x17);
+    apdu.push_back(hashAlgo);
+    apdu.push_back(0x00);
+    const size_t lc = 4 + message.size();
+    if (lc > sam::SAM_SECURE_CHANNEL_MAX_PLAIN_LC)
+        apdu.push_back(0x00);
+    else
+        apdu.push_back(static_cast<unsigned char>(lc));
+    sam::appendUInt32BE(apdu, messageLen);
+    apdu.insert(apdu.end(), message.begin(), message.end());
+    apdu.push_back(0x00);
 
-    ByteVector response;
+    ByteVector response = transmitSecureChained(apdu, sam::ApduFormat::ExtendedWithLe);
 
-    auto buildAPDU = [&](unsigned char p2, const ByteVector &data, bool includeMLen,
-                         bool isLastFrame) -> ByteVector
-    {
-        ByteVector apdu;
+    if (response.size() < 2)
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "PKI_GenerateHash : invalid response size.");
 
-        apdu.push_back(d_cla);
-        apdu.push_back(0x17);
-        apdu.push_back(p1);
-        apdu.push_back(p2);
+    if (response.size() != sam::expectedHashSize(hashAlgo) + 2)
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "PKI_GenerateHash : invalid hash length.");
 
-        ByteVector frame = data;
-
-        if (includeMLen)
-        {
-            ByteVector mlen(4, 0x00);
-            BufferHelper::setUInt32(mlen, static_cast<uint32_t>(message.size()));
-            frame.insert(frame.begin(), mlen.begin(), mlen.end());
-        }
-
-        if (frame.size() > 0xFF)
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                     "PKI_GenerateHash : frame too large (>255).");
-
-        apdu.push_back(static_cast<unsigned char>(frame.size()));
-        apdu.insert(apdu.end(), frame.begin(), frame.end());
-
-        if (isLastFrame && p2 == 0x00)
-            apdu.push_back(0x00);
-        return transmit(apdu, firstFrame, isLastFrame);
-    };
-
-    auto guardFailure = [&](const ByteVector &resp)
-    {
-        if (resp.size() < 2)
-        {
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                     "PKI_GenerateHash : invalid response size.");
-        }
-    };
-
-    while (offset < message.size())
-    {
-        const size_t remaining = message.size() - offset;
-        const size_t overhead  = firstFrame ? 4 : 0;
-        const size_t maxChunk  = sam::MAX_APDU_DATA_SIZE - overhead;
-        const size_t chunkSize = (remaining > maxChunk) ? maxChunk : remaining;
-
-        ByteVector chunk(message.begin() + offset, message.begin() + offset + chunkSize);
-        offset += chunkSize;
-
-        const bool lastFrame   = (offset >= message.size());
-        const unsigned char p2 = lastFrame ? 0x00 : 0xAF;
-        ByteVector resp        = buildAPDU(p2, chunk, firstFrame, lastFrame);
-        guardFailure(resp);
-        const uint16_t sw = (resp[resp.size() - 2] << 8) | resp[resp.size() - 1];
-        firstFrame        = false;
-        if (sw == 0x9000)
-        {
-            resp.resize(resp.size() - 2);
-            return resp;
-        }
-
-        if (sw == 0x90AF)
-            continue;
+    const uint16_t sw = sam::parseStatusWord(response);
+    if (sw != 0x9000)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                  "PKI_GenerateHash : unexpected status word.");
-    }
 
-    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                             "PKI_GenerateHash : incomplete execution.");
+    response.resize(response.size() - 2);
+    return response;
 }
 
 void SAMAV2ISO7816Commands::PKI_GenerateSignature(unsigned char hashAlgo,
                                                   unsigned char keyNoSign,
                                                   const ByteVector &hash)
 {
-    if (hashAlgo > 0x03)
+    if (!sam::isSupportedHashAlgo(hashAlgo))
         THROW_EXCEPTION_WITH_LOG(
             LibLogicalAccessException,
-            "PKI_GenerateSignature : invalid hashAlgo (must be 0x00..0x03).");
+            "PKI_GenerateSignature : unsupported or RFU hash algorithm.");
 
     if (keyNoSign > 0x01)
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "PKI_GenerateSignature : invalid key number.");
+
+    const size_t expectedSize = sam::expectedHashSize(hashAlgo);
+
+    if (hash.size() != expectedSize)
         THROW_EXCEPTION_WITH_LOG(
             LibLogicalAccessException,
-            "PKI_GenerateSignature : invalid keyNoSign (must be 0x00 or 0x01).");
-
-    switch (hashAlgo & 0x03)
-    {
-    case 0x00:
-        if (hash.size() != 20)
-            THROW_EXCEPTION_WITH_LOG(
-                LibLogicalAccessException,
-                "PKI_GenerateSignature : invalid hash size for SHA-1 "
-                "(expected 20 bytes).");
-        break;
-
-    case 0x01:
-        if (hash.size() != 28)
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                     "PKI_GenerateSignature : invalid hash size for "
-                                     "SHA-224 (expected 28 bytes).");
-        break;
-
-    case 0x02:
-    case 0x03:
-        if (hash.size() != 32)
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                     "PKI_GenerateSignature : invalid hash size for "
-                                     "SHA-256 (expected 32 bytes).");
-        break;
-
-    default:
-        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                 "PKI_GenerateSignature : unsupported hash algorithm.");
-    }
-
-    const unsigned char p1 = (hashAlgo & 0x03);
+            "PKI_GenerateSignature : invalid hash size for selected algorithm.");
 
     ByteVector apdu;
     apdu.reserve(5 + 1 + hash.size());
     apdu.push_back(d_cla);
     apdu.push_back(0x16);
-    apdu.push_back(p1);
+    apdu.push_back(hashAlgo);
     apdu.push_back(0x00);
 
     const size_t lc = 1 + hash.size();
-    if (lc > sam::MAX_APDU_DATA_SIZE)
+    if (lc > 1 + expectedSize)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                  "PKI_GenerateSignature : payload too large.");
 
@@ -2177,50 +2017,38 @@ void SAMAV2ISO7816Commands::PKI_GenerateSignature(unsigned char hashAlgo,
 
     if (response.size() < 2)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                 "PKI_GenerateSignature : invalid response length.");
+                                 "PKI_GenerateSignature : invalid response size.");
 
-    const uint16_t sw =
-        (response[response.size() - 2] << 8) | response[response.size() - 1];
+    const uint16_t sw = sam::parseStatusWord(response);
 
     if (sw != 0x9000)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                 "PKI_GenerateSignature failed with status word.");
+                                 "PKI_GenerateSignature : unexpected status word.");
+
+    return;
 }
 
 ByteVector SAMAV2ISO7816Commands::PKI_SendSignature()
 {
-    const unsigned char RFU =
-        0x00; // TODO : add in header (and apply changes in other functions) or remove
+    constexpr size_t MIN_SIG_SIZE = 8;
+    constexpr size_t MAX_SIG_SIZE = 256;
+    ByteVector signature = transmit({d_cla, 0x1A, 0x00, 0x00, 0x00}, true, true);
 
-    ByteVector apdu;
-    apdu.reserve(5);
-    apdu.push_back(d_cla);
-    apdu.push_back(0x1A);
-    apdu.push_back(RFU);
-    apdu.push_back(RFU);
-    apdu.push_back(RFU);
-
-    ByteVector response = transmit(apdu, true, true);
-
-    if (response.size() < 2)
+    if (signature.size() < 2)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                 "PKI_SendSignature : response too short");
+                                 "PKI_SendSignature : invalid response size.");
 
-    const uint16_t sw =
-        (response[response.size() - 2] << 8) | response[response.size() - 1];
+    if (sam::parseStatusWord(signature) != 0x9000)
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "PKI_SendSignature : unexpected status word.");
 
-    ByteVector data(response.begin(), response.end() - 2);
+    signature.resize(signature.size() - 2);
 
-    if (sw == 0x9000)
-    {
-        if (data.size() < 8 || data.size() > 256)
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                     "PKI_SendSignature : invalid signature size");
-        return data;
-    }
+    if (signature.size() < MIN_SIG_SIZE || signature.size() > MAX_SIG_SIZE)
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "PKI_SendSignature : invalid signature size.");
 
-    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                             "PKI_SendSignature : unknown status word");
+    return signature;
 }
 
 void SAMAV2ISO7816Commands::PKI_VerifySignature(unsigned char hashAlgo,
@@ -2228,13 +2056,24 @@ void SAMAV2ISO7816Commands::PKI_VerifySignature(unsigned char hashAlgo,
                                                 const ByteVector &hash,
                                                 const ByteVector &signature)
 {
-    if (hash.empty() || signature.empty())
-        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                 "PKI_VerifySignature : empty hash or signature");
+    if (!sam::isSupportedHashAlgo(hashAlgo))
+        THROW_EXCEPTION_WITH_LOG(
+            LibLogicalAccessException,
+            "PKI_VerifySignature : unsupported or RFU hash algorithm.");
 
-    if (hashAlgo > 0x03)
+    if (keyNoVerif > 0x02)
+        THROW_EXCEPTION_WITH_LOG(
+            LibLogicalAccessException,
+            "PKI_VerifySignature : invalid verification key number.");
+
+    if (hash.size() != sam::expectedHashSize(hashAlgo))
+        THROW_EXCEPTION_WITH_LOG(
+            LibLogicalAccessException,
+            "PKI_VerifySignature : invalid hash size for selected algorithm.");
+
+    if (signature.empty())
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                 "PKI_VerifySignature : invalid hashAlgo");
+                                 "PKI_VerifySignature : signature cannot be empty.");
 
     ByteVector payload;
     payload.reserve(1 + hash.size() + signature.size());
@@ -2242,201 +2081,130 @@ void SAMAV2ISO7816Commands::PKI_VerifySignature(unsigned char hashAlgo,
     payload.insert(payload.end(), hash.begin(), hash.end());
     payload.insert(payload.end(), signature.begin(), signature.end());
 
-    auto buildAPDU = [&](unsigned char p1, unsigned char p2, const ByteVector &data,
-                         bool first, bool last) -> ByteVector
-    {
-        if (data.size() > 0xFF)
-        {
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                     "PKI_VerifySignature : frame too large");
-        }
+    ByteVector apdu;
+    apdu.reserve(5 + payload.size());
+    apdu.push_back(d_cla);
+    apdu.push_back(0x1B);
+    apdu.push_back(hashAlgo);
+    apdu.push_back(0x00);
+    if (payload.size() > sam::SAM_SECURE_CHANNEL_MAX_PLAIN_LC)
+        apdu.push_back(0x00);
+    else
+        apdu.push_back(static_cast<unsigned char>(payload.size()));
+    apdu.insert(apdu.end(), payload.begin(), payload.end());
 
-        ByteVector apdu;
-        apdu.reserve(5 + data.size());
-        apdu.push_back(d_cla);
-        apdu.push_back(0x1B);
-        apdu.push_back(p1);
-        apdu.push_back(p2);
-        apdu.push_back(static_cast<unsigned char>(data.size()));
-        apdu.insert(apdu.end(), data.begin(), data.end());
-        return transmit(apdu, first, last);
-    };
+    const ByteVector response = transmitSecureChained(apdu, sam::ApduFormat::Extended);
 
-    size_t offset          = 0;
-    const unsigned char p1 = (hashAlgo & 0x03);
-
-    while (offset < payload.size())
-    {
-        const size_t remaining  = payload.size() - offset;
-        const size_t frameSize  = (std::min)(remaining, sam::MAX_APDU_DATA_SIZE);
-        const bool isFirstFrame = (offset == 0);
-        const bool isLastFrame  = (remaining <= sam::MAX_APDU_DATA_SIZE);
-
-        ByteVector chunk(payload.begin() + offset, payload.begin() + offset + frameSize);
-        offset += frameSize;
-
-        const ByteVector resp =
-            buildAPDU(p1, isLastFrame ? 0x00 : 0xAF, chunk, isFirstFrame, isLastFrame);
-
-        if (resp.size() < 2)
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                     "PKI_VerifySignature : invalid response size");
-
-
-        const uint16_t sw = (resp[resp.size() - 2] << 8) | resp[resp.size() - 1];
-
-        if (!isLastFrame)
-        {
-            if (sw == 0x90AF)
-                continue;
-
-            THROW_EXCEPTION_WITH_LOG(
-                LibLogicalAccessException,
-                "PKI_VerifySignature : chaining failed (expected 0x90AF)");
-        }
-
-        if (sw == 0x9000)
-            return;
-
+    if (response.size() < 2)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                 "PKI_VerifySignature : unexpected status word");
-    }
+                                 "PKI_VerifySignature : invalid response size.");
 
-    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                             "PKI_VerifySignature : incomplete execution");
+    if (sam::parseStatusWord(response) != 0x9000)
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "PKI_VerifySignature : unexpected status word.");
+
+    return;
 }
 
 ByteVector SAMAV2ISO7816Commands::PKI_EncipherData(unsigned char hashAlgo,
                                                    unsigned char keyNoEnc,
                                                    const ByteVector &plainData)
 {
+    if (!sam::isSupportedHashAlgo(hashAlgo))
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "PKI_EncipherData : unsupported or RFU hash algorithm.");
+
+    if (keyNoEnc > 0x02)
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "PKI_EncipherData : invalid encryption key number.");
+
     if (plainData.empty())
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                 "PKI_EncipherData : empty plaintext");
-
-    if (hashAlgo > 0x03)
-        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                 "PKI_EncipherData : invalid hashAlgo");
+                                 "PKI_EncipherData : empty plaintext.");
 
     const unsigned char p1 = (hashAlgo & 0x03);
-
-    ByteVector payload;
-    payload.reserve(1 + plainData.size());
-    payload.push_back(keyNoEnc);
-    payload.insert(payload.end(), plainData.begin(), plainData.end());
-
-    if (payload.size() > sam::MAX_APDU_DATA_SIZE)
-        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                 "PKI_EncipherData : payload too large for single frame");
+    const size_t lc = 1 + plainData.size();
 
     ByteVector apdu;
-    apdu.reserve(5 + payload.size() + 1);
+    apdu.reserve(5 + lc + 1);
     apdu.push_back(d_cla);
     apdu.push_back(0x13);
     apdu.push_back(p1);
     apdu.push_back(0x00);
-    apdu.push_back(static_cast<unsigned char>(payload.size()));
-    apdu.insert(apdu.end(), payload.begin(), payload.end());
+    apdu.push_back(static_cast<unsigned char>(lc));
+    apdu.push_back(keyNoEnc);
+    apdu.insert(apdu.end(), plainData.begin(), plainData.end());
     apdu.push_back(0x00);
 
-    ByteVector resp = transmit(apdu, true, true);
+    ByteVector encData = transmitSecureChained(apdu);
 
-    if (resp.size() < 2)
+    if (encData.size() < 2)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                  "PKI_EncipherData : response too short");
 
-    const uint16_t sw = (resp[resp.size() - 2] << 8) | resp[resp.size() - 1];
+    encData.resize(encData.size() - 2);
 
-    ByteVector data(resp.begin(), resp.end() - 2);
+    if (sam::parseStatusWord(encData) != 0x9000)
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "PKI_EncipherData : unexpected status word.");
 
-    if (sw == 0x9000)
-    {
-        if (data.empty())
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                     "PKI_EncipherData : empty encrypted data");
-        return data;
-    }
+    if (encData.empty())
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "PKI_EncipherData : empty encrypted data");
 
-    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                             "PKI_EncipherData : unexpected status word");
+    return encData;
 }
 
 ByteVector SAMAV2ISO7816Commands::PKI_DecipherData(unsigned char hashAlgo,
                                                    unsigned char keyNoDec,
                                                    const ByteVector &encData)
 {
+    if (!sam::isSupportedHashAlgo(hashAlgo))
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "PKI_DecipherData : unsupported or RFU hash algorithm.");
+
+    if (keyNoDec > 0x01)
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "PKI_DecipherData : invalid key number.");
+
     if (encData.empty())
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                  "PKI_DecipherData : empty encrypted data");
 
-    if (hashAlgo > 0x03)
-        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                 "PKI_DecipherData : invalid hashAlgo");
-
-    ByteVector payload;
-    payload.reserve(1 + encData.size());
-    payload.push_back(keyNoDec);
-    payload.insert(payload.end(), encData.begin(), encData.end());
-
-    auto buildAPDU = [&](unsigned char p1, unsigned char p2, const ByteVector &data,
-                         bool first, bool last) -> ByteVector
-    {
-        ByteVector apdu;
-        apdu.reserve(6 + data.size());
-        apdu.push_back(d_cla);
-        apdu.push_back(0x14);
-        apdu.push_back(p1);
-        apdu.push_back(p2);
-        apdu.push_back(static_cast<unsigned char>(data.size()));
-        apdu.insert(apdu.end(), data.begin(), data.end());
-        apdu.push_back(0x00);
-        return transmit(apdu, first, last);
-    };
-
-    size_t offset          = 0;
     const unsigned char p1 = (hashAlgo & 0x03);
-    ByteVector result;
+    const size_t lc = 1 + encData.size();
 
-    while (offset < payload.size())
-    {
-        const size_t remaining  = payload.size() - offset;
-        const size_t frameSize  = (std::min)(remaining, sam::MAX_APDU_DATA_SIZE);
-        const bool isFirstFrame = (offset == 0);
-        const bool isLastFrame  = (remaining <= sam::MAX_APDU_DATA_SIZE);
+    ByteVector apdu;
+    apdu.reserve(5 + lc + 1);
+    apdu.push_back(d_cla);
+    apdu.push_back(0x14);
+    apdu.push_back(p1);
+    apdu.push_back(0x00);
+    if (lc > sam::SAM_SECURE_CHANNEL_MAX_PLAIN_LC)
+        apdu.push_back(0x00);
+    else
+        apdu.push_back(static_cast<unsigned char>(lc));
+    apdu.push_back(keyNoDec);
+    apdu.insert(apdu.end(), encData.begin(), encData.end());
+    apdu.push_back(0x00);
 
-        ByteVector chunk(payload.begin() + offset, payload.begin() + offset + frameSize);
-        offset += frameSize;
+    ByteVector plainData = transmitSecureChained(apdu, sam::ApduFormat::ExtendedWithLe);
 
-        const ByteVector resp =
-            buildAPDU(p1, isLastFrame ? 0x00 : 0xAF, chunk, isFirstFrame, isLastFrame);
-
-        if (resp.size() < 2)
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                     "PKI_DecipherData : response too short");
-
-        const uint16_t sw = (resp[resp.size() - 2] << 8) | resp[resp.size() - 1];
-
-        if (!isLastFrame)
-        {
-            if (sw != 0x90AF)
-                THROW_EXCEPTION_WITH_LOG(
-                    LibLogicalAccessException,
-                    "PKI_DecipherData : chaining failed (expected 0x90AF)");
-            continue;
-        }
-
-        if (sw == 0x9000)
-        {
-            result.assign(resp.begin(), resp.end() - 2);
-            return result;
-        }
-
+    if (plainData.size() < 2)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                 "PKI_DecipherData : unexpected status word");
-    }
+                                 "PKI_DecipherData : invalid response size.");
 
-    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                             "PKI_DecipherData : incomplete execution");
+    if (sam::parseStatusWord(plainData) != 0x9000)
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "PKI_DecipherData : unexpected status word.");
+
+    plainData.resize(plainData.size() - 2);
+
+    if (plainData.empty())
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "PKI_DecipherData : empty plaintext returned.");
+
+    return plainData;
 }
 
 void SAMAV2ISO7816Commands::PKI_ImportEccKey(
@@ -2446,14 +2214,16 @@ void SAMAV2ISO7816Commands::PKI_ImportEccKey(
 {
     if (keyNo > 0x07)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                 "PKI_ImportEccKey : invalid keyNo (0..7)");
+                                 "PKI_ImportEccKey : invalid keyNo (0...7)");
+
+    constexpr size_t PKI_IMPORT_ECC_MAX_PAYLOAD = 0x4B;
 
     const unsigned char p1 = settingsOnly ? 0x01 : 0x00;
 
     ByteVector payload;
+    payload.reserve(settingsOnly ? 8 : 10 + eccPublicKey.size());
     payload.push_back(keyNo);
-    payload.push_back(static_cast<unsigned char>((eccSet >> 8) & 0xFF));
-    payload.push_back(static_cast<unsigned char>(eccSet & 0xFF));
+    sam::appendUInt16BE(payload, eccSet);
     payload.push_back(keyNoCEK);
     payload.push_back(keyNoVCEK);
     payload.push_back(keyNoKUC);
@@ -2472,29 +2242,26 @@ void SAMAV2ISO7816Commands::PKI_ImportEccKey(
                                      "PKI_ImportEccKey : ECC public key must start with "
                                      "0x04 (uncompressed format)");
 
-        if (eccPublicKey.size() < 33 || eccPublicKey.size() > 65)
+        const size_t keySize = eccPublicKey.size();
+
+        if (keySize < 33 || keySize > 65)
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                      "PKI_ImportEccKey : invalid ECC public key length "
-                                     "(must be 33..65 bytes)");
+                                     "(must be 33...65 bytes)");
 
-        if (((eccPublicKey.size() - 1) % 2) != 0)
-            THROW_EXCEPTION_WITH_LOG(
-                LibLogicalAccessException,
-                "PKI_ImportEccKey : invalid ECC public key structure");
+        const unsigned short coordSize = static_cast<unsigned short>((keySize - 1) / 2);
 
-        const unsigned short coordSize =
-            static_cast<unsigned short>((eccPublicKey.size() - 1) / 2);
+        if (coordSize * 2 + 1 != keySize)
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                     "PKI_ImportEccKey : malformed ECC point structure");
 
-        payload.push_back(static_cast<unsigned char>((coordSize >> 8) & 0xFF));
-        payload.push_back(static_cast<unsigned char>(coordSize & 0xFF));
-
+        sam::appendUInt16BE(payload, coordSize);
         payload.insert(payload.end(), eccPublicKey.begin(), eccPublicKey.end());
     }
-    if (payload.size() > sam::MAX_APDU_DATA_SIZE)
-    {
+
+    if (payload.size() > PKI_IMPORT_ECC_MAX_PAYLOAD)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                  "PKI_ImportEccKey : payload too large");
-    }
 
     ByteVector apdu;
     apdu.reserve(5 + payload.size());
@@ -2504,13 +2271,14 @@ void SAMAV2ISO7816Commands::PKI_ImportEccKey(
     apdu.push_back(0x00);
     apdu.push_back(static_cast<unsigned char>(payload.size()));
     apdu.insert(apdu.end(), payload.begin(), payload.end());
+
     const ByteVector resp = transmit(apdu, true, true);
 
     if (resp.size() < 2)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                  "PKI_ImportEccKey : response too short");
 
-    const uint16_t sw = (resp[resp.size() - 2] << 8) | resp[resp.size() - 1];
+    const uint16_t sw = sam::parseStatusWord(resp);
 
     if (sw == 0x9000)
         return;
@@ -2523,18 +2291,17 @@ void SAMAV2ISO7816Commands::PKI_ImportEccKey(
                              "PKI_ImportEccKey : unexpected status word");
 }
 
-void SAMAV2ISO7816Commands::PKI_ImportEccCurve(unsigned char curveNo,
-                                               unsigned char keyNoCCK,
+void SAMAV2ISO7816Commands::PKI_ImportEccCurve(unsigned char curveNo, unsigned char keyNoCCK,
                                                unsigned char keyNoVCCK,
                                                const ByteVector &eccCurve,
                                                bool settingsOnly)
 {
 
     if (curveNo > 0x03)
-        THROW_EXCEPTION_WITH_LOG(
-            LibLogicalAccessException,
-            "PKI_ImportEccCurve : curveNo out of range (0x00..0x03)");
-    if (keyNoCCK != 0xFE && keyNoCCK != 0xFF && keyNoCCK > 0x7F)
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+            "PKI_ImportEccCurve : curveNo out of range (0x00...0x03)");
+
+    if (!(keyNoCCK == 0xFE || keyNoCCK == 0xFF || keyNoCCK <= 0x7F))
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                  "pkiImportEccCurve : invalid keyNoCCK");
 
@@ -2549,8 +2316,7 @@ void SAMAV2ISO7816Commands::PKI_ImportEccCurve(unsigned char curveNo,
     if (!settingsOnly)
     {
         if (eccCurve.empty())
-            THROW_EXCEPTION_WITH_LOG(
-                LibLogicalAccessException,
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                 "PKI_ImportEccCurve : ECC curve data required when settingsOnly = false");
 
         if (eccCurve.size() < 2)
@@ -2561,26 +2327,41 @@ void SAMAV2ISO7816Commands::PKI_ImportEccCurve(unsigned char curveNo,
         const unsigned char eccM = eccCurve[1];
 
         if (eccN < 0x10 || eccN > 0x20)
-            THROW_EXCEPTION_WITH_LOG(
-                LibLogicalAccessException,
-                "PKI_ImportEccCurve : ECC_N out of range (0x10..0x20)");
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                "PKI_ImportEccCurve : ECC_N out of range (0x10...0x20)");
 
         if (eccM < 0x10 || eccM > 0x20)
-            THROW_EXCEPTION_WITH_LOG(
-                LibLogicalAccessException,
-                "PKI_ImportEccCurve : ECC_M out of range (0x10..0x20)");
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                "PKI_ImportEccCurve : ECC_M out of range (0x10...0x20)");
 
-        const size_t expectedSize =
-            2 + (5 * static_cast<size_t>(eccN)) + static_cast<size_t>(eccM);
+        const size_t expectedSize = 2 + (5 * static_cast<size_t>(eccN)) + static_cast<size_t>(eccM);
 
         if (eccCurve.size() != expectedSize)
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                      "PKI_ImportEccCurve : ECC curve length mismatch");
 
+        size_t offset = 2;
+
+        auto checkBlock = [&](size_t len, const char *name)
+        {
+            if (offset + len > eccCurve.size())
+                THROW_EXCEPTION_WITH_LOG(
+                    LibLogicalAccessException,
+                    std::string("PKI_ImportEccCurve: truncated field ") + name);
+            offset += len;
+        };
+
+        checkBlock(eccN, "ECC_Prime");
+        checkBlock(eccN, "ECC_A");
+        checkBlock(eccN, "ECC_B");
+        checkBlock(eccN, "ECC_Px");
+        checkBlock(eccN, "ECC_Py");
+        checkBlock(eccM, "ECC_Order");
+
         payload.insert(payload.end(), eccCurve.begin(), eccCurve.end());
     }
 
-    if (payload.size() > sam::MAX_APDU_DATA_SIZE)
+    if (payload.size() > sam::SAM_SECURE_CHANNEL_MAX_PLAIN_LC)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                  "PKI_ImportEccCurve : APDU too large (Lc overflow)");
 
@@ -2593,13 +2374,13 @@ void SAMAV2ISO7816Commands::PKI_ImportEccCurve(unsigned char curveNo,
     apdu.push_back(static_cast<unsigned char>(payload.size()));
     apdu.insert(apdu.end(), payload.begin(), payload.end());
 
-    const ByteVector result = transmit(apdu, true, true);
+    const ByteVector response = transmit(apdu, true, true);
 
-    if (result.size() < 2)
+    if (response.size() < 2)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                  "PKI_ImportEccCurve : response too short");
 
-    const uint16_t sw = (result[result.size() - 2] << 8) | result[result.size() - 1];
+    const uint16_t sw = sam::parseStatusWord(response);
 
     if (sw == 0x9000)
         return;
@@ -2615,9 +2396,8 @@ void SAMAV2ISO7816Commands::PKI_ImportEccCurve(unsigned char curveNo,
 ByteVector SAMAV2ISO7816Commands::PKI_ExportEccPublicKey(unsigned char keyNo)
 {
     if (keyNo > 0x07)
-        THROW_EXCEPTION_WITH_LOG(
-            LibLogicalAccessException,
-            "PKI_ExportEccPublicKey : keyNo out of range (0x00..0x07)");
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+            "PKI_ExportEccPublicKey : keyNo out of range (0x00...0x07)");
 
     ByteVector apdu;
     apdu.reserve(5);
@@ -2627,19 +2407,20 @@ ByteVector SAMAV2ISO7816Commands::PKI_ExportEccPublicKey(unsigned char keyNo)
     apdu.push_back(0x00);
     apdu.push_back(0x00);
 
-    const ByteVector result = transmit(apdu, true, true);
+    ByteVector response = transmit(apdu, true, true);
 
-    if (result.size() < 2)
+    if (response.size() < 2)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                  "PKI_ExportEccPublicKey : response too short");
 
-    const uint16_t sw = (result[result.size() - 2] << 8) | result[result.size() - 1];
+    const uint16_t sw = sam::parseStatusWord(response);
 
-    if (sw == 0x9000)
-        return ByteVector(result.begin(), result.end() - 2);
+    if (sam::parseStatusWord(response) != 0x9000)
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                 "PKI_ExportEccPublicKey: unexpected status word");
 
-    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                             "PKI_ExportEccPublicKey: unexpected status word");
+    response.resize(response.size() - 2);
+    return response;
 }
 
 void SAMAV2ISO7816Commands::PKI_VerifyEccSignature(unsigned char keyNo,
@@ -2648,13 +2429,11 @@ void SAMAV2ISO7816Commands::PKI_VerifyEccSignature(unsigned char keyNo,
                                                    const ByteVector &signature)
 {
     if (keyNo > 0x07)
-        THROW_EXCEPTION_WITH_LOG(
-            LibLogicalAccessException,
-            "PKI_VerifyEccSignature : keyNo out of range (0x00..0x07)");
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+            "PKI_VerifyEccSignature : keyNo out of range (0x00...0x07)");
     if (curveNo > 0x03)
-        THROW_EXCEPTION_WITH_LOG(
-            LibLogicalAccessException,
-            "PKI_VerifyEccSignature : curveNo out of range (0x00..0x03)");
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+            "PKI_VerifyEccSignature : curveNo out of range (0x00...0x03)");
     if (message.empty())
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                  "PKI_VerifyEccSignature : message cannot be empty");
@@ -2673,28 +2452,26 @@ void SAMAV2ISO7816Commands::PKI_VerifyEccSignature(unsigned char keyNo,
     payload.insert(payload.end(), message.begin(), message.end());
     payload.insert(payload.end(), signature.begin(), signature.end());
 
-    if (payload.size() > sam::MAX_APDU_DATA_SIZE)
+    if (payload.size() > sam::SAM_SECURE_CHANNEL_MAX_PLAIN_LC)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                  "PKI_VerifyEccSignature : APDU too large (Lc overflow)");
 
     ByteVector apdu;
     apdu.reserve(5 + payload.size());
-    apdu.push_back(0x80);
+    apdu.push_back(d_cla);
     apdu.push_back(0x20);
     apdu.push_back(0x00);
     apdu.push_back(0x00);
     apdu.push_back(static_cast<unsigned char>(payload.size()));
     apdu.insert(apdu.end(), payload.begin(), payload.end());
 
-    const ByteVector result = transmit(apdu, true, true);
+    const ByteVector response = transmit(apdu, true, true);
 
-    if (result.size() < 2)
-    {
+    if (response.size() < 2)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                                  "PKI_VerifyEccSignature : response too short");
-    }
 
-    const uint16_t sw = (result[result.size() - 2] << 8) | result[result.size() - 1];
+    const uint16_t sw = sam::parseStatusWord(response);
 
     if (sw == 0x9000)
         return;
@@ -2706,6 +2483,5 @@ void SAMAV2ISO7816Commands::PKI_VerifyEccSignature(unsigned char keyNo,
     THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                              "PKI_VerifyEccSignature : unexpected status word");
 }
-
 
 }
