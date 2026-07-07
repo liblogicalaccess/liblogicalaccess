@@ -48,7 +48,7 @@ bool MifarePCSCCommands::loadKey(unsigned char keyno, MifareKeyType keytype,
     catch (const CardException &e)
     {
         if (!vol && (e.error_code() == CardException::WRONG_P1_P2 ||
-                     e.error_code() == CardException::UNKOWN_ERROR))
+                     e.error_code() == CardException::UNKNOWN_ERROR))
         {
             // With the Sony RC-S380, non-volatile memory doesn't work,
             // so we try again. Same with ACR1222L.

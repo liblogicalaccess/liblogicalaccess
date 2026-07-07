@@ -28,7 +28,7 @@ bool CL1356CardProbe::maybe_mifare_classic()
     }
     catch (const CardException &e)
     {
-        if (e.error_code() == CardException::ErrorType::UNKOWN_ERROR)
+        if (e.error_code() == CardException::ErrorType::UNKNOWN_ERROR)
         {
             // The reader returns the generic 0x6F00 signal a generic error
             // when the authentication failed.

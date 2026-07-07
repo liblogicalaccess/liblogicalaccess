@@ -17,6 +17,7 @@
 
 #include <logicalaccess/plugins/readers/iso7816/commands/samav1iso7816commands.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/samav2iso7816commands.hpp>
+#include <logicalaccess/plugins/readers/iso7816/commands/samav3iso7816commands.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/desfireev1iso7816commands.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/desfireev2iso7816commands.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/desfireev3iso7816commands.hpp>
@@ -821,13 +822,20 @@ std::shared_ptr<Chip> PCSCReaderUnit::createChip(std::string type)
                 samcrypto);
             resultChecker.reset(new SAMISO7816ResultChecker());
         }
-        else if (type == CHIP_SAMAV2 || type == CHIP_SAMAV3)
+        else if (type == CHIP_SAMAV2)
         {
             commands.reset(new SAMAV2ISO7816Commands());
             std::shared_ptr<SAMDESfireCrypto> samcrypto(new SAMDESfireCrypto());
             std::dynamic_pointer_cast<SAMAV2ISO7816Commands>(commands)->setCrypto(
                 samcrypto);
             resultChecker.reset(new SAMISO7816ResultChecker());
+        }
+        else if (type == CHIP_SAMAV3)
+        {
+            auto cmd = std::make_shared<SAMAV3ISO7816Commands>();
+            cmd->setCrypto(std::make_shared<SAMDESfireCrypto>());
+            commands      = cmd;
+            resultChecker = std::make_shared<SAMISO7816ResultChecker>();
         }
         else if (type.find("MifarePlus") == 0)
         {
@@ -905,8 +913,12 @@ std::shared_ptr<Chip> PCSCReaderUnit::createChip(std::string type)
                     std::dynamic_pointer_cast<SAMAV1ISO7816Commands>(
                         dcmd->getSAMChip()->getCommands())
                         ->setCrypto(samcrypto);
-                else if (dcmd->getSAMChip()->getCardType() == CHIP_SAMAV2 || dcmd->getSAMChip()->getCardType() == CHIP_SAMAV3)
+                else if (dcmd->getSAMChip()->getCardType() == CHIP_SAMAV2)
                     std::dynamic_pointer_cast<SAMAV2ISO7816Commands>(
+                        dcmd->getSAMChip()->getCommands())
+                        ->setCrypto(samcrypto);
+                else if (dcmd->getSAMChip()->getCardType() == CHIP_SAMAV3)
+                    std::dynamic_pointer_cast<SAMAV3ISO7816Commands>(
                         dcmd->getSAMChip()->getCommands())
                         ->setCrypto(samcrypto);
             }
