@@ -41,7 +41,7 @@ ByteVector SAMAV3ISO7816Commands::encipherKeyEntry(
         data.insert(data.end(), divInput.begin(), divInput.end());
     }
     auto result = getISO7816ReaderCardAdapter()->sendAPDUCommand(
-        d_cla, 0xE1, keyno, p2, static_cast<unsigned char>(data.size()), data, 0x00);
+        d_cla, sam::ins::key::EncipherKeyEntry, keyno, p2, static_cast<unsigned char>(data.size()), data, 0x00);
     return result.getData();
 }
 
@@ -107,7 +107,7 @@ void SAMAV3ISO7816Commands::PKI_ImportCaPk(
         ByteVector apdu;
         apdu.reserve(5 + data.size() + 1);
         apdu.push_back(d_cla);
-        apdu.push_back(0x24);
+        apdu.push_back(sam::ins::emv::ImportCaPk);
         apdu.push_back(p1);
         apdu.push_back(settingsOnly ? 0x80 : 0x00);
         apdu.push_back(static_cast<unsigned char>(data.size()));
@@ -174,7 +174,7 @@ ByteVector SAMAV3ISO7816Commands::PKI_ImportCaPkOffline(const ByteVector &offlin
         ByteVector apdu;
         apdu.reserve(5 + data.size() + (requestAck ? 1 : 0));
         apdu.push_back(d_cla);
-        apdu.push_back(0x24);
+        apdu.push_back(sam::ins::emv::ImportCaPk);
         apdu.push_back(p1);
         apdu.push_back(settingsOnly ? 0x80 : 0x00);
         apdu.push_back(static_cast<unsigned char>(data.size()));
@@ -243,7 +243,7 @@ void SAMAV3ISO7816Commands::PKI_RemoveCaPk(const ByteVector &rid,
     ByteVector apdu;
     apdu.reserve(5 + 6);
     apdu.push_back(d_cla);
-    apdu.push_back(0x2F);
+    apdu.push_back(sam::ins::emv::RemoveCaPk);
     apdu.push_back(0x00);
     apdu.push_back(0x00);
     apdu.push_back(0x06);
@@ -281,7 +281,7 @@ ByteVector SAMAV3ISO7816Commands::PKI_RemoveCaPkOffline(const ByteVector &offlin
     ByteVector apdu;
     apdu.reserve(5 + offlineCryptogram.size() + (requestAck ? 1 : 0));
     apdu.push_back(d_cla);
-    apdu.push_back(0x2F);
+    apdu.push_back(sam::ins::emv::RemoveCaPk);
     apdu.push_back(0x00);
     apdu.push_back(0x00);
     apdu.push_back(0x1A);
@@ -341,7 +341,7 @@ ByteVector SAMAV3ISO7816Commands::PKI_ExportCaPk(const ByteVector &rid,
         ByteVector apdu;
         apdu.reserve(5 + data.size() + 1);
         apdu.push_back(d_cla);
-        apdu.push_back(0x3D);
+        apdu.push_back(sam::ins::emv::ExportCaPk);
         apdu.push_back(p1);
         apdu.push_back(0x00);
         apdu.push_back(static_cast<unsigned char>(data.size()));
@@ -439,7 +439,7 @@ ByteVector SAMAV3ISO7816Commands::PKI_LoadIssuerPk(
         ByteVector apdu;
         apdu.reserve(5 + data.size() + 1);
         apdu.push_back(d_cla);
-        apdu.push_back(0x27);
+        apdu.push_back(sam::ins::emv::LoadIssuerPk);
         apdu.push_back(p1);
         apdu.push_back(0x00);
         apdu.push_back(static_cast<uint8_t>(data.size()));
@@ -526,7 +526,7 @@ ByteVector SAMAV3ISO7816Commands::PKI_LoadIccPk(const ByteVector &iccPkCert,
         ByteVector apdu;
         apdu.reserve(5 + data.size() + 1);
         apdu.push_back(d_cla);
-        apdu.push_back(0x28);
+        apdu.push_back(sam::ins::emv::LoadIccPk);
         apdu.push_back(p1);
         apdu.push_back(0x00);
         apdu.push_back(static_cast<unsigned char>(data.size()));
@@ -592,7 +592,7 @@ ByteVector SAMAV3ISO7816Commands::SAM_RecoverStaticData(const ByteVector &ssad)
         ByteVector apdu;
         apdu.reserve(5 + data.size() + 1);
         apdu.push_back(d_cla);
-        apdu.push_back(0x29);
+        apdu.push_back(sam::ins::emv::RecoverStaticData);
         apdu.push_back(p1);
         apdu.push_back(0x00);
         apdu.push_back(static_cast<unsigned char>(data.size()));
@@ -658,7 +658,7 @@ ByteVector SAMAV3ISO7816Commands::SAM_RecoverDynamicData(const ByteVector &sdad)
         ByteVector apdu;
         apdu.reserve(5 + data.size() + 1);
         apdu.push_back(d_cla);
-        apdu.push_back(0x2A);
+        apdu.push_back(sam::ins::emv::RecoverDynamicData);
         apdu.push_back(p1);
         apdu.push_back(0x00);
         apdu.push_back(static_cast<unsigned char>(data.size()));
@@ -716,7 +716,7 @@ ByteVector SAMAV3ISO7816Commands::SAM_EncipherPIN(const ByteVector &pinBlock,
                                  "SAM_EncipherPIN : ICC number must be exactly 8 bytes");
     ByteVector apdu;
     apdu.reserve(5 + 16 + 1);
-    apdu = {d_cla, 0x2B, 0x00, 0x00, 0x10};
+    apdu = {d_cla, sam::ins::emv::EncipherPin, 0x00, 0x00, 0x10};
     apdu.insert(apdu.end(), pinBlock.begin(), pinBlock.end());
     apdu.insert(apdu.end(), iccNumber.begin(), iccNumber.end());
     apdu.push_back(0x00);

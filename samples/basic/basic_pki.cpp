@@ -1227,7 +1227,7 @@ std::vector<PKIRoundTripTestCase> roundTripTests = {
 
     // ===== REPEATABILITY =====
     {0x03, 0x00, ByteVector(16, 0x55), true, "Repeatability #1"},
-    {0x03, 0x00, ByteVector(16, 0x55), true, "Repeatability #2"},
+    {0x03, 0x00, ByteVector(16, 0x55), true, "Repeatability #2"}
 };
 
 void runPKIRoundTripTests(std::shared_ptr<logicalaccess::SAMAV3ISO7816Commands> samCmd, const TestHooks& hooks)
@@ -1244,6 +1244,7 @@ void runPKIRoundTripTests(std::shared_ptr<logicalaccess::SAMAV3ISO7816Commands> 
             //     throw std::runtime_error("OAEP randomness failure");
             if (encrypted.empty())
                 throw std::runtime_error("Empty ciphertext");
+
             // ByteVector decrypted2 = samCmd->PKI_DecipherData(tc.hashAlgo,
             // tc.keyNo, encrypted); if (decrypted != tc.plainData || decrypted2 != tc.plainData)
             //      throw std::runtime_error("Roundtrip mismatch");
@@ -1336,7 +1337,7 @@ struct PKIImportEccCurveTestCase
 };
 struct ECCCurveBuilder
 {
-    static ByteVector BuildFakeCurve(uint8_t eccN, uint8_t eccM, uint8_t fillPrime,
+    static ByteVector BuildCurve(uint8_t eccN, uint8_t eccM, uint8_t fillPrime,
                                      uint8_t fillA, uint8_t fillB, uint8_t fillPx,
                                      uint8_t fillPy, uint8_t fillOrder)
     {
@@ -1356,10 +1357,7 @@ struct ECCCurveBuilder
 };
 
 std::vector<PKIImportEccCurveTestCase> ImportEccCurveTests = {
-    {0x00, 0xFE, 0x00,
-     ECCCurveBuilder::BuildFakeCurve(0x10,
-                                     0x10,
-                                     0x11, 0x22, 0x33, 0x44, 0x55, 0x66),
+    {0x00, 0xFE, 0x00, ECCCurveBuilder::BuildCurve(0x10, 0x10, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66),
      false, true, "Valid ECC curve (minimal safe size)"}};
 
 
@@ -1498,7 +1496,10 @@ struct SamSession
             hostKey->setData(logicalaccess::BufferHelper::fromHexString(
                 "00000000000000000000000000000000"));
         }
+        // Select the desired SAM host authentication mode by uncommenting the corresponding overload
         samCmd->SAMAV2ISO7816Commands::authenticateHost(hostKey, 0x00);
+        //samCmd->SAMAV2ISO7816Commands::authenticateHost(hostKey, 0x00, sam::HostMode::MAC);
+        //samCmd->SAMAV2ISO7816Commands::authenticateHost(hostKey, 0x00, sam::HostMode::Plain);
     }
 };
 
