@@ -179,11 +179,24 @@ class LLA_READERS_ISO7816_API SAMAV2ISO7816Commands
   protected:
     struct TransmissionOptions
     {
-        bool protectRequest        = true;
-        bool processResponse       = true;
-        bool resetIvBeforeResponse = true;
-        bool resetIvAfterResponse  = true;
-        bool advanceCommandCounter = true;
+        bool protectRequest;
+        bool processResponse;
+        bool resetIvBeforeResponse;
+        bool resetIvAfterResponse;
+        bool advanceCommandCounter;
+
+        constexpr TransmissionOptions(
+            bool protectRequest = true,
+            bool processResponse = true,
+            bool resetIvBeforeResponse = true,
+            bool resetIvAfterResponse = true,
+            bool advanceCommandCounter = true) noexcept
+            : protectRequest(protectRequest),
+              processResponse(processResponse),
+              resetIvBeforeResponse(resetIvBeforeResponse),
+              resetIvAfterResponse(resetIvAfterResponse),
+              advanceCommandCounter(advanceCommandCounter)
+        {}
     };
 
     void generateSessionKey(ByteVector rnd1, ByteVector rnd2);
@@ -216,7 +229,7 @@ class LLA_READERS_ISO7816_API SAMAV2ISO7816Commands
     ByteVector buildPlaintext(uint16_t changeCtr, const std::vector<std::shared_ptr<SAMBasicKeyEntry>> &entries);
     ByteVector rsa_oaep_encrypt(EVP_PKEY *pubKey, const ByteVector &plaintext, const EVP_MD *md);
     ByteVector rsa_pss_sign(EVP_PKEY *privKey, const ByteVector &data, const EVP_MD *md);
-    const EVP_MD *SAMAV2ISO7816Commands::getHash(sam::HashAlgo hashAlgo);
+    const EVP_MD *getHash(sam::HashAlgo hashAlgo);
     void buildCryptogram(EVP_PKEY *encKey, EVP_PKEY *signKey, uint8_t keyNoEnc, uint8_t keyNoSign, uint16_t changeCtr,
         const std::vector<std::shared_ptr<SAMBasicKeyEntry>> &entries,
         uint8_t hashAlgo, ByteVector &encFrame, ByteVector &signature);

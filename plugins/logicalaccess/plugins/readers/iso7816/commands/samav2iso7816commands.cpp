@@ -255,9 +255,6 @@ void SAMAV2ISO7816Commands::authenticateHost(std::shared_ptr<DESFireKey> key,
     ByteVector rnd1(RND_SIZE);
     EXCEPTION_ASSERT_WITH_LOG(RAND_bytes(rnd1.data(), static_cast<int>(rnd1.size())) == 1,
         LibLogicalAccessException, sam::errorMessage(__func__, "Cannot retrieve cryptographically strong bytes."));
-    /*if (RAND_bytes(&rnd1[0], static_cast<int>(rnd1.size())) != 1)
-        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                 sam::errorMessage(__func__, "Cannot retrieve cryptographically strong bytes"));*/
 
     ByteVector data_p2;
     data_p2.reserve(sam::MAC_SIZE + rnd1.size());
@@ -282,9 +279,6 @@ void SAMAV2ISO7816Commands::authenticateHost(std::shared_ptr<DESFireKey> key,
     ByteVector rndA(sam::AES_BLOCK_SIZE);
     EXCEPTION_ASSERT_WITH_LOG(RAND_bytes(rndA.data(), static_cast<int>(rndA.size())) == 1,
         LibLogicalAccessException, sam::errorMessage(__func__, "Cannot retrieve cryptographically strong bytes."));
-    /*if (RAND_bytes(&rndA[0], static_cast<int>(rndA.size())) != 1)
-        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                 sam::errorMessage(__func__, "Cannot retrieve cryptographically strong bytes"));*/
 
     // decipher rndB
     auto symkey = openssl::AESSymmetricKey::createFromData(d_authKey);
@@ -594,12 +588,7 @@ ByteVector SAMAV2ISO7816Commands::transmit(ByteVector cmd, bool first, bool last
     if (d_sessionKey.empty())
         return getISO7816ReaderCardAdapter()->sendCommand(cmd);
 
-    TransmissionOptions options;
-    options.protectRequest        = first || !s_mode;
-    options.processResponse       = last || !s_mode;
-    options.resetIvBeforeResponse = first;
-    options.resetIvAfterResponse  = last;
-    options.advanceCommandCounter = first || s_mode;
+    TransmissionOptions options {first || !s_mode, last || !s_mode, first, last, first || s_mode};
     return executeProtectedExchange(cmd, sam::ApduFormat::Standard, sam::PKI_ECC_LAYOUT, options);
 }
 
