@@ -12,7 +12,6 @@
 #include <logicalaccess/plugins/readers/iso7816/commands/samiso7816commands.hpp>
 #include <logicalaccess/plugins/cards/samav/samcrypto.hpp>
 #include <logicalaccess/plugins/cards/samav/samkeyentry.hpp>
-#include <logicalaccess/plugins/cards/samav/samcrypto.hpp>
 #include <logicalaccess/plugins/cards/samav/samcommands.hpp>
 
 #include <boost/interprocess/mapped_region.hpp>

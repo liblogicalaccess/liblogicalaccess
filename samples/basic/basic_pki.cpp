@@ -2,9 +2,7 @@
 #include <logicalaccess/readerproviders/readerconfiguration.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/samav3iso7816commands.hpp>
 
-#include <openssl/evp.h>
-#include <openssl/core_names.h>
-#include <openssl/bn.h>
+#include <ctime>
 
 using namespace logicalaccess;
 
@@ -24,17 +22,17 @@ enum class HashAlgo : unsigned char
 using Config = uint16_t;
 
 // PKI configuration flags
-constexpr Config PUBLIC_KEY                    = 0;
-constexpr Config PRIVATE_KEY                   = (1u << 0);
-constexpr Config ALLOW_PRIVATE_EXPORT          = (1u << 1);
-constexpr Config DISABLE                       = (1u << 2);
-constexpr Config DISABLE_ENCRYPTION            = (1u << 3);
-constexpr Config DISABLE_SIGNATURE             = (1u << 4);
-constexpr Config UPDATE_KEY_ENTRIES            = (1u << 5);
-constexpr Config CRT                           = (1u << 6);
-constexpr Config ENCIPHER_KEYS                 = (1u << 7);
-constexpr Config FORCE_HOST_USAGE              = (1u << 8);
-constexpr Config FORCE_HOST_CHANGE             = (1u << 9);
+constexpr Config PUBLIC_KEY           = 0;
+constexpr Config PRIVATE_KEY          = (1u << 0);
+constexpr Config ALLOW_PRIVATE_EXPORT = (1u << 1);
+constexpr Config DISABLE              = (1u << 2);
+constexpr Config DISABLE_ENCRYPTION   = (1u << 3);
+constexpr Config DISABLE_SIGNATURE    = (1u << 4);
+constexpr Config UPDATE_KEY_ENTRIES   = (1u << 5);
+constexpr Config CRT                  = (1u << 6);
+constexpr Config ENCIPHER_KEYS        = (1u << 7);
+constexpr Config FORCE_HOST_USAGE     = (1u << 8);
+constexpr Config FORCE_HOST_CHANGE    = (1u << 9);
 // Test defaults
 constexpr uint8_t DEFAULT_KUC    = 0xFE;
 constexpr uint8_t DEFAULT_CEKNO  = 0x00;
@@ -42,9 +40,11 @@ constexpr uint8_t DEFAULT_CEKVER = 0xFF;
 constexpr uint8_t FIRST_SLOT     = 0x00;
 constexpr uint8_t LAST_SLOT      = 0x02;
 
-const Config TEST_KEY = PRIVATE_KEY | ALLOW_PRIVATE_EXPORT | UPDATE_KEY_ENTRIES | ENCIPHER_KEYS | CRT;
+constexpr Config TEST_KEY = PRIVATE_KEY | ALLOW_PRIVATE_EXPORT | UPDATE_KEY_ENTRIES | ENCIPHER_KEYS | CRT;
 
-const Config TEST_KEY_SAFE = PRIVATE_KEY | ALLOW_PRIVATE_EXPORT | CRT;
+constexpr Config TEST_KEY_SAFE = PRIVATE_KEY | ALLOW_PRIVATE_EXPORT | CRT;
+
+constexpr Config TEST_KEY_DISABLED = TEST_KEY_SAFE | DISABLE;
 }
 
 struct PKIImportTestCase
@@ -187,6 +187,7 @@ struct PKIGenerateTestCase
     unsigned char keyNoRef{};
     sam::AEKVAEK accessKeys{};
     unsigned short nLen{};
+    unsigned short eLen{};
     ByteVector pki_e{};
     bool includeAccess{};
     bool expectSuccess{};
@@ -593,49 +594,62 @@ std::vector<PKIImportTestCase> importTests = {
 
 std::vector<PKIGenerateTestCase> generateKeyPairTests = {
     // ===== SUCCESS =====
-    {0x01, 0x0001, 0xFE, 0x00, 0xFF, sam::AEKVAEK{}, 0x40, {}, false, true, false, "Valid parameters, random exponent, minimal modulus"},
-    {0x00, 0x0001, 0xFE, 0x00, 0xFF, sam::AEKVAEK{}, 0x100, ByteVector(256, 0x03), false, true, false, "APDU chaining with large exponent (no access)"},
-    {0x01, pki::PRIVATE_KEY | pki::ALLOW_PRIVATE_EXPORT | pki::CRT, 0xFE, 0x00, 0xFF, sam::AEKVAEK{}, 0x40, {}, false, true, false, "Valid config without access keys"},
+    {0x01, pki::PRIVATE_KEY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x40, 0x04,
+    {}, false, true, false, "Valid parameters, random exponent, minimal modulus"},
+
+    {0x00, pki::PRIVATE_KEY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x100, 0x100,
+    ByteVector(256, 0x03), false, true, false, "APDU chaining with large exponent (no access)"},
+
+    {0x01, pki::TEST_KEY_SAFE, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x40, 0x04,
+    {}, false, true, false, "Valid config without access keys"},
 
     // ===== DISABLED KEY =====
-    {0x01, pki::PRIVATE_KEY | pki::ALLOW_PRIVATE_EXPORT | pki::CRT, 0xFE, 0x00, 0xFF, sam::AEKVAEK{}, 0x40, {}, false, true, true, "Key generation with disable flag (bit 2 set)"},
+    {0x01, pki::TEST_KEY_DISABLED, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x40, 0x04,
+    {}, false, true, true, "Key generation with disable flag (bit 2 set)"},
 
     // ===== MIN EXPONENT SIZE =====
-    {0x01, 0x0001, 0xFE, 0x00, 0xFF, sam::AEKVAEK{}, 0x40, logicalaccess::BufferHelper::fromHexString("00000003"), false, true, false,
-     "Minimum valid exponent size (4 bytes and odd)"},
+    {0x01, pki::PRIVATE_KEY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x40, 0x04,
+    logicalaccess::BufferHelper::fromHexString("00000003"), false, true, false, "Minimum valid exponent size (4 bytes and odd)"},
 
     // ===== EXPONENT (SMALL) =====
-    {0x01, 0x0001, 0xFE, 0x00, 0xFF, sam::AEKVAEK{}, 0x40, logicalaccess::BufferHelper::fromHexString("00010001"), false, true, false,
-     "Standard RSA exponent (65537)"},
+    {0x01, pki::PRIVATE_KEY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x40, 0x04,
+    logicalaccess::BufferHelper::fromHexString("00010001"), false, true, false, "Standard RSA exponent (65537)"},
 
     // ===== CHAINING =====
-    {0x01, 0x0001, 0xFE, 0x00, 0xFF, sam::AEKVAEK{}, 0x100, ByteVector(256, 0x03), false, true, false, "APDU chaining (256-byte exponent)"},
+    {0x01, pki::PRIVATE_KEY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x100, 0x100,
+    ByteVector(256, 0x03), false, true, false, "APDU chaining (256-byte exponent)"},
     
     // ===== INVALID KEY NUMBER =====
-    {0x02, 0x0001, 0xFE, 0x00, 0xFF, sam::AEKVAEK{}, 0x40, {}, false, false, false, "Invalid key number (must be 0x00 or 0x01)"},
+    {0x02, pki::PRIVATE_KEY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x40, 0x04,
+    {}, false, false, false, "Invalid key number (must be 0x00 or 0x01)"},
 
     // ===== INCORRECT EXPONENT LENGTH (SMALL) =====
-    {0x01, 0x0001, 0xFE, 0x00, 0xFF, sam::AEKVAEK{}, 0x40, logicalaccess::BufferHelper::fromHexString("010001"), false, false, false,
-     "Exponent length not multiple of 4 bytes"},
+    {0x01, pki::PRIVATE_KEY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x40, 0x03,
+    logicalaccess::BufferHelper::fromHexString("010001"), false, false, false, "Exponent length not multiple of 4 bytes"},
 
     // ===== INCORRECT EXPONENT (EVEN) =====
-    {0x01, 0x0001, 0xFE, 0x00, 0xFF, sam::AEKVAEK{}, 0x40, logicalaccess::BufferHelper::fromHexString("020002"), false, false, false,
-     "Exponent must be odd"},
+    {0x01, pki::PRIVATE_KEY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x40, 0x04,
+    logicalaccess::BufferHelper::fromHexString("020002"), false, false, false, "Exponent must be odd"},
 
     // ===== AEK (DISABLE CONFLICT) =====
-    {0x01, 0x0004, 0xFE, 0x00, 0xFF, sam::AEKVAEK{}, 0x40, {}, true, false, false, "Access keys required but not provided"},
+    {0x01, pki::DISABLE, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x40, 0x04,
+    {}, true, false, false, "Access keys required but not provided"},
 
     // ===== INVALID NLEN =====
-    {0x01, 0x0001, 0xFE, 0x00, 0xFF, sam::AEKVAEK{}, 0x41, {}, false, false, false, "Modulus length not multiple of 8"},
+    {0x01, pki::PRIVATE_KEY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x41, 0x04,
+    {}, false, false, false, "Modulus length not multiple of 8"},
 
     // ===== EXPONENT > MODULUS =====
-    {0x01, 0x0001, 0xFE, 0x00, 0xFF, sam::AEKVAEK{}, 0x40, ByteVector(128, 0x03), false, false, false, "Exponent length greater than modulus"},
+    {0x01, pki::PRIVATE_KEY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x40, 0x80,
+    ByteVector(128, 0x03), false, false, false, "Exponent length greater than modulus"},
 
     // ===== AEK WITH DISABLED KEY (CONFLICT) =====
-    {0x01, 0x0004, 0xFE, 0x00, 0xFF, sam::AEKVAEK(0x10, 0x20), 0x40, {}, false, false, false, "Access key provided while key is disabled"},
+    {0x01, pki::DISABLE, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK(0x10, 0x20), 0x40, 0x04,
+    {}, false, false, false, "Access key provided while key is disabled"},
 
     // ===== NLEN TOO SMALL =====
-    {0x01, 0x0001, 0xFE, 0x00, 0xFF, sam::AEKVAEK{}, 0x20, {},false, false, false, "Modulus length too small (64 bytes required)"}
+    {0x01, pki::PRIVATE_KEY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x20, 0x04,
+    {},false, false, false, "Modulus length too small (64 bytes required)"}
 };
 
 std::vector<PKIUpdateKeyEntriesTestCase> updateKeyEntriesTests = {
@@ -746,7 +760,7 @@ std::vector<PKISendSignatureTestCase> sendSignatureTests = {
     {true, true, "Retrieve signature third time"},
 
     // ===== STATE DEPENDENCY =====
-    {false, false, "No signature available"} //Test will fail if signature present (with previous tests)
+    {false, false, "No signature available"} //Test cannot fail if signature present (generated with previous runPKI tests)
 };
 
 struct TestStats
@@ -844,7 +858,7 @@ void runPKIGenerateTests(std::shared_ptr<SAMAV3ISO7816Commands> samCmd, const Te
         [&](const PKIGenerateTestCase &tc)
         {
             samCmd->PKI_GenerateKeyPair(tc.keyNo, tc.config, tc.keyNoCEK, tc.keyNoVCEK,
-                                        tc.keyNoRef, tc.accessKeys, tc.nLen, tc.pki_e,
+                                        tc.keyNoRef, tc.accessKeys, tc.nLen, tc.eLen, tc.pki_e,
                                         tc.includeAccess);
         },
         [&](const PKIGenerateTestCase &tc, bool success)
@@ -1227,7 +1241,7 @@ std::vector<PKIRoundTripTestCase> roundTripTests = {
 
     // ===== REPEATABILITY =====
     {0x03, 0x00, ByteVector(16, 0x55), true, "Repeatability #1"},
-    {0x03, 0x00, ByteVector(16, 0x55), true, "Repeatability #2"},
+    {0x03, 0x00, ByteVector(16, 0x55), true, "Repeatability #2"}
 };
 
 void runPKIRoundTripTests(std::shared_ptr<logicalaccess::SAMAV3ISO7816Commands> samCmd, const TestHooks& hooks)
@@ -1244,6 +1258,7 @@ void runPKIRoundTripTests(std::shared_ptr<logicalaccess::SAMAV3ISO7816Commands> 
             //     throw std::runtime_error("OAEP randomness failure");
             if (encrypted.empty())
                 throw std::runtime_error("Empty ciphertext");
+
             // ByteVector decrypted2 = samCmd->PKI_DecipherData(tc.hashAlgo,
             // tc.keyNo, encrypted); if (decrypted != tc.plainData || decrypted2 != tc.plainData)
             //      throw std::runtime_error("Roundtrip mismatch");
@@ -1282,15 +1297,15 @@ ByteVector makeSafeEccPoint()
 static const ByteVector SAFE_ECC_POINT = {
     0x04,
     // X (32 bytes)
-    0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11,
-    0x11,0x11,0x11,0x11,0x11,0x11,0x11,0x11,
-    0x22,0x22,0x22,0x22,0x22,0x22,0x22,0x22,
-    0x22,0x22,0x22,0x22,0x22,0x22,0x22,0x22,
+    0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11,
+    0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11, 0x11,
+    0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22,
+    0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22, 0x22,
     // Y (32 bytes)
-    0x33,0x33,0x33,0x33,0x33,0x33,0x33,0x33,
-    0x33,0x33,0x33,0x33,0x33,0x33,0x33,0x33,
-    0x44,0x44,0x44,0x44,0x44,0x44,0x44,0x44,
-    0x44,0x44,0x44,0x44,0x44,0x44,0x44,0x44
+    0x33, 0x33, 0x33, 0x33, 0x33, 0x33, 0x33, 0x33,
+    0x33, 0x33, 0x33, 0x33, 0x33, 0x33, 0x33, 0x33,
+    0x44, 0x44, 0x44, 0x44, 0x44, 0x44, 0x44, 0x44,
+    0x44, 0x44, 0x44, 0x44, 0x44, 0x44, 0x44, 0x44
 };
 
 std::vector<PKIImportEccTestCase> importEccKeyTests = {
@@ -1317,9 +1332,9 @@ void runPKIImportEccTests(std::shared_ptr<SAMAV3ISO7816Commands> samCmd, const T
         {
             std::cout << "[INFO] " << tc.description << " -> " << (success ? "OK" : "FAIL") << '\n';
             if (!success && tc.expectSuccess)
-                throw std::runtime_error("Unexpected ECC import failure: " + tc.description);
+                throw std::runtime_error("Unexpected ECC import failure : " + tc.description);
             if (success && !tc.expectSuccess)
-                throw std::runtime_error("Unexpected ECC import success: " + tc.description);
+                throw std::runtime_error("Unexpected ECC import success : " + tc.description);
         },
         hooks);
 }
@@ -1336,12 +1351,14 @@ struct PKIImportEccCurveTestCase
 };
 struct ECCCurveBuilder
 {
-    static ByteVector BuildFakeCurve(uint8_t eccN, uint8_t eccM, uint8_t fillPrime,
+    static ByteVector BuildCurve(uint8_t eccN, uint8_t eccM, uint8_t fillPrime,
                                      uint8_t fillA, uint8_t fillB, uint8_t fillPx,
                                      uint8_t fillPy, uint8_t fillOrder)
     {
+        constexpr std::size_t HEADER_SIZE = 2;
+        constexpr std::size_t FIELD_COUNT = 5;
         ByteVector v;
-        v.reserve(2 + 5 * eccN + eccM);
+        v.reserve(HEADER_SIZE + FIELD_COUNT * static_cast<std::size_t>(eccN) + static_cast<std::size_t>(eccM));
         v.push_back(eccN);
         v.push_back(eccM);
         auto appendN = [&](uint8_t val) { v.insert(v.end(), eccN, val); };
@@ -1356,10 +1373,7 @@ struct ECCCurveBuilder
 };
 
 std::vector<PKIImportEccCurveTestCase> ImportEccCurveTests = {
-    {0x00, 0xFE, 0x00,
-     ECCCurveBuilder::BuildFakeCurve(0x10,
-                                     0x10,
-                                     0x11, 0x22, 0x33, 0x44, 0x55, 0x66),
+    {0x00, 0xFE, 0x00, ECCCurveBuilder::BuildCurve(0x10, 0x10, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66),
      false, true, "Valid ECC curve (minimal safe size)"}};
 
 
@@ -1498,7 +1512,10 @@ struct SamSession
             hostKey->setData(logicalaccess::BufferHelper::fromHexString(
                 "00000000000000000000000000000000"));
         }
-        samCmd->SAMAV2ISO7816Commands::authenticateHost(hostKey, 0x00);
+        // Select the desired SAM host authentication mode by uncommenting the corresponding overload
+        samCmd->SAMAV2ISO7816Commands::authenticateHost(hostKey, 0x00); //FullProtect by default
+        //samCmd->SAMAV2ISO7816Commands::authenticateHost(hostKey, 0x00, sam::HostMode::MAC);
+        //samCmd->SAMAV2ISO7816Commands::authenticateHost(hostKey, 0x00, sam::HostMode::Plain);
     }
 };
 
@@ -1520,7 +1537,8 @@ int main(int, char **)
         readerSession.readerConfig = readerConfig;
         std::cout << "Waiting 15 seconds for card insertion..." << std::endl;
         readerSession.connect();
-        std::cout << "[INFO] Time start : " << time(NULL) << std::endl;
+        const auto now = std::time(nullptr);
+        std::cout << "[INFO] Time start : " << std::ctime(&now);
         readerSession.waitCard();
         std::cout << "[INFO] Card type : " << readerSession.chip->getCardType() << std::endl;
         samSession.attach(readerSession.chip);
@@ -1540,7 +1558,7 @@ int main(int, char **)
             }
             catch (const std::exception &e)
             {
-                std::cout << "[HOOK] Disconnect failed: " << e.what() << std::endl;
+                std::cout << "[HOOK] Disconnect failed : " << e.what() << std::endl;
             }
             catch (...)
             {
@@ -1553,7 +1571,7 @@ int main(int, char **)
             samSession.authenticate();
             std::cout << "[HOOK] SAM authenticated" << std::endl;
         };
-        for (int session = 0; session < 1; ++session) //Will be improved later
+        for (int session = 0; session < 1; ++session) // Will be improved later
         {
             std::cout << "\n=== TEST SESSION " << session << " ===\n";
 

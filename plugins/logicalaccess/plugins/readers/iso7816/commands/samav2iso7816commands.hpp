@@ -14,18 +14,13 @@
 #include <logicalaccess/plugins/readers/iso7816/iso7816readerunitconfiguration.hpp>
 #include <logicalaccess/plugins/cards/samav/samcrypto.hpp>
 #include <logicalaccess/plugins/cards/samav/samkeyentry.hpp>
-#include <logicalaccess/plugins/cards/samav/samcrypto.hpp>
 #include <logicalaccess/plugins/cards/samav/samav2commands.hpp>
 #include <string>
 #include <vector>
-#include <iostream>
 
 namespace logicalaccess
 {
 
-#define AV2_HEADER_LENGTH 0x05
-#define AV2_HEADER_LENGTH_WITH_LE 0x06
-#define AV2_LC_POS 0x04
 #define CMD_SAMAV2ISO7816 "SAMAV2ISO7816"
 
 #ifdef SWIG
@@ -58,37 +53,34 @@ class LLA_READERS_ISO7816_API SAMAV2ISO7816Commands
 
     void authenticateHost(std::shared_ptr<DESFireKey> key, unsigned char keyno) override;
 
-    void authenticateHost(std::shared_ptr<DESFireKey> key, unsigned char keyno,
-                          sam::HostMode hostmode);
+    void authenticateHost(const std::shared_ptr<DESFireKey> &key, unsigned char keyno, sam::HostMode hostmode);
 
-    std::shared_ptr<SAMKeyEntry<KeyEntryAV2Information, SETAV2>>
-    getKeyEntry(unsigned char keyno) override;
+    std::shared_ptr<SAMKeyEntry<KeyEntryAV2Information, SETAV2>> getKeyEntry(unsigned char keyno) override;
     std::shared_ptr<SAMKucEntry> getKUCEntry(unsigned char kucno) override;
 
-    void changeKUCEntry(unsigned char kucno, std::shared_ptr<SAMKucEntry> kucentry,
+    void changeKUCEntry(unsigned char kucno, std::shared_ptr<SAMKucEntry> kucEntry,
                         std::shared_ptr<DESFireKey> key) override;
-    void
-    changeKeyEntry(unsigned char keyno,
-                   std::shared_ptr<SAMKeyEntry<KeyEntryAV2Information, SETAV2>> keyentry,
+
+    void changeKeyEntry(unsigned char keyno, std::shared_ptr<SAMKeyEntry<KeyEntryAV2Information, SETAV2>> keyentry,
                    std::shared_ptr<DESFireKey> key) override;
 
     ByteVector transmit(ByteVector cmd, bool first = true, bool last = true, bool s_mode = false) override;
 
-    ByteVector dumpSecretKey(unsigned char keyno, unsigned char keyversion,
-                             ByteVector divInput) override;
+    ByteVector dumpSecretKey(unsigned char keyno, unsigned char keyversion, const ByteVector &divInput) override;
 
-    void activateOfflineKey(unsigned char keyno, unsigned char keyversion,
-                            ByteVector divInput) override;
+    void activateOfflineKey(unsigned char keyno, unsigned char keyversion, const ByteVector &divInput) override;
 
-    ByteVector decipherOfflineData(ByteVector data) override;
+    ByteVector decipherOfflineData(const ByteVector &data) override;
 
-    ByteVector encipherOfflineData(ByteVector data) override;
+    ByteVector encipherOfflineData(const ByteVector &data) override;
 	
-	void changeKeyEntryOffline(unsigned char keyno, const KeyEntryUpdateSettings& updateSettings, unsigned short changecnt, const ByteVector& encke) override;
+	void changeKeyEntryOffline(unsigned char keyno, const KeyEntryUpdateSettings &updateSettings,
+        unsigned short changecnt, const ByteVector &encke) override;
 	
-	void changeKUCEntryOffline(unsigned char kucno, const KucEntryUpdateSettings& updateSettings, unsigned short changecnt, const ByteVector& enckuc) override;
+	void changeKUCEntryOffline(unsigned char kucno, const KucEntryUpdateSettings &updateSettings,
+        unsigned short changecnt, const ByteVector &enckuc) override;
 	
-	void disableKeyEntryOffline(unsigned char keyno, unsigned short changecnt, const ByteVector& encuid) override;
+	void disableKeyEntryOffline(unsigned char keyno, unsigned short changecnt, const ByteVector &encuid) override;
 
     virtual ByteVector cmacOffline(const ByteVector &data);
 
@@ -102,13 +94,13 @@ class LLA_READERS_ISO7816_API SAMAV2ISO7816Commands
         return SAMISO7816Commands<KeyEntryAV2Information, SETAV2>::getReaderCardAdapter();
     }
 
-    void generateOfflineSessionKey(std::shared_ptr<DESFireKey> key, unsigned short changecnt);
+    void generateOfflineSessionKey(const std::shared_ptr<DESFireKey> &key, unsigned short changecnt);
 
     
     void PKI_GenerateKeyPair(unsigned char keyNo, unsigned short configSettings,
                              unsigned char keyNoCEK, unsigned char keyNoVCEK,
                              unsigned char keyNoRef, const sam::AEKVAEK &accessKeys,
-                             unsigned short nLen = 0x40,
+                             unsigned short nLen = 0x40, unsigned short eLen = 0x04,
                              const ByteVector &pki_e = {},
                              bool includeAccess = false) override;
 
@@ -125,11 +117,10 @@ class LLA_READERS_ISO7816_API SAMAV2ISO7816Commands
 
     ByteVector PKI_ExportPublicKey(unsigned char keyNo, bool returnAEK = false) override;
 
-    ByteVector
-    PKI_UpdateKeyEntries(EVP_PKEY &encKey, EVP_PKEY &signKey, unsigned char keyNoEnc,
-                         unsigned char keyNoSign, bool requestAck, unsigned char keyNoAck,
+    ByteVector PKI_UpdateKeyEntries(const ByteVector &encPublicKeyDer, const ByteVector &signPrivateKeyDer,
+                         unsigned char keyNoEnc, unsigned char keyNoSign, bool requestAck, unsigned char keyNoAck,
                          unsigned char hashAlgo, const std::vector<std::shared_ptr<SAMBasicKeyEntry>> &entries,
-                         uint16_t changeCounter) override;
+                         std::uint16_t changeCounter) override;
 
     ByteVector PKI_UpdateKeyEntries(unsigned char keyNoEnc, unsigned char keyNoSign,
                                     bool requestAck, unsigned char keyNoAck,
@@ -143,11 +134,9 @@ class LLA_READERS_ISO7816_API SAMAV2ISO7816Commands
         unsigned short persoCtr, const std::vector<std::pair<unsigned char, unsigned char>> &keyEntries,
         const ByteVector &divInput = {}) override;
 
-    ByteVector PKI_GenerateHash(unsigned char hashAlgo,
-                                const ByteVector &message) override;
+    ByteVector PKI_GenerateHash(unsigned char hashAlgo, const ByteVector &message) override;
 
-    void PKI_GenerateSignature(unsigned char hashAlgo, unsigned char keyNoSign,
-                               const ByteVector &hash) override;
+    void PKI_GenerateSignature(unsigned char hashAlgo, unsigned char keyNoSign, const ByteVector &hash) override;
 
     ByteVector PKI_SendSignature() override;
 
@@ -181,51 +170,79 @@ class LLA_READERS_ISO7816_API SAMAV2ISO7816Commands
 
 
   protected:
-    void generateSessionKey(ByteVector rnd1, ByteVector rnd2);
+    struct TransmissionOptions
+    {
+        bool protectRequest;
+        bool processResponse;
+        bool resetIvBeforeResponse;
+        bool resetIvAfterResponse;
+        bool advanceCommandCounter;
 
-    sam::ApduResult createfullProtectionCmd(const ByteVector &cmd, sam::ApduFormat format = sam::ApduFormat::Standard);
-    ByteVector createMacProtectionCmd(const ByteVector &cmd);
+        constexpr TransmissionOptions(
+            bool protectRequest = true,
+            bool processResponse = true,
+            bool resetIvBeforeResponse = true,
+            bool resetIvAfterResponse = true,
+            bool advanceCommandCounter = true) noexcept
+            : protectRequest(protectRequest),
+              processResponse(processResponse),
+              resetIvBeforeResponse(resetIvBeforeResponse),
+              resetIvAfterResponse(resetIvAfterResponse),
+              advanceCommandCounter(advanceCommandCounter)
+        {}
+    };
 
-    ByteVector transmitSecureChained(const ByteVector &cmd, sam::ApduFormat format = sam::ApduFormat::Standard, const sam::ChainingLayout &layout = sam::PKI_ECC_LAYOUT);
+    void generateSessionKey(const ByteVector &rnda, const ByteVector &rndb);
+    void deriveSessionKeys(const ByteVector &masterKey, const ByteVector &SV1a,
+                           const ByteVector &SV1b, const ByteVector &SV2a,
+                           const ByteVector &SV2b);
+    void mergeDerivedKeys(const ByteVector &sessionKeyExtension,
+                          const ByteVector &macSessionKeyExtension, std::size_t keySize);
+
+    sam::ProtectedApdu prepareProtectedApdu(const ByteVector &cmd, sam::ApduFormat format = sam::ApduFormat::Standard);
+
+    ByteVector executeProtectedExchange(const ByteVector &cmd, sam::ApduFormat format = sam::ApduFormat::Standard,
+        const sam::ChainingLayout &layout = sam::PKI_ECC_LAYOUT, const TransmissionOptions &options = TransmissionOptions{});
     
-    ByteVector transmitSecureResponseChained(const ByteVector &cmd, const sam::ChainingLayout &layout = sam::PKI_ECC_LAYOUT);
+    ByteVector sendChainedFrames(const std::vector<ByteVector> &frames);
+    ByteVector completeSecureExchange(ByteVector response, const TransmissionOptions &options);
 
-    ByteVector sendChainedFrames(const std::vector<ByteVector> &frames, unsigned char ins);
-    ByteVector receiveChainedResponse(unsigned char ins, ByteVector response,
-                                      unsigned char sw1, unsigned char sw2);
-    ByteVector finalizeSecureResponse(ByteVector response);
-
-    ByteVector sendChainedRespApdu(const ByteVector &cmd, const ByteVector &encData, const ByteVector &mac, const sam::ChainingLayout &layout = sam::PKI_ECC_LAYOUT, bool le = false);
-
-    std::vector<ByteVector> createChainedApduFrames(const ByteVector &cmd,
-                                                    const ByteVector &encData,
-                                                    const ByteVector &mac,
-                                                    const sam::ChainingLayout &layout = sam::PKI_ECC_LAYOUT,
-                                                    bool le = false);
+    std::vector<ByteVector> createApduFrames(const ByteVector &cmd, const sam::ProtectedApdu &protection,
+                                                    sam::ApduFormat format, const sam::ChainingLayout &layout);
+    std::vector<ByteVector> createSecureChainedApduFrames(const ByteVector &cmd, const sam::ProtectedApdu &protection,
+                                                    sam::ApduFormat format, const sam::ChainingLayout &layout);
+    std::vector<ByteVector> createPlainChainedApduFrames(const ByteVector &cmd, sam::ApduFormat format,
+        const sam::ChainingLayout &layout);
 
     ByteVector verifyAndDecryptResponse(const ByteVector &response);
-    ByteVector verifyAndDecryptMacResponse(const ByteVector &response);
 
+    ByteVector computeCommandMac(ByteVector &protectedCmd);
+    ByteVector encryptCommandData(const ByteVector &data);
     static void getLcLe(const ByteVector &cmd, bool &lc, bool &le);
+    sam::ApduInfo getApduInfo(const ByteVector &cmd, sam::ApduFormat format);
+    sam::ProtectedApdu prepareProtectedCommand(const ByteVector &cmd, sam::ApduFormat format);
 
     ByteVector generateEncIV(bool encrypt) const;
 
-    ByteVector buildPlaintext(uint16_t changeCtr, const std::vector<std::shared_ptr<SAMBasicKeyEntry>> &entries);
+    ByteVector buildPlaintext(std::uint16_t changeCtr, const std::vector<std::shared_ptr<SAMBasicKeyEntry>> &entries);
     ByteVector rsa_oaep_encrypt(EVP_PKEY *pubKey, const ByteVector &plaintext, const EVP_MD *md);
     ByteVector rsa_pss_sign(EVP_PKEY *privKey, const ByteVector &data, const EVP_MD *md);
-    const EVP_MD *SAMAV2ISO7816Commands::getHash(sam::HashAlgo hashAlgo);
-    void buildCryptogram(EVP_PKEY *encKey, EVP_PKEY *signKey, uint8_t keyNoEnc, uint8_t keyNoSign, uint16_t changeCtr,
+    const EVP_MD *getHash(sam::HashAlgo hashAlgo);
+    void buildCryptogram(EVP_PKEY *encKey, EVP_PKEY *signKey, std::uint8_t keyNoEnc, std::uint8_t keyNoSign, std::uint16_t changeCtr,
         const std::vector<std::shared_ptr<SAMBasicKeyEntry>> &entries,
-        uint8_t hashAlgo, ByteVector &encFrame, ByteVector &signature);
+        std::uint8_t hashAlgo, ByteVector &encFrame, ByteVector &signature);
 
     void resetIVs();
-    void secureZero(ByteVector &vec);
+    void secureZero(ByteVector &buffer) noexcept;
+    void validateSuccessResponse(const ByteVector &response, const char *caller) const;
 
     ByteVector d_macSessionKey;
 
     ByteVector d_lastMacIV;
 
     unsigned int d_cmdCtr;
+
+    sam::HostMode d_hostMode{sam::HostMode::None};
 };
 }
 

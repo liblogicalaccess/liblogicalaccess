@@ -31,15 +31,13 @@ class SAMAV3Commands : public ICommands
                                       bool settingsOnly          = false) = 0;
 
     virtual ByteVector PKI_ImportCaPkOffline(const ByteVector &offlineCryptogram,
-                                     bool settingsOnly, bool requestAck) = 0;
+                                     bool settingsOnly, bool expectResponseData) = 0;
 
     virtual void PKI_RemoveCaPk(const ByteVector &rid, unsigned char pkId) = 0;
 
-    virtual ByteVector PKI_RemoveCaPkOffline(const ByteVector &offlineCryptogram,
-                                             bool requestAck) = 0;
+    virtual ByteVector PKI_RemoveCaPkOffline(const ByteVector &offlineCryptogram, bool expectResponseData) = 0;
 
-    virtual ByteVector PKI_ExportCaPk(const ByteVector &rid, unsigned char pkId,
-                                      bool settingsOnly) = 0;
+    virtual ByteVector PKI_ExportCaPk(const ByteVector &rid, unsigned char pkId, bool settingsOnly) = 0;
 
     virtual ByteVector PKI_LoadIssuerPk(const ByteVector &rid, unsigned char pkId,
                                         const ByteVector &issuerPkCert,
@@ -54,8 +52,7 @@ class SAMAV3Commands : public ICommands
 
     virtual ByteVector SAM_RecoverDynamicData(const ByteVector &sdad) = 0;
 
-    virtual ByteVector SAM_EncipherPIN(const ByteVector &pinBlock,
-                                       const ByteVector &iccNumber) = 0;
+    virtual ByteVector SAM_EncipherPIN(const ByteVector &pinBlock, const ByteVector &iccNumber) = 0;
 };
 }
 

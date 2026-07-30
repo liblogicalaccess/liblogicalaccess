@@ -19,25 +19,25 @@ template <typename T, typename S>
 class SAMAV2Commands : public ICommands
 {
   public:
-    virtual ByteVector dumpSecretKey(unsigned char keyno, unsigned char keyversion,
-                                     ByteVector divInput) = 0;
+    virtual ByteVector dumpSecretKey(unsigned char keyno, unsigned char keyversion, const ByteVector& divInput) = 0;
 
-    virtual void activateOfflineKey(unsigned char keyno, unsigned char keyversion,
-                                    ByteVector divInput) = 0;
+    virtual void activateOfflineKey(unsigned char keyno, unsigned char keyversion, const ByteVector& divInput) = 0;
 
-    virtual ByteVector decipherOfflineData(ByteVector data) = 0;
+    virtual ByteVector decipherOfflineData(const ByteVector &data) = 0;
 
-    virtual ByteVector encipherOfflineData(ByteVector data) = 0;
+    virtual ByteVector encipherOfflineData(const ByteVector &data) = 0;
 	
-    virtual void changeKeyEntryOffline(unsigned char keyno, const KeyEntryUpdateSettings& updateSettings, unsigned short changecnt, const ByteVector& encke) = 0;
+    virtual void changeKeyEntryOffline(unsigned char keyno, const KeyEntryUpdateSettings& updateSettings,
+        unsigned short changecnt, const ByteVector& encke) = 0;
 	
-    virtual void changeKUCEntryOffline(unsigned char kucno, const KucEntryUpdateSettings& updateSettings, unsigned short changecnt, const ByteVector& enckuc) = 0;
+    virtual void changeKUCEntryOffline(unsigned char kucno, const KucEntryUpdateSettings& updateSettings,
+        unsigned short changecnt, const ByteVector& enckuc) = 0;
 	
-    virtual void disableKeyEntryOffline(unsigned char keyno, unsigned short changecnt, const ByteVector& encuid)  = 0;
+    virtual void disableKeyEntryOffline(unsigned char keyno, unsigned short changecnt, const ByteVector& encuid) = 0;
 
     virtual void PKI_GenerateKeyPair(unsigned char keyNo, unsigned short configSettings, unsigned char keyNoCEK,
             unsigned char keyNoVCEK, unsigned char keyNoRef, const sam::AEKVAEK &accessKeys,
-            unsigned short nLen = 0x40, const ByteVector &pki_e = {},
+            unsigned short nLen = 0x40, unsigned short eLen = 0x04, const ByteVector &pki_e = {},
             bool includeAccess = false) = 0;
 
     virtual void PKI_ImportKey(unsigned char keyNo, unsigned short configSettings,
@@ -49,13 +49,11 @@ class SAMAV2Commands : public ICommands
                       const sam::AEKVAEK &accessKeys = {}, bool includeAccess = false,
                       bool updateSettingsOnly = false) = 0;
 
-    virtual ByteVector PKI_ExportPrivateKey(unsigned char keyNo,
-                                                bool returnAEK = false) = 0;
+    virtual ByteVector PKI_ExportPrivateKey(unsigned char keyNo, bool returnAEK = false) = 0;
 
-    virtual ByteVector PKI_ExportPublicKey(unsigned char keyNo,
-                                               bool returnAEK = false) = 0;
+    virtual ByteVector PKI_ExportPublicKey(unsigned char keyNo, bool returnAEK = false) = 0;
 
-    virtual ByteVector PKI_UpdateKeyEntries(EVP_PKEY &encKey, EVP_PKEY &signKey,
+    virtual ByteVector PKI_UpdateKeyEntries(const ByteVector &encPublicKeyDer, const ByteVector &signPrivateKeyDer,
                          unsigned char keyNoEnc, unsigned char keyNoSign, bool requestAck,
                          unsigned char keyNoAck, unsigned char hashAlgo,
                          const std::vector<std::shared_ptr<SAMBasicKeyEntry>> &entries,
@@ -71,12 +69,9 @@ class SAMAV2Commands : public ICommands
             unsigned short persoCtr, const std::vector<std::pair<unsigned char, unsigned char>> &keyEntries,
             const ByteVector &divInput = {}) = 0;
 
-    virtual ByteVector PKI_GenerateHash(unsigned char hashAlgo,
-                                            const ByteVector &message) = 0;
+    virtual ByteVector PKI_GenerateHash(unsigned char hashAlgo, const ByteVector &message) = 0;
 
-    virtual void PKI_GenerateSignature(unsigned char hashAlgo,
-                                           unsigned char keyNoSign,
-                                           const ByteVector &hash) = 0;
+    virtual void PKI_GenerateSignature(unsigned char hashAlgo, unsigned char keyNoSign, const ByteVector &hash) = 0;
 
     virtual ByteVector PKI_SendSignature() = 0;
 
