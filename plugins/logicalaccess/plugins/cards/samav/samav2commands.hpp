@@ -37,7 +37,7 @@ class SAMAV2Commands : public ICommands
 
     virtual void PKI_GenerateKeyPair(unsigned char keyNo, unsigned short configSettings, unsigned char keyNoCEK,
             unsigned char keyNoVCEK, unsigned char keyNoRef, const sam::AEKVAEK &accessKeys,
-            unsigned short nLen = 0x40, const ByteVector &pki_e = {},
+            unsigned short nLen = 0x40, unsigned short eLen = 0x04, const ByteVector &pki_e = {},
             bool includeAccess = false) = 0;
 
     virtual void PKI_ImportKey(unsigned char keyNo, unsigned short configSettings,
@@ -53,7 +53,7 @@ class SAMAV2Commands : public ICommands
 
     virtual ByteVector PKI_ExportPublicKey(unsigned char keyNo, bool returnAEK = false) = 0;
 
-    virtual ByteVector PKI_UpdateKeyEntries(EVP_PKEY &encKey, EVP_PKEY &signKey,
+    virtual ByteVector PKI_UpdateKeyEntries(const ByteVector &encPublicKeyDer, const ByteVector &signPrivateKeyDer,
                          unsigned char keyNoEnc, unsigned char keyNoSign, bool requestAck,
                          unsigned char keyNoAck, unsigned char hashAlgo,
                          const std::vector<std::shared_ptr<SAMBasicKeyEntry>> &entries,

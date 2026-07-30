@@ -1,27 +1,36 @@
 #ifndef LOGICALACCESS_SAMTYPES_HPP
 #define LOGICALACCESS_SAMTYPES_HPP
 
+#include <cstddef>
 #include <cstdint>
+#include <string>
 
 namespace logicalaccess
 {
 namespace sam
 {
 
-constexpr std::size_t MAX_APDU_DATA_SIZE = 0xFF;
-constexpr std::size_t SAM_SECURE_CHANNEL_MAX_PLAIN_LC = 0xF0;
+constexpr std::size_t APDU_COMMAND_HEADER_SIZE  = 0x04; // CLA INS P1 P2
+constexpr std::size_t APDU_HEADER_SIZE          = 0x05; // CLA INS P1 P2 Lc
+constexpr std::size_t APDU_HEADER_WITH_LE_SIZE  = APDU_HEADER_SIZE + 1u; // CLA INS P1 P2 Lc Le
+constexpr std::size_t APDU_LC_INDEX             = 0x04;
+constexpr std::size_t MAX_APDU_SIZE             = 0xFF;
+constexpr std::size_t MAX_APDU_PAYLOAD_SIZE     = MAX_APDU_SIZE - APDU_HEADER_SIZE;
+constexpr std::size_t MAX_SECURE_APDU_DATA_SIZE = 0xF0;
 
-constexpr unsigned char AES_BLOCK_SIZE = 16;
+constexpr unsigned char AES_BLOCK_SIZE   = 16;
+constexpr unsigned char AES_128_KEY_SIZE = 16;
+constexpr unsigned char AES_192_KEY_SIZE = 24;
+constexpr unsigned char AES_256_KEY_SIZE = 32;
 constexpr unsigned char STATUS_WORD_SIZE = 2;
-constexpr unsigned char MAC_SIZE = 8;
+constexpr unsigned char MAC_SIZE         = 8;
 
 // APDU format abstraction
 enum class ApduFormat : unsigned char
 {
-    Standard,            // short APDU (< 241 bytes)
-    Extended,            // extended APDU
-    ExtendedWithLe,      // extended APDU with Le
-    ExtendedResponseOnly // extended APDU for responses only
+    Standard,      // Single short APDU (command fits in one frame and payload is < 241 bytes when protected)
+    Extended,      // Command is transmitted over one or more extended APDUs (payload exceeds the Standard 240 bytes limit)
+    ExtendedWithLe // Same as Extended, with an Le field in the final APDU
 };
 
 // APDU result wrapper
@@ -56,14 +65,19 @@ enum class HashAlgo : unsigned char
     SHA256 = 0x03
 };
 
-constexpr bool isSupportedHashAlgo(unsigned char algo)
+constexpr bool isValidAESKeySize(std::size_t size) noexcept
+{
+    return size == AES_128_KEY_SIZE || size == AES_192_KEY_SIZE || size == AES_256_KEY_SIZE;
+}
+
+constexpr bool isSupportedHashAlgo(unsigned char algo) noexcept
 {
     return algo == static_cast<unsigned char>(HashAlgo::SHA1) ||
            algo == static_cast<unsigned char>(HashAlgo::SHA224) ||
            algo == static_cast<unsigned char>(HashAlgo::SHA256);
 }
 
-constexpr unsigned char expectedHashSize(unsigned char algo)
+constexpr unsigned char expectedHashSize(unsigned char algo) noexcept
 {
     switch (algo)
     {
@@ -77,24 +91,42 @@ constexpr unsigned char expectedHashSize(unsigned char algo)
 // APDU chaining layout
 struct ChainingLayout
 {
+    static constexpr unsigned char NoIndex = 0xFF;
+
     unsigned char modeIndex;
     unsigned char lastFrameIndex;
+
+    constexpr bool hasModeIndex() const noexcept
+    {
+        return modeIndex != NoIndex;
+    }
+
+    constexpr bool hasLastFrameIndex() const noexcept
+    {
+        return lastFrameIndex != NoIndex;
+    }
+
+    constexpr bool hasChaining() const noexcept
+    {
+        return hasModeIndex() && hasLastFrameIndex();
+    }
 };
 
 // Predefined layouts
-static constexpr ChainingLayout PKI_ECC_LAYOUT = {2, 3}; //PKI and ECC commands
-static constexpr ChainingLayout EMV_LAYOUT     = {3, 2}; //EMV commands
+static constexpr ChainingLayout PKI_ECC_LAYOUT = {2, 3}; // PKI and ECC commands
+static constexpr ChainingLayout EMV_LAYOUT     = {3, 2}; // EMV commands
+static constexpr ChainingLayout NO_LAYOUT      = {ChainingLayout::NoIndex, ChainingLayout::NoIndex};
 
 // Optional AEK/VAEK (replaces pointers)
 struct AEKVAEK
 {
-    uint8_t keyNoAEK = 0;
-    uint8_t keyVAEK  = 0;
+    unsigned char keyNoAEK = 0;
+    unsigned char keyVAEK  = 0;
     bool valid       = false;
 
     constexpr AEKVAEK() = default;
 
-    constexpr AEKVAEK(uint8_t aek, uint8_t vaek) : keyNoAEK(aek), keyVAEK(vaek), valid(true)
+    constexpr AEKVAEK(unsigned char aek, unsigned char vaek) : keyNoAEK(aek), keyVAEK(vaek), valid(true)
     {
 
     }
@@ -106,7 +138,7 @@ struct AEKVAEK
 };
 
 // Utility helpers
-inline void appendUInt32BE(ByteVector &out, uint32_t value)
+inline void appendUInt32BE(ByteVector &out, std::uint32_t value) noexcept
 {
     out.push_back(static_cast<unsigned char>((value >> 24) & 0xFF));
     out.push_back(static_cast<unsigned char>((value >> 16) & 0xFF));
@@ -114,20 +146,33 @@ inline void appendUInt32BE(ByteVector &out, uint32_t value)
     out.push_back(static_cast<unsigned char>(value & 0xFF));
 }
 
-inline void appendUInt16BE(ByteVector &out, uint16_t value)
+inline void appendUInt16BE(ByteVector &out, std::uint16_t value) noexcept
 {
     out.push_back(static_cast<unsigned char>((value >> 8) & 0xFF));
     out.push_back(static_cast<unsigned char>(value & 0xFF));
 }
 
-inline uint16_t parseStatusWord(const ByteVector &response)
+// TODO Replace with ISO7816Response once SAM commands migrate to that abstraction
+[[nodiscard]]
+inline bool tryParseStatusWord(const ByteVector &response, std::uint16_t &statusWord) noexcept
 {
-    return (static_cast<uint16_t>(response[response.size() - 2]) << 8) |
-           static_cast<uint16_t>(response[response.size() - 1]);
+    if (response.size() < STATUS_WORD_SIZE)
+        return false;
+
+    statusWord = (static_cast<std::uint16_t>(response[response.size() - STATUS_WORD_SIZE]) << 8) | response.back();
+
+    return true;
+}
+
+inline std::uint16_t parseStatusWord(const ByteVector &response) noexcept
+{
+    std::uint16_t sw = 0;
+    (void)tryParseStatusWord(response, sw);
+    return sw;
 }
 
 // Constants
-constexpr unsigned char toByte(HostMode mode)
+constexpr unsigned char toByte(HostMode mode) noexcept
 {
     return static_cast<unsigned char>(mode);
 }
@@ -144,10 +189,30 @@ constexpr unsigned short ConfigDisableBit = 0x0004;
 
 namespace sw
 {
-constexpr uint16_t Success = 0x9000;
 constexpr unsigned char SuccessSW1 = 0x90;
 constexpr unsigned char SuccessSW2  = 0x00;
 constexpr unsigned char MoreDataSW2 = 0xAF;
+}
+
+constexpr bool isSuccess(unsigned char sw1, unsigned char sw2) noexcept
+{
+    return sw1 == sw::SuccessSW1 && sw2 == sw::SuccessSW2;
+}
+
+constexpr bool hasMoreData(unsigned char sw1, unsigned char sw2) noexcept
+{
+    return sw1 == sw::SuccessSW1 && sw2 == sw::MoreDataSW2;
+}
+
+constexpr bool validState(unsigned char sw1, unsigned char sw2) noexcept
+{
+    return sw1 == sw::SuccessSW1 && (sw2 == sw::SuccessSW2 || sw2 == sw::MoreDataSW2);
+}
+
+namespace chaining
+{
+constexpr unsigned char Continue = sw::MoreDataSW2;
+constexpr unsigned char End      = sw::SuccessSW2;
 }
 
 namespace ins
