@@ -17,6 +17,7 @@
 #include <logicalaccess/plugins/crypto/aes_initialization_vector.hpp>
 #include <logicalaccess/plugins/crypto/aes_cipher.hpp>
 #include <logicalaccess/plugins/crypto/cmac.hpp>
+#include <logicalaccess/plugins/crypto/secure_memory.hpp>
 
 #include <cstring>
 
@@ -24,6 +25,9 @@
 
 namespace
 {
+using logicalaccess::security::SecureZeroGuard;
+using logicalaccess::security::secureZeroBuffer;
+
 using EVP_PKEY_ptr = std::unique_ptr<EVP_PKEY, decltype(&EVP_PKEY_free)>;
 
 EVP_PKEY_ptr loadPublicKeyFromDER(const ByteVector &der)
@@ -95,35 +99,11 @@ constexpr std::size_t keySizeIndex(std::size_t keySize)
     }
 }
 
-void secureZeroBuffer(ByteVector &buffer) noexcept
+[[nodiscard]]
+inline logicalaccess::sam::ProtectedApdu makeUnprotectedApdu(const ByteVector &cmd)
 {
-    if (!buffer.empty())
-        OPENSSL_cleanse(buffer.data(), buffer.size());
+    return {cmd};
 }
-
-// RAII helper that securely erases temporary sensitive buffers when leaving scope, including during exception unwinding
-class SecureZeroGuard final
-{
-  public:
-    explicit SecureZeroGuard(std::initializer_list<ByteVector *> buffers)
-        : d_buffers(buffers.begin(), buffers.end())
-    {
-    }
-
-    ~SecureZeroGuard() noexcept
-    {
-        for (auto *buffer : d_buffers)
-            if (buffer != nullptr)
-                secureZeroBuffer(*buffer);
-    }
-
-    SecureZeroGuard(const SecureZeroGuard &)            = delete;
-    SecureZeroGuard &operator=(const SecureZeroGuard &) = delete;
-    SecureZeroGuard(SecureZeroGuard &&)            = delete;
-    SecureZeroGuard &operator=(SecureZeroGuard &&) = delete;
-  private:
-    std::vector<ByteVector *> d_buffers;
-};
 
 } // anonymous namespace
 
@@ -310,8 +290,8 @@ void SAMAV2ISO7816Commands::authenticateHost(const std::shared_ptr<DESFireKey> &
     ByteVector encHost;
     ByteVector SAMrndA;
 
-    SecureZeroGuard cleanup{&keycipher, &rnd2, &macHost, &rnd1, &data_p2, &rndA, &encRndB, &dencRndB,
-        &rndB1, &dataHost, &encHost, &SAMrndA};
+    SecureZeroGuard cleanup{&keycipher, &rnd2, &macHost, &rnd1, &data_p2, &rndA,
+        &encRndB, &dencRndB, &rndB1, &dataHost, &encHost, &SAMrndA};
 
     /* Reset previous authentication state. */
     d_hostMode = sam::HostMode::None;
@@ -530,14 +510,37 @@ void SAMAV2ISO7816Commands::getLcLe(const ByteVector &cmd, bool &lc, bool &le)
 sam::ApduInfo SAMAV2ISO7816Commands::getApduInfo(const ByteVector &cmd, sam::ApduFormat format)
 {
     sam::ApduInfo info{};
-    if (format == sam::ApduFormat::Standard)
+    if (format == sam::ApduFormat::SingleFrame)
         getLcLe(cmd, info.hasLc, info.hasLe);
     else
     {
         info.hasLc = true;
-        info.hasLe = (format == sam::ApduFormat::ExtendedWithLe);
+        info.hasLe = (format == sam::ApduFormat::ChainedWithLe);
     }
     return info;
+}
+
+std::size_t SAMAV2ISO7816Commands::getMaxSingleFramePayloadSize(bool hasLe) const
+{
+    const std::size_t leSize = hasLe ? 1u : 0u;
+    switch (d_hostMode)
+    {
+    case sam::HostMode::Plain: return sam::MAX_APDU_PAYLOAD_SIZE - leSize;
+    case sam::HostMode::MAC:
+    case sam::HostMode::FullProtect: return sam::MAX_SECURE_APDU_DATA_SIZE;
+    case sam::HostMode::None:
+    default:
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+            sam::errorMessage(__func__, "Host authentication has not been established."));
+    }
+    return 0;
+}
+
+sam::ApduFormat SAMAV2ISO7816Commands::getApduFormat(std::size_t payloadSize, bool hasLe) const
+{
+    if (payloadSize <= getMaxSingleFramePayloadSize(hasLe))
+        return sam::ApduFormat::SingleFrame;
+    return hasLe ? sam::ApduFormat::ChainedWithLe : sam::ApduFormat::Chained;
 }
 
 ByteVector SAMAV2ISO7816Commands::verifyAndDecryptResponse(const ByteVector &response)
@@ -657,7 +660,7 @@ ByteVector SAMAV2ISO7816Commands::transmit(ByteVector cmd, bool first, bool last
         return getISO7816ReaderCardAdapter()->sendCommand(cmd);
 
     const TransmissionOptions options {first || !s_mode, last || !s_mode, first, last, first || s_mode};
-    return executeProtectedExchange(cmd, sam::ApduFormat::Standard, sam::PKI_ECC_LAYOUT, options);
+    return executeProtectedExchange(cmd, sam::ApduFormat::SingleFrame, sam::PKI_ECC_LAYOUT, options);
 }
 
 void SAMAV2ISO7816Commands::resetIVs()
@@ -679,8 +682,10 @@ ByteVector SAMAV2ISO7816Commands::executeProtectedExchange(const ByteVector &cmd
 
     try
     {
-        const auto protectedApdu = prepareProtectedCommand(cmd, format);
-        const auto frames        = createApduFrames(cmd, protectedApdu, format, layout);
+        const auto protectedApdu = options.protectRequest
+            ? prepareProtectedCommand(cmd, format) // Apply current secure messaging mode
+            : makeUnprotectedApdu(cmd); // Explicitly bypass protection for this exchange
+        const auto frames = createApduFrames(cmd, protectedApdu, format, layout);
         return completeSecureExchange(sendChainedFrames(frames), options);
     }
     catch (const std::exception &e)
@@ -697,7 +702,7 @@ sam::ProtectedApdu SAMAV2ISO7816Commands::prepareProtectedCommand(const ByteVect
 {
     switch (d_hostMode)
     {
-    case sam::HostMode::Plain: return {cmd}; // Plain mode : APDU is transmitted unchanged
+    case sam::HostMode::Plain: return makeUnprotectedApdu(cmd); // Plain host mode : APDU is transmitted unchanged
     case sam::HostMode::MAC:
     case sam::HostMode::FullProtect: return prepareProtectedApdu(cmd, format);
     case sam::HostMode::None:
@@ -772,7 +777,7 @@ std::vector<ByteVector> SAMAV2ISO7816Commands::createSecureChainedApduFrames(
 
     constexpr std::size_t maxChunkSize = sam::MAX_SECURE_APDU_DATA_SIZE;
 
-    const bool updateChainingFields = format != sam::ApduFormat::Standard && layout.hasChaining();
+    const bool updateChainingFields = format != sam::ApduFormat::SingleFrame && layout.hasChaining();
 
     const auto &encData = protection.encData;
     const auto &mac     = protection.mac;
@@ -837,20 +842,21 @@ std::vector<ByteVector> SAMAV2ISO7816Commands::createPlainChainedApduFrames(cons
 {
     const auto apduInfo = getApduInfo(cmd, format);
 
-    const std::size_t maxChunkSize = sam::MAX_APDU_PAYLOAD_SIZE - (apduInfo.hasLe ? 1u : 0u);
+    const std::size_t maxChunkSize = sam::MAX_APDU_PAYLOAD_SIZE;
+    const std::size_t lastFrameCapacity = apduInfo.hasLe ? maxChunkSize - 1u : maxChunkSize;
 
     if (cmd.size() <= sam::MAX_APDU_SIZE)
         return {cmd};
 
-    const bool updateChainingFields = format != sam::ApduFormat::Standard && layout.hasChaining();
+    const bool updateChainingFields = format != sam::ApduFormat::SingleFrame && layout.hasChaining();
 
     const std::size_t dataBegin = apduInfo.hasLc ? sam::APDU_HEADER_SIZE : cmd.size();
     const std::size_t dataEnd = apduInfo.hasLc ? cmd.size() - (apduInfo.hasLe ? 1u : 0u) : cmd.size();
     const std::size_t dataSize = dataEnd - dataBegin;
 
-    const std::size_t frameCount = std::max<std::size_t>(1, (dataSize + maxChunkSize - 1) / maxChunkSize);
+    // Reserve is only an estimate. When Le is present, the last frame has one byte less capacity.
     std::vector<ByteVector> frames;
-    frames.reserve(frameCount);
+    frames.reserve(std::max<std::size_t>(1, (dataSize + maxChunkSize - 1) / maxChunkSize));
 
     const unsigned char cla = cmd[0];
     const unsigned char ins = cmd[1];
@@ -865,6 +871,8 @@ std::vector<ByteVector> SAMAV2ISO7816Commands::createPlainChainedApduFrames(cons
         frame.push_back(ins);
         frame.push_back(p1);
         frame.push_back(p2);
+        if (dataSize == 0) // No command payload : preserve ISO7816 Case 1 and 2 encoding by omitting Lc.
+            return frame;
         frame.push_back(0x00);
         frame.insert(frame.end(), cmd.begin() + dataBegin + offset, cmd.begin() + dataBegin + offset + chunkSize);
         if (updateChainingFields)
@@ -881,14 +889,15 @@ std::vector<ByteVector> SAMAV2ISO7816Commands::createPlainChainedApduFrames(cons
     };
 
     std::size_t offset = 0;
-    for (std::size_t frameIndex = 0; frameIndex < frameCount; ++frameIndex)
+    do
     {
         const std::size_t remaining = dataSize - offset;
-        const std::size_t chunkSize = (std::min)(maxChunkSize, remaining);
-        const bool lastFrame = (frameIndex == frameCount - 1);
+        const bool lastFrame = remaining <= lastFrameCapacity;
+        const std::size_t currentChunkCapacity = lastFrame ? lastFrameCapacity : maxChunkSize;
+        const std::size_t chunkSize = (std::min)(currentChunkCapacity, remaining);
         frames.emplace_back(buildFrame(offset, chunkSize, lastFrame));
         offset += chunkSize;
-    }
+    } while (offset < dataSize);
 
     if (apduInfo.hasLe && !frames.empty())
         frames.back().push_back(cmd.back());
@@ -917,7 +926,6 @@ ByteVector SAMAV2ISO7816Commands::sendChainedFrames(const std::vector<ByteVector
         sw2 = swBegin[1];
         response.insert(response.end(), apdu.begin(), swBegin);
     };
-
     for (std::size_t i = 0; i < frames.size(); ++i)
     {
         appendResponseData(adapter->sendCommand(frames[i]));
@@ -1297,12 +1305,12 @@ void SAMAV2ISO7816Commands::PKI_GenerateKeyPair(
     if (provideExponent)
         payload.insert(payload.end(), pki_e.begin(), pki_e.end());
 
-    const unsigned char lc =
-        payload.size() > sam::MAX_SECURE_APDU_DATA_SIZE ? 0x00 : static_cast<unsigned char>(payload.size());
+    const sam::ApduFormat format = getApduFormat(payload.size(), false);
+    const unsigned char lc = (format == sam::ApduFormat::SingleFrame ? static_cast<unsigned char>(payload.size()) : 0x00);
     ByteVector apdu{d_cla, sam::ins::pki::GenerateKeyPair, p1, 0x00, lc};
     apdu.insert(apdu.end(), payload.begin(), payload.end());
 
-    const ByteVector response = executeProtectedExchange(apdu, sam::ApduFormat::Extended);
+    const ByteVector response = executeProtectedExchange(apdu, format);
     validateSuccessResponse(response, __func__);
 }
 
@@ -1429,12 +1437,12 @@ void SAMAV2ISO7816Commands::PKI_ImportKey(
         }
     }
 
-    const unsigned char lc =
-        payload.size() > sam::MAX_SECURE_APDU_DATA_SIZE ? 0x00 : static_cast<unsigned char>(payload.size());
+    const sam::ApduFormat format = getApduFormat(payload.size(), false);
+    const unsigned char lc = (format == sam::ApduFormat::SingleFrame ? static_cast<unsigned char>(payload.size()) : 0x00);
     ByteVector apdu{d_cla, sam::ins::pki::ImportKey, p1, 0x00, lc};
     apdu.insert(apdu.end(), payload.begin(), payload.end());
 
-    const ByteVector response = executeProtectedExchange(apdu, sam::ApduFormat::Extended);
+    const ByteVector response = executeProtectedExchange(apdu, format);
     validateSuccessResponse(response, __func__);
 }
 
@@ -1444,8 +1452,8 @@ ByteVector SAMAV2ISO7816Commands::PKI_ExportPrivateKey(unsigned char keyNo, bool
         LibLogicalAccessException, sam::errorMessage(__func__, "Invalid key reference number."));
 
     const unsigned char returnAekFlag = static_cast<unsigned char>(returnAEK ? 0x80 : 0x00);
-    ByteVector apdu{d_cla, sam::ins::pki::ExportPrivateKey, keyNo, returnAekFlag, 0x00};
-    ByteVector response = executeProtectedExchange(apdu, sam::ApduFormat::Standard, sam::NO_LAYOUT);
+    ByteVector apdu{d_cla, sam::ins::pki::ExportPrivateKey, keyNo, returnAekFlag, sam::iso7816::LeResponse};
+    ByteVector response = executeProtectedExchange(apdu);
     validateSuccessResponse(response, __func__);
 
     response.resize(response.size() - sam::STATUS_WORD_SIZE);
@@ -1458,8 +1466,8 @@ ByteVector SAMAV2ISO7816Commands::PKI_ExportPublicKey(unsigned char keyNo, bool 
         LibLogicalAccessException, sam::errorMessage(__func__, "Key number out of range."));
 
     const unsigned char returnAekFlag = static_cast<unsigned char>(returnAEK ? 0x80 : 0x00);
-    ByteVector apdu{d_cla, sam::ins::pki::ExportPublicKey, keyNo, returnAekFlag, 0x00};
-    ByteVector response = executeProtectedExchange(apdu, sam::ApduFormat::Standard, sam::NO_LAYOUT);
+    ByteVector apdu{d_cla, sam::ins::pki::ExportPublicKey, keyNo, returnAekFlag, sam::iso7816::LeResponse};
+    ByteVector response = executeProtectedExchange(apdu);
     validateSuccessResponse(response, __func__);
 
     response.resize(response.size() - sam::STATUS_WORD_SIZE);
@@ -1470,8 +1478,10 @@ ByteVector SAMAV2ISO7816Commands::buildPlaintext(std::uint16_t changeCtr,
     const std::vector<std::shared_ptr<SAMBasicKeyEntry>> &entries)
 {
     constexpr std::size_t HEADER_SIZE = 2;
+    constexpr std::size_t MAX_KEY_ENTRY_SIZE = 64;
+
     ByteVector pt;
-    pt.reserve(HEADER_SIZE + entries.size() * (2 + sizeof(KeyEntryAV2Information)));
+    pt.reserve(HEADER_SIZE + entries.size() * (HEADER_SIZE + MAX_KEY_ENTRY_SIZE));
     sam::appendUInt16BE(pt, changeCtr);
 
     for (const auto &entry : entries)
@@ -1479,20 +1489,13 @@ ByteVector SAMAV2ISO7816Commands::buildPlaintext(std::uint16_t changeCtr,
         EXCEPTION_ASSERT_WITH_LOG(entry,
             LibLogicalAccessException, sam::errorMessage(__func__, "Null SAMBasicKeyEntry."));
 
-        //TODO : SAM must support both AV2 compatible (61 bytes) and AV3 (64 bytes) key entries
-        auto *avEntry = dynamic_cast<SAMKeyEntry<KeyEntryAV2Information, SETAV2> *>(entry.get());
-        EXCEPTION_ASSERT_WITH_LOG(avEntry,
-            LibLogicalAccessException, sam::errorMessage(__func__, "Entry is not a SAMKeyEntry AV2 type."));
-
-        const std::uint8_t keyNo = avEntry->getKeyEntryInformation().desfirekeyno;
-        const std::uint8_t updateMask = entry->getUpdateMask();
-
-        const unsigned char *data = entry->getData();
-        const std::size_t len = entry->getLength();
+        const unsigned char keyNo = entry->getKeyEntryNumber();
+        const unsigned char updateMask = entry->getUpdateMask();
+        const ByteVector newEntry = entry->serializeKSTKeyEntry();
 
         pt.push_back(keyNo);
         pt.push_back(updateMask);
-        pt.insert(pt.end(), data, data + len);
+        pt.insert(pt.end(), newEntry.begin(), newEntry.end());
     }
     return pt;
 }
@@ -1692,9 +1695,8 @@ ByteVector SAMAV2ISO7816Commands::PKI_UpdateKeyEntries(
     payload.insert(payload.end(), encKeyFrame.begin(), encKeyFrame.end());
     payload.insert(payload.end(), signature.begin(), signature.end());
 
-    
-    const unsigned char lc =
-        payload.size() > sam::MAX_SECURE_APDU_DATA_SIZE ? 0x00 : static_cast<unsigned char>(payload.size());
+    const sam::ApduFormat format = getApduFormat(payload.size(), requestAck);
+    const unsigned char lc = (format == sam::ApduFormat::SingleFrame ? static_cast<unsigned char>(payload.size()) : 0x00);
     ByteVector apdu;
     apdu.reserve(payload.size() + (requestAck ? sam::APDU_HEADER_WITH_LE_SIZE : sam::APDU_HEADER_SIZE));
     apdu.push_back(d_cla);
@@ -1704,10 +1706,9 @@ ByteVector SAMAV2ISO7816Commands::PKI_UpdateKeyEntries(
     apdu.push_back(lc);
     apdu.insert(apdu.end(), payload.begin(), payload.end());
     if (requestAck)
-        apdu.push_back(0x00);
+        apdu.push_back(sam::iso7816::LeResponse);
 
-    ByteVector response = executeProtectedExchange(apdu,
-        requestAck ? sam::ApduFormat::ExtendedWithLe : sam::ApduFormat::Extended);
+    ByteVector response = executeProtectedExchange(apdu, format);
     validateSuccessResponse(response, __func__);
 
     if (!requestAck)
@@ -1730,7 +1731,7 @@ ByteVector SAMAV2ISO7816Commands::PKI_EncipherKeyEntries(
         LibLogicalAccessException, sam::errorMessage(__func__, "1 to 3 key entries are allowed."));
 
     EXCEPTION_ASSERT_WITH_LOG(divInput.empty() || divInput.size() <= 31,
-        LibLogicalAccessException, sam::errorMessage(__func__, "DivInput must be between 1 and 31 bytes."));
+        LibLogicalAccessException, sam::errorMessage(__func__, "DivInput must be empty or between 1 and 31 bytes."));
 
     EXCEPTION_ASSERT_WITH_LOG(keyNoEnc <= 0x02,
         LibLogicalAccessException, sam::errorMessage(__func__, "Invalid keyNoEnc."));
@@ -1767,13 +1768,12 @@ ByteVector SAMAV2ISO7816Commands::PKI_EncipherKeyEntries(
     if (!divInput.empty())
         payload.insert(payload.end(), divInput.begin(), divInput.end());
 
-    const unsigned char lc =
-        payload.size() > sam::MAX_SECURE_APDU_DATA_SIZE ? 0x00 : static_cast<unsigned char>(payload.size());
+    const unsigned char lc = static_cast<unsigned char>(payload.size());
     ByteVector apdu{d_cla, sam::ins::pki::EncipherKeyEntries, p1, 0x00, lc};
     apdu.insert(apdu.end(), payload.begin(), payload.end());
-    apdu.push_back(0x00);
+    apdu.push_back(sam::iso7816::LeResponse);
 
-    ByteVector response = executeProtectedExchange(apdu, sam::ApduFormat::ExtendedWithLe);
+    ByteVector response = executeProtectedExchange(apdu);
     validateSuccessResponse(response, __func__);
 
     response.resize(response.size() - sam::STATUS_WORD_SIZE);
@@ -1790,8 +1790,9 @@ ByteVector SAMAV2ISO7816Commands::PKI_GenerateHash(unsigned char hashAlgo, const
 
     const std::uint32_t messageLen = static_cast<std::uint32_t>(message.size());
     const std::size_t payloadSize  = sizeof(messageLen) + message.size();
-    const unsigned char lc =
-        payloadSize > sam::MAX_SECURE_APDU_DATA_SIZE ? 0x00 : static_cast<unsigned char>(payloadSize);
+    
+    const sam::ApduFormat format = getApduFormat(payloadSize, true);
+    const unsigned char lc = (format == sam::ApduFormat::SingleFrame ? static_cast<unsigned char>(payloadSize) : 0x00);
 
     ByteVector apdu;
     apdu.reserve(sam::APDU_HEADER_WITH_LE_SIZE + payloadSize);
@@ -1802,9 +1803,9 @@ ByteVector SAMAV2ISO7816Commands::PKI_GenerateHash(unsigned char hashAlgo, const
     apdu.push_back(lc);
     sam::appendUInt32BE(apdu, messageLen);
     apdu.insert(apdu.end(), message.begin(), message.end());
-    apdu.push_back(0x00);
+    apdu.push_back(sam::iso7816::LeResponse);
 
-    ByteVector response = executeProtectedExchange(apdu, sam::ApduFormat::ExtendedWithLe);
+    ByteVector response = executeProtectedExchange(apdu, format);
     validateSuccessResponse(response, __func__);
 
     EXCEPTION_ASSERT_WITH_LOG(response.size() == sam::expectedHashSize(hashAlgo) + sam::STATUS_WORD_SIZE,
@@ -1839,7 +1840,7 @@ void SAMAV2ISO7816Commands::PKI_GenerateSignature(unsigned char hashAlgo, unsign
     apdu.push_back(keyNoSign);
     apdu.insert(apdu.end(), hash.begin(), hash.end());
 
-    const ByteVector response = transmit(apdu, true, true);
+    const ByteVector response = executeProtectedExchange(apdu);
     validateSuccessResponse(response, __func__);
 }
 
@@ -1848,7 +1849,8 @@ ByteVector SAMAV2ISO7816Commands::PKI_SendSignature()
     constexpr std::size_t MIN_SIG_SIZE = 8;
     constexpr std::size_t MAX_SIG_SIZE = 256;
 
-    ByteVector signature = transmit({d_cla, sam::ins::pki::SendSignature, 0x00, 0x00, 0x00}, true, true);
+    const ByteVector apdu = {d_cla, sam::ins::pki::SendSignature, 0x00, 0x00, sam::iso7816::LeResponse};
+    ByteVector signature = executeProtectedExchange(apdu);
     validateSuccessResponse(signature, __func__);
 
     signature.resize(signature.size() - sam::STATUS_WORD_SIZE);
@@ -1882,8 +1884,8 @@ void SAMAV2ISO7816Commands::PKI_VerifySignature(unsigned char hashAlgo,
     payload.insert(payload.end(), hash.begin(), hash.end());
     payload.insert(payload.end(), signature.begin(), signature.end());
 
-    const unsigned char lc =
-        payload.size() > sam::MAX_SECURE_APDU_DATA_SIZE ? 0x00 : static_cast<unsigned char>(payload.size());
+    const sam::ApduFormat format = getApduFormat(payload.size(), false);
+    const unsigned char lc = (format == sam::ApduFormat::SingleFrame ? static_cast<unsigned char>(payload.size()) : 0x00);
     ByteVector apdu;
     apdu.reserve(sam::APDU_HEADER_SIZE + payload.size());
     apdu.push_back(d_cla);
@@ -1893,7 +1895,7 @@ void SAMAV2ISO7816Commands::PKI_VerifySignature(unsigned char hashAlgo,
     apdu.push_back(lc);
     apdu.insert(apdu.end(), payload.begin(), payload.end());
 
-    const ByteVector response = executeProtectedExchange(apdu, sam::ApduFormat::Extended);
+    const ByteVector response = executeProtectedExchange(apdu, format);
     validateSuccessResponse(response, __func__);
 }
 
@@ -1912,8 +1914,8 @@ ByteVector SAMAV2ISO7816Commands::PKI_EncipherData(unsigned char hashAlgo,
 
     const unsigned char p1 = hashAlgo & 0x03;
     const std::size_t payloadSize = 1u + plainData.size();
-    const unsigned char lc =
-        payloadSize > sam::MAX_SECURE_APDU_DATA_SIZE ? 0x00 : static_cast<unsigned char>(payloadSize);
+    const sam::ApduFormat format = getApduFormat(payloadSize, true);
+    const unsigned char lc = (format == sam::ApduFormat::SingleFrame ? static_cast<unsigned char>(payloadSize) : 0x00);
 
     ByteVector apdu;
     apdu.reserve(sam::APDU_HEADER_WITH_LE_SIZE + payloadSize);
@@ -1924,9 +1926,9 @@ ByteVector SAMAV2ISO7816Commands::PKI_EncipherData(unsigned char hashAlgo,
     apdu.push_back(lc);
     apdu.push_back(keyNoEnc);
     apdu.insert(apdu.end(), plainData.begin(), plainData.end());
-    apdu.push_back(0x00);
+    apdu.push_back(sam::iso7816::LeResponse);
 
-    ByteVector encData = executeProtectedExchange(apdu, sam::ApduFormat::ExtendedWithLe);
+    ByteVector encData = executeProtectedExchange(apdu, format);
     validateSuccessResponse(encData, __func__);
 
     encData.resize(encData.size() - sam::STATUS_WORD_SIZE);
@@ -1952,8 +1954,8 @@ ByteVector SAMAV2ISO7816Commands::PKI_DecipherData(unsigned char hashAlgo,
 
     const unsigned char p1 = hashAlgo & 0x03;
     const std::size_t payloadSize = 1u + encData.size();
-    const unsigned char lc =
-        payloadSize > sam::MAX_SECURE_APDU_DATA_SIZE ? 0x00 : static_cast<unsigned char>(payloadSize);
+    const sam::ApduFormat format = getApduFormat(payloadSize, true);
+    const unsigned char lc = (format == sam::ApduFormat::SingleFrame ? static_cast<unsigned char>(payloadSize) : 0x00);
 
     ByteVector apdu;
     apdu.reserve(sam::APDU_HEADER_WITH_LE_SIZE + payloadSize);
@@ -1964,9 +1966,9 @@ ByteVector SAMAV2ISO7816Commands::PKI_DecipherData(unsigned char hashAlgo,
     apdu.push_back(lc);
     apdu.push_back(keyNoDec);
     apdu.insert(apdu.end(), encData.begin(), encData.end());
-    apdu.push_back(0x00);
+    apdu.push_back(sam::iso7816::LeResponse);
 
-    ByteVector plainData = executeProtectedExchange(apdu, sam::ApduFormat::ExtendedWithLe);
+    ByteVector plainData = executeProtectedExchange(apdu, format);
     validateSuccessResponse(plainData, __func__);
 
     plainData.resize(plainData.size() - sam::STATUS_WORD_SIZE);
@@ -2035,7 +2037,7 @@ void SAMAV2ISO7816Commands::PKI_ImportEccKey(
     apdu.push_back(lc);
     apdu.insert(apdu.end(), payload.begin(), payload.end());
 
-    const ByteVector response = transmit(apdu, true, true);
+    const ByteVector response = executeProtectedExchange(apdu);
     validateSuccessResponse(response, __func__);
 }
 
@@ -2115,7 +2117,7 @@ void SAMAV2ISO7816Commands::PKI_ImportEccCurve(unsigned char curveNo, unsigned c
     apdu.push_back(lc);
     apdu.insert(apdu.end(), payload.begin(), payload.end());
 
-    const ByteVector response = transmit(apdu, true, true);
+    const ByteVector response = executeProtectedExchange(apdu);
     validateSuccessResponse(response, __func__);
 }
 
@@ -2124,9 +2126,9 @@ ByteVector SAMAV2ISO7816Commands::PKI_ExportEccPublicKey(unsigned char keyNo)
     EXCEPTION_ASSERT_WITH_LOG(keyNo <= 0x07,
         LibLogicalAccessException, sam::errorMessage(__func__, "Key number out of range (0x00...0x07)."));
 
-    ByteVector apdu{d_cla, sam::ins::pki::ExportECCPublicKey, keyNo, 0x00, 0x00};
+    ByteVector apdu{d_cla, sam::ins::pki::ExportECCPublicKey, keyNo, 0x00, sam::iso7816::LeResponse};
 
-    ByteVector response = transmit(apdu, true, true);
+    ByteVector response = executeProtectedExchange(apdu);
     validateSuccessResponse(response, __func__);
 
     response.resize(response.size() - sam::STATUS_WORD_SIZE);
@@ -2175,7 +2177,7 @@ void SAMAV2ISO7816Commands::PKI_VerifyEccSignature(unsigned char keyNo,
     apdu.push_back(lc);
     apdu.insert(apdu.end(), payload.begin(), payload.end());
 
-    const ByteVector response = transmit(apdu, true, true);
+    const ByteVector response = executeProtectedExchange(apdu);
     validateSuccessResponse(response, __func__);
 }
 

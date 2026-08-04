@@ -122,6 +122,18 @@ class LLA_CARDS_SAMAV_API SAMBasicKeyEntry
     }
 
     /**
+     * \brief Serialize the key entry using the SAM KST key entry format.
+     * \return Serialized key entry (61 byte AV2 or 64 byte AV3 format).
+     */
+    virtual ByteVector serializeKSTKeyEntry() const = 0;
+
+    /**
+     * \brief Get the SAM key entry reference number.
+     * \return The key entry number.
+     */
+    virtual unsigned char getKeyEntryNumber() const = 0;
+
+    /**
      * \brief Set if the key is diversified on the card.
      * \param diversify True if the key is diversified on the card, false otherwise.
      */

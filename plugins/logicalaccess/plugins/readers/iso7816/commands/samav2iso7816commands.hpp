@@ -199,9 +199,9 @@ class LLA_READERS_ISO7816_API SAMAV2ISO7816Commands
     void mergeDerivedKeys(const ByteVector &sessionKeyExtension,
                           const ByteVector &macSessionKeyExtension, std::size_t keySize);
 
-    sam::ProtectedApdu prepareProtectedApdu(const ByteVector &cmd, sam::ApduFormat format = sam::ApduFormat::Standard);
+    sam::ProtectedApdu prepareProtectedApdu(const ByteVector &cmd, sam::ApduFormat format = sam::ApduFormat::SingleFrame);
 
-    ByteVector executeProtectedExchange(const ByteVector &cmd, sam::ApduFormat format = sam::ApduFormat::Standard,
+    ByteVector executeProtectedExchange(const ByteVector &cmd, sam::ApduFormat format = sam::ApduFormat::SingleFrame,
         const sam::ChainingLayout &layout = sam::PKI_ECC_LAYOUT, const TransmissionOptions &options = TransmissionOptions{});
     
     ByteVector sendChainedFrames(const std::vector<ByteVector> &frames);
@@ -220,6 +220,9 @@ class LLA_READERS_ISO7816_API SAMAV2ISO7816Commands
     ByteVector encryptCommandData(const ByteVector &data);
     static void getLcLe(const ByteVector &cmd, bool &lc, bool &le);
     sam::ApduInfo getApduInfo(const ByteVector &cmd, sam::ApduFormat format);
+    std::size_t getMaxSingleFramePayloadSize(bool hasLe) const;
+    sam::ApduFormat getApduFormat(std::size_t payloadSize, bool hasLe) const;
+
     sam::ProtectedApdu prepareProtectedCommand(const ByteVector &cmd, sam::ApduFormat format);
 
     ByteVector generateEncIV(bool encrypt) const;

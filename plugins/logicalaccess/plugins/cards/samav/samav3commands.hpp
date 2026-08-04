@@ -35,7 +35,8 @@ class SAMAV3Commands : public ICommands
 
     virtual void PKI_RemoveCaPk(const ByteVector &rid, unsigned char pkId) = 0;
 
-    virtual ByteVector PKI_RemoveCaPkOffline(const ByteVector &offlineCryptogram, bool expectResponseData) = 0;
+    virtual ByteVector PKI_RemoveCaPkOffline(unsigned short changeCounter, const ByteVector &encCaPkRef,
+                                             const ByteVector &offlineMac, bool expectResponseData) = 0;
 
     virtual ByteVector PKI_ExportCaPk(const ByteVector &rid, unsigned char pkId, bool settingsOnly) = 0;
 

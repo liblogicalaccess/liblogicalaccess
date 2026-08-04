@@ -28,9 +28,9 @@ constexpr unsigned char MAC_SIZE         = 8;
 // APDU format abstraction
 enum class ApduFormat : unsigned char
 {
-    Standard,      // Single short APDU (command fits in one frame and payload is < 241 bytes when protected)
-    Extended,      // Command is transmitted over one or more extended APDUs (payload exceeds the Standard 240 bytes limit)
-    ExtendedWithLe // Same as Extended, with an Le field in the final APDU
+    SingleFrame,   // Single short APDU (command fits in one frame and payload is < 241 bytes when protected)
+    Chained,       // Command is transmitted over one or more extended APDUs (payload exceeds the Standard 240 bytes limit)
+    ChainedWithLe  // Same as Extended, with an Le field in the final APDU
 };
 
 // APDU result wrapper
@@ -115,6 +115,9 @@ struct ChainingLayout
 // Predefined layouts
 static constexpr ChainingLayout PKI_ECC_LAYOUT = {2, 3}; // PKI and ECC commands
 static constexpr ChainingLayout EMV_LAYOUT     = {3, 2}; // EMV commands
+
+// Fallback layout for commands without chaining fields
+// Keeps P1/P2 unchanged when no chaining information is encoded
 static constexpr ChainingLayout NO_LAYOUT      = {ChainingLayout::NoIndex, ChainingLayout::NoIndex};
 
 // Optional AEK/VAEK (replaces pointers)
@@ -213,6 +216,11 @@ namespace chaining
 {
 constexpr unsigned char Continue = sw::MoreDataSW2;
 constexpr unsigned char End      = sw::SuccessSW2;
+}
+
+namespace iso7816
+{
+constexpr unsigned char LeResponse = 0x00;
 }
 
 namespace ins

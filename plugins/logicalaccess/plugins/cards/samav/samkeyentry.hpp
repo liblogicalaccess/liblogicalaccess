@@ -8,6 +8,7 @@
 #define LOGICALACCESS_SAMKEYENTRY_HPP
 
 #include <cstring>
+#include <cstdint>
 #include <logicalaccess/key.hpp>
 #include <logicalaccess/plugins/cards/samav/sambasickeyentry.hpp>
 
@@ -47,6 +48,23 @@ typedef struct s_SETAV2
     unsigned char disablegeneratemac;
 } SETAV2;
 
+typedef struct s_SETAV3
+{
+    unsigned char dumpsessionkey;
+    unsigned char rfu;
+    unsigned char keepIV;
+    unsigned char keytype[4];
+    unsigned char plkey;
+    unsigned char authkey;
+    unsigned char disablekeyentry;
+    unsigned char lockkey;
+    unsigned char disablewritekeytopicc;
+    unsigned char disabledecryption;
+    unsigned char disableencryption;
+    unsigned char disableverifymac;
+    unsigned char disablegeneratemac;
+} SETAV3;
+
 typedef struct s_EXTSET
 {
     unsigned char keyclass[3];
@@ -55,6 +73,21 @@ typedef struct s_EXTSET
     unsigned char reservedforperso;
     unsigned char rfu;
 } ExtSETStruct;
+
+typedef struct s_EXTSETAV3
+{
+    unsigned char keyclass[3];
+    unsigned char dumpsecretkey;
+    unsigned char diversifieduse;
+    unsigned char reservedforperso;
+    unsigned char rfu[2];
+    unsigned char forcekeyusageinternalhost;
+    unsigned char forcekeychangeinternalhost;
+    unsigned char forcesessionusageinternalhost;
+    unsigned char dumpsecretkeyinternalhost;
+    unsigned char dumpsessionkeyinternalhost;
+    unsigned char rfu2[3];
+} ExtSETAV3;
 
 typedef struct s_KeyEntryAV1Information
 {
@@ -82,6 +115,22 @@ typedef struct s_KeyEntryAV2Information
     unsigned char verc;
     unsigned char ExtSET;
 } KeyEntryAV2Information;
+
+typedef struct s_KeyEntryAV3Information
+{
+    unsigned char desfireAid[3];
+    unsigned char desfirekeyno;
+    unsigned char cekno;
+    unsigned char cekv;
+    unsigned char kuc;
+    unsigned char set[2];
+    unsigned char vera;
+    unsigned char verb;
+    unsigned char verc;
+    std::uint16_t ExtSET;
+    unsigned char keyNoAEK;
+    unsigned char keyVerAEK;
+} KeyEntryAV3Information;
 
 /**
  * \brief A SAMKeyEntry class.
@@ -126,9 +175,9 @@ class LLA_CARDS_SAMAV_API SAMKeyEntry : public SAMBasicKeyEntry
         return !operator==(key);
     }
 
-    void setSET(unsigned char *t)
+    void setSET(const unsigned char *t)
     {
-        memcpy(d_keyentryinformation.set, t, sizeof(*t));
+        memcpy(d_keyentryinformation.set, t, sizeof(d_keyentryinformation.set));
     }
 
     S getSETStruct()
@@ -203,9 +252,66 @@ class LLA_CARDS_SAMAV_API SAMKeyEntry : public SAMBasicKeyEntry
         setSETKeyTypeFromKeyType();
     }
 
+    unsigned char getKeyEntryNumber() const override
+    {
+        return d_keyentryinformation.desfirekeyno;
+    }
+
+    ByteVector serializeKSTKeyEntry() const override
+    {
+        ByteVector entry;
+        const size_t keyLength = getLength();
+        entry.reserve(keyLength + sizeof(T));
+        // KeyVa, KeyVb, KeyVc
+        entry.insert(entry.end(), d_key, d_key + keyLength);
+        // DF_AID
+        entry.insert(entry.end(), d_keyentryinformation.desfireAid, d_keyentryinformation.desfireAid +
+                         sizeof(d_keyentryinformation.desfireAid));
+        // DF_KeyNo
+        entry.push_back(d_keyentryinformation.desfirekeyno);
+        // KeyNoCEK
+        entry.push_back(d_keyentryinformation.cekno);
+        // KeyVerCEK
+        entry.push_back(d_keyentryinformation.cekv);
+        // RefNoKUC
+        entry.push_back(d_keyentryinformation.kuc);
+        // SET
+        entry.insert(entry.end(), d_keyentryinformation.set, d_keyentryinformation.set + sizeof(d_keyentryinformation.set));
+        // Versions
+        entry.push_back(d_keyentryinformation.vera);
+        if (getKeyNb() >= 2)
+            entry.push_back(d_keyentryinformation.verb);
+        if (getKeyNb() >= 3)
+            entry.push_back(d_keyentryinformation.verc);
+        // ExtSET
+        appendVersionSpecificFields(entry);
+        return entry;
+    }
+
+  protected:
+    void appendVersionSpecificFields(ByteVector &) const {}
+
   private:
     T d_keyentryinformation;
 };
+
+template <>
+inline void SAMKeyEntry<KeyEntryAV2Information, SETAV2>::appendVersionSpecificFields(ByteVector &entry) const
+{
+    entry.push_back(d_keyentryinformation.ExtSET);
+}
+
+template <>
+inline void SAMKeyEntry<KeyEntryAV3Information, SETAV3>::appendVersionSpecificFields(ByteVector &entry) const
+{
+    // Note : ExtSET is serialized LSB first according to the SAM API specification
+    // The corresponding AV3 reader must deserialize it as little-endian
+    uint16_t ext = d_keyentryinformation.ExtSET;
+    entry.push_back(static_cast<unsigned char>(ext & 0xFF));
+    entry.push_back(static_cast<unsigned char>((ext >> 8) & 0xFF));
+    entry.push_back(d_keyentryinformation.keyNoAEK);
+    entry.push_back(d_keyentryinformation.keyVerAEK);
+}
 }
 
 #endif /* LOGICALACCESS_SAMKEYENTRY_HPP */
