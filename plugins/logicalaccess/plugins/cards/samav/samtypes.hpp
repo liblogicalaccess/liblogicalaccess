@@ -223,6 +223,7 @@ namespace iso7816
 constexpr unsigned char LeResponse = 0x00;
 }
 
+#ifndef SWIG
 namespace ins
 {
 namespace host
@@ -284,6 +285,7 @@ constexpr unsigned char RecoverDynamicData = 0x2A;
 constexpr unsigned char EncipherPin        = 0x2B;
 }
 }
+#endif
 
 } // namespace sam
 } // namespace logicalaccess

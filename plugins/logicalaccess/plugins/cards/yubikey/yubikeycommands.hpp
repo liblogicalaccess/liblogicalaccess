@@ -92,7 +92,7 @@ typedef struct s_YubikeyListItem
 #define YUBIKEY_TLV_DEVINFO_AUTOEJECT_TIMEOUT           0x06 /* Timeout in (ms?) before the YubiKey automatically "ejects" itself. */
 #define YUBIKEY_TLV_DEVINFO_CHALLENGE_RESPONSE_TIMEOUT  0x07 /* The period of time (in seconds) after which the OTP challenge-response command should timeout. */
 #define YUBIKEY_TLV_DEVINFO_DEVICE_FLAGS                0x08 /* Device flags that can control device-global behavior. */
-#define YUBIKEY_TLV_DEVINFO_CONFIGURATION_LOCK          0x0A /* Indicates whether or not the YubiKey's configuration has been locked by the user. */
+#define YUBIKEY_TLV_DEVINFO_CONFIGURATION_LOCK          0x0A /* Indicates whether or not the YubiKey configuration has been locked by the user. */
 #define YUBIKEY_TLV_DEVINFO_AVAILABLE_CAPABILITIES_NFC  0x0D /* NFC Applications and capabilities that are available for use on this YubiKey. */
 #define YUBIKEY_TLV_DEVINFO_ENABLED_CAPABILITIES_NFC    0x0E /* Applications that are currently enabled over USB on this YubiKey. */
 
