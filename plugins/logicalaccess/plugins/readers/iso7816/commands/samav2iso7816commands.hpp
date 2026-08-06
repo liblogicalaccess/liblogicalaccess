@@ -202,7 +202,7 @@ class LLA_READERS_ISO7816_API SAMAV2ISO7816Commands
     sam::ProtectedApdu prepareProtectedApdu(const ByteVector &cmd, sam::ApduFormat format = sam::ApduFormat::SingleFrame);
 
     ByteVector executeProtectedExchange(const ByteVector &cmd, sam::ApduFormat format = sam::ApduFormat::SingleFrame,
-        const sam::ChainingLayout &layout = sam::PKI_ECC_LAYOUT, const TransmissionOptions &options = TransmissionOptions{});
+        const sam::ChainingLayout &layout = sam::PKI_ECC_LAYOUT, const TransmissionOptions &options = TransmissionOptions());
     
     ByteVector sendChainedFrames(const std::vector<ByteVector> &frames, bool expectResponse);
     ByteVector completeSecureExchange(ByteVector response, const TransmissionOptions &options);

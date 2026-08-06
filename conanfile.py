@@ -4,19 +4,18 @@ from conan.tools.files import copy
 
 class LLAConan(ConanFile):
     name = "logicalaccess"
-    version = "3.6.0"
+    version = "3.8.0"
     license = "https://github.com/liblogicalaccess/liblogicalaccess/blob/develop/LICENSE"
     url = "https://github.com/liblogicalaccess/liblogicalaccess"
     description = "LLA RFID library"
     settings = "os", "compiler", "build_type", "arch"
-    requires = 'boost/1.88.0', 'openssl/3.6.0', 'nlohmann_json/3.12.0', 'zlib/1.3.1'
-    options = {'LLA_BUILD_PKCS': [True, False], 'LLA_BUILD_LIBUSB': [True, False]}
+    requires = 'boost/1.91.0', 'openssl/3.6.3', 'nlohmann_json/3.12.0', 'zlib/1.3.2'
+    options = {'LLA_BUILD_PKCS': [True, False], 'LLA_BUILD_RFIDEAS': [True, False], 'LLA_BUILD_LIBUSB': [True, False]}
+    default_options = { 'LLA_BUILD_PKCS': True, 'LLA_BUILD_LIBUSB': False, 'LLA_BUILD_RFIDEAS': True }
     revision_mode = "scm"
     exports_sources = "plugins*", "src*", "include*", "CMakeLists.txt", "cmake*", "liblogicalaccess.config", "tests*", "samples*"
     
     def config_options(self):
-        self.options.LLA_BUILD_PKCS = True
-        self.options.LLA_BUILD_LIBUSB = False
         self.options['openssl'].shared = True
         self.options['gtest'].shared = True
         if self.settings.os == "Windows":
@@ -24,6 +23,7 @@ class LLAConan(ConanFile):
             self.options['boost'].shared = False
         else:
             self.options['boost'].shared = True
+            del self.options.LLA_BUILD_RFIDEAS
        
     def requirements(self):
         if self.options.LLA_BUILD_PKCS:
@@ -62,6 +62,10 @@ class LLAConan(ConanFile):
         if self.settings.os == "Windows":
             # For MSVC we need to restrict configuration type to avoid issues.
             tc.variables['CMAKE_CONFIGURATION_TYPES'] = self.settings.build_type
+            if self.options.LLA_BUILD_RFIDEAS:
+                tc.variables['LLA_BUILD_RFIDEAS'] = True
+            else:
+                tc.variables['LLA_BUILD_RFIDEAS'] = False
         
         tc.generate()
         
@@ -104,6 +108,9 @@ class LLAConan(ConanFile):
                 self.cpp_info.libs.append('islogkbdhooklib64')
             else:
                 self.cpp_info.libs.append('islogkbdhooklib32')
+            
+            if self.options.LLA_BUILD_RFIDEAS:
+                self.cpp_info.libs.append('rfideasreaders')
         
         # Linux / Windows common plugins.
         self.cpp_info.libs.append('llacommon')
