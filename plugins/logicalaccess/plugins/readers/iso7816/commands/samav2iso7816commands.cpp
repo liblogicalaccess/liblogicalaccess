@@ -685,8 +685,9 @@ ByteVector SAMAV2ISO7816Commands::executeProtectedExchange(const ByteVector &cmd
         const auto protectedApdu = options.protectRequest
             ? prepareProtectedCommand(cmd, format) // Apply current secure messaging mode
             : makeUnprotectedApdu(cmd); // Explicitly bypass protection for this exchange
-        const auto frames = createApduFrames(cmd, protectedApdu, format, layout);
-        return completeSecureExchange(sendChainedFrames(frames), options);
+        const auto frames = createApduFrames(cmd, protectedApdu, format, layout, options.protectRequest);
+        auto response = sendChainedFrames(frames, options.processResponse);
+        return completeSecureExchange(std::move(response), options);
     }
     catch (const std::exception &e)
     {
@@ -742,7 +743,7 @@ ByteVector SAMAV2ISO7816Commands::completeSecureExchange(ByteVector response, co
 }
 
 std::vector<ByteVector> SAMAV2ISO7816Commands::createApduFrames(const ByteVector &cmd,
-    const sam::ProtectedApdu &protection, sam::ApduFormat format, const sam::ChainingLayout &layout)
+    const sam::ProtectedApdu &protection, sam::ApduFormat format, const sam::ChainingLayout &layout, bool protectRequest)
 {
     EXCEPTION_ASSERT_WITH_LOG(cmd.size() >= sam::APDU_COMMAND_HEADER_SIZE,
         LibLogicalAccessException, sam::errorMessage(__func__, "Invalid APDU header."));
@@ -753,6 +754,11 @@ std::vector<ByteVector> SAMAV2ISO7816Commands::createApduFrames(const ByteVector
     if (layout.hasChaining())
         EXCEPTION_ASSERT_WITH_LOG(layout.modeIndex < sam::APDU_HEADER_SIZE && layout.lastFrameIndex < sam::APDU_HEADER_SIZE,
             LibLogicalAccessException, sam::errorMessage(__func__, "Invalid APDU chaining layout."));
+
+    // Build an unprotected APDU frame
+    // The transmission mode overrides HostMode : no encryption and no MAC shall be applied for this exchange
+    if (!protectRequest)
+        return createPlainChainedApduFrames(cmd, format, layout);
 
     switch (d_hostMode)
     {
@@ -905,7 +911,7 @@ std::vector<ByteVector> SAMAV2ISO7816Commands::createPlainChainedApduFrames(cons
     return frames;
 }
 
-ByteVector SAMAV2ISO7816Commands::sendChainedFrames(const std::vector<ByteVector> &frames)
+ByteVector SAMAV2ISO7816Commands::sendChainedFrames(const std::vector<ByteVector> &frames, bool expectResponse)
 {
     EXCEPTION_ASSERT_WITH_LOG(!frames.empty(), LibLogicalAccessException,
         sam::errorMessage(__func__, "No APDU frames to send."));
@@ -934,15 +940,19 @@ ByteVector SAMAV2ISO7816Commands::sendChainedFrames(const std::vector<ByteVector
             THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
                 sam::errorMessage(__func__, "Unexpected status word after intermediate chained frame."));
     }
-    while (sam::hasMoreData(sw1, sw2))
+    if (expectResponse) // Only execute SAM response chaining if this exchange expects a
+                        // response
     {
-        appendResponseData(adapter->sendCommand(continueApdu));
-        if (!sam::validState(sw1, sw2))
-            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                sam::errorMessage(__func__, "Unexpected status word during response chaining."));
+        while (sam::hasMoreData(sw1, sw2))
+        {
+            appendResponseData(adapter->sendCommand(continueApdu));
+            if (!sam::validState(sw1, sw2))
+                THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                    sam::errorMessage(__func__, "Unexpected status word during response chaining."));
+        }
+        if (!sam::isSuccess(sw1, sw2))
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, sam::errorMessage(__func__, "Expected 0x9000"));
     }
-    if (!sam::isSuccess(sw1, sw2))
-        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, sam::errorMessage(__func__, "Expected 0x9000"));
     response.push_back(sw1);
     response.push_back(sw2);
     return response;
