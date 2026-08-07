@@ -252,11 +252,6 @@ class LLA_CARDS_SAMAV_API SAMKeyEntry : public SAMBasicKeyEntry
         setSETKeyTypeFromKeyType();
     }
 
-    unsigned char getKeyEntryNumber() const override
-    {
-        return d_keyentryinformation.desfirekeyno;
-    }
-
     ByteVector serializeKSTKeyEntry() const override
     {
         ByteVector entry;

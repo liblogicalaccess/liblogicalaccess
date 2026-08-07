@@ -119,7 +119,7 @@ class LLA_READERS_ISO7816_API SAMAV2ISO7816Commands
 
     ByteVector PKI_UpdateKeyEntries(const ByteVector &encPublicKeyDer, const ByteVector &signPrivateKeyDer,
                          unsigned char keyNoEnc, unsigned char keyNoSign, bool requestAck, unsigned char keyNoAck,
-                         unsigned char hashAlgo, const std::vector<std::shared_ptr<SAMBasicKeyEntry>> &entries,
+                         unsigned char hashAlgo, const std::vector<sam::SAMKeyEntryUpdate> &updates,
                          std::uint16_t changeCounter) override;
 
     ByteVector PKI_UpdateKeyEntries(unsigned char keyNoEnc, unsigned char keyNoSign,
@@ -228,12 +228,12 @@ class LLA_READERS_ISO7816_API SAMAV2ISO7816Commands
 
     ByteVector generateEncIV(bool encrypt) const;
 
-    ByteVector buildPlaintext(std::uint16_t changeCtr, const std::vector<std::shared_ptr<SAMBasicKeyEntry>> &entries);
+    ByteVector buildPlaintext(std::uint16_t changeCtr, const std::vector<sam::SAMKeyEntryUpdate> &updates);
     ByteVector rsa_oaep_encrypt(EVP_PKEY *pubKey, const ByteVector &plaintext, const EVP_MD *md);
     ByteVector rsa_pss_sign(EVP_PKEY *privKey, const ByteVector &data, const EVP_MD *md);
     const EVP_MD *getHash(sam::HashAlgo hashAlgo);
-    void buildCryptogram(EVP_PKEY *encKey, EVP_PKEY *signKey, std::uint8_t keyNoEnc, std::uint8_t keyNoSign, std::uint16_t changeCtr,
-        const std::vector<std::shared_ptr<SAMBasicKeyEntry>> &entries,
+    void buildCryptogram(EVP_PKEY *encKey, EVP_PKEY *signKey, std::uint8_t keyNoEnc,
+        std::uint8_t keyNoSign, std::uint16_t changeCtr, const std::vector<sam::SAMKeyEntryUpdate> &updates,
         std::uint8_t hashAlgo, ByteVector &encFrame, ByteVector &signature);
 
     void resetIVs();

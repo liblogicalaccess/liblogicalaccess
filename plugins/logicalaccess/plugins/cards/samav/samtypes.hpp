@@ -4,9 +4,13 @@
 #include <cstddef>
 #include <cstdint>
 #include <string>
+#include <memory>
 
 namespace logicalaccess
 {
+
+class SAMBasicKeyEntry;
+
 namespace sam
 {
 
@@ -138,6 +142,13 @@ struct AEKVAEK
     {
         return valid;
     }
+};
+
+// Key entry update descriptor used by PKI_UpdateKeyEntries
+struct SAMKeyEntryUpdate
+{
+    unsigned char keyNo;
+    std::shared_ptr<SAMBasicKeyEntry> entry;
 };
 
 // Utility helpers

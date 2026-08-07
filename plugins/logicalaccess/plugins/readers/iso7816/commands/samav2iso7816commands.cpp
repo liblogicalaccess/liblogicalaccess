@@ -1485,25 +1485,24 @@ ByteVector SAMAV2ISO7816Commands::PKI_ExportPublicKey(unsigned char keyNo, bool 
 }
 
 ByteVector SAMAV2ISO7816Commands::buildPlaintext(std::uint16_t changeCtr,
-    const std::vector<std::shared_ptr<SAMBasicKeyEntry>> &entries)
+    const std::vector<sam::SAMKeyEntryUpdate> &updates)
 {
     constexpr std::size_t HEADER_SIZE = 2;
     constexpr std::size_t MAX_KEY_ENTRY_SIZE = 64;
 
     ByteVector pt;
-    pt.reserve(HEADER_SIZE + entries.size() * (HEADER_SIZE + MAX_KEY_ENTRY_SIZE));
+    pt.reserve(HEADER_SIZE + updates.size() * (HEADER_SIZE + MAX_KEY_ENTRY_SIZE));
     sam::appendUInt16BE(pt, changeCtr);
 
-    for (const auto &entry : entries)
+    for (const auto &update : updates)
     {
-        EXCEPTION_ASSERT_WITH_LOG(entry,
+        EXCEPTION_ASSERT_WITH_LOG(update.entry,
             LibLogicalAccessException, sam::errorMessage(__func__, "Null SAMBasicKeyEntry."));
 
-        const unsigned char keyNo = entry->getKeyEntryNumber();
-        const unsigned char updateMask = entry->getUpdateMask();
-        const ByteVector newEntry = entry->serializeKSTKeyEntry();
+        const unsigned char updateMask = update.entry->getUpdateMask();
+        const ByteVector newEntry = update.entry->serializeKSTKeyEntry();
 
-        pt.push_back(keyNo);
+        pt.push_back(update.keyNo);
         pt.push_back(updateMask);
         pt.insert(pt.end(), newEntry.begin(), newEntry.end());
     }
@@ -1616,7 +1615,7 @@ const EVP_MD *SAMAV2ISO7816Commands::getHash(sam::HashAlgo hashAlgo)
 
 void SAMAV2ISO7816Commands::buildCryptogram(
     EVP_PKEY *encKey, EVP_PKEY *signKey, std::uint8_t keyNoEnc, std::uint8_t keyNoSign,
-    std::uint16_t changeCtr, const std::vector<std::shared_ptr<SAMBasicKeyEntry>> &entries,
+    std::uint16_t changeCtr, const std::vector<sam::SAMKeyEntryUpdate> &updates,
     std::uint8_t hashAlgo, ByteVector &encFrame, ByteVector &signature)
 {
     EXCEPTION_ASSERT_WITH_LOG(sam::isSupportedHashAlgo(hashAlgo),
@@ -1628,7 +1627,7 @@ void SAMAV2ISO7816Commands::buildCryptogram(
         LibLogicalAccessException, sam::errorMessage(__func__, "Failed to resolve hash algorithm."));
 
     // plaintext
-    ByteVector plaintext = buildPlaintext(changeCtr, entries);
+    ByteVector plaintext = buildPlaintext(changeCtr, updates);
 
     // encryption
     encFrame = rsa_oaep_encrypt(encKey, plaintext, md);
@@ -1645,9 +1644,9 @@ void SAMAV2ISO7816Commands::buildCryptogram(
 ByteVector SAMAV2ISO7816Commands::PKI_UpdateKeyEntries(
     const ByteVector &encPublicKeyDer, const ByteVector &signPrivateKeyDer, unsigned char keyNoEnc,
     unsigned char keyNoSign, bool requestAck, unsigned char keyNoAck, unsigned char hashAlgo,
-    const std::vector<std::shared_ptr<SAMBasicKeyEntry>> &entries, std::uint16_t changeCounter)
+    const std::vector<sam::SAMKeyEntryUpdate> &updates, std::uint16_t changeCounter)
 {
-    EXCEPTION_ASSERT_WITH_LOG(!entries.empty() && entries.size() <= 3,
+    EXCEPTION_ASSERT_WITH_LOG(!updates.empty() && updates.size() <= 3,
         LibLogicalAccessException, sam::errorMessage(__func__, "Invalid number of entries."));
 
     auto encKey  = loadPublicKeyFromDER(encPublicKeyDer);
@@ -1656,10 +1655,10 @@ ByteVector SAMAV2ISO7816Commands::PKI_UpdateKeyEntries(
     ByteVector encryptedFrame;
     ByteVector signature;
 
-    buildCryptogram(encKey.get(), signKey.get(), keyNoEnc, keyNoSign, changeCounter, entries, hashAlgo, encryptedFrame, signature);
+    buildCryptogram(encKey.get(), signKey.get(), keyNoEnc, keyNoSign, changeCounter, updates, hashAlgo, encryptedFrame, signature);
 
     return PKI_UpdateKeyEntries(keyNoEnc, keyNoSign, requestAck, keyNoAck, hashAlgo,
-                                static_cast<unsigned char>(entries.size()), encryptedFrame, signature);
+                                static_cast<unsigned char>(updates.size()), encryptedFrame, signature);
 }
 
 ByteVector SAMAV2ISO7816Commands::PKI_UpdateKeyEntries(

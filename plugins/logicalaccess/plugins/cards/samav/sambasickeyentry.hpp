@@ -128,12 +128,6 @@ class LLA_CARDS_SAMAV_API SAMBasicKeyEntry
     virtual ByteVector serializeKSTKeyEntry() const = 0;
 
     /**
-     * \brief Get the SAM key entry reference number.
-     * \return The key entry number.
-     */
-    virtual unsigned char getKeyEntryNumber() const = 0;
-
-    /**
      * \brief Set if the key is diversified on the card.
      * \param diversify True if the key is diversified on the card, false otherwise.
      */
