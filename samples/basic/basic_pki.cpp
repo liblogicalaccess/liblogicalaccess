@@ -614,10 +614,24 @@ std::vector<PKIGenerateTestCase> generateKeyPairTests = {
     // ===== EXPONENT (SMALL) =====
     {0x01, pki::PRIVATE_KEY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x40, 0x04,
     logicalaccess::BufferHelper::fromHexString("00010001"), false, true, false, "Standard RSA exponent (65537)"},
-
+    
     // ===== CHAINING =====
     {0x01, pki::PRIVATE_KEY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x100, 0x100,
     ByteVector(256, 0x03), false, true, false, "APDU chaining (256-byte exponent)"},
+    
+    // ===== CHAINING BOUNDARY (MUST BE IN FULL PROTECT) =====
+    {0x01, pki::PRIVATE_KEY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x100, 0xE4,
+    ByteVector(228, 0x03), false, true, false, "FullProtect : maximum exponent size fitting in a single secure APDU frame"},
+
+    {0x01, pki::PRIVATE_KEY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x100, 0xE8,
+    ByteVector(232, 0x03), false, true, false, "FullProtect : minimum exponent size requiring secure APDU chaining"},
+
+    // ===== CHAINING BOUNDARY (MUST BE IN PLAIN HOST MODE) =====
+    {0x01, pki::PRIVATE_KEY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x100, 0xF0,
+    ByteVector(240, 0x03), false, true, false, "Plain : maximum exponent size fitting exactly in one APDU frame"},
+
+    {0x01, pki::PRIVATE_KEY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x100, 0xF4,
+    ByteVector(244, 0x03), false, true, false, "Plain : minimum exponent size requiring APDU chaining"},
     
     // ===== INVALID KEY NUMBER =====
     {0x02, pki::PRIVATE_KEY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x40, 0x04,
@@ -1509,8 +1523,7 @@ struct SamSession
         {
             hostKey = std::make_shared<logicalaccess::DESFireKey>();
             hostKey->setKeyType(logicalaccess::DF_KEY_AES);
-            hostKey->setData(logicalaccess::BufferHelper::fromHexString(
-                "00000000000000000000000000000000"));
+            hostKey->setData(logicalaccess::BufferHelper::fromHexString("00000000000000000000000000000000"));
         }
         // Select the desired SAM host authentication mode by uncommenting the corresponding overload
         samCmd->SAMAV2ISO7816Commands::authenticateHost(hostKey, 0x00); //FullProtect by default
@@ -1580,7 +1593,6 @@ int main(int, char **)
 
             //runPKIGenerateTests(samSession.samCmd, samHooks);
             //runPKIExportPrivateTests(samSession.samCmd, samHooks);
-            //runPKIGenerateHashTests(samSession.samCmd, samHooks);
         }
         std::cout << "\nLogical automatic card removal in 3 seconds...\n";
         readerSession.waitRemovalSafe();

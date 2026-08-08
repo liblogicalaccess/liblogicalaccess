@@ -62,7 +62,8 @@ class LLA_READERS_ISO7816_API SAMAV3ISO7816Commands
 
     void PKI_RemoveCaPk(const ByteVector &rid, unsigned char pkId) override;
 
-    ByteVector PKI_RemoveCaPkOffline(const ByteVector &offlineCryptogram, bool expectResponseData) override;
+    virtual ByteVector PKI_RemoveCaPkOffline(unsigned short changeCounter, const ByteVector &encCaPkRef,
+                                             const ByteVector &offlineMac, bool expectResponseData) override;
 
     ByteVector PKI_ExportCaPk(const ByteVector &rid, unsigned char pkId, bool settingsOnly) override;
 

@@ -119,7 +119,7 @@ class LLA_READERS_ISO7816_API SAMAV2ISO7816Commands
 
     ByteVector PKI_UpdateKeyEntries(const ByteVector &encPublicKeyDer, const ByteVector &signPrivateKeyDer,
                          unsigned char keyNoEnc, unsigned char keyNoSign, bool requestAck, unsigned char keyNoAck,
-                         unsigned char hashAlgo, const std::vector<std::shared_ptr<SAMBasicKeyEntry>> &entries,
+                         unsigned char hashAlgo, const std::vector<sam::SAMKeyEntryUpdate> &updates,
                          std::uint16_t changeCounter) override;
 
     ByteVector PKI_UpdateKeyEntries(unsigned char keyNoEnc, unsigned char keyNoSign,
@@ -199,16 +199,17 @@ class LLA_READERS_ISO7816_API SAMAV2ISO7816Commands
     void mergeDerivedKeys(const ByteVector &sessionKeyExtension,
                           const ByteVector &macSessionKeyExtension, std::size_t keySize);
 
-    sam::ProtectedApdu prepareProtectedApdu(const ByteVector &cmd, sam::ApduFormat format = sam::ApduFormat::Standard);
+    sam::ProtectedApdu prepareProtectedApdu(const ByteVector &cmd, sam::ApduFormat format = sam::ApduFormat::SingleFrame);
 
-    ByteVector executeProtectedExchange(const ByteVector &cmd, sam::ApduFormat format = sam::ApduFormat::Standard,
+    ByteVector executeProtectedExchange(const ByteVector &cmd, sam::ApduFormat format = sam::ApduFormat::SingleFrame,
         const sam::ChainingLayout &layout = sam::PKI_ECC_LAYOUT, const TransmissionOptions &options = TransmissionOptions());
     
-    ByteVector sendChainedFrames(const std::vector<ByteVector> &frames);
+    ByteVector sendChainedFrames(const std::vector<ByteVector> &frames, bool expectResponse);
     ByteVector completeSecureExchange(ByteVector response, const TransmissionOptions &options);
 
     std::vector<ByteVector> createApduFrames(const ByteVector &cmd, const sam::ProtectedApdu &protection,
-                                                    sam::ApduFormat format, const sam::ChainingLayout &layout);
+                                             sam::ApduFormat format, const sam::ChainingLayout &layout,
+                                             bool protectRequest);
     std::vector<ByteVector> createSecureChainedApduFrames(const ByteVector &cmd, const sam::ProtectedApdu &protection,
                                                     sam::ApduFormat format, const sam::ChainingLayout &layout);
     std::vector<ByteVector> createPlainChainedApduFrames(const ByteVector &cmd, sam::ApduFormat format,
@@ -220,16 +221,19 @@ class LLA_READERS_ISO7816_API SAMAV2ISO7816Commands
     ByteVector encryptCommandData(const ByteVector &data);
     static void getLcLe(const ByteVector &cmd, bool &lc, bool &le);
     sam::ApduInfo getApduInfo(const ByteVector &cmd, sam::ApduFormat format);
+    std::size_t getMaxSingleFramePayloadSize(bool hasLe) const;
+    sam::ApduFormat getApduFormat(std::size_t payloadSize, bool hasLe) const;
+
     sam::ProtectedApdu prepareProtectedCommand(const ByteVector &cmd, sam::ApduFormat format);
 
     ByteVector generateEncIV(bool encrypt) const;
 
-    ByteVector buildPlaintext(std::uint16_t changeCtr, const std::vector<std::shared_ptr<SAMBasicKeyEntry>> &entries);
+    ByteVector buildPlaintext(std::uint16_t changeCtr, const std::vector<sam::SAMKeyEntryUpdate> &updates);
     ByteVector rsa_oaep_encrypt(EVP_PKEY *pubKey, const ByteVector &plaintext, const EVP_MD *md);
     ByteVector rsa_pss_sign(EVP_PKEY *privKey, const ByteVector &data, const EVP_MD *md);
     const EVP_MD *getHash(sam::HashAlgo hashAlgo);
-    void buildCryptogram(EVP_PKEY *encKey, EVP_PKEY *signKey, std::uint8_t keyNoEnc, std::uint8_t keyNoSign, std::uint16_t changeCtr,
-        const std::vector<std::shared_ptr<SAMBasicKeyEntry>> &entries,
+    void buildCryptogram(EVP_PKEY *encKey, EVP_PKEY *signKey, std::uint8_t keyNoEnc,
+        std::uint8_t keyNoSign, std::uint16_t changeCtr, const std::vector<sam::SAMKeyEntryUpdate> &updates,
         std::uint8_t hashAlgo, ByteVector &encFrame, ByteVector &signature);
 
     void resetIVs();

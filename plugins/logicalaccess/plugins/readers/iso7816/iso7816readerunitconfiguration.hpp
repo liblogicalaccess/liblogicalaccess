@@ -145,9 +145,9 @@ class LLA_READERS_ISO7816_API ISO7816ReaderUnitConfiguration
 		return d_use_sam_authenticate_host;
 	}
 	
-	void setUseSAMAuthenticateHost(bool skipCSN)
+	void setUseSAMAuthenticateHost(bool use_sam_authenticate_host)
 	{
-		d_use_sam_authenticate_host = skipCSN;
+        d_use_sam_authenticate_host = use_sam_authenticate_host;
 	}
 
   protected:

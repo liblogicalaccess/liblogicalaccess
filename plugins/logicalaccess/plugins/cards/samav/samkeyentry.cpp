@@ -9,6 +9,7 @@
 namespace logicalaccess
 {
 // This declaration made SAMKeyEntry available for external link windows
+template class SAMKeyEntry<KeyEntryAV3Information, SETAV3>;
 template class SAMKeyEntry<KeyEntryAV2Information, SETAV2>;
 template class SAMKeyEntry<KeyEntryAV1Information, SETAV1>;
 }

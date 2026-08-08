@@ -112,8 +112,8 @@ void SAMAV3ISO7816Commands::PKI_ImportCaPk(const ByteVector &rid, unsigned char 
     EXCEPTION_ASSERT_WITH_LOG(settingsPayload || keyPayload,
         LibLogicalAccessException, sam::errorMessage(__func__, "Payload size does not match PKI Import CA PK format."));
 
-    const unsigned char lc =
-        payload.size() > sam::MAX_SECURE_APDU_DATA_SIZE ? 0x00 : static_cast<unsigned char>(payload.size());
+    const sam::ApduFormat format = getApduFormat(payload.size(), false);
+    const unsigned char lc = (format == sam::ApduFormat::SingleFrame ? static_cast<unsigned char>(payload.size()) : 0x00);
     ByteVector apdu;
     apdu.reserve(sam::APDU_HEADER_SIZE + payload.size());
     apdu.push_back(d_cla);
@@ -123,7 +123,7 @@ void SAMAV3ISO7816Commands::PKI_ImportCaPk(const ByteVector &rid, unsigned char 
     apdu.push_back(lc);
     apdu.insert(apdu.end(), payload.begin(), payload.end());
 
-    const ByteVector response = executeProtectedExchange(apdu, sam::ApduFormat::Extended, sam::EMV_LAYOUT);
+    const ByteVector response = executeProtectedExchange(apdu, format, sam::EMV_LAYOUT);
 
     if (sam::parseStatusWord(response) == SW_UNKNOWN_PK_INDEX)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, sam::errorMessage(__func__, "Unknown PK index."));
@@ -154,12 +154,10 @@ ByteVector SAMAV3ISO7816Commands::PKI_ImportCaPkOffline(const ByteVector &offlin
     constexpr std::uint16_t SW_UNKNOWN_PK_INDEX    = 0x6A83;
     constexpr std::uint8_t P2_IMPORT_SETTINGS_ONLY = 0x80;
     constexpr std::uint8_t P2_IMPORT_FULL          = 0x00;
-    constexpr std::uint8_t LE_EXPECT_RESPONSE      = 0x00;
 
-    const sam::ApduFormat type = expectResponseData ? sam::ApduFormat::ExtendedWithLe : sam::ApduFormat::Extended;
-    
-    const unsigned char lc = cryptogramSize > sam::MAX_SECURE_APDU_DATA_SIZE ?
-        0x00 : static_cast<unsigned char>(cryptogramSize);
+    const sam::ApduFormat format = getApduFormat(cryptogramSize, expectResponseData);
+    const unsigned char lc = (format == sam::ApduFormat::SingleFrame ? static_cast<unsigned char>(cryptogramSize) : 0x00);
+
     ByteVector apdu;
     apdu.reserve((expectResponseData ? sam::APDU_HEADER_WITH_LE_SIZE : sam::APDU_HEADER_SIZE) + cryptogramSize);
     apdu.push_back(d_cla);
@@ -169,9 +167,9 @@ ByteVector SAMAV3ISO7816Commands::PKI_ImportCaPkOffline(const ByteVector &offlin
     apdu.push_back(lc);
     apdu.insert(apdu.end(), offlineCryptogram.begin(), offlineCryptogram.end());
     if (expectResponseData)
-        apdu.push_back(LE_EXPECT_RESPONSE);
+        apdu.push_back(sam::iso7816::LeResponse);
     
-    const ByteVector response = executeProtectedExchange(apdu, type, sam::EMV_LAYOUT);
+    const ByteVector response = executeProtectedExchange(apdu, format, sam::EMV_LAYOUT);
 
     if (sam::parseStatusWord(response) == SW_UNKNOWN_PK_INDEX)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, sam::errorMessage(__func__, "Unknown PK index."));
@@ -207,17 +205,17 @@ void SAMAV3ISO7816Commands::PKI_RemoveCaPk(const ByteVector &rid, unsigned char 
     apdu.insert(apdu.end(), rid.begin(), rid.end());
     apdu.push_back(pkId);
 
-    const ByteVector response = executeProtectedExchange(apdu, sam::ApduFormat::Standard, sam::EMV_LAYOUT);
+    const ByteVector response = executeProtectedExchange(apdu, sam::ApduFormat::SingleFrame, sam::EMV_LAYOUT);
     validateSuccessResponse(response, __func__);
 }
 
-ByteVector SAMAV3ISO7816Commands::PKI_RemoveCaPkOffline(const ByteVector &offlineCryptogram, bool expectResponseData)
+ByteVector SAMAV3ISO7816Commands::PKI_RemoveCaPkOffline(unsigned short changeCounter, const ByteVector &encCaPkRef,
+    const ByteVector &offlineMac, bool expectResponseData)
 {
     constexpr std::size_t OFFLINE_CRYPTOGRAM_SIZE = 0x1A;
     constexpr std::size_t OFFLINE_ACK_SIZE        = 8;
-    constexpr std::uint8_t LE_EXPECT_RESPONSE     = 0x00;
 
-    EXCEPTION_ASSERT_WITH_LOG(offlineCryptogram.size() == OFFLINE_CRYPTOGRAM_SIZE,
+    EXCEPTION_ASSERT_WITH_LOG(sizeof(changeCounter) + encCaPkRef.size() + offlineMac.size() == OFFLINE_CRYPTOGRAM_SIZE,
         LibLogicalAccessException, sam::errorMessage(__func__, "Offline cryptogram must be exactly 26 bytes."));
 
     ByteVector apdu;
@@ -227,23 +225,25 @@ ByteVector SAMAV3ISO7816Commands::PKI_RemoveCaPkOffline(const ByteVector &offlin
     apdu.push_back(0x00);
     apdu.push_back(0x00);
     apdu.push_back(static_cast<unsigned char>(OFFLINE_CRYPTOGRAM_SIZE));
-    apdu.insert(apdu.end(), offlineCryptogram.begin(), offlineCryptogram.end());
+    sam::appendUInt16BE(apdu, changeCounter);
+    apdu.insert(apdu.end(), encCaPkRef.begin(), encCaPkRef.end());
+    apdu.insert(apdu.end(), offlineMac.begin(), offlineMac.end());
     if (expectResponseData)
-        apdu.push_back(LE_EXPECT_RESPONSE);
+        apdu.push_back(sam::iso7816::LeResponse);
 
-    const ByteVector response = executeProtectedExchange(apdu, sam::ApduFormat::Standard, sam::EMV_LAYOUT);
+    const ByteVector response = executeProtectedExchange(apdu, sam::ApduFormat::SingleFrame, sam::EMV_LAYOUT);
 
     validateSuccessResponse(response, __func__);
 
     if (!expectResponseData)
         return {};
 
-    const ByteVector ack(response.begin(), response.end() - sam::STATUS_WORD_SIZE);
+    const ByteVector offlineAck(response.begin(), response.end() - sam::STATUS_WORD_SIZE);
 
-    EXCEPTION_ASSERT_WITH_LOG(ack.size() == OFFLINE_ACK_SIZE,
+    EXCEPTION_ASSERT_WITH_LOG(offlineAck.size() == OFFLINE_ACK_SIZE,
         LibLogicalAccessException, sam::errorMessage(__func__, "Invalid offline acknowledgment length."));
 
-    return ack;
+    return offlineAck;
 }
 
 ByteVector SAMAV3ISO7816Commands::PKI_ExportCaPk(const ByteVector &rid, unsigned char pkId, bool settingsOnly)
@@ -252,7 +252,6 @@ ByteVector SAMAV3ISO7816Commands::PKI_ExportCaPk(const ByteVector &rid, unsigned
     constexpr std::size_t PAYLOAD_SIZE        = RID_SIZE + 1;
     constexpr std::uint8_t P1_SETTINGS_ONLY   = 0x80;
     constexpr std::uint8_t P1_FULL            = 0x00;
-    constexpr std::uint8_t LE_EXPECT_RESPONSE = 0x00;
 
     EXCEPTION_ASSERT_WITH_LOG(rid.size() == RID_SIZE,
         LibLogicalAccessException, sam::errorMessage(__func__, "RID must be exactly 5 bytes."));
@@ -268,9 +267,9 @@ ByteVector SAMAV3ISO7816Commands::PKI_ExportCaPk(const ByteVector &rid, unsigned
     apdu.push_back(static_cast<unsigned char>(PAYLOAD_SIZE));
     apdu.insert(apdu.end(), rid.begin(), rid.end());
     apdu.push_back(pkId);
-    apdu.push_back(LE_EXPECT_RESPONSE);
+    apdu.push_back(sam::iso7816::LeResponse);
 
-    ByteVector response = executeProtectedExchange(apdu, sam::ApduFormat::Standard, sam::EMV_LAYOUT);
+    ByteVector response = executeProtectedExchange(apdu, sam::ApduFormat::SingleFrame, sam::EMV_LAYOUT);
     validateSuccessResponse(response, __func__);
     response.resize(response.size() - sam::STATUS_WORD_SIZE);
     return response;
@@ -284,7 +283,6 @@ ByteVector SAMAV3ISO7816Commands::PKI_LoadIssuerPk(const ByteVector &rid, unsign
     constexpr std::size_t MAX_LENGTH_FIELD_SIZE = 0xFF;
     constexpr unsigned char EXPONENT_SHORT_SIZE = 0x01;
     constexpr unsigned char EXPONENT_LONG_SIZE  = 0x03;
-    constexpr std::uint8_t LE_EXPECT_RESPONSE   = 0x00;
     constexpr std::size_t RESPONSE_SIZE         = 9;
 
     EXCEPTION_ASSERT_WITH_LOG(rid.size() == RID_SIZE,
@@ -314,8 +312,8 @@ ByteVector SAMAV3ISO7816Commands::PKI_LoadIssuerPk(const ByteVector &rid, unsign
     payload.push_back(pkExpLen);
     payload.insert(payload.end(), pkExp.begin(), pkExp.end());
 
-    const unsigned char lc =
-        payload.size() > sam::MAX_SECURE_APDU_DATA_SIZE ? 0x00 : static_cast<unsigned char>(payload.size());
+    const sam::ApduFormat format = getApduFormat(payload.size(), true);
+    const unsigned char lc = (format == sam::ApduFormat::SingleFrame ? static_cast<unsigned char>(payload.size()) : 0x00);
     ByteVector apdu;
     apdu.reserve(sam::APDU_HEADER_WITH_LE_SIZE + payload.size());
     apdu.push_back(d_cla);
@@ -324,9 +322,9 @@ ByteVector SAMAV3ISO7816Commands::PKI_LoadIssuerPk(const ByteVector &rid, unsign
     apdu.push_back(0x00);
     apdu.push_back(lc);
     apdu.insert(apdu.end(), payload.begin(), payload.end());
-    apdu.push_back(LE_EXPECT_RESPONSE);
+    apdu.push_back(sam::iso7816::LeResponse);
 
-    ByteVector response = executeProtectedExchange(apdu, sam::ApduFormat::ExtendedWithLe, sam::EMV_LAYOUT);
+    ByteVector response = executeProtectedExchange(apdu, format, sam::EMV_LAYOUT);
     validateSuccessResponse(response, __func__);
     response.resize(response.size() - sam::STATUS_WORD_SIZE);
     EXCEPTION_ASSERT_WITH_LOG(response.size() == RESPONSE_SIZE,
@@ -343,7 +341,6 @@ ByteVector SAMAV3ISO7816Commands::PKI_LoadIccPk(const ByteVector &iccPkCert, con
     constexpr std::size_t MAX_LENGTH_FIELD_SIZE = 0xFF;
     constexpr unsigned char EXPONENT_SHORT_SIZE = 0x01;
     constexpr unsigned char EXPONENT_LONG_SIZE  = 0x03;
-    constexpr std::uint8_t LE_EXPECT_RESPONSE   = 0x00;
     constexpr std::size_t RESPONSE_SIZE         = 16;
 
     EXCEPTION_ASSERT_WITH_LOG(pkExpLen == EXPONENT_SHORT_SIZE || pkExpLen == EXPONENT_LONG_SIZE,
@@ -365,9 +362,9 @@ ByteVector SAMAV3ISO7816Commands::PKI_LoadIccPk(const ByteVector &iccPkCert, con
     payload.insert(payload.end(), pkExp.begin(), pkExp.end());
     if (!staticData.empty())
         payload.insert(payload.end(), staticData.begin(), staticData.end());
-
-    const unsigned char lc =
-        payload.size() > sam::MAX_SECURE_APDU_DATA_SIZE ? 0x00 : static_cast<unsigned char>(payload.size());
+    
+    const sam::ApduFormat format = getApduFormat(payload.size(), true);
+    const unsigned char lc = (format == sam::ApduFormat::SingleFrame ? static_cast<unsigned char>(payload.size()) : 0x00);
     ByteVector apdu;
     apdu.reserve(sam::APDU_HEADER_WITH_LE_SIZE + payload.size());
     apdu.push_back(d_cla);
@@ -376,9 +373,9 @@ ByteVector SAMAV3ISO7816Commands::PKI_LoadIccPk(const ByteVector &iccPkCert, con
     apdu.push_back(0x00);
     apdu.push_back(lc);
     apdu.insert(apdu.end(), payload.begin(), payload.end());
-    apdu.push_back(LE_EXPECT_RESPONSE);
+    apdu.push_back(sam::iso7816::LeResponse);
 
-    ByteVector response = executeProtectedExchange(apdu, sam::ApduFormat::ExtendedWithLe, sam::EMV_LAYOUT);
+    ByteVector response = executeProtectedExchange(apdu, format, sam::EMV_LAYOUT);
     validateSuccessResponse(response, __func__);
     response.resize(response.size() - sam::STATUS_WORD_SIZE);
     EXCEPTION_ASSERT_WITH_LOG(response.size() == RESPONSE_SIZE,
@@ -389,7 +386,6 @@ ByteVector SAMAV3ISO7816Commands::PKI_LoadIccPk(const ByteVector &iccPkCert, con
 ByteVector SAMAV3ISO7816Commands::SAM_RecoverStaticData(const ByteVector &ssad)
 {
     constexpr std::size_t MIN_SSAD_SIZE       = 0x40;
-    constexpr std::uint8_t LE_EXPECT_RESPONSE = 0x00;
     constexpr std::size_t RESPONSE_SIZE       = 23;
 
     EXCEPTION_ASSERT_WITH_LOG(!ssad.empty(),
@@ -398,8 +394,8 @@ ByteVector SAMAV3ISO7816Commands::SAM_RecoverStaticData(const ByteVector &ssad)
     EXCEPTION_ASSERT_WITH_LOG(ssad.size() >= MIN_SSAD_SIZE,
         LibLogicalAccessException, sam::errorMessage(__func__, "SSAD length is too small."));
 
-    const unsigned char lc =
-        ssad.size() > sam::MAX_SECURE_APDU_DATA_SIZE ? 0x00 : static_cast<unsigned char>(ssad.size());
+    const sam::ApduFormat format = getApduFormat(ssad.size(), true);
+    const unsigned char lc = (format == sam::ApduFormat::SingleFrame ? static_cast<unsigned char>(ssad.size()) : 0x00);
     ByteVector apdu;
     apdu.reserve(sam::APDU_HEADER_WITH_LE_SIZE + ssad.size());
     apdu.push_back(d_cla);
@@ -408,9 +404,9 @@ ByteVector SAMAV3ISO7816Commands::SAM_RecoverStaticData(const ByteVector &ssad)
     apdu.push_back(0x00);
     apdu.push_back(lc);
     apdu.insert(apdu.end(), ssad.begin(), ssad.end());
-    apdu.push_back(LE_EXPECT_RESPONSE);
+    apdu.push_back(sam::iso7816::LeResponse);
 
-    ByteVector response = executeProtectedExchange(apdu, sam::ApduFormat::ExtendedWithLe, sam::EMV_LAYOUT);
+    ByteVector response = executeProtectedExchange(apdu, format, sam::EMV_LAYOUT);
     validateSuccessResponse(response, __func__);
     response.resize(response.size() - sam::STATUS_WORD_SIZE);
     EXCEPTION_ASSERT_WITH_LOG(response.size() == RESPONSE_SIZE,
@@ -421,16 +417,15 @@ ByteVector SAMAV3ISO7816Commands::SAM_RecoverStaticData(const ByteVector &ssad)
 ByteVector SAMAV3ISO7816Commands::SAM_RecoverDynamicData(const ByteVector &sdad)
 {
     constexpr std::size_t MIN_SDAD_SIZE       = 0x40;
-    constexpr std::uint8_t LE_EXPECT_RESPONSE = 0x00;
 
     EXCEPTION_ASSERT_WITH_LOG(!sdad.empty(),
         LibLogicalAccessException, sam::errorMessage(__func__, "SDAD must not be empty."));
 
     EXCEPTION_ASSERT_WITH_LOG(sdad.size() >= MIN_SDAD_SIZE,
         LibLogicalAccessException, sam::errorMessage(__func__, "SDAD length is too small."));
-
-    const unsigned char lc =
-        sdad.size() > sam::MAX_SECURE_APDU_DATA_SIZE ? 0x00 : static_cast<unsigned char>(sdad.size());
+    
+    const sam::ApduFormat format = getApduFormat(sdad.size(), true);
+    const unsigned char lc = (format == sam::ApduFormat::SingleFrame ? static_cast<unsigned char>(sdad.size()) : 0x00);
     ByteVector apdu;
     apdu.reserve(sam::APDU_HEADER_WITH_LE_SIZE + sdad.size());
     apdu.push_back(d_cla);
@@ -439,9 +434,9 @@ ByteVector SAMAV3ISO7816Commands::SAM_RecoverDynamicData(const ByteVector &sdad)
     apdu.push_back(0x00);
     apdu.push_back(lc);
     apdu.insert(apdu.end(), sdad.begin(), sdad.end());
-    apdu.push_back(LE_EXPECT_RESPONSE);
+    apdu.push_back(sam::iso7816::LeResponse);
 
-    ByteVector response = executeProtectedExchange(apdu, sam::ApduFormat::ExtendedWithLe, sam::EMV_LAYOUT);
+    ByteVector response = executeProtectedExchange(apdu, format, sam::EMV_LAYOUT);
     validateSuccessResponse(response, __func__);
     response.resize(response.size() - sam::STATUS_WORD_SIZE);
     return response;
@@ -452,7 +447,6 @@ ByteVector SAMAV3ISO7816Commands::SAM_EncipherPIN(const ByteVector &pinBlock, co
     constexpr std::size_t PIN_BLOCK_SIZE      = 8;
     constexpr std::size_t ICC_NUMBER_SIZE     = 8;
     constexpr std::size_t PAYLOAD_SIZE        = PIN_BLOCK_SIZE + ICC_NUMBER_SIZE;
-    constexpr std::uint8_t LE_EXPECT_RESPONSE = 0x00;
 
     EXCEPTION_ASSERT_WITH_LOG(pinBlock.size() == PIN_BLOCK_SIZE,
         LibLogicalAccessException, sam::errorMessage(__func__, "PIN block must be exactly 8 bytes."));
@@ -469,9 +463,9 @@ ByteVector SAMAV3ISO7816Commands::SAM_EncipherPIN(const ByteVector &pinBlock, co
     apdu.push_back(static_cast<unsigned char>(PAYLOAD_SIZE));
     apdu.insert(apdu.end(), pinBlock.begin(), pinBlock.end());
     apdu.insert(apdu.end(), iccNumber.begin(), iccNumber.end());
-    apdu.push_back(LE_EXPECT_RESPONSE);
+    apdu.push_back(sam::iso7816::LeResponse);
 
-    ByteVector response = executeProtectedExchange(apdu, sam::ApduFormat::Standard, sam::EMV_LAYOUT);
+    ByteVector response = executeProtectedExchange(apdu, sam::ApduFormat::SingleFrame, sam::EMV_LAYOUT);
     validateSuccessResponse(response, __func__);
     response.resize(response.size() - sam::STATUS_WORD_SIZE);
     return response;

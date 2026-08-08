@@ -56,7 +56,7 @@ class SAMAV2Commands : public ICommands
     virtual ByteVector PKI_UpdateKeyEntries(const ByteVector &encPublicKeyDer, const ByteVector &signPrivateKeyDer,
                          unsigned char keyNoEnc, unsigned char keyNoSign, bool requestAck,
                          unsigned char keyNoAck, unsigned char hashAlgo,
-                         const std::vector<std::shared_ptr<SAMBasicKeyEntry>> &entries,
+                         const std::vector<sam::SAMKeyEntryUpdate> &updates,
                          uint16_t changeCounter) = 0;
 
     virtual ByteVector PKI_UpdateKeyEntries(unsigned char keyNoEnc, unsigned char keyNoSign,
