@@ -907,12 +907,29 @@ void DESFireEV2ISO7816Commands::proximityCheck(std::shared_ptr<DESFireKey> key,
                                                const uint8_t chunk_size)
 {
     assert(chunk_size == 1 || chunk_size == 2 || chunk_size == 4 || chunk_size == 8);
+    ByteVector keydata;
     if (!key)
     {
-        key = getDESFireChip()->getCrypto()->getKey(0, DFEV2_PROXIMITY_CHECK_KEY_NO);
-    }
-    EXCEPTION_ASSERT_WITH_LOG(key != nullptr, LibLogicalAccessException,
+        if (getDESFireChip()->getCrypto()->d_auth_method == CryptoMethod::CM_EV2)
+        {
+            auto crypto = std::dynamic_pointer_cast<DESFireEV2Crypto>(getDESFireChip()->getCrypto());
+            keydata = crypto->d_macSessionKey;
+        }
+        else if ((getDESFireChip()->getCrypto()->d_auth_method & CryptoMethod::CM_EV1) == CryptoMethod::CM_EV1 &&
+            getDESFireChip()->getCrypto()->d_sessionKey.size() >= 16)
+        {
+            keydata = getDESFireChip()->getCrypto()->d_sessionKey;
+        }
+        else
+        {
+            key = getDESFireChip()->getCrypto()->getKey(0, DFEV2_PROXIMITY_CHECK_KEY_NO);
+            EXCEPTION_ASSERT_WITH_LOG(key != nullptr, LibLogicalAccessException,
                               "No ProximityCheck specified nor found");
+            keydata = key->getData();
+        }
+    }
+    EXCEPTION_ASSERT_WITH_LOG(keydata.size() > 0, LibLogicalAccessException,
+                              "The key used for proximity check cannot be determined");
 
     // Bytes we compute our MAC over. This is built over multiple commands.
     ByteVector MAC_SOURCE;
@@ -994,16 +1011,14 @@ void DESFireEV2ISO7816Commands::proximityCheck(std::shared_ptr<DESFireKey> key,
     }
 
     // Verify PC
-    auto mac = DESFireEV2Crypto::truncateMAC(
-        openssl::CMACCrypto::cmac(key->getData(), "aes", MAC_SOURCE));
+    auto mac = DESFireEV2Crypto::truncateMAC(openssl::CMACCrypto::cmac(keydata, "aes", MAC_SOURCE));
     resp = transmit_plain(DFEV2_INS_VERIFY_PC, mac);
 
     // Now verify the MAC sent by the card.
     // This mac is computed over the same data, except the first byte where the card
     // uses 0x90 instead of 0xFD
     MAC_SOURCE[0]  = 0x90;
-    auto mac_verif = DESFireEV2Crypto::truncateMAC(
-        openssl::CMACCrypto::cmac(key->getData(), "aes", MAC_SOURCE));
+    auto mac_verif = DESFireEV2Crypto::truncateMAC(openssl::CMACCrypto::cmac(keydata, "aes", MAC_SOURCE));
 
     // The verif should match what the card sent us, otherwise PC check fails.
     EXCEPTION_ASSERT_WITH_LOG(mac_verif == resp.getData(), LibLogicalAccessException,
