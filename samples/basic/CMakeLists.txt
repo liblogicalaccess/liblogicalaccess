@@ -56,3 +56,22 @@ install(TARGETS basic_desfire_sam
         RUNTIME DESTINATION bin
         LIBRARY DESTINATION lib${LIB_SUFFIX}
         ARCHIVE DESTINATION lib${LIB_SUFFIX})
+
+project(basic_samkeyentry CXX)
+
+add_executable(basic_samkeyentry
+        basic_samkeyentry.cpp)
+
+target_link_libraries(basic_samkeyentry
+        iso7816cards
+        desfirecards
+        logicalaccess
+        iso7816readers
+        samavcards
+        pcscreaders
+        )
+
+install(TARGETS basic_samkeyentry
+        RUNTIME DESTINATION bin
+        LIBRARY DESTINATION lib${LIB_SUFFIX}
+        ARCHIVE DESTINATION lib${LIB_SUFFIX})

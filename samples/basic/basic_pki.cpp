@@ -19,20 +19,6 @@ enum class HashAlgo : unsigned char
     RFU    = 0xFF
 };
 
-using Config = uint16_t;
-
-// PKI configuration flags
-constexpr Config PUBLIC_KEY           = 0;
-constexpr Config PRIVATE_KEY          = (1u << 0);
-constexpr Config ALLOW_PRIVATE_EXPORT = (1u << 1);
-constexpr Config DISABLE              = (1u << 2);
-constexpr Config DISABLE_ENCRYPTION   = (1u << 3);
-constexpr Config DISABLE_SIGNATURE    = (1u << 4);
-constexpr Config UPDATE_KEY_ENTRIES   = (1u << 5);
-constexpr Config CRT                  = (1u << 6);
-constexpr Config ENCIPHER_KEYS        = (1u << 7);
-constexpr Config FORCE_HOST_USAGE     = (1u << 8);
-constexpr Config FORCE_HOST_CHANGE    = (1u << 9);
 // Test defaults
 constexpr uint8_t DEFAULT_KUC    = 0xFE;
 constexpr uint8_t DEFAULT_CEKNO  = 0x00;
@@ -40,17 +26,76 @@ constexpr uint8_t DEFAULT_CEKVER = 0xFF;
 constexpr uint8_t FIRST_SLOT     = 0x00;
 constexpr uint8_t LAST_SLOT      = 0x02;
 
-constexpr Config TEST_KEY = PRIVATE_KEY | ALLOW_PRIVATE_EXPORT | UPDATE_KEY_ENTRIES | ENCIPHER_KEYS | CRT;
-
-constexpr Config TEST_KEY_SAFE = PRIVATE_KEY | ALLOW_PRIVATE_EXPORT | CRT;
-
-constexpr Config TEST_KEY_DISABLED = TEST_KEY_SAFE | DISABLE;
+constexpr sam::pki::PKISet makePrivateKeyOnly()
+{
+    sam::pki::PKISet config{};
+    config.setPrivateKey(true);
+    return config;
 }
+
+constexpr sam::pki::PKISet makeDisabled()
+{
+    sam::pki::PKISet config{};
+    config.setDisabled(true);
+    return config;
+}
+
+constexpr sam::pki::PKISet makePublicKeyConfig()
+{
+    sam::pki::PKISet config{};
+    config.setCRT(true);
+    return config;
+}
+
+constexpr sam::pki::PKISet makePrivateKeyCRT()
+{
+    sam::pki::PKISet config{};
+    config.setPrivateKey(true);
+    config.setCRT(true);
+    return config;
+}
+
+constexpr sam::pki::PKISet makeTestKey()
+{
+    sam::pki::PKISet config{};
+    config.setPrivateKey(true);
+    config.setAllowPrivateExport(true);
+    config.setUpdateKeyEntries(true);
+    config.setEncipherKeyEntries(true);
+    config.setCRT(true);
+    return config;
+}
+
+constexpr sam::pki::PKISet makeTestKeySafe()
+{
+    sam::pki::PKISet config{};
+    config.setPrivateKey(true);
+    config.setAllowPrivateExport(true);
+    config.setCRT(true);
+    return config;
+}
+
+constexpr sam::pki::PKISet makeTestKeyDisabled()
+{
+    auto config = makeTestKeySafe();
+    config.setDisabled(true);
+    return config;
+}
+
+constexpr auto PRIVATE_KEY_ONLY  = makePrivateKeyOnly();
+constexpr auto DISABLED          = makeDisabled();
+constexpr auto PUBLIC_KEY_CONFIG = makePublicKeyConfig();
+constexpr auto PRIVATE_KEY_CRT   = makePrivateKeyCRT();
+constexpr auto TEST_KEY          = makeTestKey();
+constexpr auto TEST_KEY_SAFE     = makeTestKeySafe();
+constexpr auto TEST_KEY_DISABLED = makeTestKeyDisabled();
+
+} // namespace pki
 
 struct PKIImportTestCase
 {
     unsigned char keyNo{};
-    unsigned short config{};
+    sam::pki::PKISet config{};
     unsigned char keyNoCEK{};
     unsigned char keyNoVCEK{};
     unsigned char refNoKUC{};
@@ -140,14 +185,14 @@ inline const ByteVector &IPQ256()
 inline PKIImportTestCase makePKIImportTest()
 {
     PKIImportTestCase tc{};
-    tc.keyNo     = 0x01;
-    tc.config    = pki::CRT;
-    tc.keyNoCEK  = 0xFE;
-    tc.keyNoVCEK = 0x00;
-    tc.refNoKUC  = 0xFF;
-    tc.provideAEK = false;
-    tc.keyNoAEK = 0x00;
-    tc.keyVAEK = 0x00;
+    tc.keyNo              = 0x01;
+    tc.config             = pki::PUBLIC_KEY_CONFIG;
+    tc.keyNoCEK           = 0xFE;
+    tc.keyNoVCEK          = 0x00;
+    tc.refNoKUC           = 0xFF;
+    tc.provideAEK         = false;
+    tc.keyNoAEK           = 0x00;
+    tc.keyVAEK            = 0x00;
     tc.includeAccess      = false;
     tc.updateSettingsOnly = false;
     tc.expectSuccess      = true;
@@ -157,7 +202,7 @@ inline PKIImportTestCase makePKIImportTest()
 inline PKIImportTestCase makePKIPublicKeyTest()
 {
     auto tc   = makePKIImportTest();
-    tc.config = pki::PUBLIC_KEY | pki::CRT;
+    tc.config = pki::PUBLIC_KEY_CONFIG;
     tc.n      = N1024();
     tc.e      = E();
     return tc;
@@ -166,7 +211,7 @@ inline PKIImportTestCase makePKIPublicKeyTest()
 inline PKIImportTestCase makePKICRTKeyTest()
 {
     auto tc   = makePKIImportTest();
-    tc.config = pki::PRIVATE_KEY | pki::CRT;
+    tc.config = pki::PRIVATE_KEY_CRT;
     tc.n      = N512();
     tc.e      = E();
     tc.p      = P256();
@@ -181,7 +226,7 @@ inline PKIImportTestCase makePKICRTKeyTest()
 struct PKIGenerateTestCase
 {
     unsigned char keyNo{};
-    unsigned short config{};
+    sam::pki::PKISet config{};
     unsigned char keyNoCEK{};
     unsigned char keyNoVCEK{};
     unsigned char keyNoRef{};
@@ -327,8 +372,9 @@ std::vector<PKIImportTestCase> importTests = {
     // ===== SETTINGS =====
     []
     {
-        auto tc               = util::makePKIImportTest();
-        tc.config             = pki::DISABLE | pki::CRT;
+        auto tc = util::makePKIImportTest();
+        tc.config.setDisabled(true);
+        tc.config.setCRT(true);
         tc.updateSettingsOnly = true;
         tc.description        = "Settings-only disable key entry";
         return tc;
@@ -344,9 +390,10 @@ std::vector<PKIImportTestCase> importTests = {
 
     []
     {
-        auto tc               = util::makePKIImportTest();
-        tc.keyNo              = 0x02;
-        tc.config             = pki::DISABLE | pki::CRT;
+        auto tc  = util::makePKIImportTest();
+        tc.keyNo = 0x02;
+        tc.config.setDisabled(true);
+        tc.config.setCRT(true);
         tc.updateSettingsOnly = true;
         tc.description        = "Settings-only on keyNo=2";
         return tc;
@@ -456,8 +503,9 @@ std::vector<PKIImportTestCase> importTests = {
 
     []
     {
-        auto tc          = util::makePKIImportTest();
-        tc.config        = pki::DISABLE | pki::CRT;
+        auto tc = util::makePKIImportTest();
+        tc.config.setDisabled(true);
+        tc.config.setCRT(true);
         tc.n             = util::N512();
         tc.e             = util::E();
         tc.keyNoAEK      = 0x05;
@@ -545,8 +593,9 @@ std::vector<PKIImportTestCase> importTests = {
     // ===== CONFIG =====
     []
     {
-        auto tc        = util::makePKIImportTest();
-        tc.config      = pki::DISABLE | pki::CRT;
+        auto tc = util::makePKIImportTest();
+        tc.config.setDisabled(true);
+        tc.config.setCRT(true);
         tc.n           = util::N512();
         tc.e           = util::E();
         tc.description = "Import disabled key";
@@ -555,8 +604,10 @@ std::vector<PKIImportTestCase> importTests = {
 
     []
     {
-        auto tc          = util::makePKICRTKeyTest();
-        tc.config        = pki::PRIVATE_KEY | pki::DISABLE | pki::CRT;
+        auto tc = util::makePKICRTKeyTest();
+        tc.config.setPrivateKey(true);
+        tc.config.setDisabled(true);
+        tc.config.setCRT(true);
         tc.keyNoAEK      = 0x05;
         tc.keyVAEK       = 0x01;
         tc.provideAEK    = true;
@@ -582,22 +633,22 @@ std::vector<PKIImportTestCase> importTests = {
 
     []
     {
-        auto tc          = util::makePKIImportTest();
-        tc.config        = pki::PRIVATE_KEY | pki::CRT;
+        auto tc = util::makePKIImportTest();
+        tc.config.setPrivateKey(true);
+        tc.config.setCRT(true);
         tc.n             = util::N2048();
         tc.e             = ByteVector(256, 0x04); // even exponent
         tc.expectSuccess = false;
         tc.description   = "Chaining + invalid exponent";
         return tc;
-    }()
-};
+    }()};
 
 std::vector<PKIGenerateTestCase> generateKeyPairTests = {
     // ===== SUCCESS =====
-    {0x01, pki::PRIVATE_KEY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x40, 0x04,
+    {0x01, pki::PRIVATE_KEY_ONLY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x40, 0x04,
     {}, false, true, false, "Valid parameters, random exponent, minimal modulus"},
 
-    {0x00, pki::PRIVATE_KEY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x100, 0x100,
+    {0x00, pki::PRIVATE_KEY_ONLY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x100, 0x100,
     ByteVector(256, 0x03), false, true, false, "APDU chaining with large exponent (no access)"},
 
     {0x01, pki::TEST_KEY_SAFE, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x40, 0x04,
@@ -608,61 +659,61 @@ std::vector<PKIGenerateTestCase> generateKeyPairTests = {
     {}, false, true, true, "Key generation with disable flag (bit 2 set)"},
 
     // ===== MIN EXPONENT SIZE =====
-    {0x01, pki::PRIVATE_KEY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x40, 0x04,
+    {0x01, pki::PRIVATE_KEY_ONLY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x40, 0x04,
     logicalaccess::BufferHelper::fromHexString("00000003"), false, true, false, "Minimum valid exponent size (4 bytes and odd)"},
 
     // ===== EXPONENT (SMALL) =====
-    {0x01, pki::PRIVATE_KEY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x40, 0x04,
+    {0x01, pki::PRIVATE_KEY_ONLY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x40, 0x04,
     logicalaccess::BufferHelper::fromHexString("00010001"), false, true, false, "Standard RSA exponent (65537)"},
     
     // ===== CHAINING =====
-    {0x01, pki::PRIVATE_KEY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x100, 0x100,
+    {0x01, pki::PRIVATE_KEY_ONLY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x100, 0x100,
     ByteVector(256, 0x03), false, true, false, "APDU chaining (256-byte exponent)"},
     
     // ===== CHAINING BOUNDARY (MUST BE IN FULL PROTECT) =====
-    {0x01, pki::PRIVATE_KEY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x100, 0xE4,
+    {0x01, pki::PRIVATE_KEY_ONLY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x100, 0xE4,
     ByteVector(228, 0x03), false, true, false, "FullProtect : maximum exponent size fitting in a single secure APDU frame"},
 
-    {0x01, pki::PRIVATE_KEY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x100, 0xE8,
+    {0x01, pki::PRIVATE_KEY_ONLY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x100, 0xE8,
     ByteVector(232, 0x03), false, true, false, "FullProtect : minimum exponent size requiring secure APDU chaining"},
 
     // ===== CHAINING BOUNDARY (MUST BE IN PLAIN HOST MODE) =====
-    {0x01, pki::PRIVATE_KEY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x100, 0xF0,
+    {0x01, pki::PRIVATE_KEY_ONLY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x100, 0xF0,
     ByteVector(240, 0x03), false, true, false, "Plain : maximum exponent size fitting exactly in one APDU frame"},
 
-    {0x01, pki::PRIVATE_KEY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x100, 0xF4,
+    {0x01, pki::PRIVATE_KEY_ONLY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x100, 0xF4,
     ByteVector(244, 0x03), false, true, false, "Plain : minimum exponent size requiring APDU chaining"},
     
     // ===== INVALID KEY NUMBER =====
-    {0x02, pki::PRIVATE_KEY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x40, 0x04,
+    {0x02, pki::PRIVATE_KEY_ONLY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x40, 0x04,
     {}, false, false, false, "Invalid key number (must be 0x00 or 0x01)"},
 
     // ===== INCORRECT EXPONENT LENGTH (SMALL) =====
-    {0x01, pki::PRIVATE_KEY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x40, 0x03,
+    {0x01, pki::PRIVATE_KEY_ONLY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x40, 0x03,
     logicalaccess::BufferHelper::fromHexString("010001"), false, false, false, "Exponent length not multiple of 4 bytes"},
 
     // ===== INCORRECT EXPONENT (EVEN) =====
-    {0x01, pki::PRIVATE_KEY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x40, 0x04,
+    {0x01, pki::PRIVATE_KEY_ONLY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x40, 0x04,
     logicalaccess::BufferHelper::fromHexString("020002"), false, false, false, "Exponent must be odd"},
 
     // ===== AEK (DISABLE CONFLICT) =====
-    {0x01, pki::DISABLE, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x40, 0x04,
+    {0x01, pki::DISABLED, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x40, 0x04,
     {}, true, false, false, "Access keys required but not provided"},
 
     // ===== INVALID NLEN =====
-    {0x01, pki::PRIVATE_KEY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x41, 0x04,
+    {0x01, pki::PRIVATE_KEY_ONLY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x41, 0x04,
     {}, false, false, false, "Modulus length not multiple of 8"},
 
     // ===== EXPONENT > MODULUS =====
-    {0x01, pki::PRIVATE_KEY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x40, 0x80,
+    {0x01, pki::PRIVATE_KEY_ONLY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x40, 0x80,
     ByteVector(128, 0x03), false, false, false, "Exponent length greater than modulus"},
 
     // ===== AEK WITH DISABLED KEY (CONFLICT) =====
-    {0x01, pki::DISABLE, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK(0x10, 0x20), 0x40, 0x04,
+    {0x01, pki::DISABLED, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK(0x10, 0x20), 0x40, 0x04,
     {}, false, false, false, "Access key provided while key is disabled"},
 
     // ===== NLEN TOO SMALL =====
-    {0x01, pki::PRIVATE_KEY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x20, 0x04,
+    {0x01, pki::PRIVATE_KEY_ONLY, pki::DEFAULT_KUC, pki::DEFAULT_CEKNO, pki::DEFAULT_CEKVER, sam::AEKVAEK{}, 0x20, 0x04,
     {},false, false, false, "Modulus length too small (64 bytes required)"}
 };
 
@@ -904,11 +955,49 @@ void runPKIExportPrivateTests(std::shared_ptr<SAMAV3ISO7816Commands> samCmd, con
         "EXPORT PRIVATE", exportPrivateKeyTests,
         [&](const PKIExportPrivateTestCase &tc)
         {
-            ByteVector exported = samCmd->PKI_ExportPrivateKey(tc.keyNo, tc.requestAEK);
-            if (exported.empty())
-                throw std::runtime_error("Empty export payload");
-            if (tc.expectPrivatePartPresent && exported.size() < 13) //Private export should be larger than public key export.
-                throw std::runtime_error("Private key export unexpectedly small");
+            const sam::pki::ExportedPrivateKey exported = samCmd->PKI_ExportPrivateKey(tc.keyNo, tc.requestAEK);
+
+            // Must always return a complete RSA key
+            if (exported.n.empty())
+                throw std::runtime_error("Exported RSA modulus is empty.");
+            if (exported.e.empty())
+                throw std::runtime_error("Exported RSA public exponent is empty.");
+            // This command specifically exports a private key
+            if (!exported.config.privateKeyIncluded())
+                throw std::runtime_error("Exported key entry does not contain a private key.");
+            // Check the returned lengths
+            if (exported.n.size() != exported.nLen)
+                throw std::runtime_error("Exported modulus length does not match PKI_NLen.");
+            if (exported.e.size() != exported.eLen)
+                throw std::runtime_error("Exported exponent length does not match PKI_eLen.");
+            if (exported.p.size() != exported.pLen)
+                throw std::runtime_error("Exported prime p length does not match PKI_pLen.");
+            if (exported.q.size() != exported.qLen)
+                throw std::runtime_error("Exported prime q length does not match PKI_qLen.");
+            if (exported.dP.size() != exported.pLen)
+                throw std::runtime_error("Exported dP length does not match PKI_pLen.");
+            if (exported.dQ.size() != exported.qLen)
+                throw std::runtime_error("Exported dQ length does not match PKI_qLen.");
+            if (exported.ipq.size() != exported.qLen)
+                throw std::runtime_error("Exported ipq length does not match PKI_qLen.");
+            if (tc.expectPrivatePartPresent)
+            {
+                if (exported.p.empty() || exported.q.empty() || exported.dP.empty() ||
+                    exported.dQ.empty() || exported.ipq.empty())
+                {
+                    throw std::runtime_error("Private CRT components are missing from export.");
+                }
+            }
+            if (tc.requestAEK)
+            {
+                if (!exported.hasAccessKey)
+                    throw std::runtime_error("AEK metadata was requested but not returned.");
+            }
+            else
+            {
+                if (exported.hasAccessKey)
+                    throw std::runtime_error("AEK metadata was returned although it was not requested.");
+            }
         },
         hooks);
 }
@@ -918,11 +1007,38 @@ void runPKIExportPublicTests(std::shared_ptr<SAMAV3ISO7816Commands> samCmd, cons
     runTestSuite("EXPORT PUBLIC", exportPublicKeyTests,
         [&](const PKIExportPublicTestCase &tc)
         {
-            ByteVector exported = samCmd->PKI_ExportPublicKey(tc.keyNo, tc.returnAEK);
-            if (exported.empty())
-                throw std::runtime_error("Empty export payload");
-            if (exported.size() < 9)
-                throw std::runtime_error("Public key export unexpectedly small");
+            const sam::pki::ExportedPublicKey exported = samCmd->PKI_ExportPublicKey(tc.keyNo, tc.returnAEK);
+
+            if (!exported.hasPublicKey())
+                throw std::runtime_error("Exported public key is empty.");
+
+            if (!exported.hasValidLengths())
+                throw std::runtime_error("Exported public key component lengths are inconsistent.");
+
+            if (exported.n.empty())
+                throw std::runtime_error("Exported RSA modulus is empty.");
+
+            if (exported.e.empty())
+                throw std::runtime_error("Exported RSA public exponent is empty.");
+
+            if (exported.n.size() != exported.nLen)
+                throw std::runtime_error("PKI_NLen does not match exported modulus length.");
+
+            if (exported.e.size() != exported.eLen)
+                throw std::runtime_error("PKI_eLen does not match exported exponent length.");
+
+            if (exported.hasAccessKey != tc.returnAEK)
+            {
+                throw std::runtime_error(tc.returnAEK
+                        ? "AEK metadata was requested but not returned."
+                        : "AEK metadata was returned although it was not requested.");
+            }
+
+            if (tc.returnAEK)
+            {
+                if (!exported.hasAccessKey)
+                    throw std::runtime_error("Exported key incorrectly reports no AEK metadata.");
+            }
         },
         hooks);
 }

@@ -199,14 +199,302 @@ inline std::string errorMessage(const char *function, const std::string &message
 namespace pki
 {
 constexpr unsigned short ConfigDisableBit = 0x0004;
-}
+
+/**
+ * \brief PKI key entry configuration settings.
+ *
+ * This is the 16 bit PKI_SET configuration.
+ * 
+ * Bits 10 to 15 are RFU and shall be set to zero.
+ */
+struct PKISet
+{
+    using value_type = std::uint16_t;
+
+    static constexpr value_type PrivateKey         = 0x0001;
+    static constexpr value_type AllowPrivateExport = 0x0002;
+    static constexpr value_type Disable            = 0x0004;
+    static constexpr value_type DisableEncryption  = 0x0008;
+    static constexpr value_type DisableSignature   = 0x0010;
+    static constexpr value_type UpdateKeyEntries   = 0x0020;
+    static constexpr value_type CRT                = 0x0040;
+    static constexpr value_type EncipherKeyEntries = 0x0080;
+    static constexpr value_type ForceHostUsage     = 0x0100;
+    static constexpr value_type ForceHostChange    = 0x0200;
+
+    static constexpr value_type RFUMask   = 0xFC00;
+
+    value_type value = 0;
+
+    constexpr PKISet() noexcept = default;
+
+    explicit constexpr PKISet(value_type value) noexcept
+        : value(value)
+    {
+    }
+
+    [[nodiscard]]
+    static constexpr bool isValidRaw(value_type value) noexcept
+    {
+        return (value & RFUMask) == 0;
+    }
+
+    [[nodiscard]]
+    constexpr bool isValid() const noexcept
+    {
+        return isValidRaw(value);
+    }
+
+    [[nodiscard]]
+    constexpr value_type raw() const noexcept
+    {
+        return value;
+    }
+
+    constexpr void reset() noexcept
+    {
+        value = 0;
+    }
+
+    constexpr void setRaw(value_type newValue) noexcept
+    {
+        value = newValue;
+    }
+
+    constexpr void setPrivateKey(bool enabled) noexcept
+    {
+        setFlag(PrivateKey, enabled);
+    }
+
+    constexpr void setAllowPrivateExport(bool enabled) noexcept
+    {
+        setFlag(AllowPrivateExport, enabled);
+    }
+
+    constexpr void setDisabled(bool enabled) noexcept
+    {
+        setFlag(Disable, enabled);
+    }
+
+    constexpr void setEncryptionDisabled(bool enabled) noexcept
+    {
+        setFlag(DisableEncryption, enabled);
+    }
+
+    constexpr void setSignatureDisabled(bool enabled) noexcept
+    {
+        setFlag(DisableSignature, enabled);
+    }
+
+    constexpr void setUpdateKeyEntries(bool enabled) noexcept
+    {
+        setFlag(UpdateKeyEntries, enabled);
+    }
+
+    constexpr void setCRT(bool enabled) noexcept
+    {
+        setFlag(CRT, enabled);
+    }
+
+    constexpr void setEncipherKeyEntries(bool enabled) noexcept
+    {
+        setFlag(EncipherKeyEntries, enabled);
+    }
+
+    constexpr void setForceHostUsage(bool enabled) noexcept
+    {
+        setFlag(ForceHostUsage, enabled);
+    }
+
+    constexpr void setForceHostChange(bool enabled) noexcept
+    {
+        setFlag(ForceHostChange, enabled);
+    }
+
+    [[nodiscard]]
+    constexpr bool privateKeyIncluded() const noexcept
+    {
+        return hasFlag(PrivateKey);
+    }
+
+    [[nodiscard]]
+    constexpr bool privateKeyExportAllowed() const noexcept
+    {
+        return hasFlag(AllowPrivateExport);
+    }
+
+    [[nodiscard]]
+    constexpr bool disabled() const noexcept
+    {
+        return hasFlag(Disable);
+    }
+
+    [[nodiscard]]
+    constexpr bool encryptionDisabled() const noexcept
+    {
+        return hasFlag(DisableEncryption);
+    }
+
+    [[nodiscard]]
+    constexpr bool signatureDisabled() const noexcept
+    {
+        return hasFlag(DisableSignature);
+    }
+
+    [[nodiscard]]
+    constexpr bool updateKeyEntriesEnabled() const noexcept
+    {
+        return hasFlag(UpdateKeyEntries);
+    }
+
+    [[nodiscard]]
+    constexpr bool crtRepresentation() const noexcept
+    {
+        return hasFlag(CRT);
+    }
+
+    [[nodiscard]]
+    constexpr bool encipherKeyEntriesEnabled() const noexcept
+    {
+        return hasFlag(EncipherKeyEntries);
+    }
+
+    [[nodiscard]]
+    constexpr bool hostUsageForced() const noexcept
+    {
+        return hasFlag(ForceHostUsage);
+    }
+
+    [[nodiscard]]
+    constexpr bool hostChangeForced() const noexcept
+    {
+        return hasFlag(ForceHostChange);
+    }
+
+    [[nodiscard]]
+    constexpr bool isValidForKeyEntry(unsigned char keyNo) const noexcept
+    {
+        // SAM AV3 PKI key entries are 0x00 to 0x02
+        if (keyNo > 0x02)
+            return false;
+
+        // Bits 10 to 15 are RFU and must be set 0
+        if (!isValid())
+            return false;
+
+        // Key entry 0x02 is public key only
+        if (keyNo == 0x02 && privateKeyIncluded())
+            return false;
+
+        return true;
+    }
+
+    /**
+     * \brief Serialize the PKI_SET value in SAM command byte order.
+     *
+     * PKI_SET is encoded as a 16 bit big-endian value in the corresponding SAM command payload.
+     * 
+     * This function doesn't validate the configuration !
+     * Callers requiring a valid PKI_SET must check isValid() or isValidForKeyEntry() before serialization.
+     */
+    void appendTo(ByteVector &output) const
+    {
+        sam::appendUInt16BE(output, value);
+    }
+
+  private:
+    [[nodiscard]]
+    constexpr bool hasFlag(value_type flag) const noexcept
+    {
+        return (value & flag) != 0;
+    }
+
+    constexpr void setFlag(value_type flag, bool enabled) noexcept
+    {
+        if (enabled)
+            value |= flag;
+        else
+            value &= static_cast<value_type>(~flag);
+    }
+};
+
+/**
+ * \brief RSA key data returned by the SAM AV3 PKI_ExportPrivateKey command.
+ *
+ * The response contains the PKI key entry configuration and RSA key components.
+ * 
+ * keyNoAEK/keyVerAEK fields are present only when the command was executed with P2 bit 7 set.
+ */
+struct ExportedPrivateKey
+{
+    PKISet config;
+
+    unsigned char keyNoCEK  = 0;
+    unsigned char keyVerCEK = 0;
+    unsigned char refNoKUC  = 0;
+
+    bool hasAccessKey       = false;
+    unsigned char keyNoAEK  = 0;
+    unsigned char keyVerAEK = 0;
+
+    std::uint16_t nLen = 0;
+    std::uint16_t eLen = 0;
+    std::uint16_t pLen = 0;
+    std::uint16_t qLen = 0;
+
+    ByteVector n;
+    ByteVector e;
+    ByteVector p;
+    ByteVector q;
+    ByteVector dP;
+    ByteVector dQ;
+    ByteVector ipq;
+};
+
+/**
+ * \brief Public RSA key exported from a SAM AV3 PKI key entry.
+ *
+ * Represents the decoded response of PKI_ExportPublicKey.
+ */
+struct ExportedPublicKey
+{
+    PKISet config{};
+
+    unsigned char keyNoCEK = 0;
+    unsigned char keyVCEK  = 0;
+    unsigned char refNoKUC = 0;
+
+    bool hasAccessKey      = false;
+    unsigned char keyNoAEK = 0;
+    unsigned char keyVAEK  = 0;
+
+    std::uint16_t nLen = 0;
+    std::uint16_t eLen = 0;
+
+    ByteVector n;
+    ByteVector e;
+
+    [[nodiscard]]
+    bool hasValidLengths() const noexcept
+    {
+        return n.size() == nLen && e.size() == eLen;
+    }
+
+    [[nodiscard]]
+    bool hasPublicKey() const noexcept
+    {
+        return !n.empty() && !e.empty();
+    }
+};
+
+} // namespace pki
 
 namespace sw
 {
 constexpr unsigned char SuccessSW1 = 0x90;
 constexpr unsigned char SuccessSW2  = 0x00;
 constexpr unsigned char MoreDataSW2 = 0xAF;
-}
+} // namespace sw
 
 constexpr bool isSuccess(unsigned char sw1, unsigned char sw2) noexcept
 {
@@ -227,12 +515,12 @@ namespace chaining
 {
 constexpr unsigned char Continue = sw::MoreDataSW2;
 constexpr unsigned char End      = sw::SuccessSW2;
-}
+} // namespace chaining
 
 namespace iso7816
 {
 constexpr unsigned char LeResponse = 0x00;
-}
+} // namespace iso7816
 
 #ifndef SWIG
 namespace ins
@@ -240,7 +528,7 @@ namespace ins
 namespace host
 {
 constexpr unsigned char AuthenticateHost = 0xA4;
-}
+} // namespace host
 
 namespace key
 {
@@ -249,20 +537,20 @@ constexpr unsigned char ChangeKeyEntry         = 0xC1;
 constexpr unsigned char DisableKeyEntryOffline = 0xD8;
 constexpr unsigned char EncipherKeyEntry       = 0xE1;
 constexpr unsigned char DumpSecretKey          = 0xD6;
-}
+} // namespace key
 
 namespace kuc
 {
 constexpr unsigned char GetEntry    = 0x6C;
 constexpr unsigned char ChangeEntry = 0xCC;
-}
+} // namespace kuc
 
 namespace offline
 {
 constexpr unsigned char ActivateKey  = 0x01;
 constexpr unsigned char DecipherData = 0x0D;
 constexpr unsigned char EncipherData = 0x0E;
-}
+} // namespace offline
 
 namespace pki
 {
@@ -282,7 +570,7 @@ constexpr unsigned char ImportECCKey       = 0x21;
 constexpr unsigned char ImportECCCurve     = 0x22;
 constexpr unsigned char ExportECCPublicKey = 0x23;
 constexpr unsigned char VerifyECCSignature = 0x20;
-}
+} // namespace pki
 
 namespace emv
 {
@@ -294,8 +582,9 @@ constexpr unsigned char LoadIccPk          = 0x28;
 constexpr unsigned char RecoverStaticData  = 0x29;
 constexpr unsigned char RecoverDynamicData = 0x2A;
 constexpr unsigned char EncipherPin        = 0x2B;
-}
-}
+} // namespace emv
+
+} // namespace ins
 #endif
 
 } // namespace sam
