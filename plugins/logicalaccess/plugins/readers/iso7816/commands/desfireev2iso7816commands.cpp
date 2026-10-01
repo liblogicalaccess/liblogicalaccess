@@ -913,14 +913,18 @@ void DESFireEV2ISO7816Commands::proximityCheck(std::shared_ptr<DESFireKey> key,
         if (getDESFireChip()->getCrypto()->d_auth_method == CryptoMethod::CM_EV2)
         {
             auto crypto = std::dynamic_pointer_cast<DESFireEV2Crypto>(getDESFireChip()->getCrypto());
-            keydata = crypto->d_macSessionKey;
+            if (crypto->d_macSessionKey.size() >= 16)
+            {
+                keydata = crypto->d_macSessionKey;
+            }
         }
         else if ((getDESFireChip()->getCrypto()->d_auth_method & CryptoMethod::CM_EV1) == CryptoMethod::CM_EV1 &&
             getDESFireChip()->getCrypto()->d_sessionKey.size() >= 16)
         {
             keydata = getDESFireChip()->getCrypto()->d_sessionKey;
         }
-        else
+        
+        if (keydata.size() == 0)
         {
             key = getDESFireChip()->getCrypto()->getKey(0, DFEV2_PROXIMITY_CHECK_KEY_NO);
             EXCEPTION_ASSERT_WITH_LOG(key != nullptr, LibLogicalAccessException,
