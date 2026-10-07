@@ -48,6 +48,15 @@ void validate_child(const TLVPtr &child)
         throw_tlv_error("TLV child cannot be null.");
 }
 
+/**
+ * \brief Validate a collection of child pointers
+ */
+void validate_children(const std::vector<TLVPtr> &tlvs)
+{
+    for (const auto &tlv : tlvs)
+        validate_child(tlv);
+}
+
 } // namespace
 
 TLV::TLV(std::uint8_t tag)
@@ -129,7 +138,7 @@ void TLV::value(std::vector<TLVPtr> tlv)
 
 ByteVector TLV::compute() const
 {
-    const ByteVector encodedValue = encode_value(false);
+    const ByteVector encodedValue = value();
 
     if (encodedValue.size() > 0xFFU)
         throw_tlv_error("TLV value is too large for the legacy encoding.");
@@ -267,12 +276,6 @@ bool TLV::decode_der_length(const ByteVector &bytes, std::size_t &offset, std::u
 
     offset = current;
     return true;
-}
-
-void TLV::validate_children(const std::vector<TLVPtr> &tlvs)
-{
-    for (const auto &tlv : tlvs)
-        validate_child(tlv);
 }
 
 std::size_t TLV::encoded_children_size(const std::vector<TLVPtr> &tlvs)

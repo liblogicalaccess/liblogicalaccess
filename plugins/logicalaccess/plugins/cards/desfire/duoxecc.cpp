@@ -332,14 +332,18 @@ ECPoint decodeECPoint(CurveID curve, const ByteVector &encoded)
     const std::size_t expectedSize   = 1U + (2U * coordinateSize);
 
     if (encoded.size() != expectedSize)
-        throw std::invalid_argument("Invalid DUOX EC point length");
+        throw std::invalid_argument("Invalid DUOX EC point length.");
 
     if (encoded.front() != 0x04U)
-        throw std::invalid_argument("DUOX EC point is not an uncompressed point");
+        throw std::invalid_argument("DUOX EC point is not an uncompressed point.");
 
     ECPoint point;
-    point.x.assign(encoded.begin() + 1, encoded.begin() + 1 + coordinateSize);
-    point.y.assign(encoded.begin() + 1 + coordinateSize, encoded.end());
+    const auto xBegin = encoded.begin() + 1;
+    const auto xEnd   = xBegin + coordinateSize;
+    const auto yEnd   = encoded.end();
+
+    point.x.assign(xBegin, xEnd);
+    point.y.assign(xEnd, yEnd);
 
     return point;
 }
@@ -421,13 +425,33 @@ ByteVector deriveECDHSharedSecret(CurveID curve, const ByteVector &privateKey, c
         throw std::runtime_error("Failed to allocate OpenSSL BN context");
 
     // Validate the private scalar against the actual order of the selected curve
-    validatePrivateKey(group.get(), privateKey, bnContext.get());
+    validatePrivateKey(group.get(), privateKey, bnContext.get()); // dA
 
     // Convert the private scalar into a BIGNUM
     const BIGNUMPtr privateKeyBN = coordinateToBignum(privateKey);
 
+    // Retrieve the ECC domain-parameter cofactor h. NIST ECC CDH computes P = h * dA * QB
+    // TODO h always equals 1 with current curves => keep it for later versions if cofactor doesn't equal 1
+    BIGNUMPtr cofactor(BN_new(), &BN_free);
+
+    if (!cofactor)
+        throw std::runtime_error("Failed to allocate OpenSSL EC cofactor");
+
+    if (EC_GROUP_get_cofactor(group.get(), cofactor.get(), bnContext.get()) != 1)
+        throw std::runtime_error("Failed to retrieve OpenSSL EC group cofactor");
+
+    // Compute scalar = h * dA
+    // EC_POINT_mul() performs scalar multiplication modulo the group order as appropriate for the selected group
+    BIGNUMPtr scalar(BN_new(), &BN_free);
+
+    if (!scalar)
+        throw std::runtime_error("Failed to allocate OpenSSL ECC CDH scalar");
+
+    if (BN_mul(scalar.get(), cofactor.get(), privateKeyBN.get(), bnContext.get()) != 1)
+        throw std::runtime_error("Failed to compute ECC CDH scalar");
+
     // Reconstruct the peer public point in OpenSSL representation
-    ECPointPtr peerPoint = createECPoint(group.get(), peerPublicPoint, bnContext.get());
+    ECPointPtr peerPoint = createECPoint(group.get(), peerPublicPoint, bnContext.get()); // QB
 
     // Allocate the resulting shared point
     ECPointPtr sharedPoint(EC_POINT_new(group.get()), &EC_POINT_free);
@@ -435,32 +459,28 @@ ByteVector deriveECDHSharedSecret(CurveID curve, const ByteVector &privateKey, c
     if (!sharedPoint)
         throw std::runtime_error("Failed to allocate OpenSSL ECDH shared point");
 
-    // ECDH scalar multiplication
-    if (EC_POINT_mul(group.get(), sharedPoint.get(), nullptr, peerPoint.get(), privateKeyBN.get(), bnContext.get()) != 1)
+    // ECDH scalar multiplication, ECC CDH : P = h * dA * QB
+    if (EC_POINT_mul(group.get(), sharedPoint.get(), nullptr, peerPoint.get(), scalar.get(), bnContext.get()) != 1)
         throw std::runtime_error("OpenSSL ECDH scalar multiplication failed");
 
     // ECDH must never produce the point at infinity
     if (EC_POINT_is_at_infinity(group.get(), sharedPoint.get()) == 1)
         throw std::runtime_error("ECDH resulted in the point at infinity");
 
-    // Extract the affine X-coordinate of the shared point (uses fixed-width 32-byte coordinates)
+    // Extract the affine X-coordinate of the shared point (uses fixed-width 32-byte coordinates) z = xP
     BIGNUMPtr sharedX(BN_new(), &BN_free);
 
     if (!sharedX)
         throw std::runtime_error("Failed to allocate OpenSSL ECDH shared coordinate");
 
-    BIGNUMPtr sharedY(BN_new(), &BN_free);
+    if (EC_POINT_get_affine_coordinates(group.get(), sharedPoint.get(), sharedX.get(), nullptr, bnContext.get()) != 1)
+        throw std::runtime_error("Failed to extract OpenSSL ECC CDH X-coordinate");
 
-    if (!sharedY)
-        throw std::runtime_error("Failed to allocate OpenSSL ECDH shared coordinate");
-
-    if (EC_POINT_get_affine_coordinates(group.get(), sharedPoint.get(), sharedX.get(), sharedY.get(), bnContext.get()) != 1)
-        throw std::runtime_error("Failed to extract OpenSSL ECDH shared point");
-
+    // Convert the field element z = xP to the fixed width byte representation Z (32 bytes big-endian with leading zeroes)
     ByteVector sharedSecret(coordinateSize);
 
     if (BN_bn2binpad(sharedX.get(), sharedSecret.data(),
-                     static_cast<int>(sharedSecret.size())) != static_cast<int>(sharedSecret.size()))
+                     static_cast<int>(coordinateSize)) != static_cast<int>(coordinateSize))
     {
         throw std::runtime_error("Failed to encode DUOX ECDH shared secret");
     }
@@ -505,8 +525,7 @@ ECDSASignature signECDSA(CurveID curve, const ByteVector &privateKey, const Byte
     return decodeECDSASignatureDER(derSignature);
 }
 
-bool verifyECDSA(CurveID curve, const PublicKey &publicKey, const ByteVector &message,
-                     const ECDSASignature &signature)
+bool verifyECDSA(CurveID curve, const PublicKey &publicKey, const ByteVector &message, const ECDSASignature &signature)
 {
     validateSignatureComponent(signature.r, "r");
     validateSignatureComponent(signature.s, "s");
@@ -752,8 +771,7 @@ ECKeyPair generateECKeyPair(CurveID curve)
     const std::size_t coordinateSize = getCoordinateSize(curve);
     const char *curveName            = getOpenSSLCurveName(curve);
 
-    EVP_PKEY_CTXPtr keyContext(EVP_PKEY_CTX_new_from_name(nullptr, "EC", nullptr),
-                               &EVP_PKEY_CTX_free);
+    EVP_PKEY_CTXPtr keyContext(EVP_PKEY_CTX_new_from_name(nullptr, "EC", nullptr), &EVP_PKEY_CTX_free);
 
     if (!keyContext)
         throw std::runtime_error("Unable to create EC key generation context");
@@ -782,11 +800,9 @@ ECKeyPair generateECKeyPair(CurveID curve)
     ECKeyPair result;
     result.privateKey.resize(coordinateSize);
 
-    if (BN_bn2binpad(privateKey.get(), result.privateKey.data(), static_cast<int>(coordinateSize)) !=
-        static_cast<int>(coordinateSize))
-    {
+    const int written = BN_bn2binpad(privateKey.get(), result.privateKey.data(), static_cast<int>(coordinateSize));
+    if (written != static_cast<int>(coordinateSize))
         throw std::runtime_error("Unable to encode EC private key");
-    }
 
     // Extract the public key in uncompressed form : 0x04 || X || Y
     std::size_t publicKeySize = 0;

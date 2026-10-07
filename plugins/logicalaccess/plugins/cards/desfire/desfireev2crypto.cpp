@@ -485,4 +485,12 @@ void DESFireEV2Crypto::invalidateAuthentication()
     // Keep d_currentAid and d_keys intact because it's selection state, not authentication state
 }
 
+void DESFireEV2Crypto::initializeSecureMessagingState()
+{
+    // TODO: Move this to DUOXCrypto once DUOX has its own crypto implementation.
+    cmdctr_ = 0;
+    d_cipher.reset(new openssl::AESCipher());
+    d_mac_size = 8;
+}
+
 } // namespace logicalaccess

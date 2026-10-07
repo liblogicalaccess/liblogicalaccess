@@ -10,6 +10,9 @@
 #include <logicalaccess/plugins/cards/desfire/desfireaccessinfo.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfirelocation.hpp>
 #include <logicalaccess/cards/commands.hpp>
+
+#include <cstdint>
+#include <string>
 #include <vector>
 
 namespace logicalaccess
@@ -58,7 +61,8 @@ namespace logicalaccess
 #define DF_INS_ADDITIONAL_FRAME 0xAF
 
 #define DF_CLA_ISO_WRAP 0x90
-#endif
+
+#endif // DF_INS
 
 #define CMD_DESFIRE "DESFire"
 
@@ -101,13 +105,15 @@ typedef enum {
 
 /**
  * \brief Access rights on DESFire file.
+ * 
+ * Each access right occupies four bits in the two-byte DESFire access-rights field.
  */
 struct DESFireAccessRights
 {
-    TaskAccessRights readAccess;         /**< \brief Read access */
-    TaskAccessRights writeAccess;        /**< \brief Write access */
-    TaskAccessRights readAndWriteAccess; /**< \brief Read and Write access */
-    TaskAccessRights changeAccess;       /**< \brief Change access */
+    TaskAccessRights readAccess;         /**< \brief Read access. */
+    TaskAccessRights writeAccess;        /**< \brief Write access. */
+    TaskAccessRights readAndWriteAccess; /**< \brief Read and Write access. */
+    TaskAccessRights changeAccess;       /**< \brief Change access. */
 };
 
 /**
@@ -154,11 +160,87 @@ class LLA_CARDS_DESFIRE_API DESFireCommands : public Commands
     virtual void erase() = 0;
 
     /**
-     * \brief Describe setting for Data File type.
+     * \brief Maximum number of additional access-right sets supported by the GetFileSettings response.
+     */
+    static const unsigned char MaxAdditionalAccessRights = 7U;
+
+    /**
+     * \brief Describe the additional access-right sets of a file.
+     *
+     * The DESFire protocol limits the number of additional access-right sets to seven.
+     * A fixed-size array is therefore intentionally used instead of dynamic allocation.
+     */
+    struct LLA_CARDS_DESFIRE_API AdditionalAccessRights
+    {
+        unsigned char nrAddARs;
+        DESFireAccessRights accessRights[MaxAdditionalAccessRights];
+    };
+
+    /**
+     * \brief Describe Secure Dynamic Messaging settings.
+     * 
+     * A has* flag is intentionally kept separately from the associated
+     * three-byte value because an absent optional field and a present field
+     * whose value is zero are distinct protocol states.
+     */
+    struct LLA_CARDS_DESFIRE_API SDMSettings
+    {
+        unsigned char options;                 /**< \brief SDM options. */
+        unsigned char accessRights[2];         /**< \brief SDM access rights. */
+
+        unsigned char vcuidOffset[3];          /**< \brief VCUID mirror offset. */
+        unsigned char sdmReadCounterOffset[3]; /**< \brief SDM read-counter mirror offset. */
+        unsigned char piccDataOffset[3];       /**< \brief Encrypted PICCData mirror offset. */
+        unsigned char gpioStatusOffset[3];     /**< \brief GPIOStatus mirror offset. */
+        unsigned char sdmMacInputOffset[3];    /**< \brief SDM MAC input offset. */
+        unsigned char sdmEncOffset[3];         /**< \brief SDM encrypted-data offset. */
+        unsigned char sdmEncLength[3];         /**< \brief SDM encrypted-data length. */
+        unsigned char sdmMacOffset[3];         /**< \brief SDM MAC mirror offset. */
+        unsigned char sdmReadCounterLimit[3];  /**< \brief SDM read-counter limit. */
+
+        bool hasVcuidOffset;          /**< \brief Indicates whether vcuidOffset is present. */
+        bool hasSdmReadCounterOffset; /**< \brief Indicates whether sdmReadCounterOffset is present. */
+        bool hasPiccDataOffset;       /**< \brief Indicates whether piccDataOffset is present. */
+        bool hasGpioStatusOffset;     /**< \brief Indicates whether gpioStatusOffset is present. */
+        bool hasSdmMacInputOffset;    /**< \brief Indicates whether sdmMacInputOffset is present. */
+        bool hasSdmEncOffset;         /**< \brief Indicates whether sdmEncOffset is present. */
+        bool hasSdmEncLength;         /**< \brief Indicates whether sdmEncLength is present. */
+        bool hasSdmMacOffset;         /**< \brief Indicates whether sdmMacOffset is present. */
+        bool hasSdmReadCounterLimit;  /**< \brief Indicates whether sdmReadCounterLimit is present. */
+    };
+
+    /**
+     * \brief Describe DUOX CRL settings.
+     *
+     * These settings are only applicable to a DUOX CRL file.
+     */
+    struct LLA_CARDS_DESFIRE_API CRLSettings
+    {
+        unsigned char options;
+        unsigned char csnSize;
+        unsigned char signatureKey;
+
+        bool hasSignatureKey; /**< \brief Indicates whether the CRL signature-key field was present. */
+    };
+
+    /**
+     * \brief Describe settings for a Standard Data or Backup Data File type.
+     * 
+     * The structure contains the common data-file properties as well as
+     * optional Secure Dynamic Messaging and DUOX CRL information.
      */
     struct LLA_CARDS_DESFIRE_API DataFileSetting
     {
         unsigned char fileSize[3]; /**< \brief The file size */
+
+        unsigned char nrAddARs; /**< \brief Number of additional access-right sets. */
+        DESFireAccessRights additionalAccessRights[MaxAdditionalAccessRights];  /**< \brief Additional access-right sets. */
+
+        bool hasSDM; /**< \brief Indicates whether Secure Dynamic Messaging settings are present. */
+        SDMSettings sdm; /**< \brief Secure Dynamic Messaging settings. */
+
+        bool hasCRL; /**< Indicates whether DUOX CRL settings are present. */
+        CRLSettings crl; /**< \brief DUOX CRL settings. */
     };
 
     /**
@@ -166,70 +248,166 @@ class LLA_CARDS_DESFIRE_API DESFireCommands : public Commands
      */
     struct LLA_CARDS_DESFIRE_API ValueFileSetting
     {
-        int32_t lowerLimit;         /**< \brief The lower value limit */
-        int32_t upperLimit;         /**< \brief The upper value limit */
-        int32_t limitedCreditValue; /**< \brief The limited credit value */
-        bool limitedCreditEnabled;   /**< \brief True if limited credit is enabled, false
-                                        otherwise */
+        std::int32_t lowerLimit;    /**< \brief Lower value limit. */
+        std::int32_t upperLimit;    /**< \brief Upper value limit. */
+        std::int32_t limitedCreditValue; /**< \brief Limited credit value. */
+
+        bool limitedCreditEnabled;  /**< \brief Indicates whether Limited Credit is enabled. */
+        bool freeGetValue; /**< \brief Indicates whether GetValue is available without access-right restrictions. */
+
+        unsigned char nrAddARs; /**< \brief Number of additional access-right sets. */
+        DESFireAccessRights additionalAccessRights[MaxAdditionalAccessRights]; /**< \brief Additional access-right sets. */
     };
 
     /**
-     * \brief Describe setting for Record File type.
+     * \brief Describe settings for a Linear Record or Cyclic Record file.
      */
     struct LLA_CARDS_DESFIRE_API RecordFileSetting
     {
-        unsigned char recordSize[3];       /**< \brief The record size */
-        unsigned char maxNumberRecords[3]; /**< \brief The maximum number of records */
-        unsigned char
-            currentNumberRecords[3]; /**< \brief The current number of records */
+        unsigned char recordSize[3];           /**< \brief Record size. */
+        unsigned char maxNumberRecords[3];     /**< \brief Maximum number of records. */
+        unsigned char currentNumberRecords[3]; /**< \brief Current number of records. */
+        
+        unsigned char nrAddARs; /**< \brief Number of additional access-right sets. */
+        DESFireAccessRights additionalAccessRights[MaxAdditionalAccessRights]; /**< \brief Additional access-right sets. */
+    };
+
+    /**
+     * \brief Describe setting for Transaction MAC File type.
+     *
+     * This structure describes the Transaction MAC file configuration returned
+     * by GetFileSettings for a Transaction MAC file.
+     * It does not represent the data stored in the Transaction MAC file itself (TMC/TMV/TSV).
+     */
+    struct LLA_CARDS_DESFIRE_API TransactionMacFileSetting
+    {
+        /** \brief Options associated with AppTransactionMACKey. */
+        unsigned char tmKeyOption;
+       /** \brief Version of AppTransactionMACKey.
+        * 
+        * This field is optional for DUOX and is present when an AppTransactionMACKey is configured.
+        * The presence flag is required because a present key version of zero is distinct from an absent field.
+        */
+        unsigned char tmKeyVersion;
+
+         /** \brief Indicates whether tmKeyVersion was present in the response. */
+        bool hasTmKeyVersion;
+
+        /** \brief Indicates whether Transaction Signature is configured. */
+        bool transactionSignature;
+        /** \brief Key number of KeyID.AppTransactionSIGKey.
+         * This field is present when Transaction Signature is configured.
+         */
+        unsigned char transactionSignatureKeyNo;
+        /** \brief Indicates whether transactionSignatureKeyNo was present in the response. */
+        bool hasTransactionSignatureKeyNo;
+
+        /**
+         * \brief DUOX Transaction MAC Information exclusion file map.
+         *
+         * Valid when the corresponding DUOX option indicates that the exclusion file map is configured.
+         */
+        std::uint32_t tmiExclusionFileMap;
+        /** \brief Indicates whether tmiExclusionFileMap was present in the response. */
+        bool hasTmiExclusionFileMap;
+
+        /**
+         * \brief DUOX Transaction MAC limit.
+         *
+         * Valid when the corresponding DUOX option indicates that Transaction MAC limiting is configured.
+         */
+        std::uint32_t tmcLimit;
+        /** \brief Indicates whether tmcLimit was present in the response. */
+        bool hasTmcLimit;
     };
 
     /**
      * \brief Describe file setting.
+     *
+     * The first fields contain information common to every DESFire file.
+     * The type union contains the settings specific to the reported file type.
+     *
+     * The union is intentionally retained for compatibility with the
+     * existing LLA DESFire API and to avoid unnecessary dynamic allocation.
      */
     struct LLA_CARDS_DESFIRE_API FileSetting
     {
-        unsigned char fileType;        /**< \brief The file type */
-        unsigned char comSett;         /**< \brief The communication setting */
-        unsigned char accessRights[2]; /**< \brief The file access rights */
+        unsigned char fileType;        /**< \brief File type. */
+        unsigned char comSett;         /**< \brief Communication setting. */
+        unsigned char accessRights[2]; /**< \brief File access rights. */
         union {
             DataFileSetting dataFile;
             ValueFileSetting valueFile;
             RecordFileSetting recordFile;
-        } type; /**< \brief The file type specific information */
+            TransactionMacFileSetting transactionMacFile;
+        } type; /**< \brief The file type specific information. */
         DataFileSetting getDataFile() const;
         void setDataFile(const DataFileSetting &);
         ValueFileSetting getValueFile() const;
         void setValueFile(const ValueFileSetting &);
         RecordFileSetting getRecordFile() const;
         void setRecordFile(const RecordFileSetting &);
+        TransactionMacFileSetting getTransactionMacFile() const;
+        void setTransactionMacFile(const TransactionMacFileSetting &);
     };
 
     /**
-     * \brief Card information about software and hardware version.
+     * \brief GetVersion option used by cards supporting extended manufacturing data.
+     */
+    enum class DESFireGetVersionOption : unsigned char
+    {
+        None  = 0x00,
+        FabID = 0x01
+    };
+
+    /**
+     * \brief Card information about a DESFire hardware or software version.
+     */
+    struct LLA_CARDS_DESFIRE_API DESFireVersionInfo
+    {
+        unsigned char vendor;       /**< \brief The vendor identifier */
+        unsigned char type;         /**< \brief The product type */
+        unsigned char subtype;      /**< \brief The product subtype */
+        unsigned char majorVersion; /**< \brief The major version */
+        unsigned char minorVersion; /**< \brief The minor version */
+        unsigned char storageSize;  /**< \brief The storage size information */
+        unsigned char protocol;     /**< \brief The protocol information */
+    };
+
+    /**
+     * \brief Card manufacturing information returned by GetVersion.
+     *
+     * The variable-size fields are represented by ByteVector because the
+     * GetVersion response may contain different UID sizes and manufacturing
+     * data layouts depending on the card variant.
+     */
+    struct LLA_CARDS_DESFIRE_API DESFireManufacturingInfo
+    {
+        ByteVector uid;         /**< \brief The serial card number */
+        ByteVector batchNo;     /**< \brief The batch number */
+        ByteVector typeId;      /**< \brief The card type identifier */
+        unsigned char cwProd;   /**< \brief The production card/vendor information */
+        unsigned char yearProd; /**< \brief The production year */
+    };
+
+    /**
+     * \brief Card information about software, hardware and manufacturing data.
+     *
+     * This structure is the common GetVersion representation for DESFire card variants.
+     * It intentionally uses dynamically sized manufacturing fields
+     * because newer card variants may return UID and manufacturing data with different sizes.
+     *
+     * The hasFabID flag indicates whether fabID is present in the response.
+     * fabID is meaningful only when hasFabID is true.
      */
     struct LLA_CARDS_DESFIRE_API DESFireCardVersion
     {
-        unsigned char hardwareVendor;      /**< \brief The hardware vendor */
-        unsigned char hardwareType;        /**< \brief The hardware type */
-        unsigned char hardwareSubType;     /**< \brief The hardware subtype */
-        unsigned char hardwareMjVersion;   /**< \brief The hardware major version */
-        unsigned char hardwareMnVersion;   /**< \brief The hardware minor version */
-        unsigned char hardwareStorageSize; /**< \brief The hardware storage size */
-        unsigned char hardwareProtocol;    /**< \brief The hardware protocol */
+        DESFireVersionInfo hardware;            /**< \brief The hardware version information */
+        DESFireVersionInfo software;            /**< \brief The software version information */
+        DESFireManufacturingInfo manufacturing; /**< \brief The manufacturing information */
 
-        unsigned char softwareVendor;      /**< \brief The software vendor */
-        unsigned char softwareType;        /**< \brief The software type */
-        unsigned char softwareSubType;     /**< \brief The software subtype */
-        unsigned char softwareMjVersion;   /**< \brief The software major version */
-        unsigned char softwareMnVersion;   /**< \brief The software minor version */
-        unsigned char softwareStorageSize; /**< \brief The software storage size */
-        unsigned char softwareProtocol;    /**< \brief The software protocol */
-
-        unsigned char uid[7];     /**< \brief The serial card number */
-        unsigned char batchNo[5]; /**< \brief The batch number */
-        unsigned char cwProd;     /**< \brief The production id */
-        unsigned char yearProd;   /**< \brief The production year */
+        bool hasFabID;       /**< \brief Indicates whether a FabID was returned */
+        unsigned char fabID; /**< \brief The factory identifier */
     };
 
     /**

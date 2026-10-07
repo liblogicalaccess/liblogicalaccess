@@ -3,6 +3,9 @@
 #include <logicalaccess/plugins/readers/iso7816/commands/desfireev3iso7816commands.hpp>
 #include <logicalaccess/plugins/cards/desfire/duoxcommands.hpp>
 
+// TODO move it later inside duoxcrypto file
+#include <utility>
+
 namespace logicalaccess
 {
 
@@ -104,7 +107,7 @@ class LLA_READERS_ISO7816_API DUOXISO7816Commands : public DESFireEV3ISO7816Comm
 
     ByteVector exportKey(std::uint8_t keyNo, DUOXCommunicationMode commMode = DUOXCommunicationMode::Full) override;
 
-    void authenticateEV2NonFirst(uint8_t keyno, std::shared_ptr<DESFireKey> currentKey = nullptr) override;
+    void authenticateEV2NonFirst(std::uint8_t keyno, std::shared_ptr<DESFireKey> currentKey = nullptr) override;
 
     std::uint32_t freeMem() override;
 
@@ -123,10 +126,28 @@ class LLA_READERS_ISO7816_API DUOXISO7816Commands : public DESFireEV3ISO7816Comm
     //void changeKeyEV2(uint8_t keyset, uint8_t keyno,
     //                  std::shared_ptr<DESFireKey> key) override;
 
+    /*
+     * DESFire EV2 command interface.
+     *
+     * This overload is retained because the inherited DESFire API identifies the complete KeyNo in one byte
+     */
     void authenticateEV2First(uint8_t keyno, std::shared_ptr<DESFireKey> key) override;
 
-    void sam_authenticateEV2First(uint8_t keyno,
-                                  std::shared_ptr<DESFireKey> key) override;
+    /**
+     * \brief DUOX-specific AuthenticateEV2First entry point.
+     *
+     * Complete KeyNo is constructed rather than requiring callers to manipulate protocol bit fields themselves.
+     *
+     * \param targetedKeyNo Target authentication key number, six bit value.
+     * \param key Authentication key.
+     * \param secondaryApplication Whether the secondary-application bit is set.
+     * \param pcdCap2 PCD capabilities. At most six bytes are sent.
+     */
+    void authenticateEV2First(std::uint8_t targetedKeyNo, std::shared_ptr<DESFireKey> key,
+                              bool secondaryApplication = false,
+                              ByteVector pcdCap2        = ByteVector()); // TODO : PCDcap2 may become persistent class state
+
+    void sam_authenticateEV2First(uint8_t keyno, std::shared_ptr<DESFireKey> key) override;
 
     void createApplication(
         unsigned int aid, DESFireKeySettings settings, unsigned char maxNbKeys,
@@ -206,11 +227,9 @@ class LLA_READERS_ISO7816_API DUOXISO7816Commands : public DESFireEV3ISO7816Comm
     void proximityCheck(std::shared_ptr<DESFireKey> key, uint8_t chunk_size) override;
 
     ByteVector commitTransaction(bool return_tmac) override;
-
     ByteVector commitReaderID(ByteVector readerid) override;
 
-    void restoreTransfer(unsigned char target_fileno,
-                         unsigned char source_fileno) override;
+    void restoreTransfer(unsigned char target_fileno, unsigned char source_fileno) override;
 
     ByteVector readSignature(unsigned char address = 0x00) override;
 
@@ -250,6 +269,9 @@ class LLA_READERS_ISO7816_API DUOXISO7816Commands : public DESFireEV3ISO7816Comm
 
     bool performAESOriginalityCheck() override;
 
+    void selectApplication(unsigned int aid) override;
+    void selectApplication(unsigned int aid1, unsigned int aid2) override;
+
     protected:
     ISO7816Response transmitDUOX(std::uint8_t cmd, const ByteVector &params, const ByteVector &data,
                  DUOXCommunicationMode commMode = DUOXCommunicationMode::Full);
@@ -262,7 +284,7 @@ class LLA_READERS_ISO7816_API DUOXISO7816Commands : public DESFireEV3ISO7816Comm
 
 
     // TODO move these functions into main class definition later (access specifiers redefined temporarily for organization)
-    // And mode ISO functions to ISO class but keep them here for now
+    // And move ISO functions to ISO class but keep them here for now
 
     public:
     void isoGeneralAuthenticate(std::uint8_t caRootKeyNo,
@@ -280,6 +302,22 @@ class LLA_READERS_ISO7816_API DUOXISO7816Commands : public DESFireEV3ISO7816Comm
 
       void isoGeneralAuthenticatePart2(const ByteVector &privateKey, const ByteVector &certificate) override;
 
+      ByteVector isoInternalAuthenticate(unsigned char keyno, const ByteVector &rndA,
+                                              const ByteVector &optsA = ByteVector()) override;
+
+
+      ByteVector isoSelectFile(std::uint8_t p1, std::uint8_t p2, const ByteVector &data, std::uint32_t le) override;
+      ByteVector isoSelectFile(std::uint8_t p1, std::uint8_t p2, const ByteVector &data) override;
+      ByteVector isoSelectFile(const ByteVector &dfName, bool returnFCI = true) override;
+      ByteVector isoSelectApplicationWithECCFCI(const ByteVector &dfName, std::uint32_t le) override;
+      ByteVector isoSelectApplicationForFastUID(const ByteVector &dfName, std::uint32_t le) override;
+
+      ByteVector isoGeneralAuthenticateFinal(std::uint8_t caRootKeyNo, AuthMethod authMethod,
+          const ByteVector &certA, std::uint8_t certFileNo, std::uint8_t privateKeyNo, const ByteVector &ePublicA,
+          const ByteVector &msgAEnc, CurveID curve, std::uint32_t le) override;
+
+      DESFireCardVersion getVersion() override;
+
     private:
     ISO7816Response sendDUOXGeneralAuthenticate(std::uint8_t p2, const ByteVector &data, std::uint16_t le);
 
@@ -287,15 +325,78 @@ class LLA_READERS_ISO7816_API DUOXISO7816Commands : public DESFireEV3ISO7816Comm
                                                        std::uint8_t secondaryCaRootKeyNo,
                                                        bool multipleApplicationSelection);
 
-    static ByteVector buildDUOXOptsA(bool mutualAuthentication, bool certificateAIncluded,
+    static ByteVector buildOptsA(bool mutualAuthentication, bool certificateAIncluded,
                                      std::uint8_t certificateFileNo,
                                      std::uint8_t privateKeyNo);
 
-    static ByteVector buildDUOXAuthenticationData(const ByteVector &ephemeralPublicKey);
+    static ByteVector buildAuthenticationData(const ByteVector &ephemeralPublicKey);
 
-    static ECPoint parseDUOXAuthenticationResponse(const ByteVector &response, CurveID curve);
+    static ECPoint parseAuthenticationResponse(const ByteVector &response, CurveID curve);
+
+    ByteVector parseGeneralAuthenticateFinalResponse(const ByteVector &data);
 
     DUOXECCAuthenticationState d_duoxECCAuthentication;
+
+    // ===========================================
+    // DUOX EV2 authentication helpers
+    // ===========================================
+
+    // TODO Move all of this later inside duoxcrypto file
+
+    /**
+     * \brief Derive the DUOX EV2 authentication session keys.
+     *
+     * DUOX extends the EV2 KDF to support AES-256 keys.
+     * AES-128 produces one 16 byte CMAC per session key while AES-256 produces two 16-byte CMAC blocks per session key.
+     *
+     * \param key The diversified authentication key.
+     * \param rndA The PCD-generated authentication challenge.
+     * \param rndB The PICC-generated authentication challenge.
+     */
+    static std::pair<ByteVector, ByteVector>
+    deriveEV2SessionKeys(const ByteVector &key, const ByteVector &rndA, const ByteVector &rndB);
+
+    /**
+     * \brief Rotate a 16-byte authentication challenge left by one byte.
+     */
+    static ByteVector rotateAuthenticationChallenge(const ByteVector &rnd);
+
+    /**
+     * \brief Validate the decrypted AuthenticateEV2FirstPart2 response.
+     *
+     * \param response Decrypted PICC response.
+     * \param rndA Original PCD challenge.
+     * \param expectedPCDCap2 PCD capabilities sent during Part 1.
+     *
+     * \return Transaction identifier.
+     */
+    static ByteVector validateEV2Part2Response(const ByteVector &response,
+                                                   const ByteVector &rndA,
+                                                   const ByteVector &expectedPCDCap2);
+
+    /**
+     * \brief Build an EV2 session-vector context from RndA and RndB.
+     */
+    static ByteVector buildEV2SessionContext(const ByteVector &rndA, const ByteVector &rndB);
+
+    /**
+     * \brief Build one DUOX EV2 KDF session vector.
+     *
+     * \param label First two bytes of the KDF label.
+     * \param counter KDF counter.
+     * \param length KDF output length field.
+     * \param context 26-byte authentication context.
+     */
+    static ByteVector buildEV2SessionVector(std::uint8_t label0, std::uint8_t label1,
+                                                std::uint16_t counter,
+                                                std::uint16_t length,
+                                                const ByteVector &context);
+
+    /**
+     * \brief Construct the protocol KeyNo byte.
+     */
+    static std::uint8_t buildEV2KeyNo(std::uint8_t targetedKeyNo, bool secondaryApplication);
+
 
 };
 

@@ -656,7 +656,7 @@ void DESFireCrypto::getKeyVersioned(std::shared_ptr<DESFireKey> key,
 
 void DESFireCrypto::selectApplication(size_t aid)
 {
-    d_currentAid = static_cast<int>(aid);
+    d_currentAid = static_cast<unsigned int>(aid);
 
     d_auth_method = CM_LEGACY;
     d_cipher.reset();

@@ -149,6 +149,48 @@ class LLA_READERS_ISO7816_API DESFireEV3ISO7816Commands
     ByteVector getFileCounters(unsigned char fileno) override;
 
     bool performAESOriginalityCheck() override;
+
+    void selectApplication(unsigned int aid) override;
+    void selectApplication(unsigned int aid1, unsigned int aid2) override;
+
+    DESFireCardVersion getVersion() override;
+
+  protected:
+    /**
+     * \brief Get the GetVersion option used by the card implementation.
+     */
+    virtual DESFireGetVersionOption getVersionOption() const;
+
+    /**
+     * \brief Indicates whether the card implementation supports a 4-byte UID.
+     */
+    virtual bool supportsFourByteUID() const;
+
+    /**
+     * \brief Retrieve and parse the GetVersion response.
+     */
+    DESFireCardVersion getVersionImpl(DESFireGetVersionOption option, bool allowFourByteUID);
+
+    static DESFireVersionInfo parseVersionInfo(const ByteVector &data);
+
+    static DESFireManufacturingInfo parseManufacturingInfo(const ByteVector &data, DESFireGetVersionOption option,
+                                                           bool allowFourByteUID);
+
+    static std::size_t getManufacturingPayloadSize(const ByteVector &data, DESFireGetVersionOption option,
+                                                   bool allowFourByteUID);
+
+    static bool isValidManufacturingPayloadSize(std::size_t size, DESFireGetVersionOption option, bool allowFourByteUID);
+
+    static void ensureSize(const ByteVector &data, std::size_t offset, std::size_t required, const char *message);
+
+
+  private:
+    static constexpr unsigned int PICC_AID = 0x000000U;
+    static constexpr unsigned int AID_MASK = 0x00FFFFFFU;
+    static constexpr unsigned int MAX_AID  = AID_MASK;
+
+    static void validateAid(unsigned int aid);
+    static void validateApplicationPair(unsigned int aid1, unsigned int aid2);
 };
 
 }

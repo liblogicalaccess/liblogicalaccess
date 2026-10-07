@@ -4,6 +4,8 @@
  * \brief DESFireEV1 ISO7816 commands.
  */
 
+#include <cstddef>
+
 #include <logicalaccess/plugins/readers/iso7816/commands/desfireev1iso7816commands.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfirechip.hpp>
 #include <logicalaccess/plugins/cards/samav/samav2commands.hpp>
@@ -1228,57 +1230,72 @@ void DESFireEV1ISO7816Commands::changeKey(unsigned char keyno,
 
 DESFireCommands::DESFireCardVersion DESFireEV1ISO7816Commands::getVersion()
 {
-    DESFireCardVersion dataVersion;
-    ByteVector allresult;
-    std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
+    constexpr std::size_t VERSION_FRAME_SIZE       = 7;
+    constexpr std::size_t MANUFACTURING_FRAME_SIZE = 14;
 
-    memset(&dataVersion, 0x00, sizeof(dataVersion));
+    DESFireCardVersion dataVersion{};
+    ByteVector allresult;
+
+    const std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
+
+    const auto parseVersionFrame = [VERSION_FRAME_SIZE](DESFireVersionInfo &version, const ByteVector &data) -> bool
+    {
+        if (data.size() < VERSION_FRAME_SIZE)
+            return false;
+
+        version.vendor       = data[0];
+        version.type         = data[1];
+        version.subtype      = data[2];
+        version.majorVersion = data[3];
+        version.minorVersion = data[4];
+        version.storageSize  = data[5];
+        version.protocol     = data[6];
+
+        return true;
+    };
+
+    const auto validateAndAccumulate = [&allresult](const auto &result, std::size_t minimumSize,
+                                                    unsigned char expectedSW2) -> bool
+    {
+        if (result.getData().size() < minimumSize || result.getSW2() != expectedSW2)
+            return false;
+
+        allresult.insert(allresult.end(), result.getData().begin(), result.getData().end());
+
+        return true;
+    };
 
     auto result = transmit_nomacv(DF_INS_GET_VERSION);
 
-    if (result.getData().size() >= 7)
+    if (!validateAndAccumulate(result, VERSION_FRAME_SIZE, DF_INS_ADDITIONAL_FRAME) ||
+        !parseVersionFrame(dataVersion.hardware, result.getData()))
     {
-        if (result.getSW2() == DF_INS_ADDITIONAL_FRAME)
-        {
-            memcpy(&dataVersion, &result.getData()[0], 7);
-            allresult.insert(allresult.end(), result.getData().begin(),
-                             result.getData().end());
-
-            result = transmit_plain(DF_INS_ADDITIONAL_FRAME);
-
-            if (result.getData().size() >= 7)
-            {
-                if (result.getSW2() == DF_INS_ADDITIONAL_FRAME)
-                {
-                    memcpy(reinterpret_cast<char *>(&dataVersion) + 7,
-                           &result.getData()[0], 7);
-                    allresult.insert(allresult.end(), result.getData().begin(),
-                                     result.getData().end());
-
-                    result = transmit_plain(DF_INS_ADDITIONAL_FRAME);
-                    if (result.getData().size() >= 14)
-                    {
-                        if (result.getSW2() == 0x00)
-                        {
-                            memcpy(reinterpret_cast<char *>(&dataVersion) + 14,
-                                   &result.getData()[0], 14);
-                            allresult.insert(allresult.end(), result.getData().begin(),
-                                             result.getData().end());
-
-                            if (crypto->d_auth_method != CM_LEGACY)
-                            {
-                                if (!crypto->verifyMAC(true, allresult))
-                                {
-                                    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                                             "MAC verification failed.");
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        return dataVersion;
     }
+
+    result = transmit_plain(DF_INS_ADDITIONAL_FRAME);
+
+    if (!validateAndAccumulate(result, VERSION_FRAME_SIZE, DF_INS_ADDITIONAL_FRAME) ||
+        !parseVersionFrame(dataVersion.software, result.getData()))
+    {
+        return dataVersion;
+    }
+
+    result = transmit_plain(DF_INS_ADDITIONAL_FRAME);
+
+    if (!validateAndAccumulate(result, MANUFACTURING_FRAME_SIZE, 0x00))
+        return dataVersion;
+
+    const ByteVector &manufacturingData = result.getData();
+
+    dataVersion.manufacturing.uid.assign(manufacturingData.begin(), manufacturingData.begin() + 7);
+    dataVersion.manufacturing.batchNo.assign(manufacturingData.begin() + 7, manufacturingData.begin() + 12);
+    dataVersion.manufacturing.cwProd = manufacturingData[12];
+    dataVersion.manufacturing.yearProd = manufacturingData[13];
+
+    if (crypto->d_auth_method != CM_LEGACY && !crypto->verifyMAC(true, allresult))
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "MAC verification failed.");
+
     return dataVersion;
 }
 

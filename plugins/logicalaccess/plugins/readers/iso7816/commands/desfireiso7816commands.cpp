@@ -4,6 +4,8 @@
  * \brief DESFire ISO7816 commands.
  */
 
+#include <cstddef>
+
 #include <logicalaccess/plugins/readers/iso7816/commands/desfireiso7816commands.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfirechip.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/samav1iso7816commands.hpp>
@@ -19,6 +21,313 @@
 
 namespace logicalaccess
 {
+
+namespace
+{
+
+// \brief Number of additional access-right sets supported by the protocol.
+constexpr std::size_t MAX_ADDITIONAL_ACCESS_RIGHTS_COUNT = 7;
+
+/**
+ * \brief Ensure that a byte range is available in a response buffer.
+ *
+ * Uses subtraction rather than addition to avoid overflow when validating untrusted response data.
+ */
+void requireBytes(const ByteVector &data, const std::size_t offset, const std::size_t count)
+{
+    EXCEPTION_ASSERT_WITH_LOG(offset <= data.size() && count <= data.size() - offset,
+        LibLogicalAccessException, "Invalid GetFileSettings response : unexpected end of data.");
+}
+
+/**
+ * \brief Read an unsigned 16-bit little-endian value.
+ */
+std::uint16_t readUInt16LE(const ByteVector &data, std::size_t &offset)
+{
+    requireBytes(data, offset, 2);
+
+    const std::uint16_t value =
+        static_cast<std::uint16_t>(data[offset]) |
+        static_cast<std::uint16_t>(static_cast<std::uint16_t>(data[offset + 1]) << 8U);
+
+    offset += 2;
+    return value;
+}
+
+/**
+ * \brief Read an unsigned 24-bit little-endian value.
+ *
+ * The value is returned as a 32-bit integer because C++ has no native 24-bit type.
+ */
+std::uint32_t readUInt24LE(const ByteVector &data, std::size_t &offset)
+{
+    requireBytes(data, offset, 3);
+
+    const std::uint32_t value = static_cast<std::uint32_t>(data[offset]) |
+                                (static_cast<std::uint32_t>(data[offset + 1]) << 8U) |
+                                (static_cast<std::uint32_t>(data[offset + 2]) << 16U);
+
+    offset += 3;
+    return value;
+}
+
+/**
+ * \brief Read an unsigned 32-bit little endian value.
+ */
+std::uint32_t readUInt32LE(const ByteVector &data, std::size_t &offset)
+{
+    requireBytes(data, offset, 4);
+
+    const std::uint32_t value = static_cast<std::uint32_t>(data[offset]) |
+                                (static_cast<std::uint32_t>(data[offset + 1]) << 8U) |
+                                (static_cast<std::uint32_t>(data[offset + 2]) << 16U) |
+                                (static_cast<std::uint32_t>(data[offset + 3]) << 24U);
+
+    offset += 4;
+    return value;
+}
+
+/**
+ * \brief Store an unsigned 24-bit value in a three-byte little endian field.
+ */
+void writeUInt24LE(unsigned char (&destination)[3], const std::uint32_t value)
+{
+    destination[0] = static_cast<unsigned char>(value & 0xFFU);
+    destination[1] = static_cast<unsigned char>((value >> 8U) & 0xFFU);
+    destination[2] = static_cast<unsigned char>((value >> 16U) & 0xFFU);
+}
+
+/**
+ * \brief Decode the four four-bit access conditions contained in a DESFire access-rights word.
+ */
+DESFireAccessRights decodeAccessRights(const std::uint16_t value)
+{
+    DESFireAccessRights rights;
+    rights.readAccess = static_cast<TaskAccessRights>((value >> 12U) & 0x0FU);
+    rights.writeAccess = static_cast<TaskAccessRights>((value >> 8U) & 0x0FU);
+    rights.readAndWriteAccess = static_cast<TaskAccessRights>((value >> 4U) & 0x0FU);
+    rights.changeAccess = static_cast<TaskAccessRights>(value & 0x0FU);
+    return rights;
+}
+
+/**
+ * \brief Read one DESFire access-rights word from the response.
+ */
+DESFireAccessRights readAccessRights(const ByteVector &data, std::size_t &offset)
+{
+    return decodeAccessRights(readUInt16LE(data, offset));
+}
+
+/**
+ * \brief Read the optional additional access-right sets.
+ *
+ * The first access-right set is stored in FileSetting::accessRights.
+ * This function handles only the additional sets encoded after the file-type-specific parameters.
+ */
+void readAdditionalAccessRights(const ByteVector &data, std::size_t &offset, unsigned char &count,
+                                DESFireAccessRights (&rights)[MAX_ADDITIONAL_ACCESS_RIGHTS_COUNT])
+{
+    count = 0;
+
+    for (std::size_t i = 0; i < MAX_ADDITIONAL_ACCESS_RIGHTS_COUNT; ++i)
+        rights[i] = DESFireAccessRights();
+
+    requireBytes(data, offset, 1);
+
+    count = data[offset++];
+
+    EXCEPTION_ASSERT_WITH_LOG(count <= MAX_ADDITIONAL_ACCESS_RIGHTS_COUNT,
+        LibLogicalAccessException, "Invalid GetFileSettings response : NrAddARs exceeds the supported maximum of 7.");
+
+    for (unsigned char i = 0; i < count; ++i)
+        rights[i] = readAccessRights(data, offset);
+}
+
+/**
+ * \brief Parse Secure Dynamic Messaging settings.
+ *
+ * The presence of each optional field is determined from SDMOptions and SDMAccessRights.
+ */
+void parseSDM(const ByteVector &data, std::size_t &offset, DESFireCommands::SDMSettings &settings)
+{
+    requireBytes(data, offset, 1);
+    settings.options = data[offset++];
+
+    const std::uint16_t sdmAccessRights = readUInt16LE(data, offset);
+
+    settings.accessRights[0] = static_cast<unsigned char>(sdmAccessRights & 0xFFU);
+    settings.accessRights[1] = static_cast<unsigned char>((sdmAccessRights >> 8U) & 0xFFU);
+
+    const unsigned char sdmMetaRead = static_cast<unsigned char>((sdmAccessRights >> 8U) & 0x0FU);
+    const unsigned char sdmFileRead = static_cast<unsigned char>((sdmAccessRights >> 12U) & 0x0FU);
+
+    if ((settings.options & 0x80U) != 0U && sdmMetaRead == 0x0EU)
+    {
+        writeUInt24LE(settings.vcuidOffset, readUInt24LE(data, offset));
+        settings.hasVcuidOffset = true;
+    }
+
+    if ((settings.options & 0x40U) != 0U && sdmMetaRead == 0x0EU)
+    {
+        writeUInt24LE(settings.sdmReadCounterOffset, readUInt24LE(data, offset));
+        settings.hasSdmReadCounterOffset = true;
+    }
+
+    if (sdmMetaRead != 0x0EU && sdmMetaRead != 0x0FU)
+    {
+        writeUInt24LE(settings.piccDataOffset, readUInt24LE(data, offset));
+        settings.hasPiccDataOffset = true;
+    }
+
+    if ((settings.options & 0x08U) != 0U)
+    {
+        writeUInt24LE(settings.gpioStatusOffset, readUInt24LE(data, offset));
+        settings.hasGpioStatusOffset = true;
+    }
+
+    if (sdmFileRead != 0x0FU)
+    {
+        writeUInt24LE(settings.sdmMacInputOffset, readUInt24LE(data, offset));
+        settings.hasSdmMacInputOffset = true;
+    }
+
+    if ((settings.options & 0x10U) != 0U && sdmFileRead != 0x0FU)
+    {
+        writeUInt24LE(settings.sdmEncOffset, readUInt24LE(data, offset));
+        writeUInt24LE(settings.sdmEncLength, readUInt24LE(data, offset));
+        settings.hasSdmEncOffset = true;
+        settings.hasSdmEncLength = true;
+    }
+
+    if (sdmFileRead != 0x0FU)
+    {
+        writeUInt24LE(settings.sdmMacOffset, readUInt24LE(data, offset));
+        settings.hasSdmMacOffset = true;
+    }
+
+    if ((settings.options & 0x20U) != 0U)
+    {
+        writeUInt24LE(settings.sdmReadCounterLimit, readUInt24LE(data, offset));
+        settings.hasSdmReadCounterLimit = true;
+    }
+}
+
+/**
+ * \brief Parse Standard Data, Backup Data, or DUOX CRL file settings.
+ *
+ * The common data-file portion is shared by all supported implementations.
+ * DUOX-specific CRL information is handled by the caller so the generic data file parser doesn't accidentally
+ * interpret bytes belonging to another card.
+ */
+void parseDataFile(const ByteVector &data, std::size_t &offset, DESFireCommands::DataFileSetting &settings,
+                   const unsigned char fileOption, const bool sdmSupported)
+{
+    writeUInt24LE(settings.fileSize, readUInt24LE(data, offset));
+
+    if ((fileOption & 0x80U) != 0U)
+        readAdditionalAccessRights(data, offset, settings.nrAddARs, settings.additionalAccessRights);
+
+    if (sdmSupported && (fileOption & 0x40U) != 0U)
+    {
+        settings.hasSDM = true;
+        parseSDM(data, offset, settings.sdm);
+    }
+}
+
+/**
+ * \brief Parse Value file settings.
+ */
+void parseValueFile(const ByteVector &data, std::size_t &offset, DESFireCommands::ValueFileSetting &settings,
+                    const unsigned char fileOption)
+{
+    settings.lowerLimit = static_cast<std::int32_t>(readUInt32LE(data, offset));
+    settings.upperLimit = static_cast<std::int32_t>(readUInt32LE(data, offset));
+    settings.limitedCreditValue = static_cast<std::int32_t>(readUInt32LE(data, offset));
+
+    requireBytes(data, offset, 1);
+
+    const unsigned char limitedCreditOptions = data[offset++];
+
+    EXCEPTION_ASSERT_WITH_LOG((limitedCreditOptions & 0xFCU) == 0U,
+        LibLogicalAccessException, "Invalid GetFileSettings response : reserved Value File option bits are set.");
+
+    settings.limitedCreditEnabled = (limitedCreditOptions & 0x01U) != 0U;
+    settings.freeGetValue = (limitedCreditOptions & 0x02U) != 0U;
+
+    if ((fileOption & 0x80U) != 0U)
+        readAdditionalAccessRights(data, offset, settings.nrAddARs, settings.additionalAccessRights);
+}
+
+/**
+ * \brief Parse Linear Record or Cyclic Record file settings.
+ */
+void parseRecordFile(const ByteVector &data, std::size_t &offset, DESFireCommands::RecordFileSetting &settings,
+                     const unsigned char fileOption)
+{
+    const std::uint16_t recordSize = readUInt16LE(data, offset);
+    const std::uint32_t maxNumberRecords = readUInt24LE(data, offset);
+    const std::uint32_t currentNumberRecords = readUInt24LE(data, offset);
+
+    EXCEPTION_ASSERT_WITH_LOG(currentNumberRecords <= maxNumberRecords,
+        LibLogicalAccessException, "Invalid GetFileSettings response : current record count exceeds maximum record count.");
+
+    writeUInt24LE(settings.recordSize, recordSize);
+    writeUInt24LE(settings.maxNumberRecords, maxNumberRecords);
+    writeUInt24LE(settings.currentNumberRecords, currentNumberRecords);
+
+    if ((fileOption & 0x80U) != 0U)
+        readAdditionalAccessRights(data, offset, settings.nrAddARs, settings.additionalAccessRights);
+}
+
+/**
+ * \brief Parse Transaction MAC file settings.
+ *
+ * Transaction MAC file configuration is not supported by DESFire EV1.
+ * This parser only decodes the response representation used by cards supporting the Transaction MAC file type.
+ */
+void parseTransactionMacFile(const ByteVector &data, std::size_t &offset,
+                                    DESFireCommands::TransactionMacFileSetting &settings,
+                                    const unsigned char fileOption)
+{
+    settings.tmKeyOption = static_cast<unsigned char>(readUInt16LE(data, offset));
+
+    const unsigned char keyType = static_cast<unsigned char>(settings.tmKeyOption & 0x03U);
+    settings.transactionSignature = (settings.tmKeyOption & 0x80U) != 0U;
+
+    if (keyType != 0x00U)
+    {
+        requireBytes(data, offset, 1);
+        settings.tmKeyVersion    = data[offset++];
+        settings.hasTmKeyVersion = true;
+    }
+
+    if (settings.transactionSignature)
+    {
+        requireBytes(data, offset, 1);
+        settings.transactionSignatureKeyNo = data[offset++];
+
+        EXCEPTION_ASSERT_WITH_LOG((settings.transactionSignatureKeyNo & 0xF8U) == 0U, LibLogicalAccessException,
+            "Invalid GetFileSettings response : reserved Transaction Signature KeyNo bits are set.");
+
+        settings.hasTransactionSignatureKeyNo = true;
+    }
+
+    // These fields are DUOX-specific.
+    if ((fileOption & 0x40U) != 0U)
+    {
+        settings.tmiExclusionFileMap = readUInt32LE(data, offset);
+        settings.hasTmiExclusionFileMap = true;
+    }
+
+    if ((fileOption & 0x20U) != 0U)
+    {
+        settings.tmcLimit = readUInt32LE(data, offset);
+        settings.hasTmcLimit = true;
+    }
+}
+
+} // namespace
+
 DESFireISO7816Commands::DESFireISO7816Commands()
     : DESFireCommands(CMD_DESFIREISO7816)
 {
@@ -42,34 +351,49 @@ void DESFireISO7816Commands::erase()
 
 DESFireCommands::DESFireCardVersion DESFireISO7816Commands::getVersion()
 {
-    DESFireCardVersion dataVersion = DESFireCardVersion();
+    constexpr std::size_t VERSION_FRAME_SIZE       = 7;
+    constexpr std::size_t MANUFACTURING_FRAME_SIZE = 14;
+
+    DESFireCardVersion dataVersion{};
+
+    const auto parseVersionFrame = [VERSION_FRAME_SIZE](DESFireVersionInfo &version, const ByteVector &data) -> bool
+    {
+        if (data.size() != VERSION_FRAME_SIZE)
+            return false;
+
+        version.vendor       = data[0];
+        version.type         = data[1];
+        version.subtype      = data[2];
+        version.majorVersion = data[3];
+        version.minorVersion = data[4];
+        version.storageSize  = data[5];
+        version.protocol     = data[6];
+
+        return true;
+    };
 
     auto result = transmit(DF_INS_GET_VERSION);
-    if (result.getData().size() == 7)
-    {
-        if (result.getSW2() == DF_INS_ADDITIONAL_FRAME)
-        {
-            memcpy(&dataVersion, &result.getData()[0], 7);
-            result = transmit(DF_INS_ADDITIONAL_FRAME);
-            if (result.getData().size() == 7)
-            {
-                if (result.getSW2() == DF_INS_ADDITIONAL_FRAME)
-                {
-                    memcpy(reinterpret_cast<char *>(&dataVersion) + 7,
-                           &result.getData()[0], 7);
-                    result = transmit(DF_INS_ADDITIONAL_FRAME);
-                    if (result.getData().size() == 14)
-                    {
-                        if (result.getSW2() == 0x00)
-                        {
-                            memcpy(reinterpret_cast<char *>(&dataVersion) + 14,
-                                   &result.getData()[0], 14);
-                        }
-                    }
-                }
-            }
-        }
-    }
+
+    if (!parseVersionFrame(dataVersion.hardware, result.getData()) || result.getSW2() != DF_INS_ADDITIONAL_FRAME)
+        return dataVersion;
+
+    result = transmit(DF_INS_ADDITIONAL_FRAME);
+
+    if (!parseVersionFrame(dataVersion.software, result.getData()) || result.getSW2() != DF_INS_ADDITIONAL_FRAME)
+        return dataVersion;
+
+    result = transmit(DF_INS_ADDITIONAL_FRAME);
+
+    if (result.getData().size() != MANUFACTURING_FRAME_SIZE || result.getSW2() != 0x00)
+        return dataVersion;
+
+    const auto &data = result.getData();
+
+    dataVersion.manufacturing.uid.assign(data.begin(), data.begin() + 7);
+    dataVersion.manufacturing.batchNo.assign(data.begin() + 7, data.begin() + 12);
+    dataVersion.manufacturing.cwProd   = data[12];
+    dataVersion.manufacturing.yearProd = data[13];
+
     return dataVersion;
 }
 
@@ -389,12 +713,54 @@ void DESFireISO7816Commands::changeKeySettings(DESFireKeySettings settings)
 
 DESFireCommands::FileSetting DESFireISO7816Commands::getFileSettings(unsigned char fileno)
 {
-    FileSetting fileSetting;
+    FileSetting fileSetting = {};
     ByteVector command;
     command.push_back(fileno);
 
-    ByteVector result = transmit(DF_INS_GET_FILE_SETTINGS, command).getData();
-    memcpy(&fileSetting, &result[0], result.size());
+    const ByteVector result = transmit(DF_INS_GET_FILE_SETTINGS, command).getData();
+
+    requireBytes(result, 0, 4);
+
+    std::size_t offset = 0;
+
+    fileSetting.fileType = result[offset++];
+    fileSetting.comSett  = result[offset++];
+
+    const std::uint16_t accessRights = readUInt16LE(result, offset);
+    fileSetting.accessRights[0] = static_cast<unsigned char>(accessRights & 0xFFU);
+    fileSetting.accessRights[1] = static_cast<unsigned char>((accessRights >> 8U) & 0xFFU);
+
+    switch (fileSetting.fileType)
+    {
+    case 0x00U: // Standard Data File
+    case 0x01U: // Backup Data File
+        parseDataFile(result, offset, fileSetting.type.dataFile, fileSetting.comSett, true);
+        break;
+
+    case 0x02U: // Value File
+        parseValueFile(result, offset, fileSetting.type.valueFile, fileSetting.comSett);
+        break;
+
+    case 0x03U: // Linear Record File
+    case 0x04U: // Cyclic Record File
+        parseRecordFile(result, offset, fileSetting.type.recordFile, fileSetting.comSett);
+        break;
+
+    case 0x05U: // Transaction MAC File
+        parseTransactionMacFile(result, offset, fileSetting.type.transactionMacFile, fileSetting.comSett);
+        break;
+
+    default:
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Invalid GetFileSettings response : unsupported file type.");
+    }
+
+    /*
+     * A valid response must be consumed completely.
+     * Trailing bytes would make malformed or incorrectly interpreted responses indistinguishable from valid responses.
+     */
+    if (offset != result.size())
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Invalid GetFileSettings response : unexpected trailing data.");
+
     return fileSetting;
 }
 

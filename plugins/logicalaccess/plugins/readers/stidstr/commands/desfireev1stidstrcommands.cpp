@@ -4,6 +4,8 @@
  * \brief DESFireEV1 STidSTR commands.
  */
 
+#include <cstddef>
+
 #include <logicalaccess/plugins/readers/stidstr/commands/desfireev1stidstrcommands.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfirechip.hpp>
 #include <openssl/rand.h>
@@ -890,13 +892,43 @@ void DESFireEV1STidSTRCommands::changeKeyIndex(unsigned char keyno,
 DESFireCommands::DESFireCardVersion DESFireEV1STidSTRCommands::getVersion()
 {
     LOG(LogLevel::INFOS) << "Retrieving version...";
-    DESFireCommands::DESFireCardVersion dataVersion;
-    ByteVector result = getSTidSTRReaderCardAdapter()->sendCommand(0x0060, ByteVector());
 
-    EXCEPTION_ASSERT_WITH_LOG(result.size() >= 28, LibLogicalAccessException,
-                              "The response length should be at least 28-byte long");
+    constexpr std::size_t VERSION_FRAME_SIZE = 7;
+    constexpr std::size_t EXPECTED_SIZE      = 28;
 
-    memcpy(reinterpret_cast<char *>(&dataVersion), &result[0], 28);
+    constexpr std::size_t HW_OFFSET           = 0;
+    constexpr std::size_t SW_OFFSET           = HW_OFFSET + VERSION_FRAME_SIZE;
+    constexpr std::size_t MFG_UID_OFFSET      = SW_OFFSET + VERSION_FRAME_SIZE;
+    constexpr std::size_t MFG_BATCH_OFFSET    = MFG_UID_OFFSET + 7;
+    constexpr std::size_t MFG_CWPROD_OFFSET   = MFG_BATCH_OFFSET + 5;
+    constexpr std::size_t MFG_YEARPROD_OFFSET = MFG_CWPROD_OFFSET + 1;
+
+    const ByteVector result = getSTidSTRReaderCardAdapter()->sendCommand(0x0060, ByteVector());
+
+    EXCEPTION_ASSERT_WITH_LOG(result.size() >= EXPECTED_SIZE,
+        LibLogicalAccessException, "The response length should be at least 28-byte long.");
+
+    DESFireCommands::DESFireCardVersion dataVersion{};
+
+    const auto parseVersionFrame = [](DESFireVersionInfo &version, const ByteVector &data, std::size_t offset)
+    {
+        version.vendor       = data[offset];
+        version.type         = data[offset + 1];
+        version.subtype      = data[offset + 2];
+        version.majorVersion = data[offset + 3];
+        version.minorVersion = data[offset + 4];
+        version.storageSize  = data[offset + 5];
+        version.protocol     = data[offset + 6];
+    };
+
+    parseVersionFrame(dataVersion.hardware, result, HW_OFFSET);
+    parseVersionFrame(dataVersion.software, result, SW_OFFSET);
+
+    dataVersion.manufacturing.uid.assign(result.begin() + MFG_UID_OFFSET, result.begin() + MFG_BATCH_OFFSET);
+    dataVersion.manufacturing.batchNo.assign(result.begin() + MFG_BATCH_OFFSET, result.begin() + MFG_CWPROD_OFFSET);
+    dataVersion.manufacturing.cwProd = result[MFG_CWPROD_OFFSET];
+    dataVersion.manufacturing.yearProd = result[MFG_YEARPROD_OFFSET];
+
     return dataVersion;
 }
 

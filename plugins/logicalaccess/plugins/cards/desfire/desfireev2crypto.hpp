@@ -120,6 +120,8 @@ class LLA_CARDS_DESFIRE_API DESFireEV2Crypto : public DESFireCrypto
      */
     void invalidateAuthentication(); // TODO Create duoxcrypto.hpp and move this inside
 
+    void initializeSecureMessagingState(); // TODO Create duoxcrypto.hpp and move this inside
+
   private:
     ByteVector getIVEncrypt(bool cmdData);
 

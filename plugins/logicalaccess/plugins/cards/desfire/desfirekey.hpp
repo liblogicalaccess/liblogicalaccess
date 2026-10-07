@@ -7,6 +7,9 @@
 #ifndef LOGICALACCESS_DESFIREKEY_HPP
 #define LOGICALACCESS_DESFIREKEY_HPP
 
+#include <cstddef>
+#include <string>
+
 #include <logicalaccess/key.hpp>
 #include <logicalaccess/plugins/cards/desfire/lla_cards_desfire_api.hpp>
 
@@ -16,12 +19,22 @@
 #define DESFIRE_DES_KEY_SIZE 16
 
 /**
- * \brief The DESFire AES key size
+ * \brief The DESFire AES-128 key size
  */
 #define DESFIRE_AES_KEY_SIZE 16
 
 /**
+ * \brief The DESFire AES-256 key size
+ *
+ * DUOX uses key type bits 11b to identify AES-256 keys
+ */
+#define DESFIRE_AES256_KEY_SIZE 32
+
+/**
  * \brief The DESFire max key size
+ * 
+ * Value is kept at 24 bytes for compatibility with the existing DESFire implementation.
+ * It is not the maximum size of every key type
  */
 #define DESFIRE_MAXKEY_SIZE 24
 
@@ -33,7 +46,8 @@ namespace logicalaccess
 typedef enum {
     DF_KEY_DES    = 0x00,
     DF_KEY_3K3DES = 0x40,
-    DF_KEY_AES    = 0x80
+    DF_KEY_AES    = 0x80, // TODO later : rename DF_KEY_AES to DF_KEY_AES128 in a larger refactor
+    DF_KEY_AES256 = 0xC0
 } DESFireKeyType;
 
 /**
@@ -61,24 +75,28 @@ class LLA_CARDS_DESFIRE_API DESFireKey : public Key
      * \param buf The buffer.
      * \param buflen The buffer length.
      */
-    DESFireKey(const void *buf, size_t buflen);
+    DESFireKey(const void *buf, std::size_t buflen);
     
     /**
      * Create a key from a bytes vector.
+     * \param data The key data.
      */
     explicit DESFireKey(const ByteVector &data);
 
     /**
      * \brief Get the key length.
+     * 
+     * Length configured with setLength() takes precedence. Otherwise the length determined from the DESFire key type.
+     * 
      * \return The key length.
      */
-    size_t getLength() const override;
+    std::size_t getLength() const override;
     
     /**
      * \brief Override the key length.
-     * \param length The key length.
+     * \param length The key length in bytes.
      */
-    void setLength(size_t length)
+    void setLength(std::size_t length)
     {
         d_length = length;
     }
@@ -136,14 +154,14 @@ class LLA_CARDS_DESFIRE_API DESFireKey : public Key
 
     /**
      * \brief Equality operator
-     * \param ai DESFire key to compare.
+     * \param key DESFire key to compare.
      * \return True if equals, false otherwise.
      */
     virtual bool operator==(const DESFireKey &key) const;
 
     /**
      * \brief Inequality operator
-     * \param ai DESFire key to compare.
+     * \param key DESFire key to compare.
      * \return True if inequals, false otherwise.
      */
     bool operator!=(const DESFireKey &key) const
@@ -153,6 +171,7 @@ class LLA_CARDS_DESFIRE_API DESFireKey : public Key
 
     /**
      * \brief Get the DESFire Key Type in string format.
+     * \param t The DESFire key type.
      * \return The key type in string.
      */
     static std::string DESFireKeyTypeStr(DESFireKeyType t);
@@ -170,9 +189,12 @@ class LLA_CARDS_DESFIRE_API DESFireKey : public Key
     
     /**
      * \brief The overriden key length, if forced.
+     * 
+     * A value of 0 means that the length is determined from d_keyType.
      */
-    size_t d_length;
+    std::size_t d_length;
 };
-}
+
+} // namespace logicalaccess
 
 #endif /* LOGICALACCESS_DESFIREKEY_HPP */

@@ -64,7 +64,7 @@ bool PCSCCardProbe::is_desfire(std::vector<uint8_t> *uid)
         const auto card_version = desfire_command->getVersion();
 
         if (uid)
-            *uid = ByteVector(std::begin(card_version.uid), std::end(card_version.uid));
+            *uid = card_version.manufacturing.uid;
         return true;
     }
     catch (const std::exception &e)
@@ -100,9 +100,9 @@ PCSCCardProbe::DESFireVersionInfo PCSCCardProbe::probe_desfire_version()
             const auto cardVersion = desfire_command->getVersion();
 
             return DESFireVersionInfo {
-                cardVersion.hardwareMjVersion,
-                cardVersion.softwareMjVersion,
-                ByteVector(std::begin(cardVersion.uid), std::end(cardVersion.uid))
+                cardVersion.hardware.majorVersion,
+                cardVersion.software.majorVersion,
+                cardVersion.manufacturing.uid
             };
         }
         catch (const CardException &e)

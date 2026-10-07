@@ -51,6 +51,16 @@ target_link_libraries(basic_duox
         ${LIBLOGICALACCESS_COMMON_LIBRARIES}
 )
 
+# basic_duox_aes_authentication
+add_executable(basic_duox_aes_authentication
+    basic_duox_aes_authentication.cpp
+)
+
+target_link_libraries(basic_duox_aes_authentication
+    PRIVATE
+        ${LIBLOGICALACCESS_COMMON_LIBRARIES}
+)
+
 # basic_certificate
 add_executable(basic_certificate
     basic_certificate.cpp
@@ -88,6 +98,7 @@ install(
         basic_pki
         basic_desfire_sam
         basic_duox
+        basic_duox_aes_authentication
         basic_certificate
         basic_duoxecc
         basic_authenticate

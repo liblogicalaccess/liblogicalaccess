@@ -6,7 +6,9 @@ namespace logicalaccess
 {
 #ifndef DFEV3_INS
 #define DFEV3_INS
+
 #define DFEV3_INS_GET_FILE_COUNTERS 0xF6
+
 #endif
 class DESFireEV3Chip;
 
@@ -56,6 +58,9 @@ class LLA_CARDS_DESFIRE_API DESFireEV3Commands : public DESFireEV2Commands
                                     unsigned int sdmReadCtrLimitValue) = 0;
 
     virtual bool performAESOriginalityCheck() = 0;
+
+    virtual void selectApplication(unsigned int aid) = 0;
+    virtual void selectApplication(unsigned int aid1, unsigned int aid2) = 0;
 
   private:
     std::shared_ptr<DESFireEV3Chip> getDESFireEV3Chip() const;

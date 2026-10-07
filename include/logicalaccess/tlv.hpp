@@ -290,11 +290,6 @@ class LLA_CORE_API TLV
         ByteVector &sizeVector, std::size_t &length);
 
     /**
-     * \brief Validate a collection of child pointers.
-     */
-    static void validate_children(const std::vector<TLVPtr> &tlvs);
-
-    /**
      * \brief Compute the total encoded size of a collection of children.
      */
     static std::size_t encoded_children_size(const std::vector<TLVPtr> &tlvs);

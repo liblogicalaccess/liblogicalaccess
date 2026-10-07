@@ -1,7 +1,36 @@
 #include <logicalaccess/plugins/readers/iso7816/commands/desfireev3iso7816commands.hpp>
+#include <logicalaccess/plugins/cards/desfire/desfirechip.hpp>
 
 namespace logicalaccess
 {
+
+namespace
+{
+
+constexpr std::size_t UID_FORMAT_SIZE    = 1;
+constexpr std::size_t UID_LENGTH_SIZE    = 1;
+constexpr std::size_t UID_7_SIZE         = 7;
+constexpr std::size_t UID_4_SIZE         = 4;
+constexpr std::size_t UID_10_SIZE        = 10;
+constexpr std::size_t BATCH_NO_SIZE      = 3;
+constexpr std::size_t TYPE_ID_SIZE       = 2;
+constexpr std::size_t CW_PROD_SIZE       = 1;
+constexpr std::size_t YEAR_PROD_SIZE     = 1;
+constexpr std::size_t FAB_ID_SIZE        = 1;
+constexpr std::size_t MAC_SIZE           = 8;
+constexpr std::size_t VERSION_FRAME_SIZE = 7;
+
+constexpr std::size_t FIXED_MANUFACTURING_SIZE = BATCH_NO_SIZE + TYPE_ID_SIZE + CW_PROD_SIZE + YEAR_PROD_SIZE;
+
+constexpr std::size_t UID_7_PAYLOAD_SIZE = UID_7_SIZE + FIXED_MANUFACTURING_SIZE;
+constexpr std::size_t UID_4_PAYLOAD_SIZE = UID_FORMAT_SIZE + UID_LENGTH_SIZE + UID_4_SIZE + FIXED_MANUFACTURING_SIZE;
+constexpr std::size_t UID_10_PAYLOAD_SIZE = UID_FORMAT_SIZE + UID_LENGTH_SIZE + UID_10_SIZE + FIXED_MANUFACTURING_SIZE;
+
+constexpr std::size_t DUOX_UID_7_PAYLOAD_SIZE = UID_7_SIZE + FIXED_MANUFACTURING_SIZE + FAB_ID_SIZE;
+constexpr std::size_t DUOX_UID_10_PAYLOAD_SIZE = UID_FORMAT_SIZE + UID_LENGTH_SIZE + UID_10_SIZE +
+                                                 FIXED_MANUFACTURING_SIZE + FAB_ID_SIZE;
+
+} // namespace
 
 DESFireEV3ISO7816Commands::DESFireEV3ISO7816Commands()
     : DESFireEV2ISO7816Commands(CMD_DESFIREEV3ISO7816)
@@ -402,6 +431,248 @@ bool DESFireEV3ISO7816Commands::performAESOriginalityCheck()
     key->setKeyStorage(ks);
 
     authenticateEV2First(1, key);
+
+    return true;
+}
+
+void DESFireEV3ISO7816Commands::validateAid(unsigned int aid)
+{
+    if (aid > MAX_AID)
+    {
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Invalid DESFire EV3 application identifier.");
+    }
+}
+
+// TODO Handle TransactionMAC cases and replace throw by log (command is merely rejected and PICC level is selected)
+void DESFireEV3ISO7816Commands::validateApplicationPair(unsigned int aid1, unsigned int aid2)
+{
+    validateAid(aid1);
+    validateAid(aid2);
+
+    if (aid1 == PICC_AID || aid2 == PICC_AID)
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+            "The PICC application cannot be selected together with another application.");
+
+    if (aid1 == aid2)
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+            "Selected DESFire EV3 applications must have different application identifiers.");
+}
+
+void DESFireEV3ISO7816Commands::selectApplication(unsigned int aid)
+{
+    validateAid(aid); // TODO should select PICC on any rejected case
+    DESFireISO7816Commands::selectApplication(aid);
+    // TODO if transmit not successful, we should do :
+    // if (result.getSW1() != 0x91 && result.getSW2() != 0x00) {
+    // getDESFireChip()->getCrypto()->selectApplication(PICC_AID);
+    // THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "DESFire EV3 SelectApplication failed."); }
+}
+
+void DESFireEV3ISO7816Commands::selectApplication(unsigned int aid1, unsigned int aid2)
+{
+    validateApplicationPair(aid1, aid2); // TODO should select PICC on any rejected case
+
+    ByteVector command;
+    command.reserve(6);
+
+    ByteVector aid;
+    DESFireLocation::convertUIntToAid(aid1, aid);
+    command.insert(command.end(), aid.begin(), aid.end());
+
+    aid.clear();
+    DESFireLocation::convertUIntToAid(aid2, aid);
+    command.insert(command.end(), aid.begin(), aid.end());
+
+    const auto result = transmit(DF_INS_SELECT_APPLICATION, command);
+
+    // TODO most of the errors are caught at resultchecker level
+    if (result.getSW1() != 0x91 && result.getSW2() != 0x00)
+    {
+        getDESFireChip()->getCrypto()->selectApplication(PICC_AID);
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "DESFire EV3 SelectApplication failed.");
+    }
+
+    getDESFireChip()->getCrypto()->selectApplication(aid1);
+}
+
+DESFireCommands::DESFireGetVersionOption DESFireEV3ISO7816Commands::getVersionOption() const
+{
+    return DESFireGetVersionOption::None;
+}
+
+bool DESFireEV3ISO7816Commands::supportsFourByteUID() const
+{
+    return true;
+}
+
+DESFireCommands::DESFireCardVersion DESFireEV3ISO7816Commands::getVersionImpl(DESFireGetVersionOption option,
+                                          bool allowFourByteUID)
+{
+    DESFireCardVersion dataVersion{};
+    ByteVector allresult;
+
+    const std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
+
+    auto result = transmit_nomacv(DF_INS_GET_VERSION);
+
+    if (result.getData().size() != VERSION_FRAME_SIZE || result.getSW2() != DF_INS_ADDITIONAL_FRAME)
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Invalid DESFire GetVersion hardware response.");
+
+    dataVersion.hardware = parseVersionInfo(result.getData());
+    allresult.insert(allresult.end(), result.getData().begin(), result.getData().end());
+
+    result = transmit_plain(DF_INS_ADDITIONAL_FRAME);
+
+    if (result.getData().size() != VERSION_FRAME_SIZE || result.getSW2() != DF_INS_ADDITIONAL_FRAME)
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Invalid DESFire GetVersion software response.");
+
+    dataVersion.software = parseVersionInfo(result.getData());
+    allresult.insert(allresult.end(), result.getData().begin(), result.getData().end());
+
+    result = transmit_plain(DF_INS_ADDITIONAL_FRAME);
+
+    if (result.getSW2() != 0x00)
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Invalid DESFire GetVersion manufacturing response status.");
+
+    const ByteVector &manufacturingData = result.getData();
+    dataVersion.manufacturing = parseManufacturingInfo(manufacturingData, option, allowFourByteUID);
+
+    dataVersion.hasFabID = false;
+    dataVersion.fabID    = 0;
+
+    allresult.insert(allresult.end(), manufacturingData.begin(), manufacturingData.end());
+
+    if (option == DESFireGetVersionOption::FabID)
+    {
+        const std::size_t payloadSize = getManufacturingPayloadSize(manufacturingData, option, allowFourByteUID);
+
+        if (manufacturingData.size() > payloadSize)
+        {
+            dataVersion.hasFabID = true;
+            dataVersion.fabID    = manufacturingData[payloadSize];
+        }
+    }
+
+    if (crypto->d_auth_method != CM_LEGACY)
+    {
+        if (!crypto->verifyMAC(true, allresult))
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "MAC verification failed.");
+    }
+
+    return dataVersion;
+}
+
+DESFireCommands::DESFireVersionInfo DESFireEV3ISO7816Commands::parseVersionInfo(const ByteVector &data)
+{
+    if (data.size() != VERSION_FRAME_SIZE)
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+            "Invalid DESFire GetVersion response : version frame size is invalid.");
+
+    DESFireVersionInfo result{};
+    result.vendor       = data[0];
+    result.type         = data[1];
+    result.subtype      = data[2];
+    result.majorVersion = data[3];
+    result.minorVersion = data[4];
+    result.storageSize  = data[5];
+    result.protocol     = data[6];
+
+    return result;
+}
+
+DESFireCommands::DESFireManufacturingInfo DESFireEV3ISO7816Commands::parseManufacturingInfo(const ByteVector &data,
+                                                  DESFireGetVersionOption option, bool allowFourByteUID)
+{
+    const std::size_t payloadSize = getManufacturingPayloadSize(data, option, allowFourByteUID);
+
+    std::size_t offset    = 0;
+    std::size_t uidLength = UID_7_SIZE;
+
+    const bool hasUIDDescriptor = payloadSize != UID_7_PAYLOAD_SIZE && payloadSize != DUOX_UID_7_PAYLOAD_SIZE;
+
+    if (hasUIDDescriptor)
+    {
+        ensureSize(data, offset, UID_FORMAT_SIZE + UID_LENGTH_SIZE,
+                   "Invalid DESFire GetVersion response : incomplete UID descriptor.");
+
+        const unsigned char uidFormat         = data[offset];
+        const unsigned char declaredUidLength = data[offset + 1];
+
+        if (uidFormat != 0x00)
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                "Invalid DESFire GetVersion response : unsupported UID format.");
+
+        if (declaredUidLength != UID_4_SIZE && declaredUidLength != UID_10_SIZE)
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                "Invalid DESFire GetVersion response : invalid UID length.");
+
+        if (!allowFourByteUID && declaredUidLength == UID_4_SIZE)
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                "Invalid DESFire GetVersion response : 4-byte UID is not supported.");
+
+        uidLength = declaredUidLength;
+        offset += UID_FORMAT_SIZE + UID_LENGTH_SIZE;
+    }
+
+    ensureSize(data, offset, uidLength + FIXED_MANUFACTURING_SIZE,
+               "Invalid DESFire GetVersion response : incomplete manufacturing data.");
+
+    DESFireManufacturingInfo result{};
+
+    result.uid.assign(data.begin() + offset, data.begin() + offset + uidLength);
+    offset += uidLength;
+
+    result.batchNo.assign(data.begin() + offset, data.begin() + offset + BATCH_NO_SIZE);
+    offset += BATCH_NO_SIZE;
+
+    result.typeId.assign(data.begin() + offset, data.begin() + offset + TYPE_ID_SIZE);
+    offset += TYPE_ID_SIZE;
+
+    result.cwProd   = data[offset++];
+    result.yearProd = data[offset++];
+
+    if (offset != payloadSize)
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+            "Invalid DESFire GetVersion response : unexpected manufacturing data.");
+
+    return result;
+}
+
+std::size_t DESFireEV3ISO7816Commands::getManufacturingPayloadSize(
+    const ByteVector &data, DESFireGetVersionOption option, bool allowFourByteUID)
+{
+    if (isValidManufacturingPayloadSize(data.size(), option, allowFourByteUID))
+        return data.size();
+
+    if (data.size() >= MAC_SIZE && isValidManufacturingPayloadSize(data.size() - MAC_SIZE, option, allowFourByteUID))
+        return data.size() - MAC_SIZE;
+
+    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+        "Invalid DESFire GetVersion response : invalid manufacturing data length.");
+}
+
+void DESFireEV3ISO7816Commands::ensureSize(const ByteVector &data, std::size_t offset, std::size_t required,
+                const char *message)
+{
+    if (offset > data.size() || required > data.size() - offset)
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, message);
+}
+
+bool DESFireEV3ISO7816Commands::isValidManufacturingPayloadSize(
+    std::size_t size, DESFireGetVersionOption option, bool allowFourByteUID)
+{
+    if (option == DESFireGetVersionOption::FabID)
+        return size == DUOX_UID_7_PAYLOAD_SIZE || size == DUOX_UID_10_PAYLOAD_SIZE;
+
+    if (allowFourByteUID)
+        return size == UID_4_PAYLOAD_SIZE || size == UID_7_PAYLOAD_SIZE || size == UID_10_PAYLOAD_SIZE;
+
+    return size == UID_7_PAYLOAD_SIZE || size == UID_10_PAYLOAD_SIZE;
+}
+
+DESFireCommands::DESFireCardVersion DESFireEV3ISO7816Commands::getVersion()
+{
+    return getVersionImpl(DESFireGetVersionOption::None, true);
 }
 
 }
