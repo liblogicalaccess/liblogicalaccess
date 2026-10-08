@@ -1,5 +1,9 @@
 #pragma once
 
+#include <cstdint>
+#include <memory>
+#include <tuple>
+
 #include <logicalaccess/lla_fwd.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfirecrypto.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/samav2iso7816commands.hpp>
@@ -33,23 +37,21 @@ class LLA_CARDS_DESFIRE_API DESFireEV2Crypto : public DESFireCrypto
      */
     static ByteVector auth_ev2_part2(const ByteVector &data, const ByteVector &rnda);
 
-    void generateSessionKey(const ByteVector &key_data, const ByteVector &rnda,
-                            const ByteVector &rndb);
+    void generateSessionKey(const ByteVector &key_data, const ByteVector &rnda, const ByteVector &rndb);
 
-    void sam_generateSessionKey(const ByteVector &rnda, const ByteVector &rndb,
-                                std::shared_ptr<SAMAV2ISO7816Commands> cmd);
+    void sam_generateSessionKey(const ByteVector &rnda, const ByteVector &rndb, std::shared_ptr<SAMAV2ISO7816Commands> cmd);
 
     void setTI(const ByteVector &ti)
     {
         ti_ = ti;
     }
 
-    void setCmdCtr(uint16_t i)
+    void setCmdCtr(std::uint16_t i)
     {
         cmdctr_ = i;
     }
 
-    uint16_t getCmdCtr() const
+    std::uint16_t getCmdCtr() const
     {
         return cmdctr_;
     }
@@ -84,22 +86,18 @@ class LLA_CARDS_DESFIRE_API DESFireEV2Crypto : public DESFireCrypto
      * \param length The excepted deciphered data buffer length, or 0 to automatic.
      * \return data The deciphered data buffer
      */
-    ByteVector desfireDecrypt(size_t length) override;
+    ByteVector desfireDecrypt(std::size_t length) override;
 
     ByteVector changeKey_PICC(unsigned char keyno, ByteVector oldKeyDiversify,
                               std::shared_ptr<DESFireKey> newkey,
                               ByteVector newKeyDiversify,
                               unsigned char keysetno = 0) override;
 
-    // TODO Create duoxcrypto.hpp and move this inside 
-    ByteVector buildDUOXChangeKeyData(std::uint8_t keySetNo, std::uint8_t keyNo, const ByteVector &oldKeyDiversify,
-                              std::shared_ptr<DESFireKey> newKey, const ByteVector &newKeyDiversify);
+    void duplicateCurrentKeySet(std::uint8_t keySetNb);
 
-    void duplicateCurrentKeySet(uint8_t keySetNb);
+    void duplicateKeySet(std::uint8_t keySetNb, std::uint8_t keySetNbToDuplicate);
 
-    void duplicateKeySet(uint8_t keySetNb, uint8_t keySetNbToDuplicate);
-
-    void setKeySetCryptoType(uint8_t keySetNb, DESFireKeyType cryptoMethod);
+    void setKeySetCryptoType(std::uint8_t keySetNb, DESFireKeyType cryptoMethod);
 
     /**
      * \brief The current mac session key.
@@ -118,17 +116,21 @@ class LLA_CARDS_DESFIRE_API DESFireEV2Crypto : public DESFireCrypto
      *
      * This must be called whenever the current authentication session is no longer valid and must not be reused
      */
-    void invalidateAuthentication(); // TODO Create duoxcrypto.hpp and move this inside
-
-    void initializeSecureMessagingState(); // TODO Create duoxcrypto.hpp and move this inside
+    void invalidateAuthentication();
+    
+    /**
+     * \brief Initialize the DUOX secure-messaging state.
+     *
+     * Resets the command counter and initializes the AES cipher and MAC size required by DUOX secure messaging.
+     */
+    void initializeSecureMessagingState();
 
   private:
     ByteVector getIVEncrypt(bool cmdData);
 
-    static std::tuple<ByteVector, ByteVector> getSV(const ByteVector &rnda,
-                                                    const ByteVector &rndb);
+    static std::tuple<ByteVector, ByteVector> getSV(const ByteVector &rnda, const ByteVector &rndb);
 
     ByteVector ti_;
-    uint16_t cmdctr_;
+    std::uint16_t cmdctr_;
 };
 } // namespace logicalaccess

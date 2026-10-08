@@ -5,7 +5,7 @@
 #include <memory>
 #include <vector>
 
-#include <logicalaccess/plugins/cards/desfire/duoxecc.hpp>
+#include <logicalaccess/plugins/cards/duox/duoxecc.hpp>
 #include <logicalaccess/plugins/cards/desfire/lla_cards_desfire_api.hpp>
 #include <logicalaccess/plugins/crypto/public_key.hpp>
 #include <logicalaccess/plugins/crypto/x509V3Certificate.hpp>

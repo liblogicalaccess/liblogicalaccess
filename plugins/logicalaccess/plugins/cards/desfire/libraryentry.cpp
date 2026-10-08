@@ -7,7 +7,7 @@
 #include <logicalaccess/plugins/cards/desfire/desfireev1chip.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfireev2chip.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfireev3chip.hpp>
-#include <logicalaccess/plugins/cards/desfire/duoxchip.hpp>
+#include <logicalaccess/plugins/cards/duox/duoxchip.hpp>
 
 #include <logicalaccess/plugins/cards/desfire/nxpav1keydiversification.hpp>
 #include <logicalaccess/plugins/cards/desfire/nxpav2keydiversification.hpp>

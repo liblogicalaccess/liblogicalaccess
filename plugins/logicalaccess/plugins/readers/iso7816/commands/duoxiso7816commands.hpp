@@ -1,7 +1,7 @@
 #pragma once
 
 #include <logicalaccess/plugins/readers/iso7816/commands/desfireev3iso7816commands.hpp>
-#include <logicalaccess/plugins/cards/desfire/duoxcommands.hpp>
+#include <logicalaccess/plugins/cards/duox/duoxcommands.hpp>
 
 // TODO move it later inside duoxcrypto file
 #include <utility>
@@ -343,23 +343,6 @@ class LLA_READERS_ISO7816_API DUOXISO7816Commands : public DESFireEV3ISO7816Comm
 
     // TODO Move all of this later inside duoxcrypto file
 
-    /**
-     * \brief Derive the DUOX EV2 authentication session keys.
-     *
-     * DUOX extends the EV2 KDF to support AES-256 keys.
-     * AES-128 produces one 16 byte CMAC per session key while AES-256 produces two 16-byte CMAC blocks per session key.
-     *
-     * \param key The diversified authentication key.
-     * \param rndA The PCD-generated authentication challenge.
-     * \param rndB The PICC-generated authentication challenge.
-     */
-    static std::pair<ByteVector, ByteVector>
-    deriveEV2SessionKeys(const ByteVector &key, const ByteVector &rndA, const ByteVector &rndB);
-
-    /**
-     * \brief Rotate a 16-byte authentication challenge left by one byte.
-     */
-    static ByteVector rotateAuthenticationChallenge(const ByteVector &rnd);
 
     /**
      * \brief Validate the decrypted AuthenticateEV2FirstPart2 response.
@@ -373,24 +356,6 @@ class LLA_READERS_ISO7816_API DUOXISO7816Commands : public DESFireEV3ISO7816Comm
     static ByteVector validateEV2Part2Response(const ByteVector &response,
                                                    const ByteVector &rndA,
                                                    const ByteVector &expectedPCDCap2);
-
-    /**
-     * \brief Build an EV2 session-vector context from RndA and RndB.
-     */
-    static ByteVector buildEV2SessionContext(const ByteVector &rndA, const ByteVector &rndB);
-
-    /**
-     * \brief Build one DUOX EV2 KDF session vector.
-     *
-     * \param label First two bytes of the KDF label.
-     * \param counter KDF counter.
-     * \param length KDF output length field.
-     * \param context 26-byte authentication context.
-     */
-    static ByteVector buildEV2SessionVector(std::uint8_t label0, std::uint8_t label1,
-                                                std::uint16_t counter,
-                                                std::uint16_t length,
-                                                const ByteVector &context);
 
     /**
      * \brief Construct the protocol KeyNo byte.

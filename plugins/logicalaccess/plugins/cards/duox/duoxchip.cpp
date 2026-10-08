@@ -1,4 +1,5 @@
-#include <logicalaccess/plugins/cards/desfire/duoxchip.hpp>
+#include <logicalaccess/plugins/cards/duox/duoxchip.hpp>
+#include <logicalaccess/plugins/cards/duox/duoxcrypto.hpp>
 #include <logicalaccess/cards/locationnode.hpp>
 
 namespace logicalaccess
@@ -7,6 +8,7 @@ namespace logicalaccess
 DUOXChip::DUOXChip()
     : DESFireEV3Chip(CHIP_DUOX)
 {
+    d_crypto = std::make_shared<DUOXCrypto>();
 }
 
 std::shared_ptr<LocationNode> DUOXChip::getRootLocationNode()
@@ -15,11 +17,6 @@ std::shared_ptr<LocationNode> DUOXChip::getRootLocationNode()
     rootNode->setName("MIFARE DUOX");
 
     return rootNode;
-}
-
-std::shared_ptr<CardService> DUOXChip::getService(CardServiceType serviceType)
-{
-    return DESFireEV3Chip::getService(serviceType);
 }
 
 } // namespace logicalaccess

@@ -45,6 +45,13 @@ class LLA_CARDS_DESFIRE_API DESFireEV3Chip : public DESFireEV2Chip
      */
     std::shared_ptr<LocationNode> getRootLocationNode() override;
 
+    /**
+     * \brief Get a card service.
+     *
+     * \param serviceType Type of the requested card service.
+     *
+     * \return The requested card service.
+     */
     std::shared_ptr<CardService> getService(CardServiceType serviceType) override;
 
 };

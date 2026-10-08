@@ -70,7 +70,7 @@
 #include <logicalaccess/plugins/cards/generictag/generictagchip.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfireev2chip.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfireev3chip.hpp>
-#include <logicalaccess/plugins/cards/desfire/duoxchip.hpp>
+#include <logicalaccess/plugins/cards/duox/duoxchip.hpp>
 #include <logicalaccess/plugins/cards/seos/seoschip.hpp>
 #include <logicalaccess/plugins/cards/yubikey/yubikeychip.hpp>
 

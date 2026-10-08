@@ -1,10 +1,16 @@
 #include <logicalaccess/plugins/cards/desfire/desfireev2crypto.hpp>
+
 #include <algorithm>
+#include <cassert>
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <tuple>
+
 #include <logicalaccess/plugins/crypto/aes_helper.hpp>
 #include <logicalaccess/plugins/crypto/cmac.hpp>
 #include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/myexception.hpp>
-#include <cassert>
 #include <logicalaccess/plugins/cards/desfire/desfirecommands.hpp>
 #include <logicalaccess/plugins/crypto/aes_symmetric_key.hpp>
 #include <logicalaccess/plugins/crypto/aes_initialization_vector.hpp>
@@ -137,7 +143,7 @@ ByteVector DESFireEV2Crypto::getIVEncrypt(bool cmdData)
 
 ByteVector DESFireEV2Crypto::generateMAC(unsigned char cmd, const ByteVector &buf)
 {
-    if (d_auth_method != CryptoMethod::CM_EV2)
+    if (!usesEV2Crypto(d_auth_method))
         return DESFireCrypto::generateMAC(cmd, buf);
 
     ByteVector command, cmdCtrVector;
@@ -148,20 +154,20 @@ ByteVector DESFireEV2Crypto::generateMAC(unsigned char cmd, const ByteVector &bu
     do_mac.insert(do_mac.end(), ti_.begin(), ti_.end());                   // TI
     do_mac.insert(do_mac.end(), buf.begin(), buf.end());                   // CMD Data
 
-    auto m = openssl::CMACCrypto::cmac(d_macSessionKey, "aes", do_mac, {});
-    m = truncateMAC(m);
+    auto mac = openssl::CMACCrypto::cmac(d_macSessionKey, "aes", do_mac, {});
+    mac = truncateMAC(mac);
 
-    command.insert(command.end(), m.begin(), m.begin() + d_mac_size);
+    command.insert(command.end(), mac.begin(), mac.begin() + d_mac_size);
 
     return command;
 }
 
 bool DESFireEV2Crypto::verifyMAC(bool end, const ByteVector &data)
 {
-    if (d_auth_method != CryptoMethod::CM_EV2)
+    if (!usesEV2Crypto(d_auth_method))
         return DESFireCrypto::verifyMAC(end, data);
 
-    if (data.size() > 0)
+    if (!data.empty())
         d_buf.insert(d_buf.end(), data.begin(), data.end());
 
     if (!end)
@@ -170,28 +176,25 @@ bool DESFireEV2Crypto::verifyMAC(bool end, const ByteVector &data)
     LOG(LogLevel::INFOS) << "Running VerifyMAC on buffer: " << d_buf;
 
     if (d_buf.size() < d_mac_size)
-        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                 "verifyMAC buffer param is too small.");
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "verifyMAC buffer param is too small.");
 
-    ByteVector mac            = ByteVector(d_buf.end() - d_mac_size, d_buf.end());
-    const ByteVector respData = ByteVector(d_buf.begin(), d_buf.end() - d_mac_size);
+    const ByteVector mac(d_buf.end() - d_mac_size, d_buf.end());
+    const ByteVector respData(d_buf.begin(), d_buf.end() - d_mac_size);
     d_buf.clear();
 
     ++cmdctr_;
 
-    auto m = generateMAC(0x00, respData);
+    const auto expectedMac = generateMAC(0x00, respData);
 
-    if (!std::equal(m.begin(), m.begin() + d_mac_size, mac.begin()))
-        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                 "verifyMAC command MAC answer has an unexpected value.");
+    if (!std::equal(expectedMac.begin(), expectedMac.begin() + d_mac_size, mac.begin()))
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "verifyMAC command MAC answer has an unexpected value.");
 
     return true;
 }
 
-ByteVector DESFireEV2Crypto::desfireEncrypt(const ByteVector &data,
-                                            const ByteVector &param, bool calccrc)
+ByteVector DESFireEV2Crypto::desfireEncrypt(const ByteVector &data, const ByteVector &param, bool calccrc)
 {
-    if (d_auth_method != CryptoMethod::CM_EV2)
+    if (!usesEV2Crypto(d_auth_method))
         return DESFireCrypto::desfireEncrypt(data, param, calccrc);
 
     ByteVector encdata;
@@ -232,12 +235,12 @@ ByteVector DESFireEV2Crypto::desfireEncrypt(const ByteVector &data,
     return result;
 }
 
-ByteVector DESFireEV2Crypto::desfireDecrypt(size_t length)
+ByteVector DESFireEV2Crypto::desfireDecrypt(std::size_t length)
 {
-    if (d_auth_method != CryptoMethod::CM_EV2)
+    if (!usesEV2Crypto(d_auth_method))
         return DESFireCrypto::desfireDecrypt(length);
 
-    auto dd = d_buf;
+    const auto dd = d_buf;
     verifyMAC(true, {});
 
     const auto IV = getIVEncrypt(false);
@@ -247,15 +250,14 @@ ByteVector DESFireEV2Crypto::desfireDecrypt(size_t length)
         openssl::AESSymmetricKey::createFromData(d_sessionKey));
     const auto iv = std::make_shared<openssl::AESInitializationVector>(
         openssl::AESInitializationVector::createFromData(IV));
-
     
     ByteVector data;
     const auto encData = ByteVector(dd.begin(), dd.end() - d_mac_size);
-    if (encData.size() > 0)
+    if (!encData.empty())
     {
         d_cipher->decipher(encData, data, *isokey, *iv, false);
 
-        size_t ll = 0;
+        std::size_t ll = 0;
         if (length == 0)
         {
             ll = data.size() - 1;
@@ -264,16 +266,14 @@ ByteVector DESFireEV2Crypto::desfireDecrypt(size_t length)
                 --ll;
             }
 
-            EXCEPTION_ASSERT_WITH_LOG(data[ll] == 0x80, LibLogicalAccessException,
-                                    "Incorrect FLT result");
+            EXCEPTION_ASSERT_WITH_LOG(data[ll] == 0x80, LibLogicalAccessException, "Incorrect FLT result");
         }
         else
         {
             ll = length;
         }
 
-        EXCEPTION_ASSERT_WITH_LOG (data.size() >= ll, LibLogicalAccessException,
-                               "Decrypted buffer is too small.");
+        EXCEPTION_ASSERT_WITH_LOG (data.size() >= ll, LibLogicalAccessException, "Decrypted buffer is too small.");
         data.resize(ll);
     }
 
@@ -287,11 +287,8 @@ ByteVector DESFireEV2Crypto::changeKey_PICC(unsigned char keyno,
                                             unsigned char keysetno)
 {
     const unsigned char keyno_only = static_cast<unsigned char>(keyno & 0x3F);
-
-    if (d_auth_method != CryptoMethod::CM_EV2 ||
-        (keyno_only == d_currentKeyNo && !keysetno)) // ChangeKeyEV2
-        return DESFireCrypto::changeKey_PICC(keyno, oldKeyDiversify, newkey,
-                                             newKeyDiversify, keysetno);
+    if (!usesEV2Crypto(d_auth_method) || (keyno_only == d_currentKeyNo && !keysetno)) // ChangeKeyEV2
+        return DESFireCrypto::changeKey_PICC(keyno, oldKeyDiversify, newkey, newKeyDiversify, keysetno);
 
     // We only handle when keys number are different here
     LOG(LogLevel::INFOS) << "Init change key on PICC...";
@@ -331,90 +328,12 @@ ByteVector DESFireEV2Crypto::changeKey_PICC(unsigned char keyno,
     return cryptogram;
 }
 
-ByteVector DESFireEV2Crypto::buildDUOXChangeKeyData(std::uint8_t keySetNo, std::uint8_t keyNo,
-    const ByteVector &oldKeyDiversify, std::shared_ptr<DESFireKey> newKey, const ByteVector &newKeyDiversify)
-{
-    EXCEPTION_ASSERT_WITH_LOG(newKey != nullptr,
-        LibLogicalAccessException, "DUOX key change requires a valid new key.");
-
-    // DUOX ChangeKey supports AES keys only. AES-128 or AES-256 is determined by the actual key length
-    EXCEPTION_ASSERT_WITH_LOG(newKey->getKeyType() == DESFireKeyType::DF_KEY_AES,
-        LibLogicalAccessException, "DUOX key change supports AES keys only.");
-
-    ByteVector newKeyData;
-    getKey(newKey, newKeyDiversify, newKeyData);
-
-    EXCEPTION_ASSERT_WITH_LOG(newKeyData.size() == 16 || newKeyData.size() == 32,
-        LibLogicalAccessException, "DUOX key change requires a 16-byte or 32-byte AES key.");
-
-    const std::uint8_t targetKeyNo = static_cast<std::uint8_t>(keyNo & 0x3F);
-
-    const bool changingAuthenticatedKey = keySetNo == 0x00 && targetKeyNo == d_currentKeyNo;
-
-    ByteVector keyData;
-
-    if (changingAuthenticatedKey)
-    {
-        keyData.reserve(newKeyData.size() + 1);
-        keyData.insert(keyData.end(), newKeyData.begin(), newKeyData.end());
-        keyData.push_back(newKey->getKeyVersion());
-    }
-    else
-    {
-        ByteVector oldKey;
-        const bool oldKeyAvailable = getKey(keySetNo, targetKeyNo, oldKeyDiversify, oldKey);
-
-        // A disabled/uninitialized target key is represented by an all-zero OldKey
-        // Otherwise, adapt OldKey to the new key size
-        if (!oldKeyAvailable)
-        {
-            oldKey.assign(newKeyData.size(), 0x00);
-        }
-        else
-        {
-            oldKey.resize(newKeyData.size(), 0x00);
-        }
-
-        ByteVector xorKey(newKeyData.size(), 0x00);
-
-        for (std::size_t i = 0; i < newKeyData.size(); ++i)
-            xorKey[i] = static_cast<std::uint8_t>(newKeyData[i] ^ oldKey[i]);
-
-        keyData.reserve(newKeyData.size() + 1 + 4);
-        keyData.insert(keyData.end(), xorKey.begin(), xorKey.end());
-        keyData.push_back(newKey->getKeyVersion());
-
-        // CRC32 is calculated over NewKey, not over XOR(NewKey, OldKey) or KeyVer
-        // The CRC is appended least-significant byte first
-        const std::uint32_t crc = desfire_crc32(newKeyData.data(), newKeyData.size());
-
-        // CRC32 byte order used by the DESFire implementation : LSB first
-        keyData.push_back(static_cast<std::uint8_t>(crc & 0xFF));
-        keyData.push_back(static_cast<std::uint8_t>((crc >> 8) & 0xFF));
-        keyData.push_back(static_cast<std::uint8_t>((crc >> 16) & 0xFF));
-        keyData.push_back(static_cast<std::uint8_t>((crc >> 24) & 0xFF));
-    }
-
-    /*
-     * Expected DUOX KeyData lengths :
-     *
-     *   AES-128 / authenticated key = 17
-     *   AES-128 / other key         = 21
-     *   AES-256 / authenticated key = 33
-     *   AES-256 / other key         = 37
-     */
-    EXCEPTION_ASSERT_WITH_LOG(keyData.size() == 17 || keyData.size() == 21 || keyData.size() == 33 || keyData.size() == 37,
-        LibLogicalAccessException, "DUOX key change generated an invalid KeyData length.");
-
-    return keyData;
-}
-
-void DESFireEV2Crypto::duplicateCurrentKeySet(uint8_t keySetNb)
+void DESFireEV2Crypto::duplicateCurrentKeySet(std::uint8_t keySetNb)
 {
     duplicateKeySet(0, keySetNb);
 }
 
-void DESFireEV2Crypto::setKeySetCryptoType(uint8_t keySetNb, DESFireKeyType cryptoMethod)
+void DESFireEV2Crypto::setKeySetCryptoType(std::uint8_t keySetNb, DESFireKeyType cryptoMethod)
 {
     for (auto &&key : d_keys)
     {
@@ -423,7 +342,7 @@ void DESFireEV2Crypto::setKeySetCryptoType(uint8_t keySetNb, DESFireKeyType cryp
     }
 }
 
-void DESFireEV2Crypto::duplicateKeySet(uint8_t keySetNbToDuplicate, uint8_t keySetNb)
+void DESFireEV2Crypto::duplicateKeySet(std::uint8_t keySetNbToDuplicate, std::uint8_t keySetNb)
 {
     uint8_t nbKeys = 0;
     for (auto &&key : d_keys)
@@ -487,7 +406,6 @@ void DESFireEV2Crypto::invalidateAuthentication()
 
 void DESFireEV2Crypto::initializeSecureMessagingState()
 {
-    // TODO: Move this to DUOXCrypto once DUOX has its own crypto implementation.
     cmdctr_ = 0;
     d_cipher.reset(new openssl::AESCipher());
     d_mac_size = 8;

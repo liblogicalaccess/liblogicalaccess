@@ -1,6 +1,6 @@
 #pragma once
 
-#include <logicalaccess/plugins/cards/desfire/duoxcommands.hpp>
+#include <logicalaccess/plugins/cards/duox/duoxcommands.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfireev3chip.hpp>
 
 namespace logicalaccess
@@ -42,15 +42,6 @@ public:
      * \return The root location node.
      */
     std::shared_ptr<LocationNode> getRootLocationNode() override;
-
-    /**
-     * \brief Get a card service.
-     * 
-     * \param serviceType Type of the requested card service.
-     * 
-     * \return The requested card service.
-     */
-    std::shared_ptr<CardService> getService(CardServiceType serviceType) override;
 };
 
 } // namespace logicalaccess

@@ -2,7 +2,7 @@
 
 #include <logicalaccess/plugins/cards/desfire/desfirechip.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfireev2crypto.hpp>
-
+#include <logicalaccess/plugins/cards/duox/duoxcrypto.hpp>
 #include <logicalaccess/plugins/crypto/lla_random.hpp>
 #include <logicalaccess/plugins/crypto/aes_helper.hpp>
 
@@ -13,10 +13,6 @@
 #include <limits>
 
 // Move this inside duoxcrypto later
-#include <logicalaccess/plugins/cards/desfire/desfireev2crypto.hpp>
-#include <logicalaccess/plugins/crypto/aes_helper.hpp>
-#include <logicalaccess/plugins/crypto/cmac.hpp>
-#include <logicalaccess/plugins/crypto/lla_random.hpp>
 #include <algorithm>
 #include <array>
 
@@ -25,31 +21,6 @@ namespace logicalaccess
 
 namespace
 {
-
-// ---------------------------------------
-// TODO : Move sections later
-// ---------------------------------------
-
-//////////////////////////////////////////
-using EVP_PKEY_ptr = std::unique_ptr<EVP_PKEY, decltype(&EVP_PKEY_free)>;
-using EVP_MD_CTX_ptr = std::unique_ptr<EVP_MD_CTX, decltype(&EVP_MD_CTX_free)>;
-
-/**
- * \brief Check whether a DUOX communication mode is supported.
- * 
- * \return true for Plain, MAC, or Full communication modes; otherwise false.
- */
-constexpr bool isValidCommunicationMode(DUOXCommunicationMode mode)
-{
-    switch (mode)
-    {
-    case DUOXCommunicationMode::Plain:
-    case DUOXCommunicationMode::MAC:
-    case DUOXCommunicationMode::Full: return true;
-
-    default: return false;
-    }
-}
 
 // ---------------------------------------
 // DUOX EV2 authentication
@@ -71,18 +42,6 @@ constexpr std::size_t EV2_PCDCAP2_SIZE = 6;
 constexpr std::size_t EV2_PART1_RESPONSE_SIZE = 16;
 constexpr std::size_t EV2_PART2_COMMAND_SIZE  = 32;
 constexpr std::size_t EV2_PART2_RESPONSE_SIZE = 32;
-
-constexpr std::uint16_t AES128_KDF_LENGTH = 0x0080;
-constexpr std::uint16_t AES256_KDF_LENGTH = 0x0100;
-
-constexpr std::uint8_t ENC_LABEL_0 = 0xA5;
-constexpr std::uint8_t ENC_LABEL_1 = 0x5A;
-
-constexpr std::uint8_t MAC_LABEL_0 = 0x5A;
-constexpr std::uint8_t MAC_LABEL_1 = 0xA5;
-
-constexpr std::size_t KDF_CONTEXT_SIZE = 26;
-constexpr std::size_t KDF_VECTOR_SIZE  = 32;
 
 /**
  * \brief Clear and release sensitive byte data.
@@ -144,6 +103,9 @@ static void debugBytes(const std::string &label, const ByteVector &data)
 // ---------------------------------------
 // ECDSA certificate verification
 // ---------------------------------------
+
+using EVP_PKEY_ptr = std::unique_ptr<EVP_PKEY, decltype(&EVP_PKEY_free)>;
+using EVP_MD_CTX_ptr = std::unique_ptr<EVP_MD_CTX, decltype(&EVP_MD_CTX_free)>;
 
 void verifySignatureWithCertificate(const ByteVector &certificateDER, const ByteVector &message,
                                     const ECDSASignature &signature)
@@ -219,6 +181,27 @@ constexpr std::size_t ECC_PRIVATE_KEY_SIZE = 32;
 constexpr std::size_t ECC_PUBLIC_KEY_SIZE = 65;
 
 constexpr std::uint8_t ECC_UNCOMPRESSED_POINT_PREFIX = 0x04;
+
+// ---------------------------------------
+// DUOX communication modes
+// ---------------------------------------
+
+/**
+ * \brief Check whether a DUOX communication mode is supported.
+ *
+ * \return true for Plain, MAC, or Full communication modes; otherwise false.
+ */
+constexpr bool isValidCommunicationMode(DUOXCommunicationMode mode)
+{
+    switch (mode)
+    {
+    case DUOXCommunicationMode::Plain:
+    case DUOXCommunicationMode::MAC:
+    case DUOXCommunicationMode::Full: return true;
+
+    default: return false;
+    }
+}
 
 // ---------------------------------------
 // Access rights and key policy
@@ -896,7 +879,7 @@ ByteVector DUOXISO7816Commands::exportKey(std::uint8_t keyNo, DUOXCommunicationM
 
 void DUOXISO7816Commands::authenticateEV2NonFirst(std::uint8_t keyno, std::shared_ptr<DESFireKey> currentKey)
 {
-    auto chip = getDESFireChip();
+    const auto chip = getDESFireChip();
 
     EXCEPTION_ASSERT_WITH_LOG(chip != nullptr,
         LibLogicalAccessException, "DUOX EV2 AuthenticateEV2NonFirst requires an initialized DESFire chip.");
@@ -906,16 +889,18 @@ void DUOXISO7816Commands::authenticateEV2NonFirst(std::uint8_t keyno, std::share
     EXCEPTION_ASSERT_WITH_LOG(crypto != nullptr,
         LibLogicalAccessException, "DUOX EV2 AuthenticateEV2NonFirst requires an initialized DESFire crypto context.");
 
-    const auto ev2Crypto = std::dynamic_pointer_cast<DESFireEV2Crypto>(crypto);
+    // AuthenticateEV2NonFirst is valid for both the DUOX and standard EV2 secure-messaging modes.
+    // Preserve the authentication mode established by the preceding authentication step.
+    EXCEPTION_ASSERT_WITH_LOG(usesEV2Crypto(crypto->d_auth_method),
+        LibLogicalAccessException, "DUOX EV2 AuthenticateEV2NonFirst requires an active EV2 authentication.");
 
-    EXCEPTION_ASSERT_WITH_LOG(ev2Crypto != nullptr, LibLogicalAccessException,
-        "DUOX EV2 AuthenticateEV2NonFirst requires the existing DESFireEV2Crypto implementation.");
+    const auto duoxCrypto = std::dynamic_pointer_cast<DUOXCrypto>(crypto);
 
-    EXCEPTION_ASSERT_WITH_LOG(ev2Crypto->d_auth_method == CryptoMethod::CM_EV2, LibLogicalAccessException,
-        "DUOX EV2 AuthenticateEV2NonFirst requires an active EV2 authentication.");
+    EXCEPTION_ASSERT_WITH_LOG(duoxCrypto != nullptr, LibLogicalAccessException,
+        "DUOX EV2 AuthenticateEV2NonFirst requires the existing DUOX implementation.");
 
     if (!currentKey)
-        currentKey = ev2Crypto->getKey(0, keyno);
+        currentKey = duoxCrypto->getKey(0, keyno);
 
     EXCEPTION_ASSERT_WITH_LOG(currentKey != nullptr,
         LibLogicalAccessException, "DUOX EV2 AuthenticateEV2NonFirst requires an authentication key.");
@@ -934,7 +919,7 @@ void DUOXISO7816Commands::authenticateEV2NonFirst(std::uint8_t keyno, std::share
     const ByteVector keyDiversification = getKeyInformations(key, keyno);
 
     ByteVector keyDiv;
-    ev2Crypto->getKey(key, keyDiversification, keyDiv);
+    duoxCrypto->getKey(key, keyDiversification, keyDiv);
 
     EXCEPTION_ASSERT_WITH_LOG(keyDiv.size() == expectedKeyLength,
         LibLogicalAccessException, "DUOX EV2 diversified authentication key has an invalid length.");
@@ -961,7 +946,7 @@ void DUOXISO7816Commands::authenticateEV2NonFirst(std::uint8_t keyno, std::share
         LibLogicalAccessException, "Random generator returned an invalid RndA length.");
 
     // RndB' = RndB rotated left by one byte
-    ByteVector rndBPrime = rotateAuthenticationChallenge(rndB);
+    ByteVector rndBPrime = DUOXCrypto::rotateAuthenticationChallenge(rndB);
 
     // Part 2 data : RndA || RndB'
     ByteVector challenge;
@@ -990,16 +975,15 @@ void DUOXISO7816Commands::authenticateEV2NonFirst(std::uint8_t keyno, std::share
         LibLogicalAccessException, "AuthenticateEV2NonFirst returned an invalid RndA'.");
 
     // Verify RndA' = RndA rotated left by one byte
-    ByteVector expectedRndAPrime = rotateAuthenticationChallenge(rndA);
+    ByteVector expectedRndAPrime = DUOXCrypto::rotateAuthenticationChallenge(rndA);
 
     EXCEPTION_ASSERT_WITH_LOG(rndAPrime == expectedRndAPrime,
         LibLogicalAccessException, "AuthenticateEV2NonFirst authentication failed : invalid RndA'.");
 
     // Establish the EV2 secure-messaging session
-    ev2Crypto->generateSessionKey(keyDiv, rndA, rndB);
-    ev2Crypto->d_auth_method  = CryptoMethod::CM_EV2;
-    ev2Crypto->d_currentKeyNo = keyno;
-    ev2Crypto->setKey(ev2Crypto->d_currentAid, 0, keyno, key);
+    duoxCrypto->generateSessionKey(keyDiv, rndA, rndB);
+    duoxCrypto->d_currentKeyNo = keyno;
+    duoxCrypto->setKey(duoxCrypto->d_currentAid, 0, keyno, key);
 
     // Clear sensitive authentication material
     clearSensitiveBytes(rndA);
@@ -1329,11 +1313,43 @@ DUOXKeySettings DUOXISO7816Commands::getKeySettings(DUOXKeySettingsOption option
 
 void DUOXISO7816Commands::changeKey(std::uint8_t keyNo, std::shared_ptr<DESFireKey> newKey)
 {
+    const auto chip = getDESFireChip();
+
+    EXCEPTION_ASSERT_WITH_LOG(chip != nullptr,
+        LibLogicalAccessException, "DUOX ChangeKey requires an initialized DESFire chip.");
+
+    const auto crypto = std::dynamic_pointer_cast<DUOXCrypto>(chip->getCrypto());
+
+    EXCEPTION_ASSERT_WITH_LOG(crypto != nullptr,
+        LibLogicalAccessException, "DUOX ChangeKey requires DESFireEV2-compatible crypto.");
+
+    if (crypto->d_auth_method == CryptoMethod::CM_EV2)
+    {
+        DESFireEV2ISO7816Commands::changeKey(keyNo, std::move(newKey));
+        return;
+    }
+
     changeKeyEV2Internal(0x00, keyNo, std::move(newKey), DUOXChangeKeyCommand::ChangeKey);
 }
 
 void DUOXISO7816Commands::changeKeyEV2(std::uint8_t keySetNo, std::uint8_t keyNo, std::shared_ptr<DESFireKey> newKey)
 {
+    const auto chip = getDESFireChip();
+
+    EXCEPTION_ASSERT_WITH_LOG(chip != nullptr,
+        LibLogicalAccessException, "DUOX ChangeKeyEV2 requires an initialized DESFire chip.");
+
+    const auto crypto = std::dynamic_pointer_cast<DUOXCrypto>(chip->getCrypto());
+
+    EXCEPTION_ASSERT_WITH_LOG(crypto != nullptr,
+        LibLogicalAccessException, "DUOX ChangeKeyEV2 requires DESFireEV2-compatible crypto.");
+
+    if (crypto->d_auth_method == CryptoMethod::CM_EV2)
+    {
+        DESFireEV2ISO7816Commands::changeKeyEV2(keySetNo, keyNo, std::move(newKey));
+        return;
+    }
+
     changeKeyEV2Internal(keySetNo, keyNo, std::move(newKey), DUOXChangeKeyCommand::ChangeKeyEV2);
 }
 
@@ -1344,12 +1360,12 @@ void DUOXISO7816Commands::changeKeyEV2Internal(std::uint8_t keySetNo, std::uint8
 
     const char *functionName = isChangeKey ? "DUOX ChangeKey" : "DUOX ChangeKeyEV2";
 
-    auto chip = getDESFireChip();
+    const auto chip = getDESFireChip();
 
     EXCEPTION_ASSERT_WITH_LOG(chip != nullptr,
         LibLogicalAccessException, std::string(functionName) + " requires an initialized DESFire chip.");
 
-    const auto crypto = std::dynamic_pointer_cast<DESFireEV2Crypto>(chip->getCrypto());
+    const auto crypto = std::dynamic_pointer_cast<DUOXCrypto>(chip->getCrypto());
 
     EXCEPTION_ASSERT_WITH_LOG(crypto != nullptr,
         LibLogicalAccessException, std::string(functionName) + " requires DESFireEV2 crypto.");
@@ -1384,7 +1400,7 @@ void DUOXISO7816Commands::changeKeyEV2Internal(std::uint8_t keySetNo, std::uint8
     // For ChangeKeyEV2, KeySetNo != 0 always uses the "different key" encoding
     const bool changingAuthenticatedKey = keySetNo == 0x00 && targetKeyNo == crypto->d_currentKeyNo;
 
-    const bool authenticatedEV2 = crypto->d_auth_method == CryptoMethod::CM_EV2;
+    const bool authenticatedEV2 = crypto->d_auth_method == CryptoMethod::CM_DUOX;
 
     std::uint8_t commandKeyNo = keyNo;
 
@@ -1400,7 +1416,7 @@ void DUOXISO7816Commands::changeKeyEV2Internal(std::uint8_t keySetNo, std::uint8
 
     const ByteVector newKeyDiversify = getKeyInformations(key, targetKeyNo);
 
-    const ByteVector keyDataPlain = crypto->buildDUOXChangeKeyData(keySetNo, commandKeyNo, oldKeyDiversify, key, newKeyDiversify);
+    const ByteVector keyDataPlain = crypto->buildChangeKeyData(keySetNo, commandKeyNo, oldKeyDiversify, key, newKeyDiversify);
 
     const ByteVector params = isChangeKey ? ByteVector{commandKeyNo} : ByteVector{keySetNo, commandKeyNo};
 
@@ -2520,132 +2536,12 @@ std::uint8_t DUOXISO7816Commands::buildEV2KeyNo(std::uint8_t targetedKeyNo, bool
         LibLogicalAccessException, "DUOX EV2 AuthenticateEV2First targeted key number must fit in the six-bit KeyNo field.");
 
     const std::uint8_t keyNo = static_cast<std::uint8_t>(
-        (secondaryApplication ? KEYNO_SECONDARY_APPLICATION : 0x00) |
-        (targetedKeyNo & KEYNO_MASK));
+        (secondaryApplication ? KEYNO_SECONDARY_APPLICATION : 0x00) | (targetedKeyNo & KEYNO_MASK));
 
     EXCEPTION_ASSERT_WITH_LOG((keyNo & KEYNO_RESERVED) == 0,
         LibLogicalAccessException, "Internal DUOX EV2 error : constructed KeyNo contains RFU bit 6.");
 
     return keyNo;
-}
-
-ByteVector DUOXISO7816Commands::rotateAuthenticationChallenge(const ByteVector &rnd)
-{
-    EXCEPTION_ASSERT_WITH_LOG(rnd.size() == EV2_RANDOM_SIZE,
-        LibLogicalAccessException, "DUOX EV2 authentication challenge must contain exactly 16 bytes.");
-
-    ByteVector rotated = rnd;
-    std::rotate(rotated.begin(), rotated.begin() + 1, rotated.end());
-
-    return rotated;
-}
-
-ByteVector DUOXISO7816Commands::buildEV2SessionContext(const ByteVector &rndA, const ByteVector &rndB)
-{
-    constexpr std::size_t EV2_CONTEXT_XOR_SIZE    = 6U;
-    constexpr std::size_t EV2_CONTEXT_RNDB_OFFSET = 6U;
-    constexpr std::size_t EV2_CONTEXT_RNDA_OFFSET = 8U;
-
-    EXCEPTION_ASSERT_WITH_LOG(rndA.size() == EV2_RANDOM_SIZE,
-        LibLogicalAccessException, "DUOX EV2 RndA must contain exactly 16 bytes.");
-
-    EXCEPTION_ASSERT_WITH_LOG(rndB.size() == EV2_RANDOM_SIZE,
-        LibLogicalAccessException, "DUOX EV2 RndB must contain exactly 16 bytes.");
-
-    ByteVector context;
-    context.reserve(KDF_CONTEXT_SIZE);
-
-    context.push_back(rndA[0]);
-    context.push_back(rndA[1]);
-
-    for (std::size_t i = 0; i < EV2_CONTEXT_XOR_SIZE; ++i)
-        context.push_back(static_cast<std::uint8_t>(rndA[2 + i] ^ rndB[i]));
-
-    context.insert(context.end(), rndB.begin() + EV2_CONTEXT_RNDB_OFFSET, rndB.end());
-    context.insert(context.end(), rndA.begin() + EV2_CONTEXT_RNDA_OFFSET, rndA.end());
-
-    EXCEPTION_ASSERT_WITH_LOG(context.size() == KDF_CONTEXT_SIZE,
-        LibLogicalAccessException, "Internal DUOX EV2 error: invalid KDF context size.");
-
-    return context;
-}
-
-ByteVector DUOXISO7816Commands::buildEV2SessionVector(std::uint8_t label0,
-                                                          std::uint8_t label1,
-                                                          std::uint16_t counter,
-                                                          std::uint16_t length,
-                                                          const ByteVector &context)
-{
-    EXCEPTION_ASSERT_WITH_LOG(context.size() == KDF_CONTEXT_SIZE,
-        LibLogicalAccessException, "DUOX EV2 KDF context must contain exactly 26 bytes.");
-
-    EXCEPTION_ASSERT_WITH_LOG(counter != 0,
-        LibLogicalAccessException, "DUOX EV2 KDF counter must be non-zero.");
-
-    ByteVector sv;
-    sv.reserve(KDF_VECTOR_SIZE);
-
-    sv.push_back(label0);
-    sv.push_back(label1);
-    sv.push_back(static_cast<std::uint8_t>((counter >> 8U) & 0xFFU));
-    sv.push_back(static_cast<std::uint8_t>(counter & 0xFFU));
-    sv.push_back(static_cast<std::uint8_t>((length >> 8U) & 0xFFU));
-    sv.push_back(static_cast<std::uint8_t>(length & 0xFFU));
-    sv.insert(sv.end(), context.begin(), context.end());
-
-    EXCEPTION_ASSERT_WITH_LOG(sv.size() == KDF_VECTOR_SIZE,
-        LibLogicalAccessException, "Internal DUOX EV2 error: session vector must contain exactly 32 bytes.");
-
-    return sv;
-}
-
-std::pair<ByteVector, ByteVector> DUOXISO7816Commands::deriveEV2SessionKeys(
-    const ByteVector &key, const ByteVector &rndA, const ByteVector &rndB)
-{
-    constexpr std::uint16_t KDF_COUNTER_FIRST  = 0x0001U;
-    constexpr std::uint16_t KDF_COUNTER_SECOND = 0x0002U;
-
-    const bool aes128 = key.size() == DESFIRE_AES_KEY_SIZE;
-    const bool aes256 = key.size() == DESFIRE_AES256_KEY_SIZE;
-
-    EXCEPTION_ASSERT_WITH_LOG(aes128 || aes256,
-        LibLogicalAccessException, "DUOX EV2 authentication requires an AES-128 or AES-256 key.");
-
-    const ByteVector context = buildEV2SessionContext(rndA, rndB);
-    const std::uint16_t kdfLength = aes128 ? AES128_KDF_LENGTH : AES256_KDF_LENGTH;
-
-    const auto deriveBlock = [&](std::uint8_t label0, std::uint8_t label1, std::uint16_t counter) -> ByteVector
-    {
-        const ByteVector sv = buildEV2SessionVector(label0, label1, counter, kdfLength, context);
-        const ByteVector block = openssl::CMACCrypto::cmac(key, "aes", sv, {});
-
-        EXCEPTION_ASSERT_WITH_LOG(block.size() == 16,
-            LibLogicalAccessException, "DUOX EV2 KDF CMAC returned an invalid 16-byte block.");
-
-        return block;
-    };
-
-    ByteVector sessionEnc = deriveBlock(ENC_LABEL_0, ENC_LABEL_1, KDF_COUNTER_FIRST);
-    ByteVector sessionMac = deriveBlock(MAC_LABEL_0, MAC_LABEL_1, KDF_COUNTER_FIRST);
-
-    if (aes128)
-    {
-        EXCEPTION_ASSERT_WITH_LOG(sessionEnc.size() == DESFIRE_AES_KEY_SIZE && sessionMac.size() == DESFIRE_AES_KEY_SIZE,
-            LibLogicalAccessException, "DUOX EV2 AES-128 KDF produced invalid session-key lengths.");
-
-        return {sessionEnc, sessionMac};
-    }
-
-    const ByteVector enc2 = deriveBlock(ENC_LABEL_0, ENC_LABEL_1, KDF_COUNTER_SECOND);
-    const ByteVector mac2 = deriveBlock(MAC_LABEL_0, MAC_LABEL_1, KDF_COUNTER_SECOND);
-
-    sessionEnc.insert(sessionEnc.end(), enc2.begin(), enc2.end());
-    sessionMac.insert(sessionMac.end(), mac2.begin(), mac2.end());
-
-    EXCEPTION_ASSERT_WITH_LOG(sessionEnc.size() == DESFIRE_AES256_KEY_SIZE && sessionMac.size() == DESFIRE_AES256_KEY_SIZE,
-        LibLogicalAccessException, "DUOX EV2 AES-256 KDF produced invalid session-key lengths.");
-
-    return {sessionEnc, sessionMac};
 }
 
 ByteVector DUOXISO7816Commands::validateEV2Part2Response(
@@ -2660,7 +2556,7 @@ ByteVector DUOXISO7816Commands::validateEV2Part2Response(
     EXCEPTION_ASSERT_WITH_LOG(expectedPCDCap2.size() <= EV2_PCDCAP2_SIZE,
         LibLogicalAccessException, "DUOX PCDcap2 must contain at most six bytes.");
 
-    const ByteVector expectedRndAPrime = rotateAuthenticationChallenge(rndA);
+    const ByteVector expectedRndAPrime = DUOXCrypto::rotateAuthenticationChallenge(rndA);
 
     const ByteVector receivedRndAPrime(response.begin() + EV2_TI_SIZE,
                                        response.begin() + EV2_TI_SIZE + EV2_RANDOM_SIZE);
@@ -2668,14 +2564,18 @@ ByteVector DUOXISO7816Commands::validateEV2Part2Response(
     EXCEPTION_ASSERT_WITH_LOG(receivedRndAPrime == expectedRndAPrime, LibLogicalAccessException,
         "DUOX AuthenticateEV2First failed: received RndA' does not match the expected rotated RndA.");
 
-    EXCEPTION_ASSERT_WITH_LOG(response.size() >= EV2_TI_SIZE + EV2_RANDOM_SIZE + EV2_PDCAP2_SIZE,
-        LibLogicalAccessException, "DUOX response too short");
-
+    /*
+     * PDcap2 is supplied by the PICC.
+     * It' is 's not consumed by the command layer but it's part of the authenticated response
+     * and therefore deliberately parsed here rather than silently skipping six bytes.
+     */
     const ByteVector piccCap2(response.begin() + EV2_TI_SIZE + EV2_RANDOM_SIZE,
                               response.begin() + EV2_TI_SIZE + EV2_RANDOM_SIZE + EV2_PDCAP2_SIZE);
 
-    ByteVector expectedAdjustedPCDCap2 = expectedPCDCap2;
+    EXCEPTION_ASSERT_WITH_LOG(piccCap2.size() == EV2_PDCAP2_SIZE,
+        LibLogicalAccessException, "DUOX AuthenticateEV2First returned an invalid PDcap2 length.");
 
+    ByteVector expectedAdjustedPCDCap2 = expectedPCDCap2;
     expectedAdjustedPCDCap2.resize(EV2_PCDCAP2_SIZE, static_cast<std::uint8_t>(0x00));
     
     const ByteVector returnedPCDCap2(response.begin() + EV2_TI_SIZE + EV2_RANDOM_SIZE + EV2_PDCAP2_SIZE,
@@ -2714,7 +2614,7 @@ void DUOXISO7816Commands::authenticateEV2First(std::uint8_t targetedKeyNo, std::
     EXCEPTION_ASSERT_WITH_LOG(pcdCap2.size() <= MAX_PCDCAP2_SIZE,
         LibLogicalAccessException, "DUOX EV2 AuthenticateEV2First PCDcap2 must contain at most six bytes.");
 
-    auto chip = getDESFireChip();
+    const auto chip = getDESFireChip();
 
     EXCEPTION_ASSERT_WITH_LOG(chip != nullptr,
         LibLogicalAccessException, "DUOX EV2 AuthenticateEV2First requires an initialized DESFire chip.");
@@ -2724,10 +2624,10 @@ void DUOXISO7816Commands::authenticateEV2First(std::uint8_t targetedKeyNo, std::
     EXCEPTION_ASSERT_WITH_LOG(crypto != nullptr,
         LibLogicalAccessException, "DUOX EV2 AuthenticateEV2First requires an initialized DESFire crypto context.");
 
-    const auto ev2Crypto = std::dynamic_pointer_cast<DESFireEV2Crypto>(crypto);
+    const auto duoxCrypto = std::dynamic_pointer_cast<DUOXCrypto>(crypto);
 
-    EXCEPTION_ASSERT_WITH_LOG(ev2Crypto != nullptr,
-        LibLogicalAccessException, "DUOX EV2 AuthenticateEV2First requires the existing DESFireEV2Crypto implementation.");
+    EXCEPTION_ASSERT_WITH_LOG(duoxCrypto != nullptr,
+        LibLogicalAccessException, "DUOX EV2 AuthenticateEV2First requires the existing DUOXCrypto implementation.");
 
     EXCEPTION_ASSERT_WITH_LOG(key != nullptr,
         LibLogicalAccessException, "DUOX EV2 AuthenticateEV2First requires an authentication key.");
@@ -2748,7 +2648,7 @@ void DUOXISO7816Commands::authenticateEV2First(std::uint8_t targetedKeyNo, std::
     try
     {
         const ByteVector diversify = getKeyInformations(key, targetedKeyNo);
-        ev2Crypto->getKey(key, diversify, keyData);
+        duoxCrypto->getKey(key, diversify, keyData);
 
         EXCEPTION_ASSERT_WITH_LOG(keyData.size() == expectedKeyLength,
             LibLogicalAccessException, "DUOX EV2 diversified authentication key has an invalid length.");
@@ -2779,7 +2679,7 @@ void DUOXISO7816Commands::authenticateEV2First(std::uint8_t targetedKeyNo, std::
         EXCEPTION_ASSERT_WITH_LOG(rndA.size() == EV2_RANDOM_SIZE,
             LibLogicalAccessException, "DUOX EV2 random generator returned an invalid RndA length.");
 
-        const ByteVector rndBPrime = rotateAuthenticationChallenge(rndB);
+        const ByteVector rndBPrime = DUOXCrypto::rotateAuthenticationChallenge(rndB);
 
         ByteVector part2Plaintext;
         part2Plaintext.reserve(EV2_RANDOM_SIZE * 2);
@@ -2813,7 +2713,7 @@ void DUOXISO7816Commands::authenticateEV2First(std::uint8_t targetedKeyNo, std::
         EXCEPTION_ASSERT_WITH_LOG(ti.size() == EV2_TI_SIZE,
             LibLogicalAccessException, "DUOX AuthenticateEV2First returned an invalid transaction identifier.");
 
-        const auto sessionKeys = deriveEV2SessionKeys(keyData, rndA, rndB);
+        const auto sessionKeys = duoxCrypto->deriveSessionKeys(keyData, rndA, rndB);
 
         EXCEPTION_ASSERT_WITH_LOG(sessionKeys.first.size() == expectedKeyLength,
             LibLogicalAccessException, "DUOX EV2 authentication produced an invalid encryption session-key length.");
@@ -2821,16 +2721,16 @@ void DUOXISO7816Commands::authenticateEV2First(std::uint8_t targetedKeyNo, std::
         EXCEPTION_ASSERT_WITH_LOG(sessionKeys.second.size() == expectedKeyLength,
             LibLogicalAccessException,"DUOX EV2 authentication produced an invalid MAC session-key length.");
 
-        ev2Crypto->initializeSecureMessagingState();
+        duoxCrypto->initializeSecureMessagingState();
 
-        ev2Crypto->setTI(ti);
-        ev2Crypto->setCmdCtr(0);
-        ev2Crypto->d_sessionKey = sessionKeys.first;
-        ev2Crypto->d_macSessionKey = sessionKeys.second;
-        ev2Crypto->d_auth_method = CryptoMethod::CM_EV2;
-        ev2Crypto->d_currentKeyNo  = targetedKeyNo;
+        duoxCrypto->setTI(ti);
+        duoxCrypto->setCmdCtr(0);
+        duoxCrypto->d_sessionKey    = sessionKeys.first;
+        duoxCrypto->d_macSessionKey = sessionKeys.second;
+        duoxCrypto->d_auth_method   = CryptoMethod::CM_DUOX;
+        duoxCrypto->d_currentKeyNo  = targetedKeyNo;
 
-        ev2Crypto->setKey(ev2Crypto->d_currentAid, 0, targetedKeyNo, key);
+        duoxCrypto->setKey(duoxCrypto->d_currentAid, 0, targetedKeyNo, key);
 
         clearSensitiveBytes(rndA);
         clearSensitiveBytes(rndB);
@@ -2841,7 +2741,7 @@ void DUOXISO7816Commands::authenticateEV2First(std::uint8_t targetedKeyNo, std::
     }
     catch (...)
     {
-        resetDUOXEV2AuthenticationState(ev2Crypto);
+        resetDUOXEV2AuthenticationState(duoxCrypto);
         clearSensitiveBytes(keyData);
 
         throw;
@@ -2856,13 +2756,6 @@ void DUOXISO7816Commands::authenticateEV2First(std::uint8_t targetedKeyNo, std::
 // -------------------------------------------------------------------------
 // DESFire EV2
 // -------------------------------------------------------------------------
-
-//TODO Merge later between EV2/EV3 usage and DUOX usage
-/*void DUOXISO7816Commands::changeKeyEV2(uint8_t keyset, uint8_t keyno,
-                                       std::shared_ptr<DESFireKey> key)
-{
-    DESFireEV3ISO7816Commands::changeKeyEV2(keyset, keyno, key);
-}*/
 
 // TODO add later EV2 retrocompatibility mode
 /*void DUOXISO7816Commands::authenticateEV2First(uint8_t keyno, std::shared_ptr<DESFireKey> key)

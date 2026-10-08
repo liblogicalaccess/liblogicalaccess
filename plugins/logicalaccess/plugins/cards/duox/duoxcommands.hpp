@@ -7,7 +7,7 @@
 #include <logicalaccess/plugins/cards/desfire/desfireev3commands.hpp>
 #include <logicalaccess/plugins/cards/desfire/lla_cards_desfire_api.hpp>
 
-#include "duoxecc.hpp"
+#include <logicalaccess/plugins/cards/duox/duoxecc.hpp>
 
 namespace logicalaccess
 {

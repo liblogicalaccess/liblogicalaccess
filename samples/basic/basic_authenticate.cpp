@@ -13,8 +13,8 @@
 
 #include <logicalaccess/plugins/cards/desfire/desfirechip.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfirecommands.hpp>
-#include <logicalaccess/plugins/cards/desfire/duoxcommands.hpp>
-#include <logicalaccess/plugins/cards/desfire/duoxCertificateValidator.hpp>
+#include <logicalaccess/plugins/cards/duox/duoxcommands.hpp>
+#include <logicalaccess/plugins/cards/duox/duoxCertificateValidator.hpp>
 #include <logicalaccess/plugins/crypto/x509V3Certificate.hpp>
 
 #include <openssl/core_names.h>

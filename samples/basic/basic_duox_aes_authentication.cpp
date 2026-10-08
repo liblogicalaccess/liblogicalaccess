@@ -28,7 +28,7 @@
 #include <logicalaccess/dynlibrary/librarymanager.hpp>
 #include <logicalaccess/readerproviders/readerconfiguration.hpp>
 
-#include <logicalaccess/plugins/cards/desfire/duoxcommands.hpp>
+#include <logicalaccess/plugins/cards/duox/duoxcommands.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfirechip.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfirecommands.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/duoxiso7816commands.hpp>
@@ -428,8 +428,8 @@ class DUOXTestContext
         require(state->d_currentAid == expectedAid,
                 "Authentication succeeded but the current AID is unexpected.");
 
-        require(state->d_auth_method == logicalaccess::CryptoMethod::CM_EV2,
-                "Authentication succeeded but the resulting authentication method is not EV2.");
+        require(state->d_auth_method == logicalaccess::CryptoMethod::CM_DUOX,
+                "Authentication succeeded but the resulting authentication method is not DUOX.");
 
         require(state->d_currentKeyNo == TEST_APPLICATION_AUTH_KEY_NO,
             "Authentication succeeded but the authenticated key number is unexpected.");
@@ -749,10 +749,10 @@ void testPiccAES128Authentication(DUOXTestContext &context)
     require(crypto->d_currentKeyNo == PICC_MASTER_KEY_NO,
             "PICC authentication succeeded but authenticated key number is unexpected.");
 
-    require(crypto->d_auth_method == logicalaccess::CryptoMethod::CM_EV2,
-            "PICC authentication succeeded but authentication method is not EV2.");
+    require(crypto->d_auth_method == logicalaccess::CryptoMethod::CM_DUOX,
+            "PICC authentication succeeded but authentication method is not DUOX.");
 
-    std::cout << "[PASS] PICC AES-128 EV2 authentication succeeded.\n";
+    std::cout << "[PASS] PICC AES-128 DUOX authentication succeeded.\n";
 }
 
 void testAES128ApplicationAuthentication(DUOXTestContext &context)
@@ -772,7 +772,7 @@ void testAES128ApplicationAuthentication(DUOXTestContext &context)
     std::cout << "[PASS] AES-128 application authentication succeeded.\n"
               << "[PASS] Current AID remains " << formatAid(DUOX_TEST_AES128_APPLICATION_AID) << ".\n"
               << "[PASS] Authenticated key number is " << static_cast<unsigned int>(TEST_APPLICATION_AUTH_KEY_NO) << ".\n"
-              << "[PASS] Authentication method is EV2.\n";
+              << "[PASS] Authentication method is DUOX.\n";
 }
 
 void testAES256ApplicationAuthentication(DUOXTestContext &context)
@@ -792,7 +792,7 @@ void testAES256ApplicationAuthentication(DUOXTestContext &context)
     std::cout << "[PASS] AES-256 application authentication succeeded.\n"
               << "[PASS] Current AID remains " << formatAid(DUOX_TEST_AES256_APPLICATION_AID) << ".\n"
               << "[PASS] Authenticated key number is " << static_cast<unsigned int>(TEST_APPLICATION_AUTH_KEY_NO) << ".\n"
-              << "[PASS] Authentication method is EV2.\n";
+              << "[PASS] Authentication method is DUOX.\n";
 }
 
 // ==============================================
@@ -889,9 +889,9 @@ int main()
                   << "===========================================================\n"
                   << "[INFO] AES-128 test application : " << formatAid(DUOX_TEST_AES128_APPLICATION_AID) << '\n'
                   << "[INFO] AES-256 test application : " << formatAid(DUOX_TEST_AES256_APPLICATION_AID) << '\n'
-                  << "[INFO] PICC authentication      : AES-128 / EV2\n"
-                  << "[INFO] AES-128 app authentication: AES-128 / EV2\n"
-                  << "[INFO] AES-256 app authentication: AES-256 / EV2\n"
+                  << "[INFO] PICC authentication      : AES-128 / DUOX\n"
+                  << "[INFO] AES-128 app authentication: AES-128 / DUOX\n"
+                  << "[INFO] AES-256 app authentication: AES-256 / DUOX\n"
                   << "===========================================================\n";
 
         if (CARD_PREPARATION_MODE == DUOXCardPreparationMode::EraseCard)

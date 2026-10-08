@@ -1,4 +1,4 @@
-#include <logicalaccess/plugins/cards/desfire/duoxCertificateValidator.hpp>
+#include <logicalaccess/plugins/cards/duox/duoxCertificateValidator.hpp>
 #include <logicalaccess/plugins/crypto/public_key.hpp>
 #include <logicalaccess/plugins/crypto/x509V3Certificate.hpp>
 

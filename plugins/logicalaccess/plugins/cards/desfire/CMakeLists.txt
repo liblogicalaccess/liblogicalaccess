@@ -11,10 +11,15 @@ set(HEADER_RELATIVE_INSTALL_DIR "include/logicalaccess/plugins/cards/desfire")
 file(GLOB_RECURSE SRCS *.cpp)
 file(GLOB_RECURSE INCLUDE *.hpp)
 
+file(GLOB_RECURSE DUOX_SRCS ../duox/*.cpp)
+file(GLOB_RECURSE DUOX_INCLUDE ../duox/*.hpp)
+
 add_library(desfirecards
         SHARED
         ${SRCS}
         ${INCLUDE}
+        ${DUOX_SRCS}
+        ${DUOX_INCLUDE}
         ${LLA_RESOURCE_RC})
 
 SET_TARGET_PROPERTIES(desfirecards PROPERTIES VERSION ${LIBLOGICALACCESS_VERSION_STRING})

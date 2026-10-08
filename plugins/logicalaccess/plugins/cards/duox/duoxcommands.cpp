@@ -1,4 +1,4 @@
-#include <logicalaccess/plugins/cards/desfire/duoxcommands.hpp>
+#include <logicalaccess/plugins/cards/duox/duoxcommands.hpp>
 
 namespace logicalaccess
 {

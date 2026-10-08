@@ -280,7 +280,7 @@ ISO7816Response DESFireEV2ISO7816Commands::transmit(unsigned char cmd,
 {
     auto crypto =
         std::dynamic_pointer_cast<DESFireEV2Crypto>(getDESFireChip()->getCrypto());
-    if (crypto->d_auth_method != CryptoMethod::CM_EV2)
+    if (!usesEV2Crypto(crypto->d_auth_method))
         return DESFireEV1ISO7816Commands::transmit(cmd, buf, lc, forceLc);
 
     auto command = crypto->generateMAC(cmd, buf);
@@ -300,7 +300,7 @@ ISO7816Response DESFireEV2ISO7816Commands::transmit_nomacv(unsigned char cmd,
 {
     auto crypto =
         std::dynamic_pointer_cast<DESFireEV2Crypto>(getDESFireChip()->getCrypto());
-    if (crypto->d_auth_method != CryptoMethod::CM_EV2)
+    if (!usesEV2Crypto(crypto->d_auth_method))
         return DESFireEV1ISO7816Commands::transmit_nomacv(cmd, buf, lc, forceLc);
 
     auto command = crypto->generateMAC(cmd, buf);
@@ -316,7 +316,7 @@ ISO7816Response DESFireEV2ISO7816Commands::handleReadCmd(unsigned char cmd,
 {
     auto crypto =
         std::dynamic_pointer_cast<DESFireEV2Crypto>(getDESFireChip()->getCrypto());
-    if (crypto->d_auth_method != CryptoMethod::CM_EV2 || mode != CM_PLAIN)
+    if (!usesEV2Crypto(crypto->d_auth_method) || mode != CM_PLAIN)
         return DESFireEV1ISO7816Commands::handleReadCmd(cmd, data, mode);
 
     auto result = transmit_plain(cmd, data); // EV2 has a real plain mode

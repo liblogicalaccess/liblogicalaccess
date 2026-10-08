@@ -1,4 +1,4 @@
-#include <logicalaccess/plugins/cards/desfire/duoxCertificateValidator.hpp>
+#include <logicalaccess/plugins/cards/duox/duoxCertificateValidator.hpp>
 
 #include <memory>
 #include <stdexcept>

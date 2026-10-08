@@ -1,4 +1,4 @@
-#include "duoxecc.hpp"
+#include <logicalaccess/plugins/cards/duox/duoxecc.hpp>
 
 #include <algorithm>
 #include <cstddef>

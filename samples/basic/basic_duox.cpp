@@ -13,7 +13,7 @@
 #include <logicalaccess/dynlibrary/librarymanager.hpp>
 #include <logicalaccess/readerproviders/readerconfiguration.hpp>
 
-#include <logicalaccess/plugins/cards/desfire/duoxcommands.hpp>
+#include <logicalaccess/plugins/cards/duox/duoxcommands.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfirechip.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfirecommands.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/duoxiso7816commands.hpp>
@@ -371,8 +371,8 @@ class DUOXTestContext
         const auto state = crypto();
         require(state->d_currentAid == DUOX_TEST_APPLICATION_AID,
                 "SAFETY FAILURE : current AID is not the dedicated DUOX test application.");
-        require(state->d_auth_method == logicalaccess::CryptoMethod::CM_EV2,
-                "Safety check failed : active authentication is not EV2.");
+        require(state->d_auth_method == logicalaccess::CryptoMethod::CM_DUOX,
+                "Safety check failed : active authentication is not DUOX.");
         require(state->d_currentKeyNo == TEST_APPLICATION_AUTH_KEY_NO,
                 "Safety check failed : application key 0 is not authenticated.");
     }
@@ -382,8 +382,8 @@ class DUOXTestContext
         const auto state = crypto();
         require(state->d_currentAid == DUOX_TEST_APPLICATION_AID,
                 "SAFETY FAILURE : ChangeKey is outside the dedicated test application.");
-        require(state->d_auth_method == logicalaccess::CryptoMethod::CM_EV2,
-                "ChangeKey safety check : active authentication is not EV2.");
+        require(logicalaccess::usesEV2Crypto(state->d_auth_method),
+            "ChangeKey safety check : active authentication does not use EV2 crypto.");
         require(state->d_currentKeyNo == TEST_APPLICATION_AUTH_KEY_NO,
                 "SAFETY FAILURE : ChangeKey requires application key 0.");
         require(keyNo != PICC_MASTER_KEY_NO,
@@ -656,12 +656,9 @@ void requireAESKeySettings(const logicalaccess::DUOXKeySettings &settings,
 void requireEV2TestAuthentication(DUOXTestContext &context, std::uint8_t keyNo = TEST_APPLICATION_AUTH_KEY_NO)
 {
     const auto crypto = context.crypto();
-    require(crypto->d_currentAid == DUOX_TEST_APPLICATION_AID,
-            "SAFETY FAILURE: unexpected current AID.");
-    require(crypto->d_currentKeyNo == keyNo,
-            "Unexpected authenticated key number.");
-    require(crypto->d_auth_method == logicalaccess::CryptoMethod::CM_EV2,
-            "Expected EV2 authentication.");
+    require(crypto->d_currentAid == DUOX_TEST_APPLICATION_AID, "SAFETY FAILURE: unexpected current AID.");
+    require(crypto->d_currentKeyNo == keyNo, "Unexpected authenticated key number.");
+    require(logicalaccess::usesEV2Crypto(crypto->d_auth_method), "Expected an authentication method using EV2 crypto.");
 }
 
 void authenticateWithKey(DUOXTestContext &context, std::uint8_t keyNo,
