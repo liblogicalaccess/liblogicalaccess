@@ -16,6 +16,8 @@
 #include <algorithm>
 #include <array>
 
+#include <logicalaccess/plugins/cards/desfire/transactionsignaturecrypto.hpp>
+
 namespace logicalaccess
 {
 
@@ -42,6 +44,14 @@ constexpr std::size_t EV2_PCDCAP2_SIZE = 6;
 constexpr std::size_t EV2_PART1_RESPONSE_SIZE = 16;
 constexpr std::size_t EV2_PART2_COMMAND_SIZE  = 32;
 constexpr std::size_t EV2_PART2_RESPONSE_SIZE = 32;
+
+constexpr unsigned char TMAC_FILE_OPTION_TMI_EXCLUSION = 0x40;
+
+constexpr unsigned char TMAC_KEY_OPTION_NONE   = 0x00;
+constexpr unsigned char TMAC_KEY_OPTION_AES128 = 0x02;
+constexpr unsigned char TMAC_KEY_OPTION_AES256 = 0x03;
+
+constexpr unsigned char TMAC_KEY_OPTION_SIGNATURE = 0x80;
 
 /**
  * \brief Clear and release sensitive byte data.
@@ -518,6 +528,31 @@ void appendDERTLV(ByteVector &output, std::uint8_t tag, const ByteVector &value)
     const ByteVector encodedLength = encodeDERLength(value.size());
     output.insert(output.end(), encodedLength.begin(), encodedLength.end());
     output.insert(output.end(), value.begin(), value.end());
+}
+
+/**
+ * \brief Returns the TMKeyOption value corresponding to a DUOX Transaction MAC key.
+ *
+ * Validates that the key is non-null and that its configured AES key type matches its data length.
+ * DUOX supports AES-128 (16 bytes) and AES-256 (32 bytes) for the Transaction MAC key.
+ *
+ * \param key Transaction MAC key.
+ */
+unsigned char getTransactionMACKeyOption(const std::shared_ptr<DESFireKey> &key)
+{
+    EXCEPTION_ASSERT_WITH_LOG(key != nullptr, LibLogicalAccessException, "A Transaction MAC key is required.");
+
+    const auto keyData = key->getData();
+    const auto keySize = keyData.size();
+
+    EXCEPTION_ASSERT_WITH_LOG((keySize == 16 && key->getKeyType() == DF_KEY_AES) ||
+                              (keySize == 32 && key->getKeyType() == DF_KEY_AES256),
+        LibLogicalAccessException, "Transaction MAC key type and key length are inconsistent.");
+
+    EXCEPTION_ASSERT_WITH_LOG(keySize == 16 || keySize == 32,
+        LibLogicalAccessException, "DUOX Transaction MAC key must contain 16 or 32 bytes.");
+
+    return keySize == 16 ? TMAC_KEY_OPTION_AES128 : TMAC_KEY_OPTION_AES256;
 }
 
 } // namespace
@@ -2866,12 +2901,135 @@ void DUOXISO7816Commands::createCyclicRecordFile(
                                                       isoFID, multiAccessRights);
 }
 
+std::uint32_t DUOXISO7816Commands::decodeTransactionSignatureCounter(const CommitTransactionResult &result)
+{
+    EXCEPTION_ASSERT_WITH_LOG(result.type == CommitTransactionResult::Type::Signature, LibLogicalAccessException,
+        "Expected Signature result.");
+
+    return decodeTransactionCounter(result.signature.tmc);
+}
+
+std::uint32_t DUOXISO7816Commands::decodeTransactionResultCounter(const CommitTransactionResult &result)
+{
+    switch (result.type)
+    {
+    case CommitTransactionResult::Type::MAC:
+        return decodeTransactionCounter(result.mac.tmc);
+
+    case CommitTransactionResult::Type::Signature:
+        return decodeTransactionCounter(result.signature.tmc);
+
+    case CommitTransactionResult::Type::NoCredential:
+        throw LibLogicalAccessException("Cannot decode the transaction counter : no transaction credential was returned.");
+    }
+
+    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Cannot decode the transaction counter : invalid credential type.");
+}
+
+bool DUOXISO7816Commands::verifyTransactionSignature(const TransactionSignatureFileData &committed,
+                                                     EVP_PKEY *applicationPublicKey) const
+{
+    EXCEPTION_ASSERT_WITH_LOG(hasCommittedTransactionMACInput_,
+        LibLogicalAccessException, "Transaction Signature : no successfully committed TMI is available.");
+
+    return DESFireTransactionSignatureCrypto::verifyTSV(
+        lastCommittedTransactionMACInput_, committed.tmc,
+        committed.tsv, applicationPublicKey);
+}
+
+void DUOXISO7816Commands::configureTransactionSignature(unsigned char transactionManagementFileNo)
+{
+    initializeTransactionMACInputTracking(transactionManagementFileNo);
+}
+
+void DUOXISO7816Commands::validateTransactionMACConfiguration(const ByteVector &applicationTMACKey,
+                                                              const ByteVector &uid) const
+{
+    EXCEPTION_ASSERT_WITH_LOG(applicationTMACKey.size() == 16 || applicationTMACKey.size() == 32,
+        LibLogicalAccessException, "DUOX TMAC requires a 16 byte AES-128 or 32 byte AES-256 application key.");
+
+    EXCEPTION_ASSERT_WITH_LOG(uid.size() == 7 || uid.size() == 10,
+        LibLogicalAccessException, "DUOX TMAC requires a 7 or 10 byte UID.");
+}
+
 void DUOXISO7816Commands::createTransactionMACFile(
     unsigned char fileno, EncryptionMode comSettings,
     const DESFireAccessRights &accessRights, std::shared_ptr<DESFireKey> tmkey)
 {
-    DESFireEV3ISO7816Commands::createTransactionMACFile(fileno, comSettings, accessRights,
-                                                        tmkey);
+    DUOXTransactionMACFileOptions options;
+    options.fileNo            = fileno;
+    options.communicationMode = comSettings;
+    options.accessRights      = accessRights;
+    options.mode              = DUOXTransactionMACFileMode::TransactionMAC;
+    options.transactionMACKey = std::move(tmkey);
+
+    createTransactionMACFile(options);
+}
+
+void DUOXISO7816Commands::createTransactionMACFile(const DUOXTransactionMACFileOptions &options)
+{
+    const bool transactionSignature = options.mode == DUOXTransactionMACFileMode::TransactionSignature;
+
+    EXCEPTION_ASSERT_WITH_LOG(options.fileNo <= 0x1F,
+        LibLogicalAccessException, "Transaction MAC file number must fit in five bits.");
+
+    EXCEPTION_ASSERT_WITH_LOG(options.communicationMode == CM_PLAIN ||
+                              options.communicationMode == CM_MAC ||
+                              options.communicationMode == CM_ENCRYPT,
+        LibLogicalAccessException, "Unsupported communication mode for Transaction MAC file.");
+
+    EXCEPTION_ASSERT_WITH_LOG(options.excludeFilesFromTMI || options.tmiExclusionFileMap == 0,
+        LibLogicalAccessException, "A non-zero TMI exclusion map requires exclusion to be enabled.");
+
+    const auto readWriteAccess = options.accessRights.readAndWriteAccess;
+    const bool authenticatedCommitReaderID = readWriteAccess != AR_FREE && readWriteAccess != AR_NEVER;
+
+    // Transaction MAC always requires a MAC key. Transaction Signature may include the MAC key parameters.
+    const bool includeMACKey = !transactionSignature || authenticatedCommitReaderID;
+
+    unsigned char tmKeyOption = TMAC_KEY_OPTION_NONE;
+    ByteVector data;
+
+    if (includeMACKey)
+    {
+        EXCEPTION_ASSERT_WITH_LOG(options.transactionMACKey != nullptr,
+            LibLogicalAccessException, "Transaction MAC key is required for this configuration.");
+
+        const unsigned char keyOption = getTransactionMACKeyOption(options.transactionMACKey);
+        tmKeyOption |= keyOption;
+        const auto keyData = options.transactionMACKey->getData();
+        data.insert(data.end(), keyData.begin(), keyData.end());
+        data.push_back(options.transactionMACKey->getKeyVersion());
+    }
+
+    if (transactionSignature)
+    {
+        tmKeyOption |= TMAC_KEY_OPTION_SIGNATURE;
+
+        EXCEPTION_ASSERT_WITH_LOG(options.transactionSignatureKeyNo <= 4,
+            LibLogicalAccessException, "DUOX Transaction Signature key number must be between 0 and 4.");
+    }
+
+    ByteVector parameters;
+    parameters.reserve(options.excludeFilesFromTMI ? 9 : 5);
+
+    parameters.push_back(options.fileNo);
+    unsigned char fileOption = static_cast<unsigned char>(options.communicationMode);
+    if (options.excludeFilesFromTMI)
+        fileOption |= TMAC_FILE_OPTION_TMI_EXCLUSION;
+    parameters.push_back(fileOption);
+    const short accessRightsValue = AccessRightsInMemory(options.accessRights);
+    BufferHelper::setUShort(parameters, accessRightsValue);
+    if (options.excludeFilesFromTMI) // Optional DUOX TMI exclusion file map
+    {
+        for (unsigned int shift = 0; shift < 32; shift += 8)
+            parameters.push_back(static_cast<unsigned char>((options.tmiExclusionFileMap >> shift) & 0xFF));
+    }
+    parameters.push_back(tmKeyOption); // TMKeyOption : key type plus optional Transaction Signature bit
+    if (transactionSignature)          // Transaction Signature identifies the ECC private key number
+        data.push_back(options.transactionSignatureKeyNo);
+
+    transmit_full(DFEV2_INS_CREATE_TRANSACTION_MAC_FILE, data, parameters);
 }
 
 ByteVector DUOXISO7816Commands::getKeyVersion(uint8_t keysetno, uint8_t keyno)
@@ -2924,16 +3082,81 @@ void DUOXISO7816Commands::proximityCheck(std::shared_ptr<DESFireKey> key,
     DESFireEV3ISO7816Commands::proximityCheck(key, chunk_size);
 }
 
-ByteVector DUOXISO7816Commands::commitTransaction(bool return_tmac)
+// -------------------------------------------------------------------------
+// Transaction management
+// -------------------------------------------------------------------------
+
+void DUOXISO7816Commands::abortTransaction()
 {
-    return DESFireEV3ISO7816Commands::commitTransaction(return_tmac);
+    transmit(DF_INS_ABORT_TRANSACTION); // TODO 0x0C is incorrectly returned as an error; should be a warning
+    onTransactionAborted();
+}
+
+CommitTransactionResult DUOXISO7816Commands::commitTransaction(bool return_tmac)
+{
+    using TransactionManagement::TMC_SIZE;
+    using TransactionManagement::TMV_SIZE;
+    using TransactionManagement::TSV_SIZE;
+    using TransactionManagement::TMAC_SIZE;
+    using TransactionManagement::TSIG_SIZE;
+
+    constexpr std::uint8_t OPTION_RETURN_TMC = 0x01U;
+    constexpr std::uint8_t OPTION_NONE       = 0x00U;
+
+    ByteVector params;
+    params.push_back(return_tmac ? OPTION_RETURN_TMC : OPTION_NONE);
+
+    const auto response = transmit(DF_COMMIT_TRANSACTION, params);
+
+    checkSuccess(response, DUOX_SUCCESS, __func__);
+
+    const auto &data = response.getData();
+
+    if (!return_tmac)
+    {
+        EXCEPTION_ASSERT_WITH_LOG(data.empty(), LibLogicalAccessException,
+            "DUOX CommitTransaction returned unexpected response data when no transaction credential was requested.");
+        onTransactionCommitted();
+        return {};
+    }
+    
+    EXCEPTION_ASSERT_WITH_LOG(data.size() == TMAC_SIZE || data.size() == TSIG_SIZE,
+        LibLogicalAccessException, "DUOX CommitTransaction returned an invalid response size : received "
+        + std::to_string(data.size()) + " bytes; expected " + std::to_string(TMAC_SIZE) + " bytes (TMC + TMV) or "
+        + std::to_string(TSIG_SIZE) + " bytes (TMC + TSV).");
+
+    CommitTransactionResult result;
+
+    if (data.size() == TMAC_SIZE)
+    {
+        result.type = CommitTransactionResult::Type::MAC;
+
+        std::copy_n(data.begin(), TMC_SIZE, result.mac.tmc.begin());
+        std::copy_n(data.begin() + TMC_SIZE, TMV_SIZE, result.mac.tmv.begin());
+    }
+    else
+    {
+        result.type = CommitTransactionResult::Type::Signature;
+
+        std::copy_n(data.begin(), TMC_SIZE, result.signature.tmc.begin());
+        std::copy_n(data.begin() + TMC_SIZE, TSV_SIZE, result.signature.tsv.begin());
+    }
+
+    onTransactionCommitted();
+
+    return result;
+}
+
+TransactionMACFileData DUOXISO7816Commands::readTransactionMacFile(unsigned char fileno)
+{
+    return DESFireEV3ISO7816Commands::readTransactionMacFile(fileno);
 }
 
 ByteVector DUOXISO7816Commands::commitReaderID(ByteVector readerid)
 {
     return DESFireEV3ISO7816Commands::commitReaderID(readerid);
 }
-
+ 
 void DUOXISO7816Commands::restoreTransfer(unsigned char target_fileno,
                                           unsigned char source_fileno)
 {

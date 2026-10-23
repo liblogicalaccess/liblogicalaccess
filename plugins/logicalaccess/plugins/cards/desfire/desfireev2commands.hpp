@@ -9,6 +9,9 @@
 
 #include <logicalaccess/plugins/cards/desfire/desfireev1commands.hpp>
 
+#include <array>
+#include <cstdint>
+
 namespace logicalaccess
 {
 #ifndef DFEV2_INS
@@ -33,6 +36,53 @@ namespace logicalaccess
 #define DFEV2_PROXIMITY_CHECK_KEY_NO 0x21
 
 #endif
+
+enum class TransactionMACState
+{
+    Disabled,
+    Active
+};
+
+namespace TransactionManagement
+{
+constexpr std::size_t TMC_SIZE = 4U;
+constexpr std::size_t TMV_SIZE = 8U;
+constexpr std::size_t TSV_SIZE = 64U;
+
+constexpr std::size_t TMAC_SIZE = TMC_SIZE + TMV_SIZE;
+constexpr std::size_t TSIG_SIZE = TMC_SIZE + TSV_SIZE;
+
+using TransactionCounter        = std::array<std::uint8_t, TMC_SIZE>;
+using TransactionMACValue       = std::array<std::uint8_t, TMV_SIZE>;
+using TransactionSignatureValue = std::array<std::uint8_t, TSV_SIZE>;
+}
+
+struct TransactionMACFileData
+{
+    TransactionManagement::TransactionCounter tmc{};
+    TransactionManagement::TransactionMACValue tmv{};
+};
+
+struct TransactionSignatureFileData
+{
+    TransactionManagement::TransactionCounter tmc{};
+    TransactionManagement::TransactionSignatureValue tsv{};
+};
+
+struct CommitTransactionResult
+{
+    enum class Type
+    {
+        NoCredential,
+        MAC,
+        Signature
+    };
+
+    Type type = Type::NoCredential;
+
+    TransactionMACFileData mac{};
+    TransactionSignatureFileData signature{};
+};
 
 class DESFireEV2Chip;
 
@@ -157,7 +207,16 @@ class LLA_CARDS_DESFIRE_API DESFireEV2Commands : public ICommands
      * \brief Commit the transaction.
      * \param return_tmac True to return the new Transaction MAC counter and value, false otherwise.
      */
-    virtual ByteVector commitTransaction(bool return_tmac) = 0;
+    virtual CommitTransactionResult commitTransaction(bool return_tmac) = 0;
+
+    /**
+     * Read and decode Transaction MAC file contents.
+     *
+     * The file must be configured and readable under the current
+     * application's access rights.
+     */
+    virtual TransactionMACFileData readTransactionMacFile(unsigned char fileno) = 0;
+    // TODO Should call getFileSettings(fileno) and verify that the file type is TransactionMAC
 
     virtual ByteVector commitReaderID(ByteVector readerid) = 0;
 

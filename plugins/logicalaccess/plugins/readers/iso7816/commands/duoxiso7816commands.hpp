@@ -206,6 +206,8 @@ class LLA_READERS_ISO7816_API DUOXISO7816Commands : public DESFireEV3ISO7816Comm
                                   const DESFireAccessRights &accessRights,
                                   std::shared_ptr<DESFireKey> tmkey) override;
 
+    void createTransactionMACFile(const DUOXTransactionMACFileOptions &options) override;
+
     ByteVector getKeyVersion(uint8_t keysetno, uint8_t keyno) override;
 
     void setConfiguration(bool formatCardEnabled, bool randomIdEnabled,
@@ -226,7 +228,7 @@ class LLA_READERS_ISO7816_API DUOXISO7816Commands : public DESFireEV3ISO7816Comm
 
     void proximityCheck(std::shared_ptr<DESFireKey> key, uint8_t chunk_size) override;
 
-    ByteVector commitTransaction(bool return_tmac) override;
+    CommitTransactionResult commitTransaction(bool return_tmac) override;
     ByteVector commitReaderID(ByteVector readerid) override;
 
     void restoreTransfer(unsigned char target_fileno, unsigned char source_fileno) override;
@@ -271,10 +273,20 @@ class LLA_READERS_ISO7816_API DUOXISO7816Commands : public DESFireEV3ISO7816Comm
 
     void selectApplication(unsigned int aid) override;
     void selectApplication(unsigned int aid1, unsigned int aid2) override;
+    
+    [[nodiscard]] std::uint32_t decodeTransactionSignatureCounter(const CommitTransactionResult &result);
+    [[nodiscard]] std::uint32_t decodeTransactionResultCounter(const CommitTransactionResult &result);
+
+    [[nodiscard]] bool verifyTransactionSignature(const TransactionSignatureFileData &committed,
+                                                  EVP_PKEY *applicationPublicKey) const;
+
+    void configureTransactionSignature(unsigned char transactionManagementFileNo);
 
     protected:
     ISO7816Response transmitDUOX(std::uint8_t cmd, const ByteVector &params, const ByteVector &data,
                  DUOXCommunicationMode commMode = DUOXCommunicationMode::Full);
+
+    void validateTransactionMACConfiguration(const ByteVector &applicationTMACKey, const ByteVector &uid) const override;
 
     private:
     void changeKeyEV2Internal(std::uint8_t keySetNo, std::uint8_t keyNo,
@@ -318,6 +330,10 @@ class LLA_READERS_ISO7816_API DUOXISO7816Commands : public DESFireEV3ISO7816Comm
 
       DESFireCardVersion getVersion() override;
 
+      void abortTransaction() override;
+
+      TransactionMACFileData readTransactionMacFile(unsigned char fileno) override;
+
     private:
     ISO7816Response sendDUOXGeneralAuthenticate(std::uint8_t p2, const ByteVector &data, std::uint16_t le);
 
@@ -334,6 +350,7 @@ class LLA_READERS_ISO7816_API DUOXISO7816Commands : public DESFireEV3ISO7816Comm
     static ECPoint parseAuthenticationResponse(const ByteVector &response, CurveID curve);
 
     ByteVector parseGeneralAuthenticateFinalResponse(const ByteVector &data);
+
 
     DUOXECCAuthenticationState d_duoxECCAuthentication;
 

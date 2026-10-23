@@ -144,6 +144,46 @@ enum class AuthMethod : std::uint8_t
 };
 
 /**
+ * \brief Selects the operation supported by a DUOX Transaction MAC file.
+ */
+enum class DUOXTransactionMACFileMode
+{
+    TransactionMAC, // Enables Transaction MAC generation and verification
+    TransactionSignature // Enables Transaction Signature using an application ECC private key
+};
+
+/**
+ * \brief Describes the parameters required to create a DUOX Transaction MAC or Transaction Signature file.
+ *
+ * The selected mode and access rights determine whether the Transaction MAC key parameters are required.
+ * The Transaction Signature mode additionally requires an ECC private key number.
+ *
+ * DUOX-specific options control the exclusion of files from Transaction MAC or Transaction Signature input calculation.
+ */
+struct DUOXTransactionMACFileOptions
+{
+    unsigned char fileNo             = 0;          // File number in the targeted application
+    EncryptionMode communicationMode = CM_ENCRYPT; // Communication mode used for the file
+    DESFireAccessRights accessRights{};            // Access conditions for reading, writing and changing the file
+
+    DUOXTransactionMACFileMode mode = DUOXTransactionMACFileMode::TransactionMAC;
+
+    // Transaction MAC key
+    // Required for Transaction MAC mode and Transaction Signature configurations with authenticated CommitReaderID
+    std::shared_ptr<DESFireKey> transactionMACKey;
+
+    // Transaction Signature only : ECC private key number
+    unsigned char transactionSignatureKeyNo = 0;
+
+    // Enables DUOX exclusion of selected files from TMAC/TSIG calculation : FileOption bit 6
+    bool excludeFilesFromTMI = false;
+
+    // Bitmask identifying files excluded from TMAC/TSIG calculation
+    // Present in the command header only when exclusion is enabled
+    std::uint32_t tmiExclusionFileMap = 0;
+};
+
+/**
  * \brief Base commands class for DUOX cards
  *
  * DUOX is based on the DESFire EV3 command architecture. This class provides
@@ -225,6 +265,7 @@ class LLA_CARDS_DESFIRE_API DUOXCommands : public DESFireEV3Commands
     // TODO Rewrite function later
     //virtual void changeKeyEV2(std::uint8_t keySetNo, std::uint8_t keyNo, std::shared_ptr<DESFireKey> newKey) = 0;
 
+    virtual void createTransactionMACFile(const DUOXTransactionMACFileOptions &options) = 0;
     
     virtual void isoGeneralAuthenticate(std::uint8_t caRootKeyNo,
                                         std::uint8_t secondaryCaRootKeyNo,
@@ -342,6 +383,16 @@ class LLA_CARDS_DESFIRE_API DUOXCommands : public DESFireEV3Commands
     virtual ByteVector isoGeneralAuthenticateFinal(std::uint8_t caRootKeyNo, AuthMethod authMethod,
         const ByteVector &certA, std::uint8_t certFileNo, std::uint8_t privateKeyNo, const ByteVector &ePublicA,
         const ByteVector &msgAEnc, CurveID curve, std::uint32_t le) = 0;
+
+    /**
+     * \brief Abort pending transactional changes.
+     *
+     * This operation must not be interpreted as proof that a preceding
+     * commit with an uncertain transport outcome was rolled back.
+     *
+     * \throws LibLogicalAccessException on card or transport failure.
+     */
+    virtual void abortTransaction() = 0;
 
 };
 

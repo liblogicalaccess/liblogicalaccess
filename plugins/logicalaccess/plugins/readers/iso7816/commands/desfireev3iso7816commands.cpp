@@ -172,7 +172,9 @@ void DESFireEV3ISO7816Commands::createLinearRecordFile(unsigned char fileno, Enc
     unsigned int maxNumberOfRecords,
     unsigned short isoFID, bool multiAccessRights)
 {
-    DESFireEV2ISO7816Commands::createLinearRecordFile(fileno, comSettings, accessRights, fileSize, maxNumberOfRecords, isoFID, multiAccessRights);
+    DESFireEV2ISO7816Commands::createLinearRecordFile(fileno, comSettings, accessRights,
+                                                      fileSize, maxNumberOfRecords,
+                                                      isoFID, multiAccessRights);
 }
 
 void DESFireEV3ISO7816Commands::createCyclicRecordFile(unsigned char fileno, EncryptionMode comSettings,
@@ -181,14 +183,16 @@ void DESFireEV3ISO7816Commands::createCyclicRecordFile(unsigned char fileno, Enc
     unsigned int maxNumberOfRecords,
     unsigned short isoFID, bool multiAccessRights)
 {
-    DESFireEV2ISO7816Commands::createCyclicRecordFile(fileno, comSettings, accessRights, fileSize, maxNumberOfRecords, isoFID, multiAccessRights);
+    DESFireEV2ISO7816Commands::createCyclicRecordFile(fileno, comSettings, accessRights,
+                                                      fileSize, maxNumberOfRecords,
+                                                      isoFID, multiAccessRights);
 }
 
 void DESFireEV3ISO7816Commands::createTransactionMACFile(
     unsigned char fileno, EncryptionMode comSettings,
     const DESFireAccessRights &accessRights, std::shared_ptr<DESFireKey> tmkey)
 {
-    DESFireEV2ISO7816Commands::createTransactionMACFile(fileno, comSettings, accessRights, tmkey);
+    DESFireEV2ISO7816Commands::createTransactionMACFile(fileno, comSettings, accessRights, std::move(tmkey));
 }
 
 ByteVector DESFireEV3ISO7816Commands::getKeyVersion(uint8_t keysetno, uint8_t keyno)
@@ -384,9 +388,14 @@ void DESFireEV3ISO7816Commands::proximityCheck(std::shared_ptr<DESFireKey> key,
     DESFireEV2ISO7816Commands::proximityCheck(key, chunk_size);
 }
 
-ByteVector DESFireEV3ISO7816Commands::commitTransaction(bool return_tmac)
+CommitTransactionResult DESFireEV3ISO7816Commands::commitTransaction(bool return_tmac)
 {
     return DESFireEV2ISO7816Commands::commitTransaction(return_tmac);
+}
+
+TransactionMACFileData DESFireEV3ISO7816Commands::readTransactionMacFile(unsigned char fileno)
+{
+    return DESFireEV2ISO7816Commands::readTransactionMacFile(fileno);
 }
 
 ByteVector DESFireEV3ISO7816Commands::commitReaderID(ByteVector readerid)
@@ -437,25 +446,20 @@ bool DESFireEV3ISO7816Commands::performAESOriginalityCheck()
 
 void DESFireEV3ISO7816Commands::validateAid(unsigned int aid)
 {
-    if (aid > MAX_AID)
-    {
-        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Invalid DESFire EV3 application identifier.");
-    }
+    EXCEPTION_ASSERT_WITH_LOG(aid <= MAX_AID, LibLogicalAccessException, "Invalid DESFire EV3 application identifier.");
 }
 
-// TODO Handle TransactionMAC cases and replace throw by log (command is merely rejected and PICC level is selected)
+// TODO Handle TransactionMAC cases and replace throw (command is merely rejected and PICC level is selected)
 void DESFireEV3ISO7816Commands::validateApplicationPair(unsigned int aid1, unsigned int aid2)
 {
     validateAid(aid1);
     validateAid(aid2);
 
-    if (aid1 == PICC_AID || aid2 == PICC_AID)
-        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-            "The PICC application cannot be selected together with another application.");
+    EXCEPTION_ASSERT_WITH_LOG(aid1 != PICC_AID && aid2 != PICC_AID,
+        LibLogicalAccessException, "The PICC application cannot be selected together with another application.");
 
-    if (aid1 == aid2)
-        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-            "Selected DESFire EV3 applications must have different application identifiers.");
+    EXCEPTION_ASSERT_WITH_LOG(aid1 != aid2,
+        LibLogicalAccessException, "Selected DESFire EV3 applications must have different application identifiers.");
 }
 
 void DESFireEV3ISO7816Commands::selectApplication(unsigned int aid)
@@ -673,6 +677,16 @@ bool DESFireEV3ISO7816Commands::isValidManufacturingPayloadSize(
 DESFireCommands::DESFireCardVersion DESFireEV3ISO7816Commands::getVersion()
 {
     return getVersionImpl(DESFireGetVersionOption::None, true);
+}
+
+void DESFireEV3ISO7816Commands::validateTransactionMACConfiguration(const ByteVector &applicationTMACKey,
+                                                                    const ByteVector &uid) const
+{
+    EXCEPTION_ASSERT_WITH_LOG(applicationTMACKey.size() == 16,
+        LibLogicalAccessException, "DESFire EV3 TMAC requires a 16 byte AES-128 application key.");
+
+    EXCEPTION_ASSERT_WITH_LOG(uid.size() == 4 || uid.size() == 7 || uid.size() == 10,
+        LibLogicalAccessException, "DESFire EV3 TMAC requires a 4, 7, or 10 byte UID.");
 }
 
 }

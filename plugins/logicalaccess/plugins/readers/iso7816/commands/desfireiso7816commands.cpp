@@ -40,6 +40,15 @@ void requireBytes(const ByteVector &data, const std::size_t offset, const std::s
 }
 
 /**
+ * \brief Read an unsigned 8-bit little-endian value.
+ */
+std::uint8_t readUInt8LE(const ByteVector &data, std::size_t &offset)
+{
+    requireBytes(data, offset, 1);
+    return data[offset++];
+}
+
+/**
  * \brief Read an unsigned 16-bit little-endian value.
  */
 std::uint16_t readUInt16LE(const ByteVector &data, std::size_t &offset)
@@ -264,7 +273,7 @@ void parseValueFile(const ByteVector &data, std::size_t &offset, DESFireCommands
 void parseRecordFile(const ByteVector &data, std::size_t &offset, DESFireCommands::RecordFileSetting &settings,
                      const unsigned char fileOption)
 {
-    const std::uint16_t recordSize = readUInt16LE(data, offset);
+    const std::uint16_t recordSize = readUInt24LE(data, offset);
     const std::uint32_t maxNumberRecords = readUInt24LE(data, offset);
     const std::uint32_t currentNumberRecords = readUInt24LE(data, offset);
 
@@ -289,7 +298,7 @@ void parseTransactionMacFile(const ByteVector &data, std::size_t &offset,
                                     DESFireCommands::TransactionMacFileSetting &settings,
                                     const unsigned char fileOption)
 {
-    settings.tmKeyOption = static_cast<unsigned char>(readUInt16LE(data, offset));
+    settings.tmKeyOption = static_cast<unsigned char>(readUInt8LE(data, offset));
 
     const unsigned char keyType = static_cast<unsigned char>(settings.tmKeyOption & 0x03U);
     settings.transactionSignature = (settings.tmKeyOption & 0x80U) != 0U;

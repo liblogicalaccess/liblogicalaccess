@@ -136,7 +136,8 @@ class LLA_READERS_ISO7816_API DESFireEV3ISO7816Commands
 
     void proximityCheck(std::shared_ptr<DESFireKey> key, uint8_t chunk_size) override;
 
-    ByteVector commitTransaction(bool return_tmac) override;
+    CommitTransactionResult commitTransaction(bool return_tmac) override;
+    TransactionMACFileData readTransactionMacFile(unsigned char fileno) override;
 
     ByteVector commitReaderID(ByteVector readerid) override;
 
@@ -156,6 +157,8 @@ class LLA_READERS_ISO7816_API DESFireEV3ISO7816Commands
     DESFireCardVersion getVersion() override;
 
   protected:
+    void validateTransactionMACConfiguration(const ByteVector &applicationTMACKey, const ByteVector &uid) const override;
+
     /**
      * \brief Get the GetVersion option used by the card implementation.
      */

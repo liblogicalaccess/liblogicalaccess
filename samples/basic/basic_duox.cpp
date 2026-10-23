@@ -1302,6 +1302,31 @@ void testChangeKeyInteroperability(DUOXTestContext &context)
     std::cout << "[PASS] ChangeKey / ChangeKeyEV2 interoperability verified.\n";
 }
 
+// -------------------------------------------------------------------------
+// Transaction Management - invalid Reader ID must be rejected locally
+// -------------------------------------------------------------------------
+void testCommitReaderIDRejectsInvalidLength(DUOXTestContext &context)
+{
+    std::cout << "\n[Transaction Management] Reject invalid Reader ID...\n";
+
+    const ByteVector invalidReaderID{0x01, 0x02, 0x03};
+
+    bool rejected = false;
+
+    try
+    {
+        context.duox()->commitReaderID(invalidReaderID);
+    }
+    catch (const std::exception &)
+    {
+        rejected = true;
+    }
+
+    require(rejected, "CommitReaderID accepted an invalid Reader ID length.");
+
+    std::cout << "[PASS] Invalid Reader ID rejected.\n";
+}
+
 // ==============================================
 // Test runner
 // ==============================================
@@ -1382,6 +1407,7 @@ void runDUOXManageKeyPairTests(const std::shared_ptr<logicalaccess::Chip> &chip)
     std::cout << "[INFO] Authenticating to the dedicated DUOX application...\n";
 
     context.authenticateTestApplication();
+    testCommitReaderIDRejectsInvalidLength(context);
 
     std::cout << "[PASS] Application authentication succeeded.\n";
 

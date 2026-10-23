@@ -636,7 +636,7 @@ ByteVector extractP256PrivateKey(EVP_PKEY *key)
     assertP256EVPKey(key, "EC key");
 
     BIGNUM *rawPrivateKey = nullptr;
-    checkOpenSSLResult( EVP_PKEY_get_bn_param(key, OSSL_PKEY_PARAM_PRIV_KEY, &rawPrivateKey),
+    checkOpenSSLResult(EVP_PKEY_get_bn_param(key, OSSL_PKEY_PARAM_PRIV_KEY, &rawPrivateKey),
         "EVP_PKEY_get_bn_param(private)");
 
     BIGNUMHandle privateKey(rawPrivateKey);
