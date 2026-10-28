@@ -51,6 +51,24 @@ class LLA_READERS_ISO7816_API SAMAV3ISO7816Commands
                                 const ByteVector &targetSamUid = ByteVector(),
                                 const ByteVector &divInput     = ByteVector()) override;
 
+    void PKI_ImportEccKey(unsigned char keyNo, unsigned short eccSet,
+                          unsigned char keyNoCEK, unsigned char keyNoVCEK,
+                          unsigned char keyNoKUC, unsigned char keyNoAEK,
+                          unsigned char keyNoVAEK,
+                          const ByteVector &eccPublicKey = ByteVector(),
+                          bool settingsOnly              = false) override;
+
+    void PKI_ImportEccCurve(unsigned char curveNo, unsigned char keyNoCCK,
+                            unsigned char keyNoVCCK,
+                            const ByteVector &eccCurve = ByteVector(),
+                            bool settingsOnly          = false) override;
+
+    ByteVector PKI_ExportEccPublicKey(unsigned char keyNo) override;
+
+    void PKI_VerifyEccSignature(unsigned char keyNo, unsigned char curveNo,
+                                const ByteVector &message,
+                                const ByteVector &signature) override;
+
     void PKI_ImportCaPk(const ByteVector &rid, unsigned char pkId, unsigned short set,
                         unsigned char keyNoCEK, unsigned char keyVCEK,
                         unsigned char keyNoAEK, unsigned char keyVAEK,

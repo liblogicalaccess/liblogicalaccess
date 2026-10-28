@@ -35,12 +35,12 @@ class SAMAV2Commands : public ICommands
 	
     virtual void disableKeyEntryOffline(unsigned char keyno, unsigned short changecnt, const ByteVector& encuid) = 0;
 
-    virtual void PKI_GenerateKeyPair(unsigned char keyNo, unsigned short configSettings, unsigned char keyNoCEK,
+    virtual void PKI_GenerateKeyPair(unsigned char keyNo, const sam::pki::PKISet &configSettings, unsigned char keyNoCEK,
             unsigned char keyNoVCEK, unsigned char keyNoRef, const sam::AEKVAEK &accessKeys,
             unsigned short nLen = 0x40, unsigned short eLen = 0x04, const ByteVector &pki_e = {},
             bool includeAccess = false) = 0;
 
-    virtual void PKI_ImportKey(unsigned char keyNo, unsigned short configSettings,
+    virtual void PKI_ImportKey(unsigned char keyNo, const sam::pki::PKISet &configSettings,
                       unsigned char keyNoCEK, unsigned char keyNoVCEK,
                       unsigned char refNoKUC, const ByteVector &pki_n,
                       const ByteVector &pki_e, const ByteVector &pki_p = {},
@@ -49,9 +49,9 @@ class SAMAV2Commands : public ICommands
                       const sam::AEKVAEK &accessKeys = {}, bool includeAccess = false,
                       bool updateSettingsOnly = false) = 0;
 
-    virtual ByteVector PKI_ExportPrivateKey(unsigned char keyNo, bool returnAEK = false) = 0;
+    virtual sam::pki::ExportedPrivateKey PKI_ExportPrivateKey(unsigned char keyNo, bool returnAEK = false) = 0;
 
-    virtual ByteVector PKI_ExportPublicKey(unsigned char keyNo, bool returnAEK = false) = 0;
+    virtual sam::pki::ExportedPublicKey PKI_ExportPublicKey(unsigned char keyNo, bool returnAEK = false) = 0;
 
     virtual ByteVector PKI_UpdateKeyEntries(const ByteVector &encPublicKeyDer, const ByteVector &signPrivateKeyDer,
                          unsigned char keyNoEnc, unsigned char keyNoSign, bool requestAck,
@@ -86,24 +86,6 @@ class SAMAV2Commands : public ICommands
     virtual ByteVector PKI_DecipherData(unsigned char hashAlgo,
                                             unsigned char keyNoDec,
                                             const ByteVector &encData) = 0;
-
-    virtual void PKI_ImportEccKey(unsigned char keyNo, unsigned short eccSet,
-                                      unsigned char keyNoCEK, unsigned char keyNoVCEK,
-                                      unsigned char keyNoKUC, unsigned char keyNoAEK,
-                                      unsigned char keyNoVAEK,
-                                      const ByteVector &eccPublicKey = ByteVector(),
-                                      bool settingsOnly              = false) = 0;
-
-    virtual void PKI_ImportEccCurve(unsigned char curveNo, unsigned char keyNoCCK,
-                                        unsigned char keyNoVCCK,
-                                        const ByteVector &eccCurve = ByteVector(),
-                                        bool settingsOnly          = false) = 0;
-
-    virtual ByteVector PKI_ExportEccPublicKey(unsigned char keyNo) = 0;
-
-    virtual void PKI_VerifyEccSignature(unsigned char keyNo, unsigned char curveNo,
-                                            const ByteVector &message,
-                                            const ByteVector &signature) = 0;
 };
 }
 

@@ -97,14 +97,14 @@ class LLA_READERS_ISO7816_API SAMAV2ISO7816Commands
     void generateOfflineSessionKey(const std::shared_ptr<DESFireKey> &key, unsigned short changecnt);
 
     
-    void PKI_GenerateKeyPair(unsigned char keyNo, unsigned short configSettings,
+    void PKI_GenerateKeyPair(unsigned char keyNo, const sam::pki::PKISet &configSettings,
                              unsigned char keyNoCEK, unsigned char keyNoVCEK,
                              unsigned char keyNoRef, const sam::AEKVAEK &accessKeys,
                              unsigned short nLen = 0x40, unsigned short eLen = 0x04,
                              const ByteVector &pki_e = {},
                              bool includeAccess = false) override;
 
-    void PKI_ImportKey(unsigned char keyNo, unsigned short configSettings,
+    void PKI_ImportKey(unsigned char keyNo, const sam::pki::PKISet &configSettings,
                        unsigned char keyNoCEK, unsigned char keyNoVCEK,
                        unsigned char refNoKUC, const ByteVector &pki_n,
                        const ByteVector &pki_e, const ByteVector &pki_p = {},
@@ -113,9 +113,9 @@ class LLA_READERS_ISO7816_API SAMAV2ISO7816Commands
                        const sam::AEKVAEK &accessKeys = {}, bool includeAccess = false,
                        bool updateSettingsOnly = false) override;
 
-    ByteVector PKI_ExportPrivateKey(unsigned char keyNo, bool returnAEK = false) override;
+    sam::pki::ExportedPrivateKey PKI_ExportPrivateKey(unsigned char keyNo, bool returnAEK = false) override;
 
-    ByteVector PKI_ExportPublicKey(unsigned char keyNo, bool returnAEK = false) override;
+    sam::pki::ExportedPublicKey PKI_ExportPublicKey(unsigned char keyNo, bool returnAEK = false) override;
 
     ByteVector PKI_UpdateKeyEntries(const ByteVector &encPublicKeyDer, const ByteVector &signPrivateKeyDer,
                          unsigned char keyNoEnc, unsigned char keyNoSign, bool requestAck, unsigned char keyNoAck,
@@ -149,25 +149,6 @@ class LLA_READERS_ISO7816_API SAMAV2ISO7816Commands
 
     ByteVector PKI_DecipherData(unsigned char hashAlgo, unsigned char keyNoDec,
                                 const ByteVector &encData) override;
-
-    void PKI_ImportEccKey(unsigned char keyNo, unsigned short eccSet,
-                          unsigned char keyNoCEK, unsigned char keyNoVCEK,
-                          unsigned char keyNoKUC, unsigned char keyNoAEK,
-                          unsigned char keyNoVAEK,
-                          const ByteVector &eccPublicKey = ByteVector(),
-                          bool settingsOnly              = false) override;
-
-    void PKI_ImportEccCurve(unsigned char curveNo, unsigned char keyNoCCK,
-                            unsigned char keyNoVCCK,
-                            const ByteVector &eccCurve = ByteVector(),
-                            bool settingsOnly          = false) override;
-
-    ByteVector PKI_ExportEccPublicKey(unsigned char keyNo) override;
-
-    void PKI_VerifyEccSignature(unsigned char keyNo, unsigned char curveNo,
-                                const ByteVector &message,
-                                const ByteVector &signature) override;
-
 
   protected:
     struct TransmissionOptions
@@ -247,6 +228,12 @@ class LLA_READERS_ISO7816_API SAMAV2ISO7816Commands
     unsigned int d_cmdCtr;
 
     sam::HostMode d_hostMode{sam::HostMode::None};
+
+  private:
+    static sam::pki::ExportedPrivateKey
+        parseExportedPrivateKey(const ByteVector &payload, unsigned char keyNo, bool hasAccessKey);
+    static sam::pki::ExportedPublicKey
+        parseExportedPublicKey(const ByteVector &payload, unsigned char keyNo, bool hasAccessKey);
 };
 }
 

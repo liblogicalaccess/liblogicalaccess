@@ -41,6 +41,17 @@ target_link_libraries(basic_desfire_sam
         samavcards
 )
 
+# basic_samkeyentry
+add_executable(basic_samkeyentry
+    basic_samkeyentry.cpp
+)
+
+target_link_libraries(basic_samkeyentry
+    PRIVATE
+        ${LIBLOGICALACCESS_COMMON_LIBRARIES}
+        samavcards
+)
+
 # basic_duox
 add_executable(basic_duox
     basic_duox.cpp
@@ -107,6 +118,7 @@ install(
         basic
         basic_pki
         basic_desfire_sam
+        basic_samkeyentry
         basic_duox
         basic_duox_aes_authentication
         basic_duox_transaction_management

@@ -22,6 +22,24 @@ class SAMAV3Commands : public ICommands
                                   const ByteVector& targetSamUid = ByteVector(),
                                   const ByteVector& divInput = ByteVector()) = 0;
 
+    virtual void PKI_ImportEccKey(unsigned char keyNo, unsigned short eccSet,
+                                  unsigned char keyNoCEK, unsigned char keyNoVCEK,
+                                  unsigned char keyNoKUC, unsigned char keyNoAEK,
+                                  unsigned char keyNoVAEK,
+                                  const ByteVector &eccPublicKey = ByteVector(),
+                                  bool settingsOnly              = false) = 0;
+
+    virtual void PKI_ImportEccCurve(unsigned char curveNo, unsigned char keyNoCCK,
+                                    unsigned char keyNoVCCK,
+                                    const ByteVector &eccCurve = ByteVector(),
+                                    bool settingsOnly          = false) = 0;
+
+    virtual ByteVector PKI_ExportEccPublicKey(unsigned char keyNo) = 0;
+
+    virtual void PKI_VerifyEccSignature(unsigned char keyNo, unsigned char curveNo,
+                                        const ByteVector &message,
+                                        const ByteVector &signature) = 0;
+
     virtual void PKI_ImportCaPk(const ByteVector &rid, unsigned char pkId,
                                       unsigned short set, unsigned char keyNoCEK,
                                       unsigned char keyVCEK, unsigned char keyNoAEK,

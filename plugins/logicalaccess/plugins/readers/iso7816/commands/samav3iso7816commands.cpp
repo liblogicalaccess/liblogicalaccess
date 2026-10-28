@@ -45,6 +45,208 @@ ByteVector SAMAV3ISO7816Commands::encipherKeyEntry(
     return result.getData();
 }
 
+void SAMAV3ISO7816Commands::PKI_ImportEccKey(
+    unsigned char keyNo, unsigned short eccSet, unsigned char keyNoCEK,
+    unsigned char keyNoVCEK, unsigned char keyNoKUC, unsigned char keyNoAEK,
+    unsigned char keyNoVAEK, const ByteVector &eccPublicKey, bool settingsOnly)
+{
+    EXCEPTION_ASSERT_WITH_LOG(keyNo <= 0x07,
+        LibLogicalAccessException, sam::errorMessage(__func__, "Invalid keyNo (must be 0...7)."));
+
+    constexpr std::size_t PKI_IMPORT_ECC_MAX_PAYLOAD = 0x4B;
+
+    const unsigned char p1 = settingsOnly ? 0x01 : 0x00;
+
+    ByteVector payload;
+    payload.reserve(settingsOnly ? 8 : 10 + eccPublicKey.size());
+    payload.push_back(keyNo);
+    sam::appendUInt16BE(payload, eccSet);
+    payload.push_back(keyNoCEK);
+    payload.push_back(keyNoVCEK);
+    payload.push_back(keyNoKUC);
+    payload.push_back(keyNoAEK);
+    payload.push_back(keyNoVAEK);
+
+    if (!settingsOnly)
+    {
+        EXCEPTION_ASSERT_WITH_LOG(!eccPublicKey.empty(), LibLogicalAccessException,
+            sam::errorMessage(__func__, "ECC public key must be provided when settingsOnly is false."));
+
+        EXCEPTION_ASSERT_WITH_LOG(eccPublicKey[0] == 0x04, LibLogicalAccessException,
+            sam::errorMessage(__func__, "ECC public key must start with 0x04 (uncompressed format)."));
+
+        const std::size_t keySize = eccPublicKey.size();
+
+        EXCEPTION_ASSERT_WITH_LOG(keySize >= 33 && keySize <= 65, LibLogicalAccessException,
+            sam::errorMessage(__func__, "Invalid ECC public key length (must be 33...65 bytes)."));
+
+        const unsigned short coordSize = static_cast<unsigned short>((keySize - 1) / 2);
+
+        EXCEPTION_ASSERT_WITH_LOG((coordSize * 2 + 1) == keySize,
+            LibLogicalAccessException, sam::errorMessage(__func__, "Malformed ECC point structure."));
+
+        sam::appendUInt16BE(payload, coordSize);
+        payload.insert(payload.end(), eccPublicKey.begin(), eccPublicKey.end());
+    }
+
+    EXCEPTION_ASSERT_WITH_LOG(payload.size() <= PKI_IMPORT_ECC_MAX_PAYLOAD,
+        LibLogicalAccessException, sam::errorMessage(__func__, "Payload too large."));
+
+    const unsigned char lc = static_cast<unsigned char>(payload.size());
+
+    ByteVector apdu;
+    apdu.reserve(sam::APDU_HEADER_SIZE + payload.size());
+    apdu.push_back(d_cla);
+    apdu.push_back(sam::ins::pki::ImportECCKey);
+    apdu.push_back(p1);
+    apdu.push_back(0x00);
+    apdu.push_back(lc);
+    apdu.insert(apdu.end(), payload.begin(), payload.end());
+
+    const ByteVector response = executeProtectedExchange(apdu);
+    validateSuccessResponse(response, __func__);
+}
+
+void SAMAV3ISO7816Commands::PKI_ImportEccCurve(unsigned char curveNo, unsigned char keyNoCCK,
+                                               unsigned char keyNoVCCK,
+                                               const ByteVector &eccCurve,
+                                               bool settingsOnly)
+{
+    EXCEPTION_ASSERT_WITH_LOG(curveNo <= 0x03,
+        LibLogicalAccessException, sam::errorMessage(__func__, "Curve number out of range (0x00...0x03)."));
+
+    EXCEPTION_ASSERT_WITH_LOG(keyNoCCK == 0xFE || keyNoCCK == 0xFF || keyNoCCK <= 0x7F,
+        LibLogicalAccessException, sam::errorMessage(__func__, "Invalid keyNoCCK."));
+
+    const unsigned char p1 = settingsOnly ? 0x01 : 0x00;
+
+    ByteVector payload;
+    payload.reserve(3u + eccCurve.size());
+    payload.push_back(curveNo);
+    payload.push_back(keyNoCCK);
+    payload.push_back(keyNoVCCK);
+
+    if (!settingsOnly)
+    {
+        EXCEPTION_ASSERT_WITH_LOG(!eccCurve.empty(), LibLogicalAccessException,
+            sam::errorMessage(__func__, "ECC curve data required when settingsOnly is false."));
+
+        EXCEPTION_ASSERT_WITH_LOG(eccCurve.size() >= 2,
+            LibLogicalAccessException, sam::errorMessage(__func__, "ECC curve data too short."));
+
+        const unsigned char eccN = eccCurve[0];
+        const unsigned char eccM = eccCurve[1];
+
+        EXCEPTION_ASSERT_WITH_LOG(eccN >= 0x10 && eccN <= 0x20,
+            LibLogicalAccessException, sam::errorMessage(__func__, "ECC_N out of range (0x10...0x20)."));
+
+        EXCEPTION_ASSERT_WITH_LOG(eccM >= 0x10 && eccM <= 0x20,
+            LibLogicalAccessException, sam::errorMessage(__func__, "ECC_M out of range (0x10...0x20)."));
+
+        constexpr std::size_t ECC_CURVE_HEADER_SIZE = 2u;
+        const std::size_t expectedSize = ECC_CURVE_HEADER_SIZE +
+            (5u * static_cast<std::size_t>(eccN)) + static_cast<std::size_t>(eccM);
+
+        EXCEPTION_ASSERT_WITH_LOG(eccCurve.size() == expectedSize,
+            LibLogicalAccessException, sam::errorMessage(__func__, "ECC curve length mismatch."));
+
+        std::size_t offset = ECC_CURVE_HEADER_SIZE;
+
+        const auto checkBlock = [&](std::size_t length, const char *name)
+        {
+            EXCEPTION_ASSERT_WITH_LOG(offset + length <= eccCurve.size(),
+                LibLogicalAccessException, sam::errorMessage(__func__, std::string("Truncated field ") + name + "."));
+            offset += length;
+        };
+
+        checkBlock(eccN, "ECC_Prime");
+        checkBlock(eccN, "ECC_A");
+        checkBlock(eccN, "ECC_B");
+        checkBlock(eccN, "ECC_Px");
+        checkBlock(eccN, "ECC_Py");
+        checkBlock(eccM, "ECC_Order");
+
+        payload.insert(payload.end(), eccCurve.begin(), eccCurve.end());
+    }
+
+    EXCEPTION_ASSERT_WITH_LOG(payload.size() <= sam::MAX_SECURE_APDU_DATA_SIZE,
+        LibLogicalAccessException, sam::errorMessage(__func__, "APDU payload too large."));
+
+    const unsigned char lc = static_cast<unsigned char>(payload.size());
+
+    ByteVector apdu;
+    apdu.reserve(sam::APDU_HEADER_SIZE + payload.size());
+    apdu.push_back(d_cla);
+    apdu.push_back(sam::ins::pki::ImportECCCurve);
+    apdu.push_back(p1);
+    apdu.push_back(0x00);
+    apdu.push_back(lc);
+    apdu.insert(apdu.end(), payload.begin(), payload.end());
+
+    const ByteVector response = executeProtectedExchange(apdu);
+    validateSuccessResponse(response, __func__);
+}
+
+ByteVector SAMAV3ISO7816Commands::PKI_ExportEccPublicKey(unsigned char keyNo)
+{
+    EXCEPTION_ASSERT_WITH_LOG(keyNo <= 0x07,
+        LibLogicalAccessException, sam::errorMessage(__func__, "Key number out of range (0x00...0x07)."));
+
+    ByteVector apdu{d_cla, sam::ins::pki::ExportECCPublicKey, keyNo, 0x00, sam::iso7816::LeResponse};
+
+    ByteVector response = executeProtectedExchange(apdu);
+    validateSuccessResponse(response, __func__);
+
+    response.resize(response.size() - sam::STATUS_WORD_SIZE);
+    return response;
+}
+
+void SAMAV3ISO7816Commands::PKI_VerifyEccSignature(unsigned char keyNo,
+                                                   unsigned char curveNo,
+                                                   const ByteVector &message,
+                                                   const ByteVector &signature)
+{
+    EXCEPTION_ASSERT_WITH_LOG(keyNo <= 0x07,
+        LibLogicalAccessException, sam::errorMessage(__func__, "Key number out of range (0x00...0x07)."));
+
+    EXCEPTION_ASSERT_WITH_LOG(curveNo <= 0x03,
+        LibLogicalAccessException, sam::errorMessage(__func__, "Curve number out of range (0x00...0x03)."));
+
+    EXCEPTION_ASSERT_WITH_LOG(!message.empty(),
+        LibLogicalAccessException, sam::errorMessage(__func__, "Message cannot be empty."));
+
+    EXCEPTION_ASSERT_WITH_LOG(message.size() <= 0xFF,
+        LibLogicalAccessException, sam::errorMessage(__func__, "Message too large."));
+
+    EXCEPTION_ASSERT_WITH_LOG(!signature.empty(),
+        LibLogicalAccessException, sam::errorMessage(__func__, "Signature cannot be empty."));
+
+    ByteVector payload;
+    payload.reserve(3u + message.size() + signature.size());
+    payload.push_back(keyNo);
+    payload.push_back(curveNo);
+    payload.push_back(static_cast<unsigned char>(message.size()));
+    payload.insert(payload.end(), message.begin(), message.end());
+    payload.insert(payload.end(), signature.begin(), signature.end());
+
+    EXCEPTION_ASSERT_WITH_LOG(payload.size() <= sam::MAX_SECURE_APDU_DATA_SIZE,
+        LibLogicalAccessException, sam::errorMessage(__func__, "APDU payload too large."));
+
+    const unsigned char lc = static_cast<unsigned char>(payload.size());
+
+    ByteVector apdu;
+    apdu.reserve(sam::APDU_HEADER_SIZE + payload.size());
+    apdu.push_back(d_cla);
+    apdu.push_back(sam::ins::pki::VerifyECCSignature);
+    apdu.push_back(0x00);
+    apdu.push_back(0x00);
+    apdu.push_back(lc);
+    apdu.insert(apdu.end(), payload.begin(), payload.end());
+
+    const ByteVector response = executeProtectedExchange(apdu);
+    validateSuccessResponse(response, __func__);
+}
+
 void SAMAV3ISO7816Commands::PKI_ImportCaPk(const ByteVector &rid, unsigned char pkId, unsigned short set,
                                            unsigned char keyNoCEK, unsigned char keyVCEK,
                                            unsigned char keyNoAEK, unsigned char keyVAEK,
