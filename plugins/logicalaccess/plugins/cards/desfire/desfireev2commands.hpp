@@ -8,8 +8,8 @@
 #define LOGICALACCESS_DESFIREEV2COMMANDS_HPP
 
 #include <logicalaccess/plugins/cards/desfire/desfireev1commands.hpp>
+#include <logicalaccess/plugins/cards/desfire/transactioncommon.hpp>
 
-#include <array>
 #include <cstdint>
 
 namespace logicalaccess
@@ -42,20 +42,6 @@ enum class TransactionMACState
     Disabled,
     Active
 };
-
-namespace TransactionManagement
-{
-constexpr std::size_t TMC_SIZE = 4U;
-constexpr std::size_t TMV_SIZE = 8U;
-constexpr std::size_t TSV_SIZE = 64U;
-
-constexpr std::size_t TMAC_SIZE = TMC_SIZE + TMV_SIZE;
-constexpr std::size_t TSIG_SIZE = TMC_SIZE + TSV_SIZE;
-
-using TransactionCounter        = std::array<std::uint8_t, TMC_SIZE>;
-using TransactionMACValue       = std::array<std::uint8_t, TMV_SIZE>;
-using TransactionSignatureValue = std::array<std::uint8_t, TSV_SIZE>;
-}
 
 struct TransactionMACFileData
 {
@@ -225,6 +211,19 @@ class LLA_CARDS_DESFIRE_API DESFireEV2Commands : public ICommands
     virtual ByteVector readSignature(unsigned char address = 0x00) = 0;
 
     virtual bool performECCOriginalityCheck() = 0;
+
+    [[nodiscard]] virtual std::uint32_t decodeTransactionMACCounter(const CommitTransactionResult &result) = 0;
+
+    [[nodiscard]] virtual std::uint32_t decodeTransactionCounter(const TransactionManagement::TransactionCounter &tmc) = 0;
+
+    virtual void configureTransactionMAC(const ByteVector &applicationTMACKey, const ByteVector &uid,
+                                         unsigned char transactionMACFileNo) = 0;
+
+    virtual void resetTransactionMACInput() = 0;
+
+    virtual ByteVector getTransactionMACInput() const = 0;
+
+    [[nodiscard]] virtual bool verifyTransactionMAC(const TransactionMACFileData &committed) const = 0;
 
   private:
     std::shared_ptr<DESFireEV2Chip> getDESFireEV2Chip() const;

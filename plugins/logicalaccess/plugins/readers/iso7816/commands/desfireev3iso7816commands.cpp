@@ -418,6 +418,37 @@ bool DESFireEV3ISO7816Commands::performECCOriginalityCheck()
     return DESFireEV2ISO7816Commands::performECCOriginalityCheck();
 }
 
+std::uint32_t DESFireEV3ISO7816Commands::decodeTransactionMACCounter(const CommitTransactionResult &result)
+{
+    return DESFireEV2ISO7816Commands::decodeTransactionMACCounter(result);
+}
+
+std::uint32_t DESFireEV3ISO7816Commands::decodeTransactionCounter(const TransactionManagement::TransactionCounter &tmc)
+{
+    return DESFireEV2ISO7816Commands::decodeTransactionCounter(tmc);
+}
+
+void DESFireEV3ISO7816Commands::configureTransactionMAC(const ByteVector &applicationTMACKey, const ByteVector &uid,
+                                                        unsigned char transactionMACFileNo)
+{
+    DESFireEV2ISO7816Commands::configureTransactionMAC(applicationTMACKey, uid, transactionMACFileNo);
+}
+
+void DESFireEV3ISO7816Commands::resetTransactionMACInput()
+{
+    DESFireEV2ISO7816Commands::resetTransactionMACInput();
+}
+
+ByteVector DESFireEV3ISO7816Commands::getTransactionMACInput() const
+{
+    return DESFireEV2ISO7816Commands::getTransactionMACInput();
+}
+
+bool DESFireEV3ISO7816Commands::verifyTransactionMAC(const TransactionMACFileData &committed) const
+{
+    return DESFireEV2ISO7816Commands::verifyTransactionMAC(committed);
+}
+
 ByteVector DESFireEV3ISO7816Commands::getFileCounters(unsigned char fileno)
 {
     ByteVector params;

@@ -45,7 +45,7 @@ ByteVector makeUID(std::size_t size)
     return uid;
 }
 
-std::array<std::uint8_t, 4> makeTMC()
+TransactionManagement::TransactionCounter makeTMC()
 {
     return {0x01, 0x00, 0x00, 0x00};
 }
@@ -153,7 +153,7 @@ TEST(DESFireTransactionMACCryptoTest, ReaderIDDecryptRoundTrip)
                                   0xA8, 0xA9, 0xAA, 0xAB, 0xAC, 0xAD, 0xAE, 0xAF};
     const ByteVector ciphertext = AESHelper::AESEncrypt(plaintext, encryptionKey, zeroIV);
 
-    ASSERT_EQ(ciphertext.size(), DESFireTransactionMACCrypto::READER_ID_SIZE);
+    ASSERT_EQ(ciphertext.size(), TransactionManagement::READER_ID_SIZE);
 
     const auto decrypted = DESFireTransactionMACCrypto::decryptPreviousReaderID(key, tmc, uid, ciphertext);
 
@@ -179,7 +179,7 @@ TEST(DESFireTransactionMACCryptoTest, VerifiesTMVAndRejectsTampering)
 
     ASSERT_EQ(fullMAC.size(), 16U);
 
-    std::array<std::uint8_t, DESFireTransactionMACCrypto::TMV_SIZE> tmv{};
+    TransactionManagement::TransactionMACValue tmv{};
 
     for (std::size_t i = 0; i < tmv.size(); ++i)
         tmv[i] = fullMAC[2U * i + 1U];
@@ -216,7 +216,7 @@ TEST(DESFireTransactionMACCryptoTest, SessionKeysMatchReferenceVector)
 
     const ByteVector uid = {0x04, 0x6F, 0x48, 0x8A, 0x1C, 0x1E, 0x90};
 
-    const std::array<std::uint8_t, 4> tmc = {0x03, 0x00, 0x00, 0x00};
+    const TransactionManagement::TransactionCounter tmc = {0x03, 0x00, 0x00, 0x00};
 
     const auto keys = DESFireTransactionMACCrypto::deriveAESSessionKeys(key, tmc, uid);
 
@@ -237,7 +237,7 @@ TEST(DESFireTransactionMACCryptoTest, FullCMACAndTMVMatchReferenceVector)
 
     const ByteVector uid = {0x04, 0x6F, 0x48, 0x8A, 0x1C, 0x1E, 0x90};
 
-    const std::array<std::uint8_t, 4> tmc = {0x04, 0x00, 0x00, 0x00};
+    const TransactionManagement::TransactionCounter tmc = {0x04, 0x00, 0x00, 0x00};
 
     /// Deterministic 80 byte TMI from real hardware test.
     /// Provides regression coverage for Transaction MAC verification against actual DESFire protocol behavior.
@@ -261,7 +261,7 @@ TEST(DESFireTransactionMACCryptoTest, FullCMACAndTMVMatchReferenceVector)
 
     ASSERT_EQ(fullMAC.size(), 16U);
 
-    std::array<std::uint8_t, DESFireTransactionMACCrypto::TMV_SIZE> expectedTMV{};
+    TransactionManagement::TransactionMACValue expectedTMV{};
 
     // Use the same truncation convention as verifyTMV()
     for (std::size_t i = 0; i < expectedTMV.size(); ++i)
@@ -277,8 +277,8 @@ TEST(DESFireTransactionMACCryptoTest, FullCMACAndTMVMatchReferenceVector)
 
 TEST(DESFireTransactionMACCryptoTest, CounterByteOrderAffectsDerivedKeys)
 {
-    auto tmc1 = std::array<std::uint8_t, 4>{0xFF, 0x00, 0x00, 0x00};
-    auto tmc2 = std::array<std::uint8_t, 4>{0x00, 0x01, 0x00, 0x00};
+    auto tmc1 = TransactionManagement::TransactionCounter{0xFF, 0x00, 0x00, 0x00};
+    auto tmc2 = TransactionManagement::TransactionCounter{0x00, 0x01, 0x00, 0x00};
 
     const auto first = DESFireTransactionMACCrypto::deriveAESSessionKeys(makeKey(), tmc1, makeUID());
     const auto second = DESFireTransactionMACCrypto::deriveAESSessionKeys(makeKey(), tmc2, makeUID());
@@ -359,7 +359,7 @@ TEST(DESFireTransactionMACCryptoTest, AES256ReaderIDDecryptRoundTrip)
 
     const ByteVector ciphertext = AESHelper::AESEncrypt(plaintext, keys.encryptionKey, zeroIV);
 
-    ASSERT_EQ(ciphertext.size(), DESFireTransactionMACCrypto::READER_ID_SIZE);
+    ASSERT_EQ(ciphertext.size(), TransactionManagement::READER_ID_SIZE);
 
     const auto decrypted = DESFireTransactionMACCrypto::decryptPreviousReaderID(key, tmc, uid, ciphertext);
 
@@ -383,8 +383,8 @@ TEST(DESFireTransactionMACCryptoTest, AES256VerifiesTMVAndRejectsTampering)
     const ByteVector fullMAC = openssl::CMACCrypto::cmac(keys.macKey, "aes", tmi, zeroIV);
 
     ASSERT_EQ(fullMAC.size(), 16U);
-
-    std::array<std::uint8_t, DESFireTransactionMACCrypto::TMV_SIZE> tmv{};
+    
+    TransactionManagement::TransactionMACValue tmv{};
 
     for (std::size_t i = 0; i < tmv.size(); ++i)
         tmv[i] = fullMAC[2U * i + 1U];
@@ -502,7 +502,7 @@ TEST(DESFireTransactionMACCryptoTest, VerifyTMVSupportsAllValidUIDLengths)
     const auto tmc = makeTMC();
 
     const ByteVector tmi(16, 0x00);
-    const std::array<std::uint8_t, DESFireTransactionMACCrypto::TMV_SIZE> tmv{};
+    const TransactionManagement::TransactionMACValue tmv{};
 
     for (const std::size_t uidSize : {4U, 7U, 10U})
     {

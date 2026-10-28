@@ -410,6 +410,9 @@ class LLA_READERS_ISO7816_API DESFireISO7816Commands : public DESFireCommands
      * \brief The SAMChip used for the SAM Commands.
      */
     std::shared_ptr<SAMChip> d_SAM_chip;
+
+  private:
+    void updateValueFile(unsigned char instruction, unsigned char fileno, std::uint32_t value, EncryptionMode mode);
 };
 }
 

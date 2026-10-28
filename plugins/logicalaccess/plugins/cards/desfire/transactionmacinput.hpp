@@ -1,9 +1,9 @@
 #pragma once
 
-#include <array>
 #include <cstddef>
 #include <cstdint>
 
+#include <logicalaccess/plugins/cards/desfire/transactioncommon.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfireaccessinfo.hpp>
 #include <logicalaccess/lla_fwd.hpp>
 
@@ -22,9 +22,9 @@ namespace logicalaccess
 class LLA_CARDS_DESFIRE_API DESFireTransactionMACInput
 {
   public:
-    static constexpr std::size_t BLOCK_SIZE     = 16;
-    static constexpr std::size_t READER_ID_SIZE = BLOCK_SIZE;
-    static constexpr std::uint32_t U24_MAX      = 0xFFFFFFU;
+    static constexpr std::size_t BLOCK_SIZE     = TransactionManagement::AES_BLOCK_SIZE;
+    static constexpr std::size_t READER_ID_SIZE = TransactionManagement::READER_ID_SIZE;
+    static constexpr std::uint32_t U24_MAX      = TransactionManagement::U24_MAX;
 
     // DESFire command identifiers
     static constexpr std::uint8_t INS_READ_DATA         = 0xBD;

@@ -1,7 +1,6 @@
 #include <logicalaccess/plugins/cards/desfire/desfireev2crypto.hpp>
 
 #include <algorithm>
-#include <cassert>
 #include <cstddef>
 #include <cstdint>
 #include <memory>
@@ -13,6 +12,7 @@
 #include <logicalaccess/myexception.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfirecommands.hpp>
 #include <logicalaccess/plugins/crypto/aes_symmetric_key.hpp>
+#include <logicalaccess/plugins/crypto/aes_initialization_vector.hpp>
 #include <logicalaccess/plugins/crypto/aes_initialization_vector.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfireev2commands.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/samav2iso7816commands.hpp>
@@ -101,17 +101,14 @@ void DESFireEV2Crypto::sam_generateSessionKey(const ByteVector &rnda,
 
 ByteVector DESFireEV2Crypto::truncateMAC(const ByteVector &full_mac)
 {
-    assert(full_mac.size() % 2 == 0);
-    ByteVector truncated(full_mac.size() / 2);
-    unsigned char truncateCount = 0;
-    unsigned char count         = 1;
+    EXCEPTION_ASSERT_WITH_LOG(full_mac.size() % 2U == 0U,
+        LibLogicalAccessException, "DESFire EV2 : Unexpected AES-CMAC size.");
 
-    while (count < full_mac.size())
-    {
-        truncated[truncateCount] = full_mac[count];
-        count += 2;
-        ++truncateCount;
-    }
+    ByteVector truncated(full_mac.size() / 2U);
+
+    for (std::size_t i = 0U; i < truncated.size(); ++i)
+        truncated[i] = full_mac[(2U * i) + 1U];
+
     return truncated;
 }
 
@@ -240,11 +237,20 @@ ByteVector DESFireEV2Crypto::desfireDecrypt(std::size_t length)
     if (!usesEV2Crypto(d_auth_method))
         return DESFireCrypto::desfireDecrypt(length);
 
-    const auto dd = d_buf;
-    verifyMAC(true, {});
+    const ByteVector response = d_buf;
 
+    EXCEPTION_ASSERT_WITH_LOG(response.size() >= d_mac_size,
+        LibLogicalAccessException, "DESFire EV2 : Response is shorter than the expected MAC.");
+
+    verifyMAC(true, ByteVector{}); // Verify the response MAC before decrypting its payload
+
+    const std::size_t encryptedLength = response.size() - d_mac_size;
+
+    if (encryptedLength == 0U) // MAC-only response
+        return ByteVector{};
+
+    const ByteVector encryptedData(response.begin(), response.begin() + encryptedLength);
     const auto IV = getIVEncrypt(false);
-
     // Decipher
     const auto isokey = std::make_shared<openssl::AESSymmetricKey>(
         openssl::AESSymmetricKey::createFromData(d_sessionKey));
@@ -252,30 +258,28 @@ ByteVector DESFireEV2Crypto::desfireDecrypt(std::size_t length)
         openssl::AESInitializationVector::createFromData(IV));
     
     ByteVector data;
-    const auto encData = ByteVector(dd.begin(), dd.end() - d_mac_size);
-    if (!encData.empty())
+    d_cipher->decipher(encryptedData, data, *isokey, *iv, false);
+
+    if (length != 0U)
     {
-        d_cipher->decipher(encData, data, *isokey, *iv, false);
+        EXCEPTION_ASSERT_WITH_LOG(data.size() >= length,
+            LibLogicalAccessException, "DESFire EV2 : Decrypted buffer is smaller than the expected length.");
 
-        std::size_t ll = 0;
-        if (length == 0)
-        {
-            ll = data.size() - 1;
-            while (data[ll] == 0x00)
-            {
-                --ll;
-            }
-
-            EXCEPTION_ASSERT_WITH_LOG(data[ll] == 0x80, LibLogicalAccessException, "Incorrect FLT result");
-        }
-        else
-        {
-            ll = length;
-        }
-
-        EXCEPTION_ASSERT_WITH_LOG (data.size() >= ll, LibLogicalAccessException, "Decrypted buffer is too small.");
-        data.resize(ll);
+        data.resize(length);
+        return data;
     }
+
+    // Remove ISO/IEC 7816-4 padding safely : trailing 0x00 bytes followed by a 0x80 marker.
+    std::size_t unpaddedLength = data.size();
+
+    while (unpaddedLength > 0U && data[unpaddedLength - 1U] == 0x00U)
+        --unpaddedLength;
+
+    EXCEPTION_ASSERT_WITH_LOG(unpaddedLength > 0U && data[unpaddedLength - 1U] == 0x80U,
+        LibLogicalAccessException, "DESFire EV2 : Invalid ISO/IEC 7816-4 padding.");
+
+    // Exclude the 0x80 marker and trailing zeros
+    data.resize(unpaddedLength - 1U);
 
     return data;
 }

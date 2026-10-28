@@ -1128,36 +1128,37 @@ int32_t DESFireISO7816Commands::getValue(unsigned char fileno, EncryptionMode mo
     THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "DESFireISO7816Commands getValue did not return enough data");
 }
 
+void DESFireISO7816Commands::updateValueFile(unsigned char instruction,
+                                             unsigned char fileno, std::uint32_t value,
+                                             EncryptionMode mode)
+{
+    ByteVector parameters(1, fileno);
+    ByteVector data(4);
+    
+    data[0] = static_cast<std::uint8_t>(value & 0xFFU);
+    data[1] = static_cast<std::uint8_t>((value >> 8U) & 0xFFU);
+    data[2] = static_cast<std::uint8_t>((value >> 16U) & 0xFFU);
+    data[3] = static_cast<std::uint8_t>((value >> 24U) & 0xFFU);
+
+    handleWriteData(instruction, parameters, data, mode);
+}
+
 void DESFireISO7816Commands::credit(unsigned char fileno, unsigned int value,
                                     EncryptionMode mode)
 {
-    ByteVector parameters(1);
-    parameters[0]      = fileno;
-    uint32_t dataValue = static_cast<uint32_t>(value);
-    ByteVector data(sizeof(dataValue));
-    memcpy(&data[0], &dataValue, sizeof(dataValue));
-    handleWriteData(DF_INS_CREDIT, parameters, data, mode);
+    updateValueFile(DF_INS_CREDIT, fileno, static_cast<std::uint32_t>(value), mode);
 }
 
 void DESFireISO7816Commands::debit(unsigned char fileno, unsigned int value,
                                    EncryptionMode mode)
 {
-    ByteVector parameters(1);
-    parameters[0]      = fileno;
-    uint32_t dataValue = static_cast<uint32_t>(value);
-    ByteVector data(sizeof(dataValue));
-    memcpy(&data[0], &dataValue, sizeof(dataValue));
-    handleWriteData(DF_INS_DEBIT, parameters, data, mode);
+    updateValueFile(DF_INS_DEBIT, fileno, static_cast<std::uint32_t>(value), mode);
 }
 
 void DESFireISO7816Commands::limitedCredit(unsigned char fileno, int32_t value,
                                            EncryptionMode mode)
 {
-    ByteVector parameters(1);
-    parameters[0]      = static_cast<unsigned char>(fileno);
-    ByteVector data(sizeof(value));
-    memcpy(&data[0], &value, sizeof(value));
-    handleWriteData(DF_INS_LIMITED_CREDIT, parameters, data, mode);
+    updateValueFile(DF_INS_LIMITED_CREDIT, fileno, static_cast<std::uint32_t>(value), mode);
 }
 
 void DESFireISO7816Commands::writeRecord(unsigned char fileno, unsigned int offset,
@@ -1166,15 +1167,11 @@ void DESFireISO7816Commands::writeRecord(unsigned char fileno, unsigned int offs
     ByteVector parameters(7);
     parameters[0] = fileno;
     parameters[1] = static_cast<unsigned char>(offset & 0xff);
-    parameters[2] =
-        static_cast<unsigned char>(static_cast<unsigned short>(offset & 0xff00) >> 8);
-    parameters[3] =
-        static_cast<unsigned char>(static_cast<unsigned int>(offset & 0xff0000) >> 16);
+    parameters[2] = static_cast<unsigned char>(static_cast<unsigned short>(offset & 0xff00) >> 8);
+    parameters[3] = static_cast<unsigned char>(static_cast<unsigned int>(offset & 0xff0000) >> 16);
     parameters[4] = static_cast<unsigned char>(data.size() & 0xff);
-    parameters[5] = static_cast<unsigned char>(
-        static_cast<unsigned short>(data.size() & 0xff00) >> 8);
-    parameters[6] = static_cast<unsigned char>(
-        static_cast<unsigned int>(data.size() & 0xff0000) >> 16);
+    parameters[5] = static_cast<unsigned char>(static_cast<unsigned short>(data.size() & 0xff00) >> 8);
+    parameters[6] = static_cast<unsigned char>(static_cast<unsigned int>(data.size() & 0xff0000) >> 16);
 
     handleWriteData(DF_INS_WRITE_RECORD, parameters, data, mode);
 }
@@ -1186,15 +1183,11 @@ ByteVector DESFireISO7816Commands::readRecords(unsigned char fileno, unsigned in
 
     command.push_back(fileno);
     command.push_back(static_cast<unsigned char>(offset & 0xff));
-    command.push_back(
-        static_cast<unsigned char>(static_cast<unsigned short>(offset & 0xff00) >> 8));
-    command.push_back(
-        static_cast<unsigned char>(static_cast<unsigned int>(offset & 0xff0000) >> 16));
+    command.push_back(static_cast<unsigned char>(static_cast<unsigned short>(offset & 0xff00) >> 8));
+    command.push_back(static_cast<unsigned char>(static_cast<unsigned int>(offset & 0xff0000) >> 16));
     command.push_back(static_cast<unsigned char>(length & 0xff));
-    command.push_back(
-        static_cast<unsigned char>(static_cast<unsigned short>(length & 0xff00) >> 8));
-    command.push_back(
-        static_cast<unsigned char>(static_cast<unsigned int>(length & 0xff0000) >> 16));
+    command.push_back(static_cast<unsigned char>(static_cast<unsigned short>(length & 0xff00) >> 8));
+    command.push_back(static_cast<unsigned char>(static_cast<unsigned int>(length & 0xff0000) >> 16));
 
     auto result = transmit(DF_INS_READ_RECORDS, command);
     auto data = handleReadData(result.getSW2(), result.getData(), length, mode);

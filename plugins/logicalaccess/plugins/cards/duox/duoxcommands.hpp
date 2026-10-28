@@ -231,7 +231,23 @@ class LLA_CARDS_DESFIRE_API DUOXCommands : public DESFireEV3Commands
                                      const ByteVector &privateKey = ByteVector(),
                                      DUOXCommunicationMode commMode = DUOXCommunicationMode::Full) = 0;
 
-    //TODO Write brief later
+    /**
+     * \brief Creates or updates a CA root public key entry.
+     *
+     * Configures the public key, curve, access rights, read/write access conditions,
+     * and optional certificate revocation settings and trusted issuer name.
+     *
+     * \param keyNo Key number of the CA root public key entry to create or update.
+     * \param curveId Elliptic curve associated with the public key.
+     * \param accessRights Access rights bitmap associated with the CA root public key entry.
+     * \param writeAccess Access condition and communication mode for updating the entry.
+     * \param readAccess Access condition and communication mode for exporting the public key.
+     * \param crlFile Certificate Revocation List (CRL) file number and revocation configuration.
+     * \param crlFileAid Application identifier (AID) of the application containing the CRL file.
+     * \param publicKey Uncompressed public key (65 bytes : 0x04 || X || Y).
+     * \param issuer (Optional) Trusted issuer name; empty disables issuer checking.
+     * \param commMode Requested communication mode; defaults to full communication.
+     */
     virtual void manageCARootKey(std::uint8_t keyNo, CurveID curveId,
                                  std::uint16_t accessRights, std::uint8_t writeAccess,
                                  std::uint8_t readAccess, std::uint8_t crlFile,
@@ -239,7 +255,17 @@ class LLA_CARDS_DESFIRE_API DUOXCommands : public DESFireEV3Commands
                                  const ByteVector &issuer,
                                  DUOXCommunicationMode commMode = DUOXCommunicationMode::Full) = 0;
 
-    // TODO Write brief later
+    /**
+     * \brief Exports a CA root public key.
+     *
+     * Exports the public key in uncompressed point representation (0x04 || X || Y).
+     * Authentication and communication mode are determined by the targeted key's ReadAccess configuration.
+     *
+     * \param keyNo CA root key number to export.
+     * \param commMode Requested communication mode; defaults to full communication.
+     *
+     * \return The exported public key as a byte vector.
+     */
     virtual ByteVector exportKey(std::uint8_t keyNo, DUOXCommunicationMode commMode = DUOXCommunicationMode::Full) = 0;
 
     virtual void authenticateEV2NonFirst(uint8_t keyno, std::shared_ptr<DESFireKey> currentKey = nullptr) = 0;
@@ -262,11 +288,20 @@ class LLA_CARDS_DESFIRE_API DUOXCommands : public DESFireEV3Commands
     virtual DUOXKeySettings getKeySettings(DUOXKeySettingsOption option = DUOXKeySettingsOption::KeySettings) = 0;
 
     virtual void changeKey(std::uint8_t keyNo, std::shared_ptr<DESFireKey> newKey) = 0;
+
     // TODO Rewrite function later
     //virtual void changeKeyEV2(std::uint8_t keySetNo, std::uint8_t keyNo, std::shared_ptr<DESFireKey> newKey) = 0;
 
     virtual void createTransactionMACFile(const DUOXTransactionMACFileOptions &options) = 0;
     
+    [[nodiscard]] virtual std::uint32_t decodeTransactionSignatureCounter(const CommitTransactionResult &result) = 0;
+    [[nodiscard]] virtual std::uint32_t decodeTransactionResultCounter(const CommitTransactionResult &result) = 0;
+
+    [[nodiscard]] virtual bool verifyTransactionSignature(const TransactionSignatureFileData &committed,
+                               EVP_PKEY *applicationPublicKey) const = 0;
+
+    virtual void configureTransactionSignature(unsigned char transactionManagementFileNo) = 0;
+
     virtual void isoGeneralAuthenticate(std::uint8_t caRootKeyNo,
                                         std::uint8_t secondaryCaRootKeyNo,
                                         CurveID curve, bool mutualAuthentication,

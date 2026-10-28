@@ -1,11 +1,10 @@
 #pragma once
 
 #include <array>
-#include <cstddef>
 #include <cstdint>
 
+#include <logicalaccess/plugins/cards/desfire/transactioncommon.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfireaccessinfo.hpp>
-#include <logicalaccess/plugins/crypto/openssl.hpp>
 #include <logicalaccess/lla_fwd.hpp>
 
 namespace logicalaccess
@@ -25,19 +24,11 @@ struct TransactionMACSessionKeys
 /**
  * \brief DESFire Transaction MAC cryptographic operations.
  * 
- * Provides functions for deriving session keys, verifying transaction MAC values and decrypting reader IDs.
+ * Provides functions for deriving session keys, verifying transaction MAC values (TMV) and decrypting reader IDs.
  */
 class LLA_CARDS_DESFIRE_API DESFireTransactionMACCrypto
 {
   public:
-    static constexpr std::size_t AES_128_KEY_SIZE = 16;
-    static constexpr std::size_t AES_256_KEY_SIZE = 32;
-    static constexpr std::size_t AES_BLOCK_SIZE   = 16;
-
-    // TODO : centralize code with namespace TransactionManagement from desfirrev2commands.hpp
-    static constexpr std::size_t TMC_SIZE         = 4;
-    static constexpr std::size_t TMV_SIZE         = 8;
-    static constexpr std::size_t READER_ID_SIZE   = 16;
 
     /**
      * \brief Derive AES transaction session keys from TMAC key and counter.
@@ -46,6 +37,9 @@ class LLA_CARDS_DESFIRE_API DESFireTransactionMACCrypto
      * AES-128 produces 16 byte session keys.
      * AES-256 produces 32 byte session keys by concatenating two CMAC outputs per key.
      * 
+     * Callers must secure the returned keys using SecureZeroGuard or equivalent RAII wrapper
+     * to prevent sensitive key material from persisting in memory.
+     * 
      * \param applicationTMACKey The application Transaction MAC key (16 or 32 bytes).
      * \param tmcForTransaction Counter value used directly for session-key derivation, already incremented
      * \param uid Card UID
@@ -53,7 +47,7 @@ class LLA_CARDS_DESFIRE_API DESFireTransactionMACCrypto
      * \return Derived session keys for MAC and encryption
      */
     static TransactionMACSessionKeys deriveAESSessionKeys(const ByteVector &applicationTMACKey,
-                                                          const std::array<std::uint8_t, TMC_SIZE> &tmcForTransaction,
+                                                          const TransactionManagement::TransactionCounter &tmcForTransaction,
                                                           const ByteVector &uid);
 
     /**
@@ -68,9 +62,9 @@ class LLA_CARDS_DESFIRE_API DESFireTransactionMACCrypto
      * \return true if TMV is valid, false otherwise
      */
     static bool verifyTMV(const ByteVector &applicationTMACKey,
-                          const std::array<std::uint8_t, TMC_SIZE> &tmcForTransaction,
+                          const TransactionManagement::TransactionCounter &tmcForTransaction,
                           const ByteVector &uid, const ByteVector &tmi,
-                          const std::array<std::uint8_t, TMV_SIZE> &expectedTMV);
+                          const TransactionManagement::TransactionMACValue &expectedTMV);
 
     /**
      * \brief Decrypt previous Reader ID from CommitReaderID response.
@@ -84,10 +78,10 @@ class LLA_CARDS_DESFIRE_API DESFireTransactionMACCrypto
      * 
      * \return Decrypted 16 byte Reader ID
      */
-    static std::array<std::uint8_t, READER_ID_SIZE>
-    decryptPreviousReaderID(const ByteVector &applicationTMACKey,
-                            const std::array<std::uint8_t, TMC_SIZE> &tmcForTransaction,
-                            const ByteVector &uid, const ByteVector &encryptedReaderID);
+    static TransactionManagement::ReaderID decryptPreviousReaderID(
+        const ByteVector &applicationTMACKey,
+        const TransactionManagement::TransactionCounter &tmcForTransaction,
+        const ByteVector &uid, const ByteVector &encryptedReaderID);
 };
 
 } // namespace logicalaccess

@@ -3,7 +3,6 @@
 #include <logicalaccess/plugins/readers/iso7816/commands/desfireev3iso7816commands.hpp>
 #include <logicalaccess/plugins/cards/duox/duoxcommands.hpp>
 
-// TODO move it later inside duoxcrypto file
 #include <utility>
 
 namespace logicalaccess
@@ -236,6 +235,18 @@ class LLA_READERS_ISO7816_API DUOXISO7816Commands : public DESFireEV3ISO7816Comm
     ByteVector readSignature(unsigned char address = 0x00) override;
 
     bool performECCOriginalityCheck() override;
+    
+    [[nodiscard]] std::uint32_t decodeTransactionMACCounter(const CommitTransactionResult &result) override;
+    [[nodiscard]] std::uint32_t decodeTransactionCounter(const TransactionManagement::TransactionCounter &tmc) override;
+    
+    void configureTransactionMAC(const ByteVector &applicationTMACKey, const ByteVector &uid,
+                                 unsigned char transactionMACFileNo) override;
+
+    void resetTransactionMACInput() override;
+
+    ByteVector getTransactionMACInput() const override;
+
+    [[nodiscard]] bool verifyTransactionMAC(const TransactionMACFileData &committed) const override;
 
     /*
      * DESFire EV3 command interface.
@@ -274,21 +285,21 @@ class LLA_READERS_ISO7816_API DUOXISO7816Commands : public DESFireEV3ISO7816Comm
     void selectApplication(unsigned int aid) override;
     void selectApplication(unsigned int aid1, unsigned int aid2) override;
     
-    [[nodiscard]] std::uint32_t decodeTransactionSignatureCounter(const CommitTransactionResult &result);
-    [[nodiscard]] std::uint32_t decodeTransactionResultCounter(const CommitTransactionResult &result);
+    [[nodiscard]] std::uint32_t decodeTransactionSignatureCounter(const CommitTransactionResult &result) override;
+    [[nodiscard]] std::uint32_t decodeTransactionResultCounter(const CommitTransactionResult &result) override;
 
     [[nodiscard]] bool verifyTransactionSignature(const TransactionSignatureFileData &committed,
-                                                  EVP_PKEY *applicationPublicKey) const;
+                               EVP_PKEY *applicationPublicKey) const override;
 
-    void configureTransactionSignature(unsigned char transactionManagementFileNo);
+    void configureTransactionSignature(unsigned char transactionManagementFileNo) override;
 
-    protected:
+  protected:
     ISO7816Response transmitDUOX(std::uint8_t cmd, const ByteVector &params, const ByteVector &data,
                  DUOXCommunicationMode commMode = DUOXCommunicationMode::Full);
 
     void validateTransactionMACConfiguration(const ByteVector &applicationTMACKey, const ByteVector &uid) const override;
 
-    private:
+  private:
     void changeKeyEV2Internal(std::uint8_t keySetNo, std::uint8_t keyNo,
         std::shared_ptr<DESFireKey> newKey, DUOXChangeKeyCommand commandType);
 
@@ -298,7 +309,7 @@ class LLA_READERS_ISO7816_API DUOXISO7816Commands : public DESFireEV3ISO7816Comm
     // TODO move these functions into main class definition later (access specifiers redefined temporarily for organization)
     // And move ISO functions to ISO class but keep them here for now
 
-    public:
+  public:
     void isoGeneralAuthenticate(std::uint8_t caRootKeyNo,
                                 std::uint8_t secondaryCaRootKeyNo, CurveID curve,
                                 bool mutualAuthentication, bool certificatePresent,
@@ -334,7 +345,7 @@ class LLA_READERS_ISO7816_API DUOXISO7816Commands : public DESFireEV3ISO7816Comm
 
       TransactionMACFileData readTransactionMacFile(unsigned char fileno) override;
 
-    private:
+  private:
     ISO7816Response sendDUOXGeneralAuthenticate(std::uint8_t p2, const ByteVector &data, std::uint16_t le);
 
     static std::uint8_t buildDUOXGeneralAuthenticateP2(std::uint8_t caRootKeyNo,

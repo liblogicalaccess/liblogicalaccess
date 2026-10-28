@@ -887,11 +887,11 @@ int main()
         std::cout << "\n===========================================================\n"
                   << " DUOX AES AUTHENTICATION TEST\n"
                   << "===========================================================\n"
-                  << "[INFO] AES-128 test application : " << formatAid(DUOX_TEST_AES128_APPLICATION_AID) << '\n'
-                  << "[INFO] AES-256 test application : " << formatAid(DUOX_TEST_AES256_APPLICATION_AID) << '\n'
-                  << "[INFO] PICC authentication      : AES-128 / DUOX\n"
-                  << "[INFO] AES-128 app authentication: AES-128 / DUOX\n"
-                  << "[INFO] AES-256 app authentication: AES-256 / DUOX\n"
+                  << "[INFO] AES-128 test application   : " << formatAid(DUOX_TEST_AES128_APPLICATION_AID) << '\n'
+                  << "[INFO] AES-256 test application   : " << formatAid(DUOX_TEST_AES256_APPLICATION_AID) << '\n'
+                  << "[INFO] PICC authentication        : AES-128 / DUOX\n"
+                  << "[INFO] AES-128 app authentication : AES-128 / DUOX\n"
+                  << "[INFO] AES-256 app authentication : AES-256 / DUOX\n"
                   << "===========================================================\n";
 
         if (CARD_PREPARATION_MODE == DUOXCardPreparationMode::EraseCard)

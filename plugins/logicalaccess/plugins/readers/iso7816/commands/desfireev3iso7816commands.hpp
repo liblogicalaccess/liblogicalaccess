@@ -146,6 +146,18 @@ class LLA_READERS_ISO7816_API DESFireEV3ISO7816Commands
     ByteVector readSignature(unsigned char address = 0x00) override;
 
     bool performECCOriginalityCheck() override;
+    
+    [[nodiscard]] std::uint32_t decodeTransactionMACCounter(const CommitTransactionResult &result) override;
+    [[nodiscard]] std::uint32_t decodeTransactionCounter(const TransactionManagement::TransactionCounter &tmc) override;
+
+    void configureTransactionMAC(const ByteVector &applicationTMACKey, const ByteVector &uid,
+                                 unsigned char transactionMACFileNo) override;
+
+    void resetTransactionMACInput() override;
+
+    ByteVector getTransactionMACInput() const override;
+
+    [[nodiscard]] bool verifyTransactionMAC(const TransactionMACFileData &committed) const override;
 
     ByteVector getFileCounters(unsigned char fileno) override;
 

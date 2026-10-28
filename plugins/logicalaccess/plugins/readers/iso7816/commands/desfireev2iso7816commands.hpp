@@ -154,9 +154,9 @@ class LLA_READERS_ISO7816_API DESFireEV2ISO7816Commands
     bool performECCOriginalityCheck() override;
 
     // Explicitly rejects NoCredential and Signature results. It doesn't interpret the signature structure or TMV
-    [[nodiscard]] std::uint32_t decodeTransactionMACCounter(const CommitTransactionResult &result);
+    [[nodiscard]] std::uint32_t decodeTransactionMACCounter(const CommitTransactionResult &result) override;
 
-    [[nodiscard]] std::uint32_t decodeTransactionCounter(const TransactionManagement::TransactionCounter &tmc);
+    [[nodiscard]] std::uint32_t decodeTransactionCounter(const TransactionManagement::TransactionCounter &tmc) override;
 
     /**
      * \brief Configures host side Transaction MAC verification.
@@ -171,25 +171,13 @@ class LLA_READERS_ISO7816_API DESFireEV2ISO7816Commands
      * \param transactionMACFileNo File number of the application's Transaction MAC file.
      */
     void configureTransactionMAC(const ByteVector &applicationTMACKey, const ByteVector &uid,
-                                 unsigned char transactionMACFileNo);
+                                 unsigned char transactionMACFileNo) override;
 
-    /**
-     * \brief Initializes host side Transaction MAC Input (TMI) tracking.
-     *
-     * Clears the current TMI and invalidates any previously committed transaction input.
-     * Enables tracking of transaction-related commands so that the accumulated TMI can be
-     * retained when a transaction is successfully committed.
-     *
-     * This method initializes transaction input tracking independently of the cryptographic mechanism
-     * used to authenticate the transaction and therefore does not configure or derive any transaction MAC keys.
-     */
-    void initializeTransactionMACInputTracking(unsigned char fileNo);
+    void resetTransactionMACInput() override;
 
-    void resetTransactionMACInput();
+    ByteVector getTransactionMACInput() const override;
 
-    ByteVector getTransactionMACInput() const;
-
-    bool verifyTransactionMAC(const TransactionMACFileData &committed) const; // TODO Consider adding nodiscard
+    [[nodiscard]] bool verifyTransactionMAC(const TransactionMACFileData &committed) const override;
 
     void abortTransaction() override;
 
@@ -210,9 +198,6 @@ class LLA_READERS_ISO7816_API DESFireEV2ISO7816Commands
     void writeRecord(unsigned char fileno, unsigned int offset, const ByteVector &data, EncryptionMode mode) override;
 
     void clearRecordFile(unsigned char fileno) override;
-
-    void onTransactionCommitted();
-    void onTransactionAborted();
 
   protected:
     /**
@@ -239,6 +224,21 @@ class LLA_READERS_ISO7816_API DESFireEV2ISO7816Commands
                                     unsigned char lc = 0, bool forceLc = false) override;
 
     virtual void validateTransactionMACConfiguration(const ByteVector &applicationTMACKey, const ByteVector &uid) const;
+    
+    /**
+     * \brief Initializes host side Transaction MAC Input (TMI) tracking.
+     *
+     * Clears the current TMI and invalidates any previously committed transaction input.
+     * Enables tracking of transaction-related commands so that the accumulated TMI can be
+     * retained when a transaction is successfully committed.
+     *
+     * This method initializes transaction input tracking independently of the cryptographic mechanism
+     * used to authenticate the transaction and therefore does not configure or derive any transaction MAC keys.
+     */
+    void initializeTransactionMACInputTracking(unsigned char fileNo);
+
+    void onTransactionCommitted();
+    void onTransactionAborted();
 
     // Shared Transaction Management configuration and lifecycle
     unsigned char transactionManagementFileNo_ = 0xFF;
