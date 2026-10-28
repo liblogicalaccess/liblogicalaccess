@@ -17,6 +17,8 @@ class LLA_READERS_ISO7816_API DESFireEV3ISO7816Commands
   public:
     DESFireEV3ISO7816Commands();
 
+    explicit DESFireEV3ISO7816Commands(const std::string &cmd_type);
+
     std::shared_ptr<Chip> getChip() const override;
 
     std::shared_ptr<ReaderCardAdapter> getReaderCardAdapter() const override;
@@ -134,7 +136,8 @@ class LLA_READERS_ISO7816_API DESFireEV3ISO7816Commands
 
     void proximityCheck(std::shared_ptr<DESFireKey> key, uint8_t chunk_size) override;
 
-    ByteVector commitTransaction(bool return_tmac) override;
+    CommitTransactionResult commitTransaction(bool return_tmac) override;
+    TransactionMACFileData readTransactionMacFile(unsigned char fileno) override;
 
     ByteVector commitReaderID(ByteVector readerid) override;
 
@@ -143,10 +146,66 @@ class LLA_READERS_ISO7816_API DESFireEV3ISO7816Commands
     ByteVector readSignature(unsigned char address = 0x00) override;
 
     bool performECCOriginalityCheck() override;
+    
+    [[nodiscard]] std::uint32_t decodeTransactionMACCounter(const CommitTransactionResult &result) override;
+    [[nodiscard]] std::uint32_t decodeTransactionCounter(const TransactionManagement::TransactionCounter &tmc) override;
+
+    void configureTransactionMAC(const ByteVector &applicationTMACKey, const ByteVector &uid,
+                                 unsigned char transactionMACFileNo) override;
+
+    void resetTransactionMACInput() override;
+
+    ByteVector getTransactionMACInput() const override;
+
+    [[nodiscard]] bool verifyTransactionMAC(const TransactionMACFileData &committed) const override;
 
     ByteVector getFileCounters(unsigned char fileno) override;
 
     bool performAESOriginalityCheck() override;
+
+    void selectApplication(unsigned int aid) override;
+    void selectApplication(unsigned int aid1, unsigned int aid2) override;
+
+    DESFireCardVersion getVersion() override;
+
+  protected:
+    void validateTransactionMACConfiguration(const ByteVector &applicationTMACKey, const ByteVector &uid) const override;
+
+    /**
+     * \brief Get the GetVersion option used by the card implementation.
+     */
+    virtual DESFireGetVersionOption getVersionOption() const;
+
+    /**
+     * \brief Indicates whether the card implementation supports a 4-byte UID.
+     */
+    virtual bool supportsFourByteUID() const;
+
+    /**
+     * \brief Retrieve and parse the GetVersion response.
+     */
+    DESFireCardVersion getVersionImpl(DESFireGetVersionOption option, bool allowFourByteUID);
+
+    static DESFireVersionInfo parseVersionInfo(const ByteVector &data);
+
+    static DESFireManufacturingInfo parseManufacturingInfo(const ByteVector &data, DESFireGetVersionOption option,
+                                                           bool allowFourByteUID);
+
+    static std::size_t getManufacturingPayloadSize(const ByteVector &data, DESFireGetVersionOption option,
+                                                   bool allowFourByteUID);
+
+    static bool isValidManufacturingPayloadSize(std::size_t size, DESFireGetVersionOption option, bool allowFourByteUID);
+
+    static void ensureSize(const ByteVector &data, std::size_t offset, std::size_t required, const char *message);
+
+
+  private:
+    static constexpr unsigned int PICC_AID = 0x000000U;
+    static constexpr unsigned int AID_MASK = 0x00FFFFFFU;
+    static constexpr unsigned int MAX_AID  = AID_MASK;
+
+    static void validateAid(unsigned int aid);
+    static void validateApplicationPair(unsigned int aid1, unsigned int aid2);
 };
 
 }

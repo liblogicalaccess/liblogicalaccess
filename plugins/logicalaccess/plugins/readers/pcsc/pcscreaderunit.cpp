@@ -21,6 +21,7 @@
 #include <logicalaccess/plugins/readers/iso7816/commands/desfireev1iso7816commands.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/desfireev2iso7816commands.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/desfireev3iso7816commands.hpp>
+#include <logicalaccess/plugins/readers/iso7816/commands/duoxiso7816commands.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/epassiso7816commands.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/yubikeyiso7816commands.hpp>
 #include <logicalaccess/plugins/readers/pcsc/commands/mifarepcsccommands.hpp>
@@ -69,6 +70,7 @@
 #include <logicalaccess/plugins/cards/generictag/generictagchip.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfireev2chip.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfireev3chip.hpp>
+#include <logicalaccess/plugins/cards/duox/duoxchip.hpp>
 #include <logicalaccess/plugins/cards/seos/seoschip.hpp>
 #include <logicalaccess/plugins/cards/yubikey/yubikeychip.hpp>
 
@@ -669,291 +671,296 @@ std::shared_ptr<Chip> PCSCReaderUnit::createChip(std::string type)
         return d_proxyReaderUnit->createChip(type);
     }
 
-    std::shared_ptr<Chip> chip = ReaderUnit::createChip(type);
-    if (chip)
+    auto chip = ReaderUnit::createChip(type);
+    if (!chip)
+        return nullptr;
+
+    type = chip->getCardType(); // type may not be what we expected, it may be
+                                // unsupported.
+    const auto readerType = getPCSCType();
+
+    LOG(LogLevel::INFOS)
+        << "Chip (" << type
+        << ") created, creating other associated objects... Reader PCSC Type is "
+        << readerType;
+
+    std::shared_ptr<ReaderCardAdapter> rca = getReaderCardAdapter(type);
+    std::shared_ptr<Commands> commands;
+    std::shared_ptr<ResultChecker> resultChecker = createDefaultResultChecker();
+
+    if (type == CHIP_MIFARE1K || type == CHIP_MIFARE4K || type == CHIP_MIFARE)
     {
-        LOG(LogLevel::INFOS)
-            << "Chip (" << chip->getCardType()
-            << ") created, creating other associated objects... Reader PCSC Type is "
-            << getPCSCType();
-        type = chip->getCardType(); // type may not be what we expected, it may be
-                                    // unsupported.
-
-        std::shared_ptr<ReaderCardAdapter> rca = getReaderCardAdapter(type);
-        std::shared_ptr<Commands> commands;
-        std::shared_ptr<ResultChecker> resultChecker = createDefaultResultChecker();
-
-        if (type == CHIP_MIFARE1K || type == CHIP_MIFARE4K || type == CHIP_MIFARE)
+        if (readerType == PCSC_RUT_SCM)
         {
-            if (getPCSCType() == PCSC_RUT_SCM)
-            {
-                commands.reset(new MifareSCMCommands());
-            }
-            else if (getPCSCType() == PCSC_RUT_CHERRY)
-            {
-                commands.reset(new MifareCherryCommands());
-            }
-            else if (getPCSCType() == PCSC_RUT_SPRINGCARD)
-            {
-                commands.reset(new MifareSpringCardCommands());
-            }
-            else if (getPCSCType() == PCSC_RUT_OMNIKEY_XX27)
-            {
-                commands.reset(new MifarePCSCCommands());
-                resultChecker.reset(new MifareOmnikeyXX27ResultChecker());
-            }
-            else if (getPCSCType() == PCSC_RUT_OMNIKEY_XX21 ||
-                     getPCSCType() == PCSC_RUT_OMNIKEY_LAN_XX21 ||
-                     getPCSCType() == PCSC_RUT_OMNIKEY_XX22 ||
-                     getPCSCType() == PCSC_RUT_OMNIKEY_XX23)
-            {
-                commands.reset(new MifareOmnikeyXX21Commands());
-            }
-            else if (getPCSCType() == PCSC_RUT_ACS_ACR_1222L ||
-                     getPCSCType() == PCSC_RUT_ACS_ACR) // both reader needs the same
-                                                        // custom impl for
-                                                        // increment/decrement
-            {
-                commands.reset(new MifareACR1222LCommands());
-            }
-            else if (getPCSCType() == PCSC_RUT_ID3_CL1356)
-            {
-                commands.reset(new MifareCL1356Commands());
-                resultChecker = std::make_shared<ID3ResultChecker>();
-            }
-            else
-            {
-                commands.reset(new MifarePCSCCommands());
-            }
+            commands.reset(new MifareSCMCommands());
         }
-        else if (chip->getGenericCardType() == "HIDiClass")
+        else if (readerType == PCSC_RUT_CHERRY)
         {
-            // HID iClass cards have a lot of restriction on license use from HID Global,
-            // so we try to load it dynamically if the dynamic library is side by side,
-            // otherwise we don't mind.
-            commands = chip->getCommands();
-            if (commands)
-            {
-                rca = commands->getReaderCardAdapter();
-            }
-            else
-            {
-                LOG(LogLevel::WARNINGS) << "Cannot found HIDiClass commands.";
-            }
+            commands.reset(new MifareCherryCommands());
         }
-        else if (type == CHIP_DESFIRE_EV2)
+        else if (readerType == PCSC_RUT_SPRINGCARD)
         {
-            commands.reset(new DESFireEV2ISO7816Commands());
-            std::dynamic_pointer_cast<DESFireISO7816Commands>(commands)->setSAMChip(
-                getSAMChip());
-            resultChecker.reset(new DESFireISO7816ResultChecker());
+            commands.reset(new MifareSpringCardCommands());
         }
-        else if (type == CHIP_DESFIRE_EV3)
+        else if (readerType == PCSC_RUT_OMNIKEY_XX27)
         {
-            commands.reset(new DESFireEV3ISO7816Commands());
-            std::dynamic_pointer_cast<DESFireISO7816Commands>(commands)->setSAMChip(
-                getSAMChip());
-            resultChecker.reset(new DESFireISO7816ResultChecker());
+            commands.reset(new MifarePCSCCommands());
+            resultChecker.reset(new MifareOmnikeyXX27ResultChecker());
         }
-        else if (type == CHIP_DESFIRE_EV1)
+        else if (readerType == PCSC_RUT_OMNIKEY_XX21 ||
+                 readerType == PCSC_RUT_OMNIKEY_LAN_XX21 ||
+                 readerType == PCSC_RUT_OMNIKEY_XX22 ||
+                 readerType == PCSC_RUT_OMNIKEY_XX23)
         {
-            commands.reset(new DESFireEV1ISO7816Commands());
-            std::dynamic_pointer_cast<DESFireISO7816Commands>(commands)->setSAMChip(
-                getSAMChip());
-            resultChecker.reset(new DESFireISO7816ResultChecker());
+            commands.reset(new MifareOmnikeyXX21Commands());
         }
-        else if (type == CHIP_DESFIRE)
+        else if (readerType == PCSC_RUT_ACS_ACR_1222L ||
+                 readerType == PCSC_RUT_ACS_ACR) // both reader needs the same
+                                                    // custom impl for
+                                                    // increment/decrement
         {
-            commands.reset(new DESFireISO7816Commands());
-            std::dynamic_pointer_cast<DESFireISO7816Commands>(commands)->setSAMChip(
-                getSAMChip());
-            resultChecker.reset(new DESFireISO7816ResultChecker());
+            commands.reset(new MifareACR1222LCommands());
         }
-        else if (type == CHIP_ISO15693)
+        else if (readerType == PCSC_RUT_ID3_CL1356)
         {
-            commands.reset(new ISO15693PCSCCommands());
+            commands.reset(new MifareCL1356Commands());
+            resultChecker = std::make_shared<ID3ResultChecker>();
         }
-        else if (type == CHIP_ISO7816)
+        else
         {
-            commands.reset(new ISO7816ISO7816Commands());
+            commands.reset(new MifarePCSCCommands());
         }
-        else if (type == CHIP_TAGIT)
-        {
-            commands.reset(new ISO15693PCSCCommands());
-        }
-        else if (type == CHIP_TWIC)
-        {
-            commands.reset(new TwicISO7816Commands());
-        }
-        else if (type == CHIP_MIFAREULTRALIGHT)
-        {
-            commands.reset(new MifareUltralightPCSCCommands());
-        }
-        else if (type == CHIP_MIFAREULTRALIGHTC)
-        {
-            if (getPCSCType() == PCSC_RUT_ACS_ACR ||
-                getPCSCType() == PCSC_RUT_ACS_ACR_1222L)
-            {
-                commands.reset(new MifareUltralightCACSACRCommands());
-            }
-            else if (getPCSCType() == PCSC_RUT_SPRINGCARD)
-            {
-                commands.reset(new MifareUltralightCSpringCardCommands());
-            }
-            else if (getPCSCType() == PCSC_RUT_OMNIKEY_XX21)
-            {
-                commands.reset(new MifareUltralightCOmnikeyXX21Commands());
-            }
-            else if (getPCSCType() == PCSC_RUT_OMNIKEY_XX22 ||
-                     getPCSCType() == PCSC_RUT_OMNIKEY_XX23)
-            {
-                commands.reset(new MifareUltralightCOmnikeyXX22Commands());
-            }
-            else
-            {
-                commands.reset(new MifareUltralightCPCSCCommands());
-            }
-        }
-        else if (type == CHIP_SAMAV1)
-        {
-            commands.reset(new SAMAV1ISO7816Commands());
-            std::shared_ptr<SAMDESfireCrypto> samcrypto(new SAMDESfireCrypto());
-            std::dynamic_pointer_cast<SAMAV1ISO7816Commands>(commands)->setCrypto(
-                samcrypto);
-            resultChecker.reset(new SAMISO7816ResultChecker());
-        }
-        else if (type == CHIP_SAMAV2)
-        {
-            commands.reset(new SAMAV2ISO7816Commands());
-            std::shared_ptr<SAMDESfireCrypto> samcrypto(new SAMDESfireCrypto());
-            std::dynamic_pointer_cast<SAMAV2ISO7816Commands>(commands)->setCrypto(
-                samcrypto);
-            resultChecker.reset(new SAMISO7816ResultChecker());
-        }
-        else if (type == CHIP_SAMAV3)
-        {
-            auto cmd = std::make_shared<SAMAV3ISO7816Commands>();
-            cmd->setCrypto(std::make_shared<SAMDESfireCrypto>());
-            commands      = cmd;
-            resultChecker = std::make_shared<SAMISO7816ResultChecker>();
-        }
-        else if (type.find("MifarePlus") == 0)
-        {
-            configure_mifareplus_chip(chip, commands, resultChecker);
-        }
-        else if (type == CHIP_SEOS)
-        {
-            commands = LibraryManager::getInstance()->getCommands("SeosISO7816");
-            if (!commands)
-                THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                         "Could not load SeosISO7816 Commands.");
-        }
-        else if (type == CHIP_SEPROCESSOR_PUBLIC)
-        {
-            commands = LibraryManager::getInstance()->getCommands("SEProcessorISO7816");
-            if (!commands)
-                THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                         "Could not load SEProcessorISO7816 Commands.");
-        }
-        else if (type == CHIP_PROX)
-        {
-            // Dummy command that simply holds reader card adapter and data transport.
-            commands.reset(new DummyCommands());
-        }
-        else if (type == CHIP_FELICA)
-        {
-            if (getPCSCType() == PCSC_RUT_SCM)
-            {
-                commands.reset(new FeliCaSCMCommands());
-            }
-            else if (getPCSCType() == PCSC_RUT_SPRINGCARD)
-            {
-                commands.reset(new FeliCaSpringCardCommands());
-            }
-        }
-        else if (type == CHIP_EPASS)
-        {
-            commands = std::make_shared<EPassISO7816Commands>();
-            rca      = std::make_shared<ISO7816ReaderCardAdapter>();
-            rca->setDataTransport(getDefaultReaderCardAdapter()->getDataTransport());
-        }
-        else if (type == CHIP_YUBIKEY)
-        {
-            commands = std::make_shared<YubikeyISO7816Commands>();
-        }
-        else if (type == CHIP_TOPAZ)
-        {
-            if (getPCSCType() == PCSC_RUT_ACS_ACR ||
-                getPCSCType() == PCSC_RUT_ACS_ACR_1222L)
-            {
-                commands.reset(new TopazACSACRCommands());
-            }
-            else if (getPCSCType() == PCSC_RUT_SCM)
-            {
-                commands.reset(new TopazSCMCommands());
-            }
-            else if (getPCSCType() == PCSC_RUT_OMNIKEY_XX27)
-            {
-                commands.reset(new TopazOmnikeyXX27Commands());
-            }
-            else
-            {
-                commands.reset(new TopazPCSCCommands());
-            }
-        }
-
-        if (type == CHIP_DESFIRE || type == CHIP_DESFIRE_EV1)
-        {
-            std::shared_ptr<DESFireISO7816Commands> dcmd =
-                std::dynamic_pointer_cast<DESFireISO7816Commands>(commands);
-            if (dcmd->getSAMChip())
-            {
-                std::shared_ptr<SAMDESfireCrypto> samcrypto(new SAMDESfireCrypto());
-                if (dcmd->getSAMChip()->getCardType() == CHIP_SAMAV1)
-                    std::dynamic_pointer_cast<SAMAV1ISO7816Commands>(
-                        dcmd->getSAMChip()->getCommands())
-                        ->setCrypto(samcrypto);
-                else if (dcmd->getSAMChip()->getCardType() == CHIP_SAMAV2)
-                    std::dynamic_pointer_cast<SAMAV2ISO7816Commands>(
-                        dcmd->getSAMChip()->getCommands())
-                        ->setCrypto(samcrypto);
-                else if (dcmd->getSAMChip()->getCardType() == CHIP_SAMAV3)
-                    std::dynamic_pointer_cast<SAMAV3ISO7816Commands>(
-                        dcmd->getSAMChip()->getCommands())
-                        ->setCrypto(samcrypto);
-            }
-        }
-
-        LOG(LogLevel::INFOS)
-            << "Other objects created, making association (ReaderCardAdapter empty? "
-            << !rca << " - Commands empty? " << !commands << ")...";
-
-        if (rca)
-        {
-            rca->setResultChecker(resultChecker);
-            std::shared_ptr<DataTransport> dt = getDataTransport();
-            if (dt)
-            {
-                LOG(LogLevel::INFOS) << "Data transport forced to a specific one.";
-                rca->setDataTransport(dt);
-            }
-
-            dt = rca->getDataTransport();
-            if (dt)
-            {
-                dt->setReaderUnit(shared_from_this());
-            }
-        }
-
+    }
+    else if (chip->getGenericCardType() == "HIDiClass")
+    {
+        // HID iClass cards have a lot of restriction on license use from HID Global,
+        // so we try to load it dynamically if the dynamic library is side by side,
+        // otherwise we don't mind.
+        commands = chip->getCommands();
         if (commands)
         {
-            commands->setReaderCardAdapter(rca);
-            commands->setChip(chip);
-            chip->setCommands(commands);
+            rca = commands->getReaderCardAdapter();
+        }
+        else
+        {
+            LOG(LogLevel::WARNINGS) << "Cannot found HIDiClass commands.";
+        }
+    }
+    else if (type == CHIP_DUOX)
+    {
+        auto cmd = std::make_shared<DUOXISO7816Commands>();
+        cmd->setSAMChip(getSAMChip());
+        commands      = cmd;
+        resultChecker = std::make_shared<DESFireISO7816ResultChecker>();
+    }
+    else if (type == CHIP_DESFIRE_EV2)
+    {
+        commands.reset(new DESFireEV2ISO7816Commands());
+        std::dynamic_pointer_cast<DESFireISO7816Commands>(commands)->setSAMChip(
+            getSAMChip());
+        resultChecker.reset(new DESFireISO7816ResultChecker());
+    }
+    else if (type == CHIP_DESFIRE_EV3)
+    {
+        commands.reset(new DESFireEV3ISO7816Commands());
+        std::dynamic_pointer_cast<DESFireISO7816Commands>(commands)->setSAMChip(
+            getSAMChip());
+        resultChecker.reset(new DESFireISO7816ResultChecker());
+    }
+    else if (type == CHIP_DESFIRE_EV1)
+    {
+        commands.reset(new DESFireEV1ISO7816Commands());
+        std::dynamic_pointer_cast<DESFireISO7816Commands>(commands)->setSAMChip(
+            getSAMChip());
+        resultChecker.reset(new DESFireISO7816ResultChecker());
+    }
+    else if (type == CHIP_DESFIRE)
+    {
+        commands.reset(new DESFireISO7816Commands());
+        std::dynamic_pointer_cast<DESFireISO7816Commands>(commands)->setSAMChip(
+            getSAMChip());
+        resultChecker.reset(new DESFireISO7816ResultChecker());
+    }
+    else if (type == CHIP_ISO15693)
+    {
+        commands.reset(new ISO15693PCSCCommands());
+    }
+    else if (type == CHIP_ISO7816)
+    {
+        commands.reset(new ISO7816ISO7816Commands());
+    }
+    else if (type == CHIP_TAGIT)
+    {
+        commands.reset(new ISO15693PCSCCommands());
+    }
+    else if (type == CHIP_TWIC)
+    {
+        commands.reset(new TwicISO7816Commands());
+    }
+    else if (type == CHIP_MIFAREULTRALIGHT)
+    {
+        commands.reset(new MifareUltralightPCSCCommands());
+    }
+    else if (type == CHIP_MIFAREULTRALIGHTC)
+    {
+        if (readerType == PCSC_RUT_ACS_ACR || readerType == PCSC_RUT_ACS_ACR_1222L)
+        {
+            commands.reset(new MifareUltralightCACSACRCommands());
+        }
+        else if (readerType == PCSC_RUT_SPRINGCARD)
+        {
+            commands.reset(new MifareUltralightCSpringCardCommands());
+        }
+        else if (readerType == PCSC_RUT_OMNIKEY_XX21)
+        {
+            commands.reset(new MifareUltralightCOmnikeyXX21Commands());
+        }
+        else if (readerType == PCSC_RUT_OMNIKEY_XX22 ||
+                 readerType == PCSC_RUT_OMNIKEY_XX23)
+        {
+            commands.reset(new MifareUltralightCOmnikeyXX22Commands());
+        }
+        else
+        {
+            commands.reset(new MifareUltralightCPCSCCommands());
+        }
+    }
+    else if (type == CHIP_SAMAV1)
+    {
+        commands.reset(new SAMAV1ISO7816Commands());
+        std::shared_ptr<SAMDESfireCrypto> samcrypto(new SAMDESfireCrypto());
+        std::dynamic_pointer_cast<SAMAV1ISO7816Commands>(commands)->setCrypto(samcrypto);
+        resultChecker.reset(new SAMISO7816ResultChecker());
+    }
+    else if (type == CHIP_SAMAV2)
+    {
+        commands.reset(new SAMAV2ISO7816Commands());
+        std::shared_ptr<SAMDESfireCrypto> samcrypto(new SAMDESfireCrypto());
+        std::dynamic_pointer_cast<SAMAV2ISO7816Commands>(commands)->setCrypto(samcrypto);
+        resultChecker.reset(new SAMISO7816ResultChecker());
+    }
+    else if (type == CHIP_SAMAV3)
+    {
+        auto cmd = std::make_shared<SAMAV3ISO7816Commands>();
+        cmd->setCrypto(std::make_shared<SAMDESfireCrypto>());
+        commands      = cmd;
+        resultChecker = std::make_shared<SAMISO7816ResultChecker>();
+    }
+    else if (type.find("MifarePlus") == 0)
+    {
+        configure_mifareplus_chip(chip, commands, resultChecker);
+    }
+    else if (type == CHIP_SEOS)
+    {
+        commands = LibraryManager::getInstance()->getCommands("SeosISO7816");
+        if (!commands)
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                     "Could not load SeosISO7816 Commands.");
+    }
+    else if (type == CHIP_SEPROCESSOR_PUBLIC)
+    {
+        commands = LibraryManager::getInstance()->getCommands("SEProcessorISO7816");
+        if (!commands)
+            THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
+                                     "Could not load SEProcessorISO7816 Commands.");
+    }
+    else if (type == CHIP_PROX)
+    {
+        // Dummy command that simply holds reader card adapter and data transport.
+        commands.reset(new DummyCommands());
+    }
+    else if (type == CHIP_FELICA)
+    {
+        if (readerType == PCSC_RUT_SCM)
+        {
+            commands.reset(new FeliCaSCMCommands());
+        }
+        else if (readerType == PCSC_RUT_SPRINGCARD)
+        {
+            commands.reset(new FeliCaSpringCardCommands());
+        }
+    }
+    else if (type == CHIP_EPASS)
+    {
+        commands = std::make_shared<EPassISO7816Commands>();
+        rca      = std::make_shared<ISO7816ReaderCardAdapter>();
+        rca->setDataTransport(getDefaultReaderCardAdapter()->getDataTransport());
+    }
+    else if (type == CHIP_YUBIKEY)
+    {
+        commands = std::make_shared<YubikeyISO7816Commands>();
+    }
+    else if (type == CHIP_TOPAZ)
+    {
+        if (readerType == PCSC_RUT_ACS_ACR || readerType == PCSC_RUT_ACS_ACR_1222L)
+        {
+            commands.reset(new TopazACSACRCommands());
+        }
+        else if (readerType == PCSC_RUT_SCM)
+        {
+            commands.reset(new TopazSCMCommands());
+        }
+        else if (readerType == PCSC_RUT_OMNIKEY_XX27)
+        {
+            commands.reset(new TopazOmnikeyXX27Commands());
+        }
+        else
+        {
+            commands.reset(new TopazPCSCCommands());
+        }
+    }
+
+    if (type == CHIP_DESFIRE || type == CHIP_DESFIRE_EV1)
+    {
+        std::shared_ptr<DESFireISO7816Commands> dcmd =
+            std::dynamic_pointer_cast<DESFireISO7816Commands>(commands);
+        if (dcmd->getSAMChip())
+        {
+            std::shared_ptr<SAMDESfireCrypto> samcrypto(new SAMDESfireCrypto());
+            if (dcmd->getSAMChip()->getCardType() == CHIP_SAMAV1)
+                std::dynamic_pointer_cast<SAMAV1ISO7816Commands>(
+                    dcmd->getSAMChip()->getCommands())
+                    ->setCrypto(samcrypto);
+            else if (dcmd->getSAMChip()->getCardType() == CHIP_SAMAV2)
+                std::dynamic_pointer_cast<SAMAV2ISO7816Commands>(
+                    dcmd->getSAMChip()->getCommands())
+                    ->setCrypto(samcrypto);
+            else if (dcmd->getSAMChip()->getCardType() == CHIP_SAMAV3)
+                std::dynamic_pointer_cast<SAMAV3ISO7816Commands>(
+                    dcmd->getSAMChip()->getCommands())
+                    ->setCrypto(samcrypto);
+        }
+    }
+
+    LOG(LogLevel::INFOS)
+        << "Other objects created, making association (ReaderCardAdapter empty? " << !rca
+        << " - Commands empty? " << !commands << ")...";
+
+    if (rca)
+    {
+        rca->setResultChecker(resultChecker);
+        std::shared_ptr<DataTransport> dt = getDataTransport();
+        if (dt)
+        {
+            LOG(LogLevel::INFOS) << "Data transport forced to a specific one.";
+            rca->setDataTransport(dt);
         }
 
-        LOG(LogLevel::INFOS) << "Object creation done.";
+        dt = rca->getDataTransport();
+        if (dt)
+        {
+            dt->setReaderUnit(shared_from_this());
+        }
     }
+
+    if (commands)
+    {
+        commands->setReaderCardAdapter(rca);
+        commands->setChip(chip);
+        chip->setCommands(commands);
+    }
+
+    LOG(LogLevel::INFOS) << "Object creation done.";
     return chip;
 }
 
@@ -1528,45 +1535,64 @@ bool PCSCReaderUnit::process_insertion(const std::string &cardType, unsigned int
 
 std::shared_ptr<Chip> PCSCReaderUnit::adjustChip(std::shared_ptr<Chip> c)
 {
+    if (!c)
+    {
+        LOG(LogLevel::ERRORS) << "Cannot adjust a null chip.";
+        return c;
+    }
+
 	LOG(LogLevel::INFOS) << "Adjusting chip (" << c->getCardType() << ")...";
+
+    const auto probe = std::dynamic_pointer_cast<PCSCCardProbe>(createCardProbe());
+
+    EXCEPTION_ASSERT_WITH_LOG(probe != nullptr,
+        LibLogicalAccessException, "Failed to create the PC/SC card probe while adjusting the chip.");
 	
-    // DESFire adjustment. Check maybe it's DESFireEV1 or EV2. Check random uid.
-    // Adjust cryptographic context.
+    // DESFire adjustment. Check whether this is DESFire EV1, EV2, EV3, or DUOX,
+    // and adjust the cryptographic context.
     if (c->getCardType() == CHIP_DESFIRE && d_card_type == CHIP_UNKNOWN)
     {
-        // We are doing too much work here. We should query once and compare
-        // or something. It works alright but is not very good.
-        if (createCardProbe()->is_desfire_ev1())
+        const auto desfire_version = probe->get_desfire_version();
+        if (desfire_version.hardwareMajorVersion == 0xA0)
+            c = createChip(CHIP_DUOX);
+        else if (desfire_version.softwareMajorVersion == 1)
             c = createChip(CHIP_DESFIRE_EV1);
-        else if (createCardProbe()->is_desfire_ev2())
+        else if (desfire_version.softwareMajorVersion == 2)
             c = createChip(CHIP_DESFIRE_EV2);
-        else if (createCardProbe()->is_desfire_ev3())
+        else if (desfire_version.softwareMajorVersion == 3)
             c = createChip(CHIP_DESFIRE_EV3);
     }
-    if (c->getCardType() == CHIP_DESFIRE || c->getCardType() == CHIP_DESFIRE_EV1 ||
-        c->getCardType() == CHIP_DESFIRE_EV2 ||
-        c->getCardType() == CHIP_DESFIRE_EV3)
+    // Keep this value local because 'c' may have been replaced above
+    const auto cardType = c->getCardType();
+    if (cardType == CHIP_DESFIRE || cardType == CHIP_DESFIRE_EV1 ||
+        cardType == CHIP_DESFIRE_EV2 || cardType == CHIP_DESFIRE_EV3 ||
+        cardType == CHIP_DUOX)
     {
-        ByteVector uid;
-        if (createCardProbe()->has_desfire_random_uid(&uid))
+        const auto desfireChip = std::dynamic_pointer_cast<DESFireChip>(c);
+        if (desfireChip)
         {
-            c->setChipIdentifier(
-                getCardSerialNumber()); // Has random, cannot rely on get_version
-            std::dynamic_pointer_cast<DESFireChip>(c)->setHasRealUID(false);
+            ByteVector uid;
+            if (probe->has_desfire_random_uid(&uid))
+            {
+                c->setChipIdentifier(getCardSerialNumber()); // Has random, cannot rely on get_version
+                desfireChip->setHasRealUID(false);
+            }
+            else
+                c->setChipIdentifier(uid);
+
+            desfireChip->getCrypto()->setIdentifier(c->getChipIdentifier());
+            desfireChip->getCrypto()->setCryptoContext(c->getChipIdentifier());
         }
         else
-            c->setChipIdentifier(uid);
-
-        std::dynamic_pointer_cast<DESFireChip>(c)->getCrypto()->setIdentifier(
-            c->getChipIdentifier());
-        std::dynamic_pointer_cast<DESFireChip>(c)->getCrypto()->setCryptoContext(
-            c->getChipIdentifier());
+        {
+            LOG(LogLevel::ERRORS) << "Failed to cast DESFire-family chip (" << cardType << ") to DESFireChip.";
+        }
     }
 
     // Mifare Ultralight adjustement.
     if (c->getCardType() == "MifareUltralight" && d_card_type == CHIP_UNKNOWN)
     {
-        if (createCardProbe()->is_mifare_ultralight_c())
+        if (probe->is_mifare_ultralight_c())
             c = createChip("MifareUltralightC");
     }
 
@@ -1574,37 +1600,35 @@ std::shared_ptr<Chip> PCSCReaderUnit::adjustChip(std::shared_ptr<Chip> c)
     {
         try
         {
-            if (c->getCardType() == CHIP_PROX)
+            const auto currentCardType = c->getCardType();
+            if (currentCardType == CHIP_PROX)
             {
                 if (atr_.size() > 2)
                 {
                     c->setChipIdentifier(atr_);
                 }
             }
-            else if (d_card_type == "UNKNOWN" && c && c->getCardType() == "SAM_AV2")
+            else if (d_card_type == CHIP_UNKNOWN && currentCardType == "SAM_AV2")
             {
-                if (std::dynamic_pointer_cast<
-                        SAMCommands<KeyEntryAV2Information, SETAV2>>(c->getCommands())
-                        ->getSAMTypeFromSAM() == "SAM_AV1")
+                auto samCommands = std::dynamic_pointer_cast<
+                    SAMCommands<KeyEntryAV2Information, SETAV2>>(c->getCommands());
+                if (samCommands && samCommands->getSAMTypeFromSAM() == "SAM_AV1")
                 {
-                    LOG(LogLevel::INFOS) << "SAM on the reader is AV2 but mode AV1 "
-                                            "so we switch to AV1.";
+                    LOG(LogLevel::INFOS) << "SAM on the reader is AV2 but mode AV1; "
+                                            "switching to AV1.";
                     c = createChip("SAM_AV1");
                 }
             }
+            else if (!getPCSCConfiguration()->getSkipCSN())
+            {
+                c->setChipIdentifier(getCardSerialNumber());
+            }
             else
             {
-				if (!getPCSCConfiguration()->getSkipCSN())
-				{
-					c->setChipIdentifier(getCardSerialNumber());
-				}
-				else
-				{
-					LOG(LogLevel::INFOS) << "Reading CSN skipped.";
-				}
+                LOG(LogLevel::INFOS) << "Reading CSN skipped.";
             }
         }
-        catch (LibLogicalAccessException &e)
+        catch (const LibLogicalAccessException &e)
         {
             LOG(LogLevel::ERRORS)
                 << "Exception while getting card serial number {" << e.what() << "}";

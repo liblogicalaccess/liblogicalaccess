@@ -1,11 +1,11 @@
 #include <logicalaccess/plugins/readers/pcsc/readers/cardprobes/pcsccardprobe.hpp>
 #include <logicalaccess/plugins/readers/pcsc/pcscreaderunit.hpp>
+
 #include <logicalaccess/cards/chip.hpp>
-#include <logicalaccess/plugins/llacommon/logs.hpp>
-#include <logicalaccess/plugins/cards/mifare/mifarecommands.hpp>
-#include <assert.h>
 #include <logicalaccess/plugins/cards/desfire/desfirecommands.hpp>
+#include <logicalaccess/plugins/cards/mifare/mifarecommands.hpp>
 #include <logicalaccess/plugins/cards/mifareultralight/mifareultralightccommands.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 
 using namespace logicalaccess;
 
@@ -21,12 +21,13 @@ bool PCSCCardProbe::maybe_mifare_classic()
         LLA_LOG_CTX("Probe::maybe_mifare_classic");
         reset();
         auto chip = reader_unit_->createChip("Mifare1K");
-        std::shared_ptr<MifareCommands> command =
-            std::dynamic_pointer_cast<MifareCommands>(chip->getCommands());
+        auto command = std::dynamic_pointer_cast<MifareCommands>(chip->getCommands());
 
-        MifareAccessInfo::SectorAccessBits sab;
-        auto ret = command->readSector(1, 0, std::shared_ptr<MifareKey>(),
-                                       std::shared_ptr<MifareKey>(), sab);
+        EXCEPTION_ASSERT_WITH_LOG(command != nullptr,
+            LibLogicalAccessException, "Failed to create MIFARE Classic commands while probing the card.");
+
+        MifareAccessInfo::SectorAccessBits sector_access_bits;
+        command->readSector(1, 0, std::shared_ptr<MifareKey>(), std::shared_ptr<MifareKey>(), sector_access_bits);
         return true;
     }
     catch (const CardException &e)
@@ -38,9 +39,10 @@ bool PCSCCardProbe::maybe_mifare_classic()
             return true;
         }
     }
-    catch (const std::exception &)
+    catch (const std::exception &e)
     {
         // If an error occurred, the card probably isn't mifare classic.
+        LOG(LogLevel::INFOS) << "MIFARE Classic probe failed : " << e.what();
         return false;
     }
     return false;
@@ -52,43 +54,56 @@ bool PCSCCardProbe::is_desfire(std::vector<uint8_t> *uid)
     {
         LLA_LOG_CTX("Probe::is_desfire");
         reset();
-        auto chip = reader_unit_->createChip("DESFire");
-        auto desfire_command =
-            std::dynamic_pointer_cast<DESFireCommands>(chip->getCommands());
+        auto chip = reader_unit_->createChip(CMD_DESFIRE);
+        auto desfire_command = std::dynamic_pointer_cast<DESFireCommands>(chip->getCommands());
+
+        EXCEPTION_ASSERT_WITH_LOG(desfire_command != nullptr,
+            LibLogicalAccessException, "Failed to create DESFire commands while probing the card.");
+
         desfire_command->selectApplication(0x00);
-        DESFireCommands::DESFireCardVersion cardversion = desfire_command->getVersion();
+        const auto card_version = desfire_command->getVersion();
 
         if (uid)
-            *uid = ByteVector(std::begin(cardversion.uid), std::end(cardversion.uid));
+            *uid = card_version.manufacturing.uid;
         return true;
     }
-    catch (const std::exception &)
+    catch (const std::exception &e)
     {
         // If an error occurred, the card probably isn't desfire.
+        LOG(LogLevel::INFOS) << "DESFire probe failed : " << e.what();
         return false;
     }
 }
 
-int PCSCCardProbe::get_desfire_version(std::vector<uint8_t> *uid)
+PCSCCardProbe::DESFireVersionInfo PCSCCardProbe::get_desfire_version()
 {
-    int try_count = 0;
-    while (true)
+    // Keep DESFire command-layer details out of the public probe interface
+    return probe_desfire_version();
+}
+
+PCSCCardProbe::DESFireVersionInfo PCSCCardProbe::probe_desfire_version()
+{
+    constexpr int maxAttempts = 3;
+    for (int attempt = 0; attempt < maxAttempts; ++attempt)
     {
         try
         {
             LLA_LOG_CTX("Probe::get_desfire_version");
             reset();
-            auto chip = reader_unit_->createChip("DESFireEV1");
-            auto desfire_command =
-                std::dynamic_pointer_cast<DESFireCommands>(chip->getCommands());
-            assert(desfire_command);
-            desfire_command->selectApplication(0x00);
-            DESFireCommands::DESFireCardVersion cardversion =
-                desfire_command->getVersion();
+            const auto chip = reader_unit_->createChip("DESFireEV1");
+            const auto desfire_command = std::dynamic_pointer_cast<DESFireCommands>(chip->getCommands());
 
-            if (uid)
-                *uid = ByteVector(std::begin(cardversion.uid), std::end(cardversion.uid));
-            return cardversion.softwareMjVersion;
+            EXCEPTION_ASSERT_WITH_LOG(desfire_command != nullptr,
+                LibLogicalAccessException, "Failed to create DESFire commands while retrieving the card version.");
+
+            desfire_command->selectApplication(0x00);
+            const auto cardVersion = desfire_command->getVersion();
+
+            return DESFireVersionInfo {
+                cardVersion.hardware.majorVersion,
+                cardVersion.software.majorVersion,
+                cardVersion.manufacturing.uid
+            };
         }
         catch (const CardException &e)
         {
@@ -97,41 +112,75 @@ int PCSCCardProbe::get_desfire_version(std::vector<uint8_t> *uid)
                 // This likely means EV2 with Mandatory Proximity Check.
                 // Note that unfortunately,
                 // this will likely cause some issue with EV3 or something later.
-                return 2;
+                DESFireVersionInfo version;
+                version.softwareMajorVersion = 2;
+                return version;
             }
+
             throw;
         }
-        catch (const std::exception &)
+        catch (const std::exception &e)
         {
+            LOG(LogLevel::INFOS) << "DESFire version probe attempt " << (attempt + 1)
+                                 << "/" << maxAttempts << " failed : " << e.what();
+
             // Quite often the hardware is not ready or something else happens
             // which cause the command to fail. So we try a few time.
             // This seems to fix somewhat reliably the Desfire / EV1 / EV2 detection
             // issues.
-            if (try_count++ == 2)
+            if (attempt + 1 == maxAttempts)
             {
                 // If an error occurred, the card probably isn't desfire.
-                return -1;
+                LOG(LogLevel::INFOS) << "DESFire version probe failed after " << maxAttempts << " attempts.";
+                return {};
             }
         }
     }
+
+    // Defensive fallback in case the retry loop is changed in the future
+    return {};
 }
 
 bool PCSCCardProbe::is_desfire_ev1(std::vector<uint8_t> *uid)
 {
     LLA_LOG_CTX("Probe::is_desfire_ev1");
-    return get_desfire_version(uid) == 1;
+    const auto version = get_desfire_version();
+
+    if (version.softwareMajorVersion != 1)
+        return false;
+
+    if (uid != nullptr)
+        *uid = version.uid;
+
+    return true;
 }
 
 bool PCSCCardProbe::is_desfire_ev2(std::vector<uint8_t> *uid)
 {
     LLA_LOG_CTX("Probe::is_desfire_ev2");
-    return get_desfire_version(uid) == 2;
+    const auto version = get_desfire_version();
+
+    if (version.softwareMajorVersion != 2)
+        return false;
+
+    if (uid != nullptr)
+        *uid = version.uid;
+
+    return true;
 }
 
 bool PCSCCardProbe::is_desfire_ev3(std::vector<uint8_t> *uid)
 {
     LLA_LOG_CTX("Probe::is_desfire_ev3");
-    return get_desfire_version(uid) == 3;
+    const auto version = get_desfire_version();
+
+    if (version.softwareMajorVersion != 3)
+        return false;
+
+    if (uid != nullptr)
+        *uid = version.uid;
+
+    return true;
 }
 
 bool PCSCCardProbe::is_mifare_ultralight_c()
@@ -143,7 +192,10 @@ bool PCSCCardProbe::is_mifare_ultralight_c()
         auto chip = reader_unit_->createChip("MifareUltralightC");
         auto mfu_command =
             std::dynamic_pointer_cast<MifareUltralightCCommands>(chip->getCommands());
-        assert(mfu_command);
+
+        EXCEPTION_ASSERT_WITH_LOG(mfu_command != nullptr,
+            LibLogicalAccessException, "Failed to create MIFARE Ultralight C commands while probing the card.");
+
         mfu_command->authenticate(std::shared_ptr<TripleDESKey>());
     }
     catch (const std::exception &)
@@ -159,13 +211,12 @@ bool PCSCCardProbe::is_mifare_ultralight_c()
 void PCSCCardProbe::reset() const
 {
   auto pcsc_ru = dynamic_cast<PCSCReaderUnit *>(reader_unit_);
-  if (pcsc_ru == nullptr)
-    THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-      "Card probing failed because we don't have a PCSCReaderUnit.");
+
+  EXCEPTION_ASSERT_WITH_LOG(pcsc_ru != nullptr,
+      LibLogicalAccessException, "Card probing failed because the reader unit is not a PCSCReaderUnit.");
+
   try
   {
-        assert(pcsc_ru);
-
         pcsc_ru->reset(SCARD_UNPOWER_CARD);
   }
   catch (const std::exception &e)
@@ -185,11 +236,13 @@ bool PCSCCardProbe::has_desfire_random_uid(ByteVector *uid)
     try
     {
         auto pcsc_ru = dynamic_cast<PCSCReaderUnit *>(reader_unit_);
-        EXCEPTION_ASSERT_WITH_LOG(pcsc_ru != nullptr, LibLogicalAccessException, "No PCSC reader unit");
+        EXCEPTION_ASSERT_WITH_LOG(pcsc_ru != nullptr,
+            LibLogicalAccessException, "No PCSC reader unit available for DESFire random UID detection.");
         auto chip = reader_unit_->createChip("DESFireEV1");
-        auto desfire_command =
-            std::dynamic_pointer_cast<DESFireCommands>(chip->getCommands());
-        assert(desfire_command);
+        auto desfire_command = std::dynamic_pointer_cast<DESFireCommands>(chip->getCommands());
+
+        EXCEPTION_ASSERT_WITH_LOG(desfire_command != nullptr,
+            LibLogicalAccessException, "Failed to create DESFire commands while checking for a random UID.");
 
 		if (!pcsc_ru->getPCSCConfiguration()->getSkipCSN())
 		{

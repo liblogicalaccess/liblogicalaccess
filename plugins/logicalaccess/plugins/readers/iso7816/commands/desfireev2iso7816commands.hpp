@@ -4,6 +4,11 @@
 #include <logicalaccess/plugins/cards/desfire/desfireev2commands.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/iso7816iso7816commands.hpp>
 
+#include <logicalaccess/plugins/cards/desfire/transactionmacinput.hpp>
+#include <logicalaccess/plugins/cards/desfire/transactionmaccrypto.hpp>
+
+#include <cstdint>
+
 namespace logicalaccess
 {
 #define CMD_DESFIREEV2ISO7816 "DESFireEV2ISO7816"
@@ -136,7 +141,9 @@ class LLA_READERS_ISO7816_API DESFireEV2ISO7816Commands
 
     void proximityCheck(std::shared_ptr<DESFireKey> key, uint8_t chunk_size) override;
 
-    ByteVector commitTransaction(bool return_tmac) override;
+    CommitTransactionResult commitTransaction(bool return_tmac) override;
+
+    TransactionMACFileData readTransactionMacFile(unsigned char fileno) override;
 
     ByteVector commitReaderID(ByteVector readerid) override;
 
@@ -146,7 +153,53 @@ class LLA_READERS_ISO7816_API DESFireEV2ISO7816Commands
 
     bool performECCOriginalityCheck() override;
 
-  private:
+    // Explicitly rejects NoCredential and Signature results. It doesn't interpret the signature structure or TMV
+    [[nodiscard]] std::uint32_t decodeTransactionMACCounter(const CommitTransactionResult &result) override;
+
+    [[nodiscard]] std::uint32_t decodeTransactionCounter(const TransactionManagement::TransactionCounter &tmc) override;
+
+    /**
+     * \brief Configures host side Transaction MAC verification.
+     *
+     * Validates and stores the application Transaction MAC key, card UID and Transaction MAC file number.
+     * Initializes transaction MAC input tracking and resets the previously committed TMI so that subsequent
+     * transactions can be verified using the configured parameters.
+     *
+     * \param applicationTMACKey Application Transaction MAC key used for session key
+     *                           derivation and Transaction MAC verification.
+     * \param uid Card UID used during Transaction MAC session-key derivation.
+     * \param transactionMACFileNo File number of the application's Transaction MAC file.
+     */
+    void configureTransactionMAC(const ByteVector &applicationTMACKey, const ByteVector &uid,
+                                 unsigned char transactionMACFileNo) override;
+
+    void resetTransactionMACInput() override;
+
+    ByteVector getTransactionMACInput() const override;
+
+    [[nodiscard]] bool verifyTransactionMAC(const TransactionMACFileData &committed) const override;
+
+    void abortTransaction() override;
+
+    ByteVector readData(unsigned char fileno, unsigned int offset, unsigned int length, EncryptionMode mode) override;
+
+    void writeData(unsigned char fileno, unsigned int offset, const ByteVector &data, EncryptionMode mode) override;
+
+    int32_t getValue(unsigned char fileno, EncryptionMode mode) override;
+
+    void credit(unsigned char fileno, unsigned int value, EncryptionMode mode) override;
+
+    void debit(unsigned char fileno, unsigned int value, EncryptionMode mode) override;
+
+    void limitedCredit(unsigned char fileno, int32_t value, EncryptionMode mode) override;
+
+    ByteVector readRecords(unsigned char fileno, unsigned int offset, unsigned int length, EncryptionMode mode) override;
+
+    void writeRecord(unsigned char fileno, unsigned int offset, const ByteVector &data, EncryptionMode mode) override;
+
+    void clearRecordFile(unsigned char fileno) override;
+
+  protected:
     /**
      * \brief Transmit a command.
      * \param cmd The command code.
@@ -168,7 +221,43 @@ class LLA_READERS_ISO7816_API DESFireEV2ISO7816Commands
      */
     ISO7816Response transmit_nomacv(unsigned char cmd,
                                     const ByteVector &buf = ByteVector(),
-                               unsigned char lc = 0, bool forceLc = false) override;
+                                    unsigned char lc = 0, bool forceLc = false) override;
+
+    virtual void validateTransactionMACConfiguration(const ByteVector &applicationTMACKey, const ByteVector &uid) const;
+    
+    /**
+     * \brief Initializes host side Transaction MAC Input (TMI) tracking.
+     *
+     * Clears the current TMI and invalidates any previously committed transaction input.
+     * Enables tracking of transaction-related commands so that the accumulated TMI can be
+     * retained when a transaction is successfully committed.
+     *
+     * This method initializes transaction input tracking independently of the cryptographic mechanism
+     * used to authenticate the transaction and therefore does not configure or derive any transaction MAC keys.
+     */
+    void initializeTransactionMACInputTracking(unsigned char fileNo);
+
+    void onTransactionCommitted();
+    void onTransactionAborted();
+
+    // Shared Transaction Management configuration and lifecycle
+    unsigned char transactionManagementFileNo_ = 0xFF;
+    TransactionMACState transactionMACState_   = TransactionMACState::Disabled;
+
+    // Transaction MAC Input (TMI) shared tracking
+    DESFireTransactionMACInput transactionMACInput_;
+    ByteVector lastCommittedTransactionMACInput_;
+    bool hasCommittedTransactionMACInput_ = false;
+
+    // Mechanism specific TMAC/Transaction MAC Value (TMAC/TMV) configuration
+    ByteVector transactionMACKey_;
+    ByteVector transactionMACUID_;
+    bool transactionMACConfigured_ = false;
+
+    // ReaderID
+    bool readerIDCommitted_ = false;
+
+  private:
 
     /**
      * \brief Generic method to create read file cmd.
@@ -207,5 +296,11 @@ class LLA_READERS_ISO7816_API DESFireEV2ISO7816Commands
         ByteVector isoDFName, unsigned char numberKeySets, unsigned char maxKeySize,
         unsigned char actualkeySetVersion, unsigned char rollkeyno,
         bool specificCapabilityData, bool specificVCKeys);
+
+    bool shouldTrackTransactionInput(unsigned char fileno) const;
+    bool shouldTrackTransactionMAC(unsigned char fileno) const;
+
+
 };
-}
+
+} // namespace logicalaccess

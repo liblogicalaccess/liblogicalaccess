@@ -17,7 +17,39 @@
 #include <logicalaccess/plugins/llacommon/settings.hpp>
 #include <logicalaccess/plugins/readers/iso7816/guardswap.hpp>
 
+#include <limits>
+#include <algorithm>
+#include <logicalaccess/plugins/cards/desfire/transactionmacinput.hpp>
+
 using namespace logicalaccess;
+
+namespace
+{
+
+/**
+ * \brief Converts an unsigned transaction value to a signed 32-bit integer.
+ *
+ * \param value Unsigned transaction value.
+ * \return The value converted to std::int32_t.
+ * 
+ * \throws LibLogicalAccessException If the value exceeds the signed 32-bit range.
+ */
+std::int32_t checkedTransactionValue(unsigned int value)
+{
+    EXCEPTION_ASSERT_WITH_LOG(value <= static_cast<std::uint32_t>((std::numeric_limits<std::int32_t>::max)()),
+        LibLogicalAccessException, "Transaction value exceeds the signed 32-bit range.");
+
+    return static_cast<std::int32_t>(value);
+}
+
+static std::uint32_t decodeU24(const unsigned char value[3])
+{
+    return static_cast<std::uint32_t>(value[0]) |
+           (static_cast<std::uint32_t>(value[1]) << 8U) |
+           (static_cast<std::uint32_t>(value[2]) << 16U);
+}
+
+} // namespace
 
 DESFireEV2ISO7816Commands::DESFireEV2ISO7816Commands()
     : DESFireEV1ISO7816Commands(CMD_DESFIREEV2ISO7816)
@@ -280,7 +312,7 @@ ISO7816Response DESFireEV2ISO7816Commands::transmit(unsigned char cmd,
 {
     auto crypto =
         std::dynamic_pointer_cast<DESFireEV2Crypto>(getDESFireChip()->getCrypto());
-    if (crypto->d_auth_method != CryptoMethod::CM_EV2)
+    if (!usesEV2Crypto(crypto->d_auth_method))
         return DESFireEV1ISO7816Commands::transmit(cmd, buf, lc, forceLc);
 
     auto command = crypto->generateMAC(cmd, buf);
@@ -300,7 +332,7 @@ ISO7816Response DESFireEV2ISO7816Commands::transmit_nomacv(unsigned char cmd,
 {
     auto crypto =
         std::dynamic_pointer_cast<DESFireEV2Crypto>(getDESFireChip()->getCrypto());
-    if (crypto->d_auth_method != CryptoMethod::CM_EV2)
+    if (!usesEV2Crypto(crypto->d_auth_method))
         return DESFireEV1ISO7816Commands::transmit_nomacv(cmd, buf, lc, forceLc);
 
     auto command = crypto->generateMAC(cmd, buf);
@@ -314,9 +346,8 @@ ISO7816Response DESFireEV2ISO7816Commands::handleReadCmd(unsigned char cmd,
                                                          const ByteVector &data,
                                                          EncryptionMode mode)
 {
-    auto crypto =
-        std::dynamic_pointer_cast<DESFireEV2Crypto>(getDESFireChip()->getCrypto());
-    if (crypto->d_auth_method != CryptoMethod::CM_EV2 || mode != CM_PLAIN)
+    auto crypto = std::dynamic_pointer_cast<DESFireEV2Crypto>(getDESFireChip()->getCrypto());
+    if (!usesEV2Crypto(crypto->d_auth_method) || mode != CM_PLAIN)
         return DESFireEV1ISO7816Commands::handleReadCmd(cmd, data, mode);
 
     auto result = transmit_plain(cmd, data); // EV2 has a real plain mode
@@ -329,9 +360,8 @@ ByteVector DESFireEV2ISO7816Commands::handleReadData(unsigned char err,
                                                      unsigned int length,
                                                      EncryptionMode mode)
 {
-    auto crypto =
-        std::dynamic_pointer_cast<DESFireEV2Crypto>(getDESFireChip()->getCrypto());
-    if (crypto->d_auth_method != CryptoMethod::CM_EV2 || mode != CM_PLAIN)
+    auto crypto = std::dynamic_pointer_cast<DESFireEV2Crypto>(getDESFireChip()->getCrypto());
+    if (!usesEV2Crypto(crypto->d_auth_method) || mode != CM_PLAIN)
         return DESFireEV1ISO7816Commands::handleReadData(err, firstMsg, length, mode);
 
     // EV2 has a real plain mode
@@ -353,7 +383,7 @@ void DESFireEV2ISO7816Commands::handleWriteData(unsigned char cmd,
 {
     auto crypto =
         std::dynamic_pointer_cast<DESFireEV2Crypto>(getDESFireChip()->getCrypto());
-    if (crypto->d_auth_method != CryptoMethod::CM_EV2)
+    if (!usesEV2Crypto(crypto->d_auth_method))
         return DESFireEV1ISO7816Commands::handleWriteData(cmd, parameters, data, mode);
 
     ByteVector command;
@@ -656,17 +686,27 @@ void DESFireEV2ISO7816Commands::createTransactionMACFile(
     unsigned char fileno, EncryptionMode comSettings,
     const DESFireAccessRights &accessRights, std::shared_ptr<DESFireKey> tmkey)
 {
-    ByteVector param;
-    param.push_back(static_cast<unsigned char>(fileno));      // FileNo
-    param.push_back(static_cast<unsigned char>(comSettings)); // FileOption
-    short ar = AccessRightsInMemory(accessRights);
-    BufferHelper::setUShort(param, ar);                // AccessRights
-    param.push_back(static_cast<unsigned char>(0x02)); // TMKeyOption AES only atm
+    EXCEPTION_ASSERT_WITH_LOG(tmkey != nullptr,
+        LibLogicalAccessException, "CreateTransactionMACFile requires a non-null TMAC key.");
 
-    auto data = tmkey->getData(); // TMKey
-    data.push_back(tmkey->getKeyVersion());    // TMKeyVer
+    const auto keyData = tmkey->getData();
 
-    transmit_full(DFEV2_INS_CREATE_TRANSACTION_MAC_FILE, data, param);
+    EXCEPTION_ASSERT_WITH_LOG(keyData.size() == 16,
+        LibLogicalAccessException, "EV Transaction MAC requires a 16-byte AES-128 key.");
+
+    ByteVector parameters;
+    parameters.reserve(5);
+
+    parameters.push_back(fileno);                                  // FileNo
+    parameters.push_back(static_cast<unsigned char>(comSettings)); // FileOption
+    const short accessRightsValue = AccessRightsInMemory(accessRights);
+    BufferHelper::setUShort(parameters, accessRightsValue); // AccessRights
+    parameters.push_back(static_cast<unsigned char>(0x02)); // TMKeyOption AES only atm
+
+    ByteVector data = keyData;               // TMKey
+    data.push_back(tmkey->getKeyVersion());  // TMKeyVer
+
+    transmit_full(DFEV2_INS_CREATE_TRANSACTION_MAC_FILE, data, parameters);
 }
 
 void DESFireEV2ISO7816Commands::createDelegatedApplication(
@@ -1029,16 +1069,59 @@ void DESFireEV2ISO7816Commands::proximityCheck(std::shared_ptr<DESFireKey> key,
                               "Proximity Check failed. Cannot verify PICC provided MAC");
 }
 
-ByteVector DESFireEV2ISO7816Commands::commitTransaction(bool return_tmac)
+CommitTransactionResult DESFireEV2ISO7816Commands::commitTransaction(bool return_tmac)
 {
-    ByteVector data;
-    data.push_back(return_tmac ? 0x01 : 0x00);
-    return transmit(DF_COMMIT_TRANSACTION, data).getData();
+    const ByteVector parameters{static_cast<std::uint8_t>(return_tmac ? 0x01 : 0x00)};
+    const auto response = transmit(DF_COMMIT_TRANSACTION, parameters);
+    const auto &data    = response.getData();
+
+    CommitTransactionResult result;
+
+    if (!return_tmac)
+    {
+        EXCEPTION_ASSERT_WITH_LOG(data.empty(), LibLogicalAccessException,
+            "CommitTransaction returned unexpected response data when no transaction credential was requested.");
+        onTransactionCommitted();
+        return result;
+    }
+
+    EXCEPTION_ASSERT_WITH_LOG(data.size() == TransactionManagement::TMAC_SIZE,
+        LibLogicalAccessException, "CommitTransaction returned an invalid Transaction MAC response size.");
+
+    result.type = CommitTransactionResult::Type::MAC;
+
+    std::copy_n(data.begin(), TransactionManagement::TMC_SIZE, result.mac.tmc.begin());
+    std::copy_n(data.begin() + TransactionManagement::TMC_SIZE, TransactionManagement::TMV_SIZE, result.mac.tmv.begin());
+    onTransactionCommitted();
+
+    return result;
 }
 
 ByteVector DESFireEV2ISO7816Commands::commitReaderID(ByteVector readerid)
 {
-    return transmit(DFEV2_INS_COMMIT_READERID, readerid).getData();
+    constexpr std::size_t READER_ID_SIZE = 16;
+
+    EXCEPTION_ASSERT_WITH_LOG(readerid.size() == READER_ID_SIZE,
+        LibLogicalAccessException, "CommitReaderID requires exactly 16 bytes.");
+
+    EXCEPTION_ASSERT_WITH_LOG(!readerIDCommitted_, LibLogicalAccessException,
+        "CommitReaderID has already been executed in this transaction.");
+
+    const ByteVector response = transmit(DFEV2_INS_COMMIT_READERID, readerid).getData();
+
+    EXCEPTION_ASSERT_WITH_LOG(response.empty() || response.size() == READER_ID_SIZE,
+        LibLogicalAccessException, "CommitReaderID returned an invalid response length.");
+
+    if (transactionMACConfigured_ && transactionMACState_ == TransactionMACState::Active)
+    {
+        DESFireTransactionMACInput update;
+        update.appendCommitReaderID(readerid, !response.empty(), response);
+        transactionMACInput_.setData(update.data());
+    }
+    
+    readerIDCommitted_ = true;
+
+    return response;
 }
 
 void DESFireEV2ISO7816Commands::restoreTransfer(unsigned char target_fileno, unsigned char source_fileno)
@@ -1077,4 +1160,304 @@ bool DESFireEV2ISO7816Commands::performECCOriginalityCheck()
     
     ByteVector sig = readSignature(0x00);
     return SignatureHelper::verify_ecdsa_secp224r1(getDESFireChip()->getChipIdentifier(), sig, pubkey);
+}
+
+TransactionMACFileData DESFireEV2ISO7816Commands::readTransactionMacFile(unsigned char fileno)
+{
+    constexpr unsigned char TRANSACTION_MAC_FILE_TYPE = 0x05U;
+
+    const auto settings = getFileSettings(fileno);
+
+    EXCEPTION_ASSERT_WITH_LOG(settings.fileType == TRANSACTION_MAC_FILE_TYPE,
+        LibLogicalAccessException, "The selected file is not a Transaction MAC file.");
+
+    const auto mode  = getEncryptionMode(settings, true);
+
+    const ByteVector data = readData(fileno, 0U, TransactionManagement::TMAC_SIZE, mode);
+
+    EXCEPTION_ASSERT_WITH_LOG(data.size() == TransactionManagement::TMAC_SIZE,
+        LibLogicalAccessException, "TransactionMAC file returned an invalid data size.");
+
+    TransactionMACFileData result{};
+
+    std::copy_n(data.begin(), TransactionManagement::TMC_SIZE, result.tmc.begin());
+    std::copy_n(data.begin() + TransactionManagement::TMC_SIZE, TransactionManagement::TMV_SIZE, result.tmv.begin());
+
+    return result;
+}
+
+std::uint32_t DESFireEV2ISO7816Commands::decodeTransactionMACCounter(const CommitTransactionResult &result)
+{
+    EXCEPTION_ASSERT_WITH_LOG(result.type == CommitTransactionResult::Type::MAC,
+        LibLogicalAccessException, "Commit result does not contain a Transaction MAC counter.");
+
+    return decodeTransactionCounter(result.mac.tmc);
+}
+
+std::uint32_t DESFireEV2ISO7816Commands::decodeTransactionCounter(const TransactionManagement::TransactionCounter &tmc)
+{
+    return static_cast<std::uint32_t>(tmc[0]) |
+           (static_cast<std::uint32_t>(tmc[1]) << 8U) |
+           (static_cast<std::uint32_t>(tmc[2]) << 16U) |
+           (static_cast<std::uint32_t>(tmc[3]) << 24U);
+}
+
+void DESFireEV2ISO7816Commands::validateTransactionMACConfiguration(const ByteVector &applicationTMACKey,
+                                                                    const ByteVector &uid) const
+{
+    EXCEPTION_ASSERT_WITH_LOG(applicationTMACKey.size() == 16,
+        LibLogicalAccessException, "Standard AES TMAC requires a 16 byte application key.");
+
+    EXCEPTION_ASSERT_WITH_LOG(uid.size() == 7,
+        LibLogicalAccessException, "Standard AES TMAC requires the real 7 byte UID.");
+}
+
+void DESFireEV2ISO7816Commands::initializeTransactionMACInputTracking(unsigned char fileNo)
+{
+    transactionManagementFileNo_ = fileNo;
+
+    transactionMACInput_.clear();
+    lastCommittedTransactionMACInput_.clear();
+
+    transactionMACState_             = TransactionMACState::Active;
+    hasCommittedTransactionMACInput_ = false;
+}
+
+void DESFireEV2ISO7816Commands::configureTransactionMAC(
+    const ByteVector &applicationTMACKey, const ByteVector &uid,
+    unsigned char transactionMACFileNo)
+{
+    validateTransactionMACConfiguration(applicationTMACKey, uid);
+
+    transactionMACKey_           = applicationTMACKey;
+    transactionMACUID_           = uid;
+
+    transactionMACConfigured_ = true;
+
+    initializeTransactionMACInputTracking(transactionMACFileNo);
+}
+
+bool DESFireEV2ISO7816Commands::shouldTrackTransactionInput(unsigned char fileno) const
+{
+    return transactionMACState_ == TransactionMACState::Active &&
+           fileno != transactionManagementFileNo_;
+}
+
+bool DESFireEV2ISO7816Commands::shouldTrackTransactionMAC(unsigned char fileno) const
+{
+    return transactionMACConfigured_ &&
+           transactionMACState_ == TransactionMACState::Active &&
+           fileno != transactionManagementFileNo_;
+}
+
+void DESFireEV2ISO7816Commands::resetTransactionMACInput()
+{
+    EXCEPTION_ASSERT_WITH_LOG(transactionMACConfigured_,
+        LibLogicalAccessException, "Transaction MAC has not been configured.");
+
+    transactionMACInput_.clear();
+}
+
+ByteVector DESFireEV2ISO7816Commands::getTransactionMACInput() const
+{
+    return transactionMACInput_.data();
+}
+
+void DESFireEV2ISO7816Commands::onTransactionCommitted()
+{
+    lastCommittedTransactionMACInput_ = transactionMACInput_.data();
+    hasCommittedTransactionMACInput_  = !lastCommittedTransactionMACInput_.empty();
+
+    transactionMACInput_.clear();
+
+    if (transactionMACConfigured_)
+    {
+        transactionMACState_ = TransactionMACState::Active;
+    }
+    readerIDCommitted_ = false;
+}
+
+void DESFireEV2ISO7816Commands::onTransactionAborted()
+{
+    transactionMACInput_.clear();
+
+    if (transactionMACState_ != TransactionMACState::Disabled)
+    {
+        transactionMACState_ = TransactionMACState::Active;
+    }
+    readerIDCommitted_ = false;
+}
+
+bool DESFireEV2ISO7816Commands::verifyTransactionMAC(const TransactionMACFileData &committed) const
+{
+    EXCEPTION_ASSERT_WITH_LOG(transactionMACConfigured_,
+        LibLogicalAccessException, "Transaction MAC has not been configured.");
+
+    EXCEPTION_ASSERT_WITH_LOG(hasCommittedTransactionMACInput_,
+        LibLogicalAccessException, "No non-empty, successfully committed transaction input is available.");
+
+    return DESFireTransactionMACCrypto::verifyTMV(
+        transactionMACKey_, committed.tmc, transactionMACUID_,
+        lastCommittedTransactionMACInput_, committed.tmv);
+}
+
+void DESFireEV2ISO7816Commands::abortTransaction()
+{
+    // Do not clear the local TMI until the card confirms success
+    transmit(DF_INS_ABORT_TRANSACTION);
+    onTransactionAborted();
+}
+
+ByteVector DESFireEV2ISO7816Commands::readData(unsigned char fileno, unsigned int offset,
+                                               unsigned int length, EncryptionMode mode)
+{
+    ByteVector result = DESFireEV1ISO7816Commands::readData(fileno, offset, length, mode);
+
+    if (shouldTrackTransactionMAC(fileno))
+    {
+        DESFireTransactionMACInput update;
+        update.appendReadData(fileno, offset, length, result);
+        transactionMACInput_.appendUpdate(update.data());
+    }
+
+    return result;
+}
+
+void DESFireEV2ISO7816Commands::writeData(unsigned char fileno, unsigned int offset,
+                                          const ByteVector &data, EncryptionMode mode)
+{
+    DESFireEV1ISO7816Commands::writeData(fileno, offset, data, mode);
+
+    if (shouldTrackTransactionMAC(fileno))
+    {
+        DESFireTransactionMACInput update;
+        update.appendWriteData(fileno, offset, data);
+        transactionMACInput_.appendUpdate(update.data());
+    }
+}
+
+int32_t DESFireEV2ISO7816Commands::getValue(unsigned char fileno, EncryptionMode mode)
+{
+    const int32_t value = DESFireEV1ISO7816Commands::getValue(fileno, mode);
+
+    if (shouldTrackTransactionMAC(fileno))
+    {
+        DESFireTransactionMACInput update;
+        update.appendValueOperation(DESFireTransactionMACInput::INS_GET_VALUE, fileno, value);
+        transactionMACInput_.appendUpdate(update.data());
+    }
+
+    return value;
+}
+
+void DESFireEV2ISO7816Commands::credit(unsigned char fileno, unsigned int value,
+                                       EncryptionMode mode)
+{
+    DESFireEV1ISO7816Commands::credit(fileno, value, mode);
+
+    if (shouldTrackTransactionMAC(fileno))
+    {
+        DESFireTransactionMACInput update;
+        update.appendValueOperation(DESFireTransactionMACInput::INS_CREDIT, fileno, checkedTransactionValue(value));
+        transactionMACInput_.appendUpdate(update.data());
+    }
+}
+
+void DESFireEV2ISO7816Commands::debit(unsigned char fileno, unsigned int value,
+                                      EncryptionMode mode)
+{
+    DESFireEV1ISO7816Commands::debit(fileno, value, mode);
+
+    if (shouldTrackTransactionMAC(fileno))
+    {
+        DESFireTransactionMACInput update;
+        update.appendValueOperation(DESFireTransactionMACInput::INS_DEBIT, fileno, checkedTransactionValue(value));
+        transactionMACInput_.appendUpdate(update.data());
+    }
+}
+
+void DESFireEV2ISO7816Commands::limitedCredit(unsigned char fileno, int32_t value, EncryptionMode mode)
+{
+    DESFireEV1ISO7816Commands::limitedCredit(fileno, value, mode);
+
+    if (shouldTrackTransactionMAC(fileno))
+    {
+        DESFireTransactionMACInput update;
+        update.appendValueOperation(DESFireTransactionMACInput::INS_LIMITED_CREDIT, fileno, value);
+        transactionMACInput_.appendUpdate(update.data());
+    }
+}
+
+ByteVector DESFireEV2ISO7816Commands::readRecords(unsigned char fileno,
+                                                  unsigned int offset,
+                                                  unsigned int length,
+                                                  EncryptionMode mode)
+{
+    const auto settings = getFileSettings(fileno);
+
+    constexpr unsigned char LINEAR_RECORD_FILE = 0x03;
+    constexpr unsigned char CYCLIC_RECORD_FILE = 0x04;
+
+    EXCEPTION_ASSERT_WITH_LOG(settings.fileType == LINEAR_RECORD_FILE || settings.fileType == CYCLIC_RECORD_FILE,
+        LibLogicalAccessException, "ReadRecords requires a record file.");
+
+    const auto recordSettings = settings.getRecordFile();
+    const std::uint32_t recordSize = decodeU24(recordSettings.recordSize);
+    const std::uint32_t currentRecordCount = decodeU24(recordSettings.currentNumberRecords);
+
+    EXCEPTION_ASSERT_WITH_LOG(recordSize != 0, LibLogicalAccessException, "Record file has an invalid record size.");
+
+    ByteVector result = DESFireEV1ISO7816Commands::readRecords(fileno, offset, length, mode);
+
+    EXCEPTION_ASSERT_WITH_LOG(result.size() % recordSize == 0,
+        LibLogicalAccessException, "ReadRecords returned a partial record.");
+
+    const std::size_t actualCount = result.size() / recordSize;
+
+    if (shouldTrackTransactionMAC(fileno))
+    {
+        DESFireTransactionMACInput update;
+        update.appendReadRecords(fileno, offset, length, static_cast<std::uint32_t>(actualCount), result);
+        transactionMACInput_.appendUpdate(update.data());
+    }
+
+    return result;
+}
+
+void DESFireEV2ISO7816Commands::writeRecord(unsigned char fileno, unsigned int offset,
+                                            const ByteVector &data, EncryptionMode mode)
+{
+    const auto settings = getFileSettings(fileno);
+
+    constexpr unsigned char LINEAR_RECORD_FILE = 0x03;
+    constexpr unsigned char CYCLIC_RECORD_FILE = 0x04;
+    EXCEPTION_ASSERT_WITH_LOG(settings.fileType == LINEAR_RECORD_FILE || settings.fileType == CYCLIC_RECORD_FILE,
+        LibLogicalAccessException, "WriteRecord requires a record file.");
+
+    const auto recordSettings      = settings.getRecordFile();
+    const std::uint32_t recordSize = decodeU24(recordSettings.recordSize);
+
+    EXCEPTION_ASSERT_WITH_LOG(recordSize != 0 && !data.empty() && data.size() % recordSize == 0,
+        LibLogicalAccessException, "WriteRecord data must contain whole records of the configured size.");
+
+    DESFireEV1ISO7816Commands::writeRecord(fileno, offset, data, mode);
+
+    if (shouldTrackTransactionMAC(fileno))
+    {
+        DESFireTransactionMACInput update;
+        update.appendWriteRecord(fileno, offset, data);
+        transactionMACInput_.appendUpdate(update.data());
+    }
+}
+
+void DESFireEV2ISO7816Commands::clearRecordFile(unsigned char fileno)
+{
+    DESFireEV1ISO7816Commands::clearRecordFile(fileno);
+
+    if (shouldTrackTransactionMAC(fileno))
+    {
+        DESFireTransactionMACInput update;
+        update.appendClearRecordFile(fileno);
+        transactionMACInput_.appendUpdate(update.data());
+    }
 }

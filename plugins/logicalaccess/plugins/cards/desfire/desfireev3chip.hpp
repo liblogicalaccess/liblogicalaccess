@@ -8,15 +8,22 @@ namespace logicalaccess
 #define CHIP_DESFIRE_EV3 "DESFireEV3"
 
 /**
- * \brief The DESFire EV3 base chip class.
+ * \brief Base chip class for MIFARE DESFire EV3 cards.
  */
 class LLA_CARDS_DESFIRE_API DESFireEV3Chip : public DESFireEV2Chip
 {
   public:
     /**
-     * \brief Constructor.
+     * \brief Default constructor.
      */
     DESFireEV3Chip();
+
+    /**
+     * \brief Constructor using a custom chip type.
+     *
+     * \param ct Chip type identifier.
+     */
+    explicit DESFireEV3Chip(const std::string &ct);
 
     /**
      * \brief Destructor.
@@ -25,7 +32,7 @@ class LLA_CARDS_DESFIRE_API DESFireEV3Chip : public DESFireEV2Chip
 
     /**
      * \brief Get the DESFire EV3 card commands.
-     * \return The DESFire EV3 card commands.
+     * \return The DESFire EV3 card commands associated with this chip.
      */
     std::shared_ptr<DESFireEV3Commands> getDESFireEV3Commands() const
     {
@@ -38,6 +45,13 @@ class LLA_CARDS_DESFIRE_API DESFireEV3Chip : public DESFireEV2Chip
      */
     std::shared_ptr<LocationNode> getRootLocationNode() override;
 
+    /**
+     * \brief Get a card service.
+     *
+     * \param serviceType Type of the requested card service.
+     *
+     * \return The requested card service.
+     */
     std::shared_ptr<CardService> getService(CardServiceType serviceType) override;
 
 };

@@ -8,6 +8,9 @@
 #define LOGICALACCESS_DESFIREEV2COMMANDS_HPP
 
 #include <logicalaccess/plugins/cards/desfire/desfireev1commands.hpp>
+#include <logicalaccess/plugins/cards/desfire/transactioncommon.hpp>
+
+#include <cstdint>
 
 namespace logicalaccess
 {
@@ -33,6 +36,39 @@ namespace logicalaccess
 #define DFEV2_PROXIMITY_CHECK_KEY_NO 0x21
 
 #endif
+
+enum class TransactionMACState
+{
+    Disabled,
+    Active
+};
+
+struct TransactionMACFileData
+{
+    TransactionManagement::TransactionCounter tmc{};
+    TransactionManagement::TransactionMACValue tmv{};
+};
+
+struct TransactionSignatureFileData
+{
+    TransactionManagement::TransactionCounter tmc{};
+    TransactionManagement::TransactionSignatureValue tsv{};
+};
+
+struct CommitTransactionResult
+{
+    enum class Type
+    {
+        NoCredential,
+        MAC,
+        Signature
+    };
+
+    Type type = Type::NoCredential;
+
+    TransactionMACFileData mac{};
+    TransactionSignatureFileData signature{};
+};
 
 class DESFireEV2Chip;
 
@@ -157,7 +193,16 @@ class LLA_CARDS_DESFIRE_API DESFireEV2Commands : public ICommands
      * \brief Commit the transaction.
      * \param return_tmac True to return the new Transaction MAC counter and value, false otherwise.
      */
-    virtual ByteVector commitTransaction(bool return_tmac) = 0;
+    virtual CommitTransactionResult commitTransaction(bool return_tmac) = 0;
+
+    /**
+     * Read and decode Transaction MAC file contents.
+     *
+     * The file must be configured and readable under the current
+     * application's access rights.
+     */
+    virtual TransactionMACFileData readTransactionMacFile(unsigned char fileno) = 0;
+    // TODO Should call getFileSettings(fileno) and verify that the file type is TransactionMAC
 
     virtual ByteVector commitReaderID(ByteVector readerid) = 0;
 
@@ -166,6 +211,19 @@ class LLA_CARDS_DESFIRE_API DESFireEV2Commands : public ICommands
     virtual ByteVector readSignature(unsigned char address = 0x00) = 0;
 
     virtual bool performECCOriginalityCheck() = 0;
+
+    [[nodiscard]] virtual std::uint32_t decodeTransactionMACCounter(const CommitTransactionResult &result) = 0;
+
+    [[nodiscard]] virtual std::uint32_t decodeTransactionCounter(const TransactionManagement::TransactionCounter &tmc) = 0;
+
+    virtual void configureTransactionMAC(const ByteVector &applicationTMACKey, const ByteVector &uid,
+                                         unsigned char transactionMACFileNo) = 0;
+
+    virtual void resetTransactionMACInput() = 0;
+
+    virtual ByteVector getTransactionMACInput() const = 0;
+
+    [[nodiscard]] virtual bool verifyTransactionMAC(const TransactionMACFileData &committed) const = 0;
 
   private:
     std::shared_ptr<DESFireEV2Chip> getDESFireEV2Chip() const;

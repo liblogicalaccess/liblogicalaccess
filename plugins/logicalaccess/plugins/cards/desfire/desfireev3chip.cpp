@@ -10,6 +10,11 @@ DESFireEV3Chip::DESFireEV3Chip()
 {
 }
 
+DESFireEV3Chip::DESFireEV3Chip(const std::string &ct)
+    : DESFireEV2Chip(ct)
+{
+}
+
 std::shared_ptr<LocationNode> DESFireEV3Chip::getRootLocationNode()
 {
     std::shared_ptr<LocationNode> rootNode = DESFireEV2Chip::getRootLocationNode();
