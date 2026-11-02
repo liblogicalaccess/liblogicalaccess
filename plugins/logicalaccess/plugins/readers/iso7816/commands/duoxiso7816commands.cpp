@@ -116,14 +116,15 @@ void verifySignatureWithCertificate(const ByteVector &certificateDER, const Byte
  *
  * \return true for Plain, MAC, or Full communication modes; otherwise false.
  */
-constexpr bool isValidCommunicationMode(DUOXCommunicationMode mode)
+constexpr bool isValidCommunicationMode(EncryptionMode mode)
 {
     switch (mode)
     {
-    case DUOXCommunicationMode::Plain:
-    case DUOXCommunicationMode::MAC:
-    case DUOXCommunicationMode::Full: return true;
+    case CM_PLAIN:
+    case CM_MAC:
+    case CM_ENCRYPT: return true;
 
+    case CM_UNKNOWN:
     default: return false;
     }
 }
@@ -445,12 +446,12 @@ std::shared_ptr<ReaderCardAdapter> DUOXISO7816Commands::getReaderCardAdapter() c
 }
 
 ISO7816Response DUOXISO7816Commands::transmitDUOX(std::uint8_t cmd, const ByteVector &params, const ByteVector &data,
-    DUOXCommunicationMode commMode)
+                                                  EncryptionMode commMode)
 {
     switch (commMode)
     {
-    case DUOXCommunicationMode::Plain:
-    case DUOXCommunicationMode::MAC:
+    case CM_PLAIN:
+    case CM_MAC:
     {
         ByteVector command;
         command.reserve(params.size() + data.size());
@@ -458,14 +459,15 @@ ISO7816Response DUOXISO7816Commands::transmitDUOX(std::uint8_t cmd, const ByteVe
         command.insert(command.end(), data.begin(), data.end());
 
         // Differentiate Plain and MAC transmission after shared command preparation
-        if (commMode == DUOXCommunicationMode::Plain)
+        if (commMode == CM_PLAIN)
             return transmit_plain(cmd, command);
 
         return transmit(cmd, command);
     }
 
-    case DUOXCommunicationMode::Full: return transmit_full(cmd, data, params);
+    case CM_ENCRYPT: return transmit_full(cmd, data, params);
 
+    case CM_UNKNOWN:
     default:
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Invalid DUOX communication mode.");
     }
@@ -478,7 +480,7 @@ ISO7816Response DUOXISO7816Commands::transmitDUOX(std::uint8_t cmd, const ByteVe
 ByteVector DUOXISO7816Commands::manageKeyPair(std::uint8_t keyNo, DUOXManageKeyPairOption option,
                                               CurveID curveId, std::uint16_t keyPolicy,
                                               std::uint8_t writeAccess, std::uint32_t kucLimit,
-                                              const ByteVector &privateKey, DUOXCommunicationMode commMode)
+                                              const ByteVector &privateKey, EncryptionMode commMode)
 {
     const auto chip = getDESFireChip();
 
@@ -492,7 +494,7 @@ ByteVector DUOXISO7816Commands::manageKeyPair(std::uint8_t keyNo, DUOXManageKeyP
 
     const bool piccLevel = crypto->d_currentAid == duox::limits::PICC_LEVEL_AID;
 
-    const std::uint8_t maximumKeyNo = piccLevel ? duox::limits::MAX_PICC_KEY_NO : duox::limits::MAX_KEY_NO;
+    const auto maximumKeyNo = piccLevel ? duox::limits::MAX_PICC_KEY_NO : duox::limits::MAX_KEY_NO;
 
     EXCEPTION_ASSERT_WITH_LOG(keyNo <= maximumKeyNo,
         LibLogicalAccessException,
@@ -536,8 +538,8 @@ ByteVector DUOXISO7816Commands::manageKeyPair(std::uint8_t keyNo, DUOXManageKeyP
     EXCEPTION_ASSERT_WITH_LOG((writeAccess & duox::access::RFU_MASK) == 0,
         LibLogicalAccessException, "Invalid DUOX WriteAccess : reserved bits 6 and 7 must be zero.");
 
-    const auto writeCommunicationMode = static_cast<DUOXCommunicationMode>(
-        (writeAccess & duox::access::COM_MODE_MASK) >> 4);
+    const auto writeCommunicationMode = static_cast<EncryptionMode>(
+        (writeAccess & duox::access::COM_MODE_MASK) >> 4U);
 
     EXCEPTION_ASSERT_WITH_LOG(isValidCommunicationMode(writeCommunicationMode),
         LibLogicalAccessException, "Invalid DUOX WriteAccess communication mode.");
@@ -594,10 +596,10 @@ ByteVector DUOXISO7816Commands::manageKeyPair(std::uint8_t keyNo, DUOXManageKeyP
 }
 
 void DUOXISO7816Commands::manageCARootKey(
-    std::uint8_t keyNo, CurveID curveId, std::uint16_t accessRights,
+    std::uint8_t keyNo, CurveID curveId, std::uint16_t caRootKeyAccessRights,
     std::uint8_t writeAccess, std::uint8_t readAccess, std::uint8_t crlFile,
     std::uint32_t crlFileAid, const ByteVector &publicKey, const ByteVector &issuer,
-    DUOXCommunicationMode commMode)
+    EncryptionMode commMode)
 {
     const auto chip = getDESFireChip();
 
@@ -628,7 +630,7 @@ void DUOXISO7816Commands::manageCARootKey(
             "Unsupported DUOX CurveID " + byteToHex(static_cast<std::uint8_t>(curveId)) + ".");
     }
 
-    EXCEPTION_ASSERT_WITH_LOG((accessRights & ~duox::access::RIGHTS_VALID_MASK) == 0,
+    EXCEPTION_ASSERT_WITH_LOG((caRootKeyAccessRights & ~duox::access::RIGHTS_VALID_MASK) == 0,
         LibLogicalAccessException, "Invalid DUOX CA Root Key AccessRights : reserved bits 14 and 15 must be zero.");
 
     EXCEPTION_ASSERT_WITH_LOG((writeAccess & duox::access::RFU_MASK) == 0,
@@ -637,13 +639,13 @@ void DUOXISO7816Commands::manageCARootKey(
     EXCEPTION_ASSERT_WITH_LOG((readAccess & duox::access::RFU_MASK) == 0,
         LibLogicalAccessException, "Invalid DUOX ReadAccess : reserved bits 6 and 7 must be zero.");
 
-    const auto writeCommunicationMode = static_cast<DUOXCommunicationMode>(
-        (writeAccess & duox::access::COM_MODE_MASK) >> 4);
+    const auto writeCommunicationMode = static_cast<EncryptionMode>(
+        (writeAccess & duox::access::COM_MODE_MASK) >> 4U);
 
     EXCEPTION_ASSERT_WITH_LOG(isValidCommunicationMode(writeCommunicationMode),
         LibLogicalAccessException, "Invalid DUOX WriteAccess communication mode.");
 
-    const auto readCommunicationMode = static_cast<DUOXCommunicationMode>((readAccess & duox::access::COM_MODE_MASK) >> 4);
+    const auto readCommunicationMode = static_cast<EncryptionMode>((readAccess & duox::access::COM_MODE_MASK) >> 4U);
 
     EXCEPTION_ASSERT_WITH_LOG(isValidCommunicationMode(readCommunicationMode),
         LibLogicalAccessException, "Invalid DUOX ReadAccess communication mode.");
@@ -682,7 +684,7 @@ void DUOXISO7816Commands::manageCARootKey(
 
     const auto issuerLength = static_cast<std::uint8_t>(issuer.size());
 
-    constexpr std::size_t CRL_FILE_AID_SIZE = 3;
+    constexpr std::size_t CRL_FILE_AID_SIZE = 3U;
 
     constexpr std::size_t HEADER_PARAMETERS_SIZE = sizeof(std::uint8_t) +  // KeyNo
                                                    sizeof(std::uint8_t) +  // CurveID
@@ -700,7 +702,7 @@ void DUOXISO7816Commands::manageCARootKey(
 
     params.push_back(keyNo);
     params.push_back(static_cast<std::uint8_t>(curveId));
-    appendUInt16LE(params, accessRights);
+    appendUInt16LE(params, caRootKeyAccessRights);
     params.push_back(writeAccess);
     params.push_back(readAccess);
     params.push_back(crlFile);
@@ -728,7 +730,7 @@ void DUOXISO7816Commands::manageCARootKey(
         LibLogicalAccessException, "DUOX ManageCARootKey returned unexpected response data.");
 }
 
-ByteVector DUOXISO7816Commands::exportKey(std::uint8_t keyNo, DUOXCommunicationMode commMode)
+ByteVector DUOXISO7816Commands::exportKey(std::uint8_t keyNo, EncryptionMode commMode)
 {
     const auto chip = getDESFireChip();
 
@@ -741,7 +743,7 @@ ByteVector DUOXISO7816Commands::exportKey(std::uint8_t keyNo, DUOXCommunicationM
         LibLogicalAccessException, "DUOX ExportKey requires an initialized DESFire crypto context.");
 
     const bool piccLevel = crypto->d_currentAid == duox::limits::PICC_LEVEL_AID;
-    const std::uint8_t maximumKeyNo = piccLevel ? duox::limits::MAX_PICC_KEY_NO : duox::limits::MAX_KEY_NO;
+    const auto maximumKeyNo = piccLevel ? duox::limits::MAX_PICC_KEY_NO : duox::limits::MAX_KEY_NO;
 
     EXCEPTION_ASSERT_WITH_LOG(keyNo <= maximumKeyNo,
         LibLogicalAccessException,
@@ -952,7 +954,7 @@ DUOXKeySettings DUOXISO7816Commands::getKeySettings(DUOXKeySettingsOption option
         params.push_back(static_cast<std::uint8_t>(option));
     }
 
-    const auto response = transmitDUOX(duox::ins::GET_KEY_SETTINGS, params, {}, DUOXCommunicationMode::MAC);
+    const auto response = transmitDUOX(duox::ins::GET_KEY_SETTINGS, params, {}, CM_MAC);
 
     checkSuccess(response, duox::status::DUOX_SUCCESS, __func__);
 
@@ -972,7 +974,7 @@ DUOXKeySettings DUOXISO7816Commands::getKeySettings(DUOXKeySettingsOption option
         EXCEPTION_ASSERT_WITH_LOG(!data.empty(),
             LibLogicalAccessException, "DUOX GetKeySettings ECC private key metadata response is empty.");
 
-        const std::uint8_t entryCount = data[0];
+        const auto entryCount = data[0];
 
         EXCEPTION_ASSERT_WITH_LOG(entryCount <= MAX_METADATA_ENTRIES, LibLogicalAccessException,
             "Invalid DUOX ECC private key metadata entry count " + byteToHex(entryCount) +
@@ -992,7 +994,7 @@ DUOXKeySettings DUOXISO7816Commands::getKeySettings(DUOXKeySettingsOption option
             DUOXECCPrivateKeyMetadata entry;
 
             entry.keyNo = data[offset++];
-            const std::uint8_t rawCurveId = data[offset++];
+            const auto rawCurveId = data[offset++];
 
             switch (static_cast<CurveID>(rawCurveId))
             {
@@ -1006,7 +1008,8 @@ DUOXKeySettings DUOXISO7816Commands::getKeySettings(DUOXKeySettingsOption option
                     byteToHex(rawCurveId) + " at entry " + std::to_string(index) + ".");
             }
 
-            entry.keyPolicy = static_cast<std::uint16_t>(data[offset]) | (static_cast<std::uint16_t>(data[offset + 1]) << 8);
+            entry.keyPolicy = static_cast<std::uint16_t>(data[offset]) |
+                              (static_cast<std::uint16_t>(data[offset + 1]) << 8U);
             offset += 2;
             entry.writeAccess = data[offset++];
             entry.keyUsageCtrLimit =
@@ -1331,7 +1334,7 @@ void DUOXISO7816Commands::changeKeyEV2Internal(std::uint8_t keySetNo, std::uint8
     if (!authenticatedEV2)
     {
         // Not authenticated / no EV2 secure messaging
-        response = transmitDUOX(instruction, params, keyDataPlain, DUOXCommunicationMode::Plain);
+        response = transmitDUOX(instruction, params, keyDataPlain, CM_PLAIN);
     }
     else if (changingAuthenticatedKey)
     {
@@ -1355,7 +1358,7 @@ void DUOXISO7816Commands::changeKeyEV2Internal(std::uint8_t keySetNo, std::uint8
     else
     {
         // Normal EV2 CommMode.Full where command is protected and response is MAC-protected/decrypted
-        response = transmitDUOX(instruction, params, keyDataPlain, DUOXCommunicationMode::Full);
+        response = transmitDUOX(instruction, params, keyDataPlain, CM_ENCRYPT);
     }
 
     checkSuccess(response, duox::status::DUOX_SUCCESS, __func__);
@@ -1441,7 +1444,7 @@ void DUOXISO7816Commands::isoGeneralAuthenticate(
          *
          * This also guarantees that ephemeral private material is released after a failed authentication
          */
-        auth = DUOXECCAuthenticationState{};
+        auth.clear();
         throw;
     }
 }
@@ -2458,15 +2461,15 @@ void DUOXISO7816Commands::authenticateEV2First(std::uint8_t targetedKeyNo, std::
 
     const std::size_t expectedKeyLength = validateAESKey(*key);
 
-    const std::uint8_t lenCap = static_cast<std::uint8_t>(pcdCap2.size());
-    const std::uint8_t keyNo  = buildEV2KeyNo(targetedKeyNo, secondaryApplication);
+    const auto lenCap = static_cast<std::uint8_t>(pcdCap2.size());
+    const auto keyNo  = buildEV2KeyNo(targetedKeyNo, secondaryApplication);
 
     ByteVector keyData;
     security::SecureZeroGuard keyDataGuard{&keyData};
 
     try
     {
-        const ByteVector diversify = getKeyInformations(key, targetedKeyNo);
+        const auto diversify = getKeyInformations(key, targetedKeyNo);
         duoxCrypto->getKey(key, diversify, keyData);
 
         EXCEPTION_ASSERT_WITH_LOG(keyData.size() == expectedKeyLength,
@@ -3035,7 +3038,9 @@ bool DUOXISO7816Commands::performAESOriginalityCheck()
 
 void DUOXISO7816Commands::selectApplication(unsigned int aid)
 {
-    DESFireEV3ISO7816Commands::selectApplication(aid);
+    // TODO Uncomment when selectApplication has been refactored. This is part of a larger refactor about TMI updating.
+    //DESFireEV3ISO7816Commands::selectApplication(aid);
+    DESFireISO7816Commands::selectApplication(aid);
 }
 
 void DUOXISO7816Commands::selectApplication(unsigned int aid1, unsigned int aid2)

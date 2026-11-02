@@ -1,5 +1,6 @@
 #include <logicalaccess/plugins/cards/duox/duoxecc.hpp>
 #include <logicalaccess/plugins/crypto/public_key.hpp>
+#include <logicalaccess/myexception.hpp>
 
 #include <cstddef>
 #include <cstdint>
@@ -294,7 +295,7 @@ void testUnsupportedCurve()
     printSection("DUOX ECC : unsupported curve.");
 
     const auto unsupported = static_cast<CurveID>(0xFF);
-    expectThrows<std::invalid_argument>([&] { getCoordinateSize(unsupported); }, "Unsupported curve identifier.");
+    expectThrows<LibLogicalAccessException>([&] { getCoordinateSize(unsupported); }, "Unsupported curve identifier.");
 
     std::cout << " Unsupported curve correctly rejected.\n";
 }
@@ -356,17 +357,21 @@ void testMalformedPointEncoding()
 
     const CurveID curve = CurveID::NIST_P256;
 
-    expectThrows<std::invalid_argument>([&] { decodeECPoint(curve, ByteVector{}); }, "empty EC point.");
-    expectThrows<std::invalid_argument>([&] { decodeECPoint(curve, ByteVector{0x04}); }, "point containing only prefix.");
-    expectThrows<std::invalid_argument>([&] { decodeECPoint(curve, ByteVector(64, 0x00)); }, "64-byte point without prefix.");
-    expectThrows<std::invalid_argument>([&] { decodeECPoint(curve, ByteVector(66, 0x00)); }, "incorrect point length.");
+    expectThrows<LibLogicalAccessException>([&] { decodeECPoint(curve, ByteVector{}); },
+        "empty EC point.");
+    expectThrows<LibLogicalAccessException>([&] { decodeECPoint(curve, ByteVector{0x04}); },
+        "point containing only prefix.");
+    expectThrows<LibLogicalAccessException>([&] { decodeECPoint(curve, ByteVector(64, 0x00)); },
+        "64-byte point without prefix.");
+    expectThrows<LibLogicalAccessException>([&] { decodeECPoint(curve, ByteVector(66, 0x00)); },
+        "incorrect point length.");
 
     ByteVector wrongPrefix(DUOX_POINT_SIZE, 0x00);
     wrongPrefix[0] = 0x02;
-    expectThrows<std::invalid_argument>([&] { decodeECPoint(curve, wrongPrefix); }, "compressed point encoding.");
+    expectThrows<LibLogicalAccessException>([&] { decodeECPoint(curve, wrongPrefix); }, "compressed point encoding.");
 
     wrongPrefix[0] = 0x06;
-    expectThrows<std::invalid_argument>([&] { decodeECPoint(curve, wrongPrefix); }, "hybrid/unknown point encoding.");
+    expectThrows<LibLogicalAccessException>([&] { decodeECPoint(curve, wrongPrefix); }, "hybrid/unknown point encoding.");
 
     std::cout << " Malformed point encodings correctly rejected.\n";
 }
@@ -407,15 +412,18 @@ void testPointInvalidSizes()
     ECPoint point;
     point.x = ByteVector(31, 0x00);
     point.y = ByteVector(32, 0x00);
-    expectThrows<std::invalid_argument>([&] { encodeECPoint(CurveID::NIST_P256, point); }, "31-byte X coordinate.");
+    expectThrows<LibLogicalAccessException>([&point] { encodeECPoint(CurveID::NIST_P256, point); },
+        "31-byte X coordinate.");
 
     point.x = ByteVector(32, 0x00);
     point.y = ByteVector(31, 0x00);
-    expectThrows<std::invalid_argument>([&] { encodeECPoint(CurveID::NIST_P256, point); }, "31-byte Y coordinate.");
+    expectThrows<LibLogicalAccessException>([&point] { encodeECPoint(CurveID::NIST_P256, point); },
+        "31-byte Y coordinate.");
 
     point.x = ByteVector(33, 0x00);
     point.y = ByteVector(32, 0x00);
-    expectThrows<std::invalid_argument>([&] { encodeECPoint(CurveID::NIST_P256, point); }, "33-byte X coordinate.");
+    expectThrows<LibLogicalAccessException>([&point] { encodeECPoint(CurveID::NIST_P256, point); },
+        "33-byte X coordinate.");
 
     std::cout << " Invalid coordinate sizes correctly rejected.\n";
 }
@@ -486,13 +494,13 @@ void testECDHInvalidPrivateKey()
     const EVP_PKEY_ptr peer = generateECKey(NID_X9_62_prime256v1);
     const ECPoint peerPublic = getDUOXPoint(peer.get(), CurveID::NIST_P256);
 
-    expectThrows<std::invalid_argument>(
+    expectThrows<LibLogicalAccessException>(
         [&] { deriveECDHSharedSecret(CurveID::NIST_P256, ByteVector{}, peerPublic); }, "empty ECDH private key.");
-    expectThrows<std::invalid_argument>(
+    expectThrows<LibLogicalAccessException>(
         [&] { deriveECDHSharedSecret(CurveID::NIST_P256, ByteVector(31, 0x01), peerPublic); }, "31-byte ECDH private key.");
-    expectThrows<std::invalid_argument>(
+    expectThrows<LibLogicalAccessException>(
         [&] { deriveECDHSharedSecret(CurveID::NIST_P256, ByteVector(33, 0x01), peerPublic); }, "33-byte ECDH private key.");
-    expectThrows<std::invalid_argument>(
+    expectThrows<LibLogicalAccessException>(
         [&] { deriveECDHSharedSecret(CurveID::NIST_P256, ByteVector(32, 0x00), peerPublic); }, "zero ECDH private key.");
 
     std::cout << " Invalid ECDH private keys correctly rejected.\n";
@@ -509,7 +517,7 @@ void testECDHInvalidPeerPoint()
 
     invalidPoint.x = ByteVector(DUOX_COORDINATE_SIZE, 0x00);
     invalidPoint.y = ByteVector(DUOX_COORDINATE_SIZE, 0x00);
-    expectThrows<std::invalid_argument>(
+    expectThrows<LibLogicalAccessException>(
         [&] { deriveECDHSharedSecret(CurveID::NIST_P256, privateKeyA, invalidPoint); }, "invalid ECDH peer point.");
 
     std::cout << " Invalid ECDH peer point correctly rejected.\n";
@@ -525,7 +533,7 @@ void testECDHWrongCurve()
     const ByteVector privateKeyA = getPrivateScalar(keyA.get());
     const ECPoint publicKeyB = getDUOXPoint(keyB.get(), CurveID::NIST_P256);
 
-    expectThrows<std::invalid_argument>(
+    expectThrows<LibLogicalAccessException>(
         [&] { deriveECDHSharedSecret(CurveID::BRAINPOOL_P256R1, privateKeyA, publicKeyB); },
         "P-256 key used with Brainpool ECDH");
 
@@ -597,13 +605,13 @@ void testDUOXSessionKeyDerivationInvalidInputs()
 
     const ByteVector sharedSecret(DUOX_COORDINATE_SIZE, 0x55);
 
-    expectThrows<std::invalid_argument>(
+    expectThrows<LibLogicalAccessException>(
         [&] { deriveSessionKeys(ECPoint{}, publicB, sharedSecret); }, "invalid ephemeral public key A.");
-    expectThrows<std::invalid_argument>(
+    expectThrows<LibLogicalAccessException>(
         [&] { deriveSessionKeys(publicA, ECPoint{}, sharedSecret); }, "invalid ephemeral public key B.");
-    expectThrows<std::invalid_argument>(
+    expectThrows<LibLogicalAccessException>(
         [&] { deriveSessionKeys(publicA, publicB, ByteVector(31, 0x55)); }, "31-byte shared secret.");
-    expectThrows<std::invalid_argument>(
+    expectThrows<LibLogicalAccessException>(
         [&] { deriveSessionKeys(publicA, publicB, ByteVector(33, 0x55)); }, "33-byte shared secret.");
 
     std::cout << " Invalid session-key derivation inputs correctly rejected.\n";
@@ -778,26 +786,26 @@ void testECDSAInvalidInputs()
 
     const ByteVector message{0x01, 0x02};
 
-    expectThrows<std::invalid_argument>(
+    expectThrows<LibLogicalAccessException>(
         [&] { signECDSA(CurveID::NIST_P256, ByteVector{}, message); }, "empty ECDSA private key.");
-    expectThrows<std::invalid_argument>(
+    expectThrows<LibLogicalAccessException>(
         [&] { signECDSA(CurveID::NIST_P256, ByteVector(31, 0x01), message); }, "31-byte ECDSA private key.");
-    expectThrows<std::invalid_argument>(
+    expectThrows<LibLogicalAccessException>(
         [&] { signECDSA(CurveID::NIST_P256, ByteVector(33, 0x01), message); }, "33-byte ECDSA private key.");
-    expectThrows<std::invalid_argument>(
+    expectThrows<LibLogicalAccessException>(
         [&] { signECDSA(CurveID::NIST_P256, ByteVector(32, 0x00), message); }, "zero ECDSA private key.");
 
     ECDSASignature invalidSignature;
     invalidSignature.r = ByteVector(31, 0x01);
     invalidSignature.s = ByteVector(32, 0x01);
 
-    expectThrows<std::invalid_argument>(
+    expectThrows<LibLogicalAccessException>(
         [&] { verifyECDSA(CurveID::NIST_P256, publicKey, message, invalidSignature); }, "31-byte ECDSA r.");
 
     invalidSignature.r = ByteVector(32, 0x01);
     invalidSignature.s = ByteVector(31, 0x01);
 
-    expectThrows<std::invalid_argument>(
+    expectThrows<LibLogicalAccessException>(
         [&] { verifyECDSA(CurveID::NIST_P256, publicKey, message, invalidSignature); }, "31-byte ECDSA s.");
 
     std::cout << " Invalid ECDSA inputs correctly rejected.\n";
@@ -838,19 +846,19 @@ void testECDSADERMalformed()
 {
     printSection("DUOX ECC : malformed ECDSA DER.");
 
-    expectThrows<std::invalid_argument>(
+    expectThrows<LibLogicalAccessException>(
         [] { decodeECDSASignatureDER(ByteVector{}); }, "empty DER signature.");
-    expectThrows<std::invalid_argument>(
+    expectThrows<LibLogicalAccessException>(
         [] { decodeECDSASignatureDER(ByteVector{0x01, 0x02, 0x03}); }, "non-SEQUENCE DER signature.");
-    expectThrows<std::invalid_argument>(
+    expectThrows<LibLogicalAccessException>(
         [] { decodeECDSASignatureDER(ByteVector{0x30, 0x00}); }, "empty DER SEQUENCE.");
 
     // SEQUENCE containing only one INTEGER.
-    expectThrows<std::invalid_argument>(
+    expectThrows<LibLogicalAccessException>(
         [] { decodeECDSASignatureDER(ByteVector{0x30, 0x03, 0x02, 0x01, 0x01}); }, "DER signature missing s.");
 
     //SEQUENCE containing an INTEGER with zero length.
-    expectThrows<std::invalid_argument>(
+    expectThrows<LibLogicalAccessException>(
         [] { decodeECDSASignatureDER(ByteVector{0x30, 0x05, 0x02, 0x00, 0x02, 0x01, 0x01}); },
         "DER signature with zero-length r.");
 
@@ -865,15 +873,15 @@ void testECDSADERSignatureSizes()
 
     signature.r = ByteVector(31, 0x01);
     signature.s = ByteVector(32, 0x01);
-    expectThrows<std::invalid_argument>([&] { encodeECDSASignatureDER(signature); }, "31-byte r.");
+    expectThrows<LibLogicalAccessException>([&] { encodeECDSASignatureDER(signature); }, "31-byte r.");
 
     signature.r = ByteVector(32, 0x01);
     signature.s = ByteVector(31, 0x01);
-    expectThrows<std::invalid_argument>([&] { encodeECDSASignatureDER(signature); }, "31-byte s.");
+    expectThrows<LibLogicalAccessException>([&] { encodeECDSASignatureDER(signature); }, "31-byte s.");
 
     signature.r = ByteVector(33, 0x01);
     signature.s = ByteVector(32, 0x01);
-    expectThrows<std::invalid_argument>([&] { encodeECDSASignatureDER(signature); }, "33-byte r.");
+    expectThrows<LibLogicalAccessException>([&] { encodeECDSASignatureDER(signature); }, "33-byte r.");
 
     std::cout << " Invalid DER signature component sizes correctly rejected.\n";
 }

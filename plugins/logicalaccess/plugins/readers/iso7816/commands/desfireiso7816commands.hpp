@@ -411,6 +411,8 @@ class LLA_READERS_ISO7816_API DESFireISO7816Commands : public DESFireCommands
      */
     std::shared_ptr<SAMChip> d_SAM_chip;
 
+    static constexpr unsigned int PICC_AID = 0x000000U;
+
   private:
     void updateValueFile(unsigned char instruction, unsigned char fileno, std::uint32_t value, EncryptionMode mode);
 };

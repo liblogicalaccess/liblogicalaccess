@@ -1238,7 +1238,7 @@ DESFireCommands::DESFireCardVersion DESFireEV1ISO7816Commands::getVersion()
 
     const std::shared_ptr<DESFireCrypto> crypto = getDESFireChip()->getCrypto();
 
-    const auto parseVersionFrame = [VERSION_FRAME_SIZE](DESFireVersionInfo &version, const ByteVector &data) -> bool
+    const auto parseVersionFrame = [VERSION_FRAME_SIZE](DESFireVersionInfo &version, const ByteVector &data)
     {
         if (data.size() < VERSION_FRAME_SIZE)
             return false;

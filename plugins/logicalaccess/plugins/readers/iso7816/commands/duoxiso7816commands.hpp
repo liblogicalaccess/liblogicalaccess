@@ -4,6 +4,7 @@
 #include <logicalaccess/plugins/cards/duox/duoxcommands.hpp>
 
 #include <utility>
+#include <openssl/crypto.h>
 
 namespace logicalaccess
 {
@@ -41,6 +42,31 @@ struct DUOXECCAuthenticationState
     SessionKeys sessionKeys;
 
     // TODO EV2/secure-messaging context will be added here once DUOX post-authentication secure messaging format is wired
+
+    // TODO later : use RAII secure buffer wrapper
+    void clear()
+    {
+        if (!ephemeralPrivateKey.empty())
+        {
+            OPENSSL_cleanse(ephemeralPrivateKey.data(), ephemeralPrivateKey.size());
+            ephemeralPrivateKey.clear();
+        }
+
+        sessionKeys = SessionKeys{};
+
+        active               = false;
+        mutualAuthentication = false;
+        certificatePresent   = false;
+
+        optsA.clear();
+        ephemeralPublicA = ECPoint{};
+        ephemeralPublicB = ECPoint{};
+    }
+
+    ~DUOXECCAuthenticationState()
+    {
+        clear();
+    }
 };
 
 /**
@@ -96,15 +122,15 @@ class LLA_READERS_ISO7816_API DUOXISO7816Commands : public DESFireEV3ISO7816Comm
                              CurveID curveId, std::uint16_t keyPolicy,
                              std::uint8_t writeAccess, std::uint32_t kucLimit,
                              const ByteVector &privateKey = ByteVector(),
-                             DUOXCommunicationMode commMode = DUOXCommunicationMode::Full) override;
+                             EncryptionMode commMode = CM_ENCRYPT) override;
 
     void manageCARootKey(std::uint8_t keyNo, CurveID curveId,
-                         std::uint16_t accessRights, std::uint8_t writeAccess,
+                         std::uint16_t caRootKeyAccessRights, std::uint8_t writeAccess,
                          std::uint8_t readAccess, std::uint8_t crlFile,
                          std::uint32_t crlFileAid, const ByteVector &publicKey,
-                         const ByteVector &issuer, DUOXCommunicationMode commMode = DUOXCommunicationMode::Full) override;
+                         const ByteVector &issuer, EncryptionMode commMode = CM_ENCRYPT) override;
 
-    ByteVector exportKey(std::uint8_t keyNo, DUOXCommunicationMode commMode = DUOXCommunicationMode::Full) override;
+    ByteVector exportKey(std::uint8_t keyNo, EncryptionMode commMode = CM_ENCRYPT) override;
 
     void authenticateEV2NonFirst(std::uint8_t keyno, std::shared_ptr<DESFireKey> currentKey = nullptr) override;
 
@@ -143,7 +169,7 @@ class LLA_READERS_ISO7816_API DUOXISO7816Commands : public DESFireEV3ISO7816Comm
      * \param pcdCap2 PCD capabilities. At most six bytes are sent.
      */
     void authenticateEV2First(std::uint8_t targetedKeyNo, std::shared_ptr<DESFireKey> key,
-                              bool secondaryApplication = false,
+                              bool secondaryApplication,
                               ByteVector pcdCap2        = ByteVector()); // TODO : PCDcap2 may become persistent class state
 
     void sam_authenticateEV2First(uint8_t keyno, std::shared_ptr<DESFireKey> key) override;
@@ -295,7 +321,7 @@ class LLA_READERS_ISO7816_API DUOXISO7816Commands : public DESFireEV3ISO7816Comm
 
   protected:
     ISO7816Response transmitDUOX(std::uint8_t cmd, const ByteVector &params, const ByteVector &data,
-                 DUOXCommunicationMode commMode = DUOXCommunicationMode::Full);
+                                 EncryptionMode commMode = CM_ENCRYPT);
 
     void validateTransactionMACConfiguration(const ByteVector &applicationTMACKey, const ByteVector &uid) const override;
 

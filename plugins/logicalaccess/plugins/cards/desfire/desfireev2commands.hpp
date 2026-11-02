@@ -189,6 +189,9 @@ class LLA_CARDS_DESFIRE_API DESFireEV2Commands : public ICommands
      */
     virtual void proximityCheck(std::shared_ptr<DESFireKey> key, uint8_t chunk_size) = 0;
 
+    virtual void selectApplication(unsigned int aid)                     = 0;
+    virtual void selectApplication(unsigned int aid1, unsigned int aid2) = 0;
+
      /**
      * \brief Commit the transaction.
      * \param return_tmac True to return the new Transaction MAC counter and value, false otherwise.

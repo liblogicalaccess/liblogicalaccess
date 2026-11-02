@@ -424,7 +424,20 @@ int main()
             if (!firstRun)
                 printSeparator();
             const auto now = std::time(nullptr);
-            logInfo(std::string("Time start : ") + std::ctime(&now));
+
+            if (now != static_cast<std::time_t>(-1))
+            {
+                char timeBuffer[26] = {};
+
+#if defined(_WIN32)
+                if (ctime_s(timeBuffer, sizeof(timeBuffer), &now) == 0)
+#else
+                if (ctime_r(&now, timeBuffer) != nullptr)
+#endif
+                {
+                    logInfo(std::string("Time start : ") + timeBuffer);
+                }
+            }
             auto readerConfiguration = createReaderConfiguration();
             configureSAM(readerConfiguration);
 

@@ -25,20 +25,42 @@ namespace duox
 struct CertificateAccessRights
 {
     std::uint8_t arType;
-    std::uint8_t accessRight;
+    ByteVector arValue;
 
     CertificateAccessRights()
-        : arType(0)
-        , accessRight(0)
+        : arType(0U)
+        , arValue()
     {
     }
+};
+
+/**
+ * Configuration associated with a ManageCARootKey entry.
+ *
+ * Caller must supply the configuration loaded from the targeted CA root key entry.
+ * The public key is the external trust anchor.
+ *
+ * trustedIssuer is the exact issuer representation. An empty value disables the issuer-name restriction.
+ *
+ * This structure does not contain CRL data.
+ * When certificate revocation is enabled, revocation must be enforced by the authentication layer.
+ */
+struct CARootKeyValidationParameters
+{
+    CurveID curve = CurveID::NIST_P256;
+    CertificateAccessRights accessRights;
+    // Empty means that no trusted issuer-name check is configured
+    ByteVector trustedIssuer;
+    // CRL revocation configuration from ManageCARootKey
+    bool crlEnabled          = false;
+    std::uint8_t crlFileNo   = 0U;
+    std::uint32_t crlFileAid = 0U;
 };
 
 /**
  * \brief Cryptographically validated certificate
  *
  * Contains properties belonging to the certificate itself :
- *
  * - the parsed X.509 certificate;
  * - its ECC public key;
  * - its DUOX supported curve;
@@ -52,7 +74,7 @@ struct ValidatedCertificate
     X509V3Certificate certificate;
     std::shared_ptr<PublicKey> publicKey;
 
-    CurveID curve;
+    CurveID curve = CurveID::NIST_P256;
     ByteVector serialNumber;
 
     bool hasAccessRightsExtension = false;
@@ -63,7 +85,6 @@ struct ValidatedCertificate
  * \brief Result of certificate-chain validation
  *
  * The supplied certificate chain is ordered from leaf to issuer :
- *
  *     certificates[0] = leaf
  *     certificates[1] = intermediate/root-signed certificate, if present
  *
@@ -115,6 +136,10 @@ class LLA_CARDS_DESFIRE_API DUOXCertificateValidator
                   const std::shared_ptr<PublicKey> &caRootKey, const CurveID expectedCurve,
                   const CertificateAccessRights &caRootAccessRights);
 
+    // Extended overload using metadata stored with ManageCARootKey
+    static CertificateChainValidationResult validateChain(const std::vector<ByteVector> &certificates,
+                  const std::shared_ptr<PublicKey> &caRootKey, const CARootKeyValidationParameters &rootParameters);
+
     /**
      * \brief Validate the certificate's DUOX-specific X.509 structure
      * This method does not verify the issuer signature
@@ -134,6 +159,12 @@ class LLA_CARDS_DESFIRE_API DUOXCertificateValidator
      */
     static CertificateAccessRights calculateEffectiveAccessRights(const CertificateAccessRights &certificateRights,
         const CertificateAccessRights &caRootRights);
+
+    // TODO : CRL retrieval and parsing; for now this is provided by the caller
+    // This callback must return true only when the certificate is revoked.
+    using RevocationCheck = bool (*)(std::uint32_t aid, std::uint8_t fileNo, const ByteVector &serialNumber);
+
+    static void setRevocationCheck(RevocationCheck callback);
 };
 
 } // namespace duox

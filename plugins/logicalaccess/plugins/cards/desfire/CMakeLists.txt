@@ -7,6 +7,7 @@ if (MSVC)
 endif ()
 
 set(HEADER_RELATIVE_INSTALL_DIR "include/logicalaccess/plugins/cards/desfire")
+set(DUOX_HEADER_INSTALL_DIR "include/logicalaccess/plugins/cards/duox")
 
 file(GLOB_RECURSE SRCS *.cpp)
 file(GLOB_RECURSE INCLUDE *.hpp)
@@ -34,7 +35,11 @@ if (MSVC)
     SET_TARGET_PROPERTIES(desfirecards PROPERTIES LINK_FLAGS_DEBUG "/NODEFAULTLIB:msvcrt.lib")
 endif ()
 
+# Install public headers
 install(FILES ${INCLUDE} DESTINATION ${HEADER_RELATIVE_INSTALL_DIR})
+install(FILES ${DUOX_INCLUDE} DESTINATION ${DUOX_HEADER_INSTALL_DIR})
+
+# Install library
 install(TARGETS desfirecards
         RUNTIME DESTINATION bin/${LIB_SUFFIX}
         ARCHIVE DESTINATION lib/${LIB_SUFFIX}

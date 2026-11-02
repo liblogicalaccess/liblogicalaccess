@@ -497,6 +497,7 @@ void DESFireEV3ISO7816Commands::selectApplication(unsigned int aid)
 {
     validateAid(aid); // TODO should select PICC on any rejected case
     DESFireISO7816Commands::selectApplication(aid);
+    resetApplicationTransactionState(); // TODO This will be part of a larger refactor !
     // TODO if transmit not successful, we should do :
     // if (result.getSW1() != 0x91 && result.getSW2() != 0x00) {
     // getDESFireChip()->getCrypto()->selectApplication(PICC_AID);
@@ -528,6 +529,8 @@ void DESFireEV3ISO7816Commands::selectApplication(unsigned int aid1, unsigned in
     }
 
     getDESFireChip()->getCrypto()->selectApplication(aid1);
+
+    resetApplicationTransactionState(); // TODO This will be part of a larger refactor !
 }
 
 DESFireCommands::DESFireGetVersionOption DESFireEV3ISO7816Commands::getVersionOption() const
@@ -581,11 +584,8 @@ DESFireCommands::DESFireCardVersion DESFireEV3ISO7816Commands::getVersionImpl(DE
     {
         const std::size_t payloadSize = getManufacturingPayloadSize(manufacturingData, option, allowFourByteUID);
 
-        if (manufacturingData.size() > payloadSize)
-        {
-            dataVersion.hasFabID = true;
-            dataVersion.fabID    = manufacturingData[payloadSize];
-        }
+        dataVersion.hasFabID = true;
+        dataVersion.fabID    = manufacturingData[payloadSize - FAB_ID_SIZE];
     }
 
     if (crypto->d_auth_method != CM_LEGACY)
@@ -665,6 +665,12 @@ DESFireCommands::DESFireManufacturingInfo DESFireEV3ISO7816Commands::parseManufa
 
     result.cwProd   = data[offset++];
     result.yearProd = data[offset++];
+
+    if (option == DESFireGetVersionOption::FabID)
+    {
+        ensureSize(data, offset, FAB_ID_SIZE, "Invalid DESFire GetVersion response : missing FabID.");
+        offset += FAB_ID_SIZE;
+    }
 
     if (offset != payloadSize)
         THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,

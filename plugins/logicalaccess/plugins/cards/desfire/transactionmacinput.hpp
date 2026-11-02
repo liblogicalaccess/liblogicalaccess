@@ -27,17 +27,7 @@ class LLA_CARDS_DESFIRE_API DESFireTransactionMACInput
     static constexpr std::uint32_t U24_MAX      = TransactionManagement::U24_MAX;
 
     // DESFire command identifiers
-    static constexpr std::uint8_t INS_READ_DATA         = 0xBD;
-    static constexpr std::uint8_t INS_WRITE_DATA        = 0x3D;
-    static constexpr std::uint8_t INS_GET_VALUE         = 0x6C;
-    static constexpr std::uint8_t INS_CREDIT            = 0x0C;
-    static constexpr std::uint8_t INS_DEBIT             = 0xDC;
-    static constexpr std::uint8_t INS_LIMITED_CREDIT    = 0x1C;
-    static constexpr std::uint8_t INS_WRITE_RECORD      = 0x3B;
-    static constexpr std::uint8_t INS_READ_RECORDS      = 0xBB;
-    static constexpr std::uint8_t INS_UPDATE_RECORD     = 0xBA;
-    static constexpr std::uint8_t INS_CLEAR_RECORD_FILE = 0xEB;
-    static constexpr std::uint8_t INS_COMMIT_READER_ID  = 0xC8;
+    static constexpr std::uint8_t INS_UPDATE_RECORD     = 0xBA; // TODO add it as macro or centralize instructions contants
 
     /**
      * \brief Removes all accumulated TMI data.
@@ -122,14 +112,15 @@ class LLA_CARDS_DESFIRE_API DESFireTransactionMACInput
 
     // ReadRecords TMI update
     void appendReadRecords(std::uint8_t fileNo, std::uint32_t recordNo, std::uint32_t requestedRecordCount,
-                           std::uint32_t actualRecordCount, const ByteVector &returnedRecords);
+                           std::uint32_t actualRecordCount, std::uint32_t recordSize, const ByteVector &returnedRecords);
 
     // WriteRecord TMI update
-    void appendWriteRecord(std::uint8_t fileNo, std::uint32_t offset, const ByteVector &recordData);
+    void appendWriteRecord(std::uint8_t fileNo, std::uint32_t offset,
+                           std::uint32_t recordSize, const ByteVector &recordData);
 
     // UpdateRecord TMI update
-    void appendUpdateRecord(std::uint8_t fileNo, std::uint32_t recordNo,
-                            std::uint32_t offset, const ByteVector &recordData);
+    void appendUpdateRecord(std::uint8_t fileNo, std::uint32_t recordNo, std::uint32_t offset,
+                            std::uint32_t recordSize, const ByteVector &recordData);
 
     // ClearRecordFile TMI update
     void appendClearRecordFile(std::uint8_t fileNo);

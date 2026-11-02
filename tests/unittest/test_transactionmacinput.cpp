@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <logicalaccess/plugins/cards/desfire/transactionmacinput.hpp>
+#include <logicalaccess/plugins/cards/desfire/desfirecommands.hpp>
 
 #include <cstdint>
 #include <logicalaccess/myexception.hpp>
@@ -76,7 +77,7 @@ TEST(DESFireTransactionMACInputTest, ValueOperationPadsToBlock)
 {
     DESFireTransactionMACInput tmi;
 
-    tmi.appendValueOperation(DESFireTransactionMACInput::INS_CREDIT, 0x04, 0x12345678);
+    tmi.appendValueOperation(DF_INS_CREDIT, 0x04, 0x12345678);
 
     ASSERT_EQ(tmi.size(), 16U);
     EXPECT_EQ(ByteVector(tmi.data().begin(), tmi.data().begin() + 6), (ByteVector{0x0C, 0x04, 0x78, 0x56, 0x34, 0x12}));
@@ -89,7 +90,7 @@ TEST(DESFireTransactionMACInputTest, ReadRecordsUsesActualCountWhenRequestedCoun
 
     ByteVector records(32, 0xA5);
 
-    tmi.appendReadRecords(0x05, 0x000001, 0, 2, records);
+    tmi.appendReadRecords(0x05, 0x000001, 0, 2, 16, records);
 
     ASSERT_EQ(tmi.size(), 48U);
 
@@ -100,13 +101,30 @@ TEST(DESFireTransactionMACInputTest, ReadRecordsUsesActualCountWhenRequestedCoun
     EXPECT_EQ(tmi.data()[47], 0xA5);
 }
 
+TEST(DESFireTransactionMACInputTest, ReadRecordsSupportsEightByteRecords)
+{
+    DESFireTransactionMACInput tmi;
+
+    const ByteVector records(16, 0xA5);
+
+    tmi.appendReadRecords(0x02, 0, 2, 2, 8, records);
+
+    ASSERT_EQ(tmi.size(), 32U);
+
+    EXPECT_EQ(tmi.data()[0], 0xBB);
+    EXPECT_EQ(tmi.data()[1], 0x02);
+
+    EXPECT_EQ(ByteVector(tmi.data().begin() + 8, tmi.data().begin() + 16), zeros(8));
+    EXPECT_EQ(ByteVector(tmi.data().begin() + 16, tmi.data().end()), records);
+}
+
 TEST(DESFireTransactionMACInputTest, WriteRecordEncodesRecordData)
 {
     DESFireTransactionMACInput tmi;
 
     const ByteVector record(16, 0x5A);
 
-    tmi.appendWriteRecord(0x06, 0x123456, record);
+    tmi.appendWriteRecord(0x06, 0x123456, 16, record);
 
     ASSERT_EQ(tmi.size(), 32U);
 
@@ -121,7 +139,7 @@ TEST(DESFireTransactionMACInputTest, UpdateRecordPadsElevenByteHeader)
 {
     DESFireTransactionMACInput tmi;
 
-    tmi.appendUpdateRecord(0x07, 1, 2, ByteVector(16, 0xCC));
+    tmi.appendUpdateRecord(0x07, 1, 2, 16, ByteVector(16, 0xCC));
 
     ASSERT_EQ(tmi.size(), 32U);
 
@@ -130,6 +148,7 @@ TEST(DESFireTransactionMACInputTest, UpdateRecordPadsElevenByteHeader)
 
     EXPECT_EQ(ByteVector(tmi.data().begin() + 11, tmi.data().begin() + 16), zeros(5));
     EXPECT_EQ(tmi.data()[16], 0xCC);
+    EXPECT_EQ(tmi.data()[31], 0xCC);
 }
 
 TEST(DESFireTransactionMACInputTest, CommitReaderIDAuthenticated)
@@ -235,28 +254,32 @@ TEST(TransactionMACLifecycleTest, FailedOperationDoesNotAppendUpdate)
     EXPECT_EQ(input.data(), before);
 }
 
-TEST(DESFireTransactionMACInputTest, ReadRecordsDoesNotAddFinalPadding)
+TEST(DESFireTransactionMACInputTest, ReadRecordsPadsFinalDataToBlockBoundary)
 {
     DESFireTransactionMACInput tmi;
 
     const ByteVector records(32, 0xA5);
 
-    tmi.appendReadRecords(0x02, 0, 2, 2, records);
+    tmi.appendReadRecords(0x02, 0, 2, 2, 16, records);
 
     ASSERT_EQ(tmi.size(), 48U);
 
     EXPECT_EQ(tmi.data()[0], 0xBB);
     EXPECT_EQ(tmi.data()[1], 0x02);
     EXPECT_EQ(tmi.data()[5], 0x02);
-    EXPECT_EQ(tmi.data()[16], 0xA5);
-    EXPECT_EQ(tmi.data()[47], 0xA5);
+
+    // Header padding
+    EXPECT_EQ(ByteVector(tmi.data().begin() + 8, tmi.data().begin() + 16), zeros(8));
+
+    // Record data
+    EXPECT_EQ(ByteVector(tmi.data().begin() + 16, tmi.data().end()), records);
 }
 
 TEST(DESFireTransactionMACInputTest, ReadRecordsRejectsPartialRecord)
 {
     DESFireTransactionMACInput tmi;
 
-    EXPECT_THROW(tmi.appendReadRecords(0x02, 0, 1, 1, ByteVector(15, 0xA5)), LibLogicalAccessException);
+    EXPECT_THROW(tmi.appendReadRecords(0x02, 0, 1, 1, 8, ByteVector(7, 0xA5)), LibLogicalAccessException);
 
     EXPECT_TRUE(tmi.empty());
 }

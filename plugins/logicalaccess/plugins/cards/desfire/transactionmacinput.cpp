@@ -5,6 +5,8 @@
 
 #include <logicalaccess/myexception.hpp>
 #include <logicalaccess/plugins/llacommon/logs.hpp>
+#include <logicalaccess/plugins/cards/desfire/desfirecommands.hpp>
+#include <logicalaccess/plugins/cards/desfire/desfireev2commands.hpp>
 
 namespace logicalaccess
 {
@@ -93,7 +95,7 @@ void DESFireTransactionMACInput::appendReadData(std::uint8_t fileNo, std::uint32
     EXCEPTION_ASSERT_WITH_LOG(effectiveLength == returnedData.size(),
         LibLogicalAccessException, "DESFire TMI : ReadData response length does not match the effective length.");
 
-    ByteVector header{INS_READ_DATA, fileNo};
+    ByteVector header{DF_INS_READ_DATA, fileNo};
     appendU24(header, offset);
     appendU24(header, effectiveLength);
 
@@ -108,7 +110,7 @@ void DESFireTransactionMACInput::appendWriteData(std::uint8_t fileNo, std::uint3
     EXCEPTION_ASSERT_WITH_LOG(writtenData.size() <= U24_MAX,
         LibLogicalAccessException, "DESFire TMI : WriteData payload exceeds the 24-bit length range.");
 
-    ByteVector header{INS_WRITE_DATA, fileNo};
+    ByteVector header{DF_INS_WRITE_DATA, fileNo};
     appendU24(header, offset);
     appendU24(header, static_cast<std::uint32_t>(writtenData.size()));
 
@@ -128,7 +130,7 @@ void DESFireTransactionMACInput::appendCommitReaderID(const ByteVector &readerID
         LibLogicalAccessException,
         "DESFire TMI : Authenticated CommitReaderID requires a block-sized encrypted previous Reader ID.");
 
-    ByteVector update{INS_COMMIT_READER_ID};
+    ByteVector update{DFEV2_INS_COMMIT_READERID};
     update.insert(update.end(), readerID.begin(), readerID.end());
 
     if (authenticated)
@@ -139,10 +141,10 @@ void DESFireTransactionMACInput::appendCommitReaderID(const ByteVector &readerID
 
 void DESFireTransactionMACInput::appendValueOperation(std::uint8_t command, std::uint8_t fileNo, std::int32_t value)
 {
-    EXCEPTION_ASSERT_WITH_LOG(command == INS_GET_VALUE ||
-                              command == INS_CREDIT ||
-                              command == INS_DEBIT ||
-                              command == INS_LIMITED_CREDIT,
+    EXCEPTION_ASSERT_WITH_LOG(command == DF_INS_GET_VALUE ||
+                              command == DF_INS_CREDIT ||
+                              command == DF_INS_DEBIT ||
+                              command == DF_INS_LIMITED_CREDIT,
                               LibLogicalAccessException, "DESFire TMI : Unsupported value operation command.");
 
     ByteVector update{command, fileNo};
@@ -156,6 +158,7 @@ void DESFireTransactionMACInput::appendValueOperation(std::uint8_t command, std:
 void DESFireTransactionMACInput::appendReadRecords(std::uint8_t fileNo, std::uint32_t recordNo,
                                                    std::uint32_t requestedRecordCount,
                                                    std::uint32_t actualRecordCount,
+                                                   std::uint32_t recordSize,
                                                    const ByteVector &returnedRecords)
 {
     EXCEPTION_ASSERT_WITH_LOG(recordNo <= U24_MAX && requestedRecordCount <= U24_MAX && actualRecordCount <= U24_MAX,
@@ -167,10 +170,13 @@ void DESFireTransactionMACInput::appendReadRecords(std::uint8_t fileNo, std::uin
     EXCEPTION_ASSERT_WITH_LOG(requestedRecordCount == 0 || actualRecordCount == requestedRecordCount,
         LibLogicalAccessException, "DESFire TMI : ReadRecords returned count differs from requested count.");
 
-    EXCEPTION_ASSERT_WITH_LOG(returnedRecords.size() % BLOCK_SIZE == 0,
-        LibLogicalAccessException, "DESFire TMI : ReadRecords data must contain complete records.");
+    EXCEPTION_ASSERT_WITH_LOG(recordSize > 0 && returnedRecords.size() % recordSize == 0,
+        LibLogicalAccessException, "DESFire TMI : ReadRecords data does not contain complete records.");
 
-    ByteVector update{INS_READ_RECORDS, fileNo};
+    EXCEPTION_ASSERT_WITH_LOG(returnedRecords.size() / recordSize == actualRecordCount,
+        LibLogicalAccessException, "DESFire TMI : ReadRecords data size does not match the actual record count.");
+
+    ByteVector update{DF_INS_READ_RECORDS, fileNo};
 
     appendU24(update, recordNo);
     appendU24(update, requestedRecordCount == 0 ? actualRecordCount : requestedRecordCount);
@@ -179,18 +185,23 @@ void DESFireTransactionMACInput::appendReadRecords(std::uint8_t fileNo, std::uin
     // Record data is already composed of complete 16 byte records
     update.insert(update.end(), returnedRecords.begin(), returnedRecords.end());
 
+    padToBlock(update); // Align the complete TMI update
     appendAligned(update);
 }
 
-void DESFireTransactionMACInput::appendWriteRecord(std::uint8_t fileNo, std::uint32_t offset, const ByteVector &recordData)
+void DESFireTransactionMACInput::appendWriteRecord(std::uint8_t fileNo, std::uint32_t offset,
+                                                   std::uint32_t recordSize, const ByteVector &recordData)
 {
-    EXCEPTION_ASSERT_WITH_LOG(!recordData.empty() && recordData.size() % BLOCK_SIZE == 0,
-        LibLogicalAccessException, "DESFire TMI : WriteRecord data must contain complete records.");
+    EXCEPTION_ASSERT_WITH_LOG(!recordData.empty(),
+        LibLogicalAccessException, "DESFire TMI : WriteRecord data cannot be empty.");
+
+    EXCEPTION_ASSERT_WITH_LOG(recordSize > 0 && recordData.size() % recordSize == 0,
+        LibLogicalAccessException, "DESFire TMI : WriteRecord data does not contain complete records.");
 
     EXCEPTION_ASSERT_WITH_LOG(offset <= U24_MAX && recordData.size() <= U24_MAX,
         LibLogicalAccessException, "DESFire TMI : WriteRecord parameter exceeds the 24-bit range.");
 
-    ByteVector update{INS_WRITE_RECORD, fileNo};
+    ByteVector update{DF_INS_WRITE_RECORD, fileNo};
 
     appendU24(update, offset);
     appendU24(update, static_cast<std::uint32_t>(recordData.size()));
@@ -199,14 +210,19 @@ void DESFireTransactionMACInput::appendWriteRecord(std::uint8_t fileNo, std::uin
 
     update.insert(update.end(), recordData.begin(), recordData.end());
 
+    padToBlock(update);
     appendAligned(update);
 }
 
 void DESFireTransactionMACInput::appendUpdateRecord(std::uint8_t fileNo, std::uint32_t recordNo,
-                                                    std::uint32_t offset, const ByteVector &recordData)
+                                                    std::uint32_t offset, std::uint32_t recordSize,
+                                                    const ByteVector &recordData)
 {
     EXCEPTION_ASSERT_WITH_LOG(!recordData.empty(),
         LibLogicalAccessException, "DESFire TMI : UpdateRecord data cannot be empty.");
+
+    EXCEPTION_ASSERT_WITH_LOG(recordSize > 0 && recordData.size() % recordSize == 0,
+        LibLogicalAccessException, "DESFire TMI : UpdateRecord data does not contain complete records.");
 
     EXCEPTION_ASSERT_WITH_LOG(recordNo <= U24_MAX && offset <= U24_MAX && recordData.size() <= U24_MAX,
         LibLogicalAccessException, "DESFire TMI : UpdateRecord parameter exceeds the 24-bit range.");
@@ -221,17 +237,13 @@ void DESFireTransactionMACInput::appendUpdateRecord(std::uint8_t fileNo, std::ui
 
     update.insert(update.end(), recordData.begin(), recordData.end());
 
-    // UpdateRecord data is not unconditionally padded by this encoder
-    // Reject data not block-aligned with TMI invariant.
-    EXCEPTION_ASSERT_WITH_LOG(update.size() % BLOCK_SIZE == 0,
-        LibLogicalAccessException, "DESFire TMI : UpdateRecord data must end on a block boundary.");
-
+    padToBlock(update); // Align the complete TMI update
     appendAligned(update);
 }
 
 void DESFireTransactionMACInput::appendClearRecordFile(std::uint8_t fileNo)
 {
-    appendUpdate(ByteVector{INS_CLEAR_RECORD_FILE, fileNo});
+    appendUpdate(ByteVector{DF_INS_CLEAR_RECORD_FILE, fileNo});
 }
 
 void DESFireTransactionMACInput::appendU24(ByteVector &out, std::uint32_t value)

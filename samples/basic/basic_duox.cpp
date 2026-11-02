@@ -77,7 +77,7 @@ constexpr std::uint8_t TEST_ECC_KEY_SLOT_METADATA  = 0x03;
 constexpr std::uint32_t DUOX_TEST_KUC_LIMIT  = 0;      // No key-usage limit
 constexpr std::uint16_t DUOX_TEST_KEY_POLICY = 0x0000; // No ECC operation enabled
 
-constexpr auto DUOX_COMM_MODE = logicalaccess::DUOXCommunicationMode::Full;
+constexpr auto DUOX_COMM_MODE = logicalaccess::CM_ENCRYPT;
 
 constexpr std::uint8_t DUOX_TEST_WRITE_AR  = 0x0E; // Free access
 constexpr std::uint8_t DUOX_COMM_MODE_BITS = static_cast<std::uint8_t>(DUOX_COMM_MODE) << 4;
@@ -259,7 +259,18 @@ std::shared_ptr<logicalaccess::Chip> waitForCard(const std::shared_ptr<logicalac
     const auto startTime = std::time(nullptr);
 
     if (startTime != static_cast<std::time_t>(-1))
-        std::cout << "[INFO] Time start : " << std::ctime(&startTime);
+    {
+        char timeBuffer[26] = {};
+
+#if defined(_WIN32)
+        if (ctime_s(timeBuffer, sizeof(timeBuffer), &startTime) == 0)
+#else
+        if (ctime_r(&startTime, timeBuffer) != nullptr)
+#endif
+        {
+            std::cout << "[INFO] Time start : " << timeBuffer;
+        }
+    }
 
     // Establish the connection with the physical reader
     reader->connectToReader();

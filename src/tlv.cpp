@@ -355,23 +355,17 @@ std::vector<TLVPtr> TLV::parse_tlvs_der(const ByteVector &bytes, std::size_t &by
         ByteVector sizeVector;
         std::size_t valueLength = 0U;
 
-        if (!decode_der_length(bytes, bytes_consumed, sizeTag, sizeVector, valueLength))
-        {
-            // Incomplete LENGTH field
-            bytes_consumed = start;
-            break;
-        }
+        const bool validLength = decode_der_length(bytes, bytes_consumed, sizeTag, sizeVector, valueLength);
 
         // VALUE
-        // Note : bytes_consumed + valueLength > bytes.size() could overflow
-        if (valueLength > bytes.size() - bytes_consumed)
+        const bool validValue = validLength && valueLength <= bytes.size() - bytes_consumed;
+
+        if (!validValue)
         {
-            // Incomplete TLV
+            // Incomplete LENGTH field or incomplete TLV.
             bytes_consumed = start;
             break;
         }
-
-        auto tlv = std::make_shared<TLV>(tag);
 
         const auto valueBegin = bytes.begin() + static_cast<std::ptrdiff_t>(bytes_consumed);
         const auto valueEnd = valueBegin + static_cast<std::ptrdiff_t>(valueLength);
@@ -379,6 +373,8 @@ std::vector<TLVPtr> TLV::parse_tlvs_der(const ByteVector &bytes, std::size_t &by
         ByteVector value(valueBegin, valueEnd);
 
         bytes_consumed += valueLength;
+
+        auto tlv = std::make_shared<TLV>(tag);
 
         tlv->value(value);
         tlv->setSizeTag(sizeTag);

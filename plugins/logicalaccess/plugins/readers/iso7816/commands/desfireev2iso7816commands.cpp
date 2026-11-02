@@ -1069,6 +1069,21 @@ void DESFireEV2ISO7816Commands::proximityCheck(std::shared_ptr<DESFireKey> key,
                               "Proximity Check failed. Cannot verify PICC provided MAC");
 }
 
+void DESFireEV2ISO7816Commands::selectApplication(unsigned int aid)
+{
+    DESFireISO7816Commands::selectApplication(aid);
+
+    resetApplicationTransactionState(); // Reset application specific transaction state
+}
+
+void DESFireEV2ISO7816Commands::selectApplication(unsigned int aid1, unsigned int aid2)
+{
+    // TODO this function will be part of a larger refactor. Leave it as is for now !
+
+    (void)aid2; // suppress unused parameter warning
+    DESFireISO7816Commands::selectApplication(aid1); // This code is a placeholder for now
+}
+
 CommitTransactionResult DESFireEV2ISO7816Commands::commitTransaction(bool return_tmac)
 {
     const ByteVector parameters{static_cast<std::uint8_t>(return_tmac ? 0x01 : 0x00)};
@@ -1212,6 +1227,26 @@ void DESFireEV2ISO7816Commands::validateTransactionMACConfiguration(const ByteVe
         LibLogicalAccessException, "Standard AES TMAC requires the real 7 byte UID.");
 }
 
+void DESFireEV2ISO7816Commands::resetApplicationTransactionState()
+{
+    // Reset Transaction MAC Input tracking
+    transactionMACInput_.clear();
+
+    lastCommittedTransactionMACInput_.clear();
+    hasCommittedTransactionMACInput_ = false;
+
+    // Reset Transaction MAC configuration
+    transactionManagementFileNo_ = 0xFF;
+    transactionMACState_         = TransactionMACState::Disabled;
+
+    transactionMACKey_.clear();
+    transactionMACUID_.clear();
+    transactionMACConfigured_ = false;
+
+    // Reset Reader ID state
+    readerIDCommitted_ = false;
+}
+
 void DESFireEV2ISO7816Commands::initializeTransactionMACInputTracking(unsigned char fileNo)
 {
     transactionManagementFileNo_ = fileNo;
@@ -1343,22 +1378,21 @@ int32_t DESFireEV2ISO7816Commands::getValue(unsigned char fileno, EncryptionMode
     if (shouldTrackTransactionMAC(fileno))
     {
         DESFireTransactionMACInput update;
-        update.appendValueOperation(DESFireTransactionMACInput::INS_GET_VALUE, fileno, value);
+        update.appendValueOperation(DF_INS_GET_VALUE, fileno, value);
         transactionMACInput_.appendUpdate(update.data());
     }
 
     return value;
 }
 
-void DESFireEV2ISO7816Commands::credit(unsigned char fileno, unsigned int value,
-                                       EncryptionMode mode)
+void DESFireEV2ISO7816Commands::credit(unsigned char fileno, unsigned int value, EncryptionMode mode)
 {
     DESFireEV1ISO7816Commands::credit(fileno, value, mode);
 
     if (shouldTrackTransactionMAC(fileno))
     {
         DESFireTransactionMACInput update;
-        update.appendValueOperation(DESFireTransactionMACInput::INS_CREDIT, fileno, checkedTransactionValue(value));
+        update.appendValueOperation(DF_INS_CREDIT, fileno, checkedTransactionValue(value));
         transactionMACInput_.appendUpdate(update.data());
     }
 }
@@ -1371,7 +1405,7 @@ void DESFireEV2ISO7816Commands::debit(unsigned char fileno, unsigned int value,
     if (shouldTrackTransactionMAC(fileno))
     {
         DESFireTransactionMACInput update;
-        update.appendValueOperation(DESFireTransactionMACInput::INS_DEBIT, fileno, checkedTransactionValue(value));
+        update.appendValueOperation(DF_INS_DEBIT, fileno, checkedTransactionValue(value));
         transactionMACInput_.appendUpdate(update.data());
     }
 }
@@ -1383,7 +1417,7 @@ void DESFireEV2ISO7816Commands::limitedCredit(unsigned char fileno, int32_t valu
     if (shouldTrackTransactionMAC(fileno))
     {
         DESFireTransactionMACInput update;
-        update.appendValueOperation(DESFireTransactionMACInput::INS_LIMITED_CREDIT, fileno, value);
+        update.appendValueOperation(DF_INS_LIMITED_CREDIT, fileno, value);
         transactionMACInput_.appendUpdate(update.data());
     }
 }
@@ -1417,7 +1451,7 @@ ByteVector DESFireEV2ISO7816Commands::readRecords(unsigned char fileno,
     if (shouldTrackTransactionMAC(fileno))
     {
         DESFireTransactionMACInput update;
-        update.appendReadRecords(fileno, offset, length, static_cast<std::uint32_t>(actualCount), result);
+        update.appendReadRecords(fileno, offset, length, static_cast<std::uint32_t>(actualCount), recordSize, result);
         transactionMACInput_.appendUpdate(update.data());
     }
 
@@ -1445,7 +1479,7 @@ void DESFireEV2ISO7816Commands::writeRecord(unsigned char fileno, unsigned int o
     if (shouldTrackTransactionMAC(fileno))
     {
         DESFireTransactionMACInput update;
-        update.appendWriteRecord(fileno, offset, data);
+        update.appendWriteRecord(fileno, offset, recordSize, data);
         transactionMACInput_.appendUpdate(update.data());
     }
 }

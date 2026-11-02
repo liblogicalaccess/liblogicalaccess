@@ -141,6 +141,9 @@ class LLA_READERS_ISO7816_API DESFireEV2ISO7816Commands
 
     void proximityCheck(std::shared_ptr<DESFireKey> key, uint8_t chunk_size) override;
 
+    void selectApplication(unsigned int aid) override;
+    void selectApplication(unsigned int aid1, unsigned int aid2) override;
+
     CommitTransactionResult commitTransaction(bool return_tmac) override;
 
     TransactionMACFileData readTransactionMacFile(unsigned char fileno) override;
@@ -236,6 +239,15 @@ class LLA_READERS_ISO7816_API DESFireEV2ISO7816Commands
      * used to authenticate the transaction and therefore does not configure or derive any transaction MAC keys.
      */
     void initializeTransactionMACInputTracking(unsigned char fileNo);
+    
+    /**
+     * \brief Resets application specific Transaction Management state.
+     *
+     * Discards pending TMI tracking and invalidates application specific Transaction MAC verification configuration.
+     *
+     * Must be called whenever the selected application changes.
+     */
+    void resetApplicationTransactionState();
 
     void onTransactionCommitted();
     void onTransactionAborted();

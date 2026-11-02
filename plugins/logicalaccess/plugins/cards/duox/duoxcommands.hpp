@@ -34,21 +34,6 @@ enum class DUOXManageKeyPairOption : std::uint8_t
     UpdateMetadata   = 0x02
 };
 
-/**
- * \brief DUOX secure messaging mode encoded in bits 4-5 of access conditions
- *
- * 00b = Plain
- * 01b = MAC
- * 10b = RFU
- * 11b = Full
- */
-enum class DUOXCommunicationMode : std::uint8_t
-{
-    Plain = 0x00,
-    MAC   = 0x01,
-    Full  = 0x03
-};
-
 struct DUOXECCPrivateKeyMetadata
 {
     std::uint8_t keyNo;
@@ -229,7 +214,7 @@ class LLA_CARDS_DESFIRE_API DUOXCommands : public DESFireEV3Commands
                                      CurveID curveId, std::uint16_t keyPolicy,
                                      std::uint8_t writeAccess, std::uint32_t kucLimit,
                                      const ByteVector &privateKey = ByteVector(),
-                                     DUOXCommunicationMode commMode = DUOXCommunicationMode::Full) = 0;
+                                     EncryptionMode commMode = CM_ENCRYPT) = 0;
 
     /**
      * \brief Creates or updates a CA root public key entry.
@@ -253,7 +238,7 @@ class LLA_CARDS_DESFIRE_API DUOXCommands : public DESFireEV3Commands
                                  std::uint8_t readAccess, std::uint8_t crlFile,
                                  std::uint32_t crlFileAid, const ByteVector &publicKey,
                                  const ByteVector &issuer,
-                                 DUOXCommunicationMode commMode = DUOXCommunicationMode::Full) = 0;
+                                 EncryptionMode commMode = CM_ENCRYPT) = 0;
 
     /**
      * \brief Exports a CA root public key.
@@ -266,7 +251,7 @@ class LLA_CARDS_DESFIRE_API DUOXCommands : public DESFireEV3Commands
      *
      * \return The exported public key as a byte vector.
      */
-    virtual ByteVector exportKey(std::uint8_t keyNo, DUOXCommunicationMode commMode = DUOXCommunicationMode::Full) = 0;
+    virtual ByteVector exportKey(std::uint8_t keyNo, EncryptionMode commMode = CM_ENCRYPT) = 0;
 
     virtual void authenticateEV2NonFirst(uint8_t keyno, std::shared_ptr<DESFireKey> currentKey = nullptr) = 0;
 

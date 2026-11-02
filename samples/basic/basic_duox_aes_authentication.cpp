@@ -317,8 +317,16 @@ std::shared_ptr<logicalaccess::Chip> waitForCard(const std::shared_ptr<logicalac
     // Timestamp provides a consistent reference point when comparing different test executions
     const auto startTime = std::time(nullptr);
 
-    if (startTime != static_cast<std::time_t>(-1))
-        std::cout << "[INFO] Time start : " << std::ctime(&startTime);
+    char timeBuffer[26] = {};
+
+#if defined(_WIN32)
+    if (ctime_s(timeBuffer, sizeof(timeBuffer), &startTime) == 0)
+#else
+    if (ctime_r(&startTime, timeBuffer) != nullptr)
+#endif
+    {
+        std::cout << "[INFO] Time start : " << timeBuffer;
+    }
 
     // Establish the connection with the physical reader
     reader->connectToReader();

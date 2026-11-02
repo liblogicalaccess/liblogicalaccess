@@ -7,6 +7,7 @@
  * and diagnostics explicit
  */
 
+#include <logicalaccess/myexception.hpp>
 #include <logicalaccess/bufferhelper.hpp>
 #include <logicalaccess/dynlibrary/librarymanager.hpp>
 #include <logicalaccess/readerproviders/readerconfiguration.hpp>
@@ -96,7 +97,7 @@ constexpr logicalaccess::DESFireAccessRights DUOX_TEST_CERTIFICATE_FILE_ACCESS_R
 constexpr std::uint16_t ECC_KEY_POLICY = (1U << 7); // ECC-based Mutual Authentication
 constexpr std::uint32_t KUC_LIMIT = 0;
 
-constexpr auto COMM_MODE = logicalaccess::DUOXCommunicationMode::Full;
+constexpr auto COMM_MODE = logicalaccess::CM_ENCRYPT;
 
 constexpr std::uint8_t ACCESS_RIGHTS     = 0x0E;
 constexpr std::uint16_t CA_ACCESS_RIGHTS = 0x0000;
@@ -129,14 +130,14 @@ constexpr ReaderCertificateMode TEST_READER_CERTIFICATE_MODE = ReaderCertificate
 
 [[noreturn]] void fail(const std::string &message)
 {
-    throw std::runtime_error(message);
+    throw logicalaccess::LibLogicalAccessException(message);
 }
 
 template <typename T>
 void require(const T &condition, const std::string &message)
 {
     if (!static_cast<bool>(condition))
-        throw std::runtime_error(message);
+        fail(message);
 }
 
 template <typename T>
@@ -949,7 +950,7 @@ void validateCertificate(const ByteVector &certificateDER, const ByteVector &exp
 
     logicalaccess::duox::CertificateAccessRights caRootRights;
     caRootRights.arType = config::CA_ACCESS_RIGHTS == 0 ? 0 : static_cast<std::uint8_t>(config::CA_ACCESS_RIGHTS);
-    caRootRights.accessRight = config::ACCESS_RIGHTS;
+    caRootRights.arValue = {static_cast<std::uint8_t>(config::ACCESS_RIGHTS)};
 
     const auto validation = logicalaccess::duox::DUOXCertificateValidator::validateChain(
         {certificateDER}, caPublicKey, logicalaccess::CurveID::NIST_P256, caRootRights);

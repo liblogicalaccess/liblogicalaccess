@@ -59,9 +59,6 @@ class LLA_CARDS_DESFIRE_API DESFireEV3Commands : public DESFireEV2Commands
 
     virtual bool performAESOriginalityCheck() = 0;
 
-    virtual void selectApplication(unsigned int aid) = 0;
-    virtual void selectApplication(unsigned int aid1, unsigned int aid2) = 0;
-
   private:
     std::shared_ptr<DESFireEV3Chip> getDESFireEV3Chip() const;
 };

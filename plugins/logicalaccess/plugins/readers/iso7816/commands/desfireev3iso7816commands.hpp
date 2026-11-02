@@ -198,9 +198,7 @@ class LLA_READERS_ISO7816_API DESFireEV3ISO7816Commands
 
     static void ensureSize(const ByteVector &data, std::size_t offset, std::size_t required, const char *message);
 
-
   private:
-    static constexpr unsigned int PICC_AID = 0x000000U;
     static constexpr unsigned int AID_MASK = 0x00FFFFFFU;
     static constexpr unsigned int MAX_AID  = AID_MASK;
 

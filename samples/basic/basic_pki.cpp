@@ -1667,7 +1667,18 @@ int main(int, char **)
         std::cout << "Waiting 15 seconds for card insertion..." << std::endl;
         readerSession.connect();
         const auto now = std::time(nullptr);
-        std::cout << "[INFO] Time start : " << std::ctime(&now);
+        if (now != static_cast<std::time_t>(-1))
+        {
+            char timeBuffer[26] = {};
+#if defined(_WIN32)
+            if (ctime_s(timeBuffer, sizeof(timeBuffer), &now) == 0)
+#else
+            if (ctime_r(&now, timeBuffer) != nullptr)
+#endif
+            {
+                std::cout << "[INFO] Time start : " << timeBuffer;
+            }
+        }
         readerSession.waitCard();
         std::cout << "[INFO] Card type : " << readerSession.chip->getCardType() << std::endl;
         samSession.attach(readerSession.chip);

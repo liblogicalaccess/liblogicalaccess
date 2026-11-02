@@ -399,10 +399,12 @@ GeneratedCertificate createCertificate(int curveNID, EVP_PKEY *subjectKey,
         opensslFailure("X509_gmtime_adj(notAfter)");
 
     X509_NAME *subject = createName(certificate.get(), subjectName);
+
     if (X509_set_subject_name(certificate.get(), subject) != 1)
         opensslFailure("X509_set_subject_name");
 
     X509NamePtr issuer(X509_NAME_new());
+
     if (!issuer)
         opensslFailure("X509_NAME_new");
     if (X509_NAME_add_entry_by_txt(issuer.get(), "CN", MBSTRING_ASC, reinterpret_cast<const unsigned char *>(issuerName),
@@ -420,20 +422,24 @@ GeneratedCertificate createCertificate(int curveNID, EVP_PKEY *subjectKey,
     X509V3_set_ctx_nodb(&extensionContext);
     X509V3_set_ctx(&extensionContext, certificate.get(), certificate.get(), nullptr, nullptr, 0);
 
-    const char *basicConstraintsValue = caCertificate ? "critical,CA:TRUE" : "critical,CA:FALSE";
+    char basicConstraintsValue[] = "CA:TRUE";
+    char endEntityConstraintsValue[] = "CA:FALSE";
+
+    const auto *basicConstraintsConfiguration = caCertificate ? basicConstraintsValue : endEntityConstraintsValue;
 
     X509ExtensionPtr basicConstraints(X509V3_EXT_conf_nid(nullptr, &extensionContext, NID_basic_constraints,
-                            const_cast<char *>(basicConstraintsValue)));
+                            basicConstraintsConfiguration));
 
     if (!basicConstraints)
         opensslFailure("X509V3_EXT_conf_nid(basicConstraints)");
     if (X509_add_ext(certificate.get(), basicConstraints.get(), -1) != 1)
         opensslFailure("X509_add_ext(basicConstraints)");
 
-    const char *keyUsageValue = caCertificate ? "critical,keyCertSign,cRLSign" : "critical,digitalSignature,keyAgreement";
+    char keyUsageCAValue[] = "keyCertSign,cRLSign";
+    char keyUsageEndEntityValue[] = "digitalSignature,keyAgreement";
+    const auto *keyUsageConfiguration = caCertificate ? keyUsageCAValue : keyUsageEndEntityValue;
 
-    X509ExtensionPtr keyUsage(X509V3_EXT_conf_nid(nullptr, &extensionContext,
-        NID_key_usage, const_cast<char *>(keyUsageValue)));
+    X509ExtensionPtr keyUsage(X509V3_EXT_conf_nid(nullptr, &extensionContext, NID_key_usage, keyUsageConfiguration));
 
     if (!keyUsage)
         opensslFailure("X509V3_EXT_conf_nid(keyUsage)");
@@ -448,8 +454,10 @@ GeneratedCertificate createCertificate(int curveNID, EVP_PKEY *subjectKey,
 
     // Returns a fresh EVP_PKEY reference; ownership is transferred to PublicKey
     EVP_PKEY *publicKeyReference = X509_get_pubkey(certificate.get());
+
     if (publicKeyReference == nullptr)
         opensslFailure("X509_get_pubkey");
+
     result.publicKey = std::make_shared<PublicKey>(publicKeyReference);
 
     return result;
@@ -931,7 +939,7 @@ void testDUOXParse()
     expect(result.serialNumber == ByteVector{0x01}, "generated certificate serial must be 1");
     expect(!result.hasAccessRightsExtension, "test certificate must not have DUOX access-right extension");
     expect(result.accessRights.arType == 0, "default access-right arType must be zero");
-    expect(result.accessRights.accessRight == 0, "default access-right value must be zero");
+    expect(result.accessRights.arValue.empty(), "default access-right value must be empty");
 
     printInfo("Validated DER size", result.certificate.getDERData().size());
     printInfo("Curve", result.curve == CurveID::NIST_P256 ? std::string("NIST_P256") : std::string("other"));
@@ -984,7 +992,7 @@ void testDUOXWrongIssuerSignature()
     expectThrows(
         [&]
         {
-            duox::DUOXCertificateValidator::validateSignature( certificate, wrongIssuer.certificate.publicKey);
+            duox::DUOXCertificateValidator::validateSignature(certificate, wrongIssuer.certificate.publicKey);
         },
         "certificate validated against unrelated issuer key");
 
@@ -995,11 +1003,11 @@ void testDUOXNullIssuer()
 {
     printSection("DUOXCertificateValidator : null issuer");
 
-    const CertificateFixture fixture = createSelfSignedCertificate(NID_X9_62_prime256v1);
+    const auto fixture = createSelfSignedCertificate(NID_X9_62_prime256v1);
     X509V3Certificate certificate(fixture.certificate.der);
 
     expectThrows<std::invalid_argument>(
-        [&] { duox::DUOXCertificateValidator::validateSignature(certificate, nullptr); },
+        [&certificate] { duox::DUOXCertificateValidator::validateSignature(certificate, nullptr); },
         "validateSignature with null issuer");
 
     std::cout << " Null issuer correctly rejected.\n";
@@ -1190,17 +1198,59 @@ void testEffectiveAccessRightsZero()
     duox::CertificateAccessRights certificateRights;
     duox::CertificateAccessRights caRootRights;
 
-    certificateRights.arType      = 0;
-    certificateRights.accessRight = 0;
+    certificateRights.arType  = 0x01;
+    certificateRights.arValue = ByteVector{
+        0x01, 0x02, 0x03, // AID
+        0x00, 0x00        // No permissions
+    };
 
-    caRootRights.arType      = 0;
-    caRootRights.accessRight = 0;
+    caRootRights.arType  = 0x01;
+    caRootRights.arValue = ByteVector{
+        0x01, 0x02, 0x03, // Same AID
+        0x00, 0x00        // No permissions
+    };
 
     const auto effective = duox::DUOXCertificateValidator::calculateEffectiveAccessRights(certificateRights, caRootRights);
-    expect(effective.arType == 0, "zero certificate arType must produce zero effective arType");
-    expect(effective.accessRight == 0, "zero certificate accessRight must produce zero effective accessRight");
+
+    expect(effective.arType == 0x01, "effective access-right type must remain AID-based");
+    expect(effective.arValue == certificateRights.arValue, "zero permissions must remain zero after restriction");
 
     std::cout << " Zero-right calculation is deterministic.\n";
+}
+
+void testEffectiveAccessRightsIntersection()
+{
+    printSection("DUOXCertificateValidator : effective access rights");
+
+    duox::CertificateAccessRights certificateRights;
+    duox::CertificateAccessRights caRootRights;
+
+    // ARType 0x01: 3-byte AID followed by a 2-byte ACMap.
+    certificateRights.arType  = 0x01;
+    certificateRights.arValue = ByteVector{
+        0x01, 0x02, 0x03, // AID
+        0x0F, 0x00        // ACMap: certificate permissions
+    };
+
+    caRootRights.arType  = 0x01;
+    caRootRights.arValue = ByteVector{
+        0x01, 0x02, 0x03, // Matching AID
+        0x05, 0x00        // ACMap: CA-root permissions
+    };
+
+    const auto effective = duox::DUOXCertificateValidator::calculateEffectiveAccessRights(certificateRights, caRootRights);
+
+    expect(effective.arType == 0x01, "effective access-right type must remain AID-based");
+    expect(effective.arValue.size() == 5U, "effective access-right payload must remain five bytes");
+
+
+    expect(effective.arValue[0] == 0x01 && effective.arValue[1] == 0x02 && effective.arValue[2] == 0x03,
+           "effective access rights must preserve the AID");
+    // 0x0F & 0x05 = 0x05
+    expect(effective.arValue[3] == 0x05 && effective.arValue[4] == 0x00,
+           "effective ACMap must be the intersection of certificate and CA-root rights");
+
+    std::cout << " Effective access-right calculation validated.\n";
 }
 
 // ==============================================
@@ -1433,6 +1483,7 @@ int main()
 
     // DUOXCertificateValidator : access rights
     RUN_TEST(testEffectiveAccessRightsZero);
+    RUN_TEST(testEffectiveAccessRightsIntersection);
 
     // EC curve abstraction
     RUN_TEST(testP256CurveAbstraction);

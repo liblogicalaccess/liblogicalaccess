@@ -212,9 +212,8 @@ ByteVector X509V3Certificate::getSubjectPublicKeyInfoDER() const
     ByteVector result(static_cast<std::size_t>(length));
 
     unsigned char *cursor = result.data();
-    const int encodedLength = i2d_X509_PUBKEY(publicKey, &cursor);
 
-    if (encodedLength != length)
+    if (i2d_X509_PUBKEY(publicKey, &cursor) != length)
         throw std::runtime_error("x509V3Certificate::getSubjectPublicKeyInfoDER : unexpected DER encoding length");
     // Verify that exactly the allocated buffer was consumed
     if (cursor != result.data() + result.size())

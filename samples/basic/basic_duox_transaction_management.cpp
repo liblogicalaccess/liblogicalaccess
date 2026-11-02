@@ -222,7 +222,7 @@ constexpr std::uint8_t TSV_ECC_KEY_NO        = 0;
 constexpr std::uint32_t DUOX_TEST_KUC_LIMIT  = 0;      // No key-usage limit
 constexpr std::uint16_t DUOX_TEST_KEY_POLICY = 0x0040; // Enables ECC-based Transaction Signature
 
-constexpr auto DUOX_COMM_MODE = logicalaccess::DUOXCommunicationMode::Full;
+constexpr auto DUOX_COMM_MODE = logicalaccess::CM_ENCRYPT;
 
 constexpr std::uint8_t DUOX_TEST_WRITE_AR  = 0x0E; // Free access
 constexpr std::uint8_t DUOX_COMM_MODE_BITS = static_cast<std::uint8_t>(DUOX_COMM_MODE) << 4;
@@ -558,25 +558,31 @@ std::shared_ptr<Chip> waitForCard(const std::shared_ptr<ReaderConfiguration> &co
 
     if (startTime != static_cast<std::time_t>(-1))
     {
-        const auto *timestamp = std::ctime(&startTime);
-        if (timestamp)
-            logInfo(std::string("Time start : ") + timestamp);
+        char timeBuffer[26] = {};
+
+#if defined(_WIN32)
+        const bool timeConversionSucceeded = ctime_s(timeBuffer, sizeof(timeBuffer), &startTime) == 0;
+#else
+        const bool timeConversionSucceeded = ctime_r(&startTime, timeBuffer) != nullptr;
+#endif
+        if (timeConversionSucceeded)
+            logInfo(std::string("Time start : ") + timeBuffer);
     }
 
     // Establish the connection with the physical reader
-    traceOperation("Connect to physical reader", [&]() { reader->connectToReader(); });
+    traceOperation("Connect to physical reader", [&reader]() { reader->connectToReader(); });
 
     traceOperation("Wait for card insertion", [&]()
         {
             require(reader->waitInsertion(CARD_INSERTION_TIMEOUT_MS), "No card was inserted within the timeout.");
         });
-    traceOperation("Establish card communication", [&]()
+    traceOperation("Establish card communication", [&reader]()
         {
             require(reader->connect(), "A card was detected, but communication could not be established.");
         });
 
     std::shared_ptr<Chip> chip;
-    traceOperation("Identify card type", [&]()
+    traceOperation("Identify card type", [&reader, &chip]()
         {
             chip = reader->getSingleChip();
             requireNonNull(chip, "The reader connected successfully, but LogicalAccess could not identify the card.");
@@ -1256,7 +1262,7 @@ void testValueFile(DESFireEV2ISO7816Commands &commands)
     constexpr unsigned int DEBIT_AMOUNT   = 10;
     constexpr std::int32_t EXPECTED_VALUE = INITIAL_VALUE + CREDIT_AMOUNT - DEBIT_AMOUNT;
 
-    const auto readValue = [&](const std::string &stage)
+    const auto readValue = [&commands](const std::string &stage)
     {
         const auto value = commands.getValue(VALUE_FILE_NO, COMM_MODE);
         logInfo(stage + " : " + std::to_string(value));
@@ -1502,6 +1508,13 @@ void testTSVCommit(DUOXISO7816Commands &commands, EVP_PKEY *applicationPublicKey
     const ByteVector payload{0xDE, 0xAD, 0xBE, 0xEF, 0x11, 0x22, 0x33, 0x44};
 
     writeDataTraced(commands, DATA_FILE_NO, payload, "Write TSV test payload");
+
+    // Check that the host-side TMI was actually populated
+    const auto tmiBeforeCommit = commands.getTransactionMACInput();
+
+    require(!tmiBeforeCommit.empty(), "TSV : no TMI was generated before CommitTransaction.");
+
+    logInfo("TSV TMI before commit : " + toHex(tmiBeforeCommit));
 
     const auto result = commitTraced(commands, true, "Commit TSV transaction");
 

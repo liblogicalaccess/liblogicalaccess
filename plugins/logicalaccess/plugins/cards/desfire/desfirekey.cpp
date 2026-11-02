@@ -8,6 +8,8 @@
 #include <string>
 
 #include <boost/property_tree/ptree.hpp>
+#include <logicalaccess/myexception.hpp>
+#include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfirekey.hpp>
 
 namespace logicalaccess
@@ -82,9 +84,23 @@ void DESFireKey::serialize(boost::property_tree::ptree &parentNode)
 
 void DESFireKey::unSerialize(boost::property_tree::ptree &node)
 {
+    // Read required metadata before deserializing key material
+    const auto rawKeyType = node.get<unsigned int>("KeyType");
+    const auto keyVersion = node.get<unsigned char>("KeyVersion");
+
+    switch (rawKeyType)
+    {
+    case DF_KEY_DES:
+    case DF_KEY_3K3DES:
+    case DF_KEY_AES:
+    case DF_KEY_AES256: break;
+    default:
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Invalid key type in DESFireKey deserialization.");
+    }
+
+    d_keyType = static_cast<DESFireKeyType>(rawKeyType);
     Key::unSerialize(node);
-    d_keyType = static_cast<DESFireKeyType>(node.get_child("KeyType").get_value<unsigned int>());
-    d_key_version = node.get_child("KeyVersion").get_value<unsigned char>();
+    d_key_version = keyVersion; // Commit the version after successful base-class deserialization
 }
 
 std::string DESFireKey::getDefaultXmlNodeName() const
