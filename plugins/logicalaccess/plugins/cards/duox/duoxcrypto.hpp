@@ -74,29 +74,6 @@ class LLA_CARDS_DESFIRE_API DUOXCrypto : public DESFireEV2Crypto
                                   const std::shared_ptr<DESFireKey> newKey,
                                   const ByteVector &newKeyDiversify);
 
-  private:
-    /**
-     * \brief Build the DUOX EV2 KDF context from RndA and RndB.
-     * 
-     * The resulting context is the 26-byte value used by the DUOX EV2 session-key derivation.
-     */
-    static ByteVector buildKDFContext(const ByteVector &rndA, const ByteVector &rndB);
-
-
-    /**
-     * \brief Build a 32-byte DUOX EV2 KDF input vector.
-     *
-     * \param label0 First byte of the KDF label.
-     * \param label1 Second byte of the KDF label.
-     * \param counter KDF block counter.
-     * \param length Requested KDF output length in bits.
-     * \param context 26-byte KDF context.
-     * 
-     * \return The 32-byte KDF input vector.
-     */
-    static ByteVector buildKDFVector(std::uint8_t label0, std::uint8_t label1,
-                                         std::uint16_t counter, std::uint16_t length,
-                                         const ByteVector &context);
 };
 
 } // namespace logicalaccess
