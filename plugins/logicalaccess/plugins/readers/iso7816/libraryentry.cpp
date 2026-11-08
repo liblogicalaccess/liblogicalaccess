@@ -7,6 +7,7 @@
 #include <logicalaccess/plugins/readers/iso7816/commands/desfireev2iso7816commands.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/desfireev3iso7816commands.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/iso7816iso7816commands.hpp>
+#include <logicalaccess/plugins/readers/iso7816/commands/nedapmobileaccessiso7816commands.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfirechip.hpp>
 #include <logicalaccess/plugins/readers/iso7816/lla_readers_iso7816_api.hpp>
 
@@ -91,6 +92,15 @@ getISO7816ISO7816Commands(std::shared_ptr<logicalaccess::Commands> *commands)
     if (commands != nullptr)
     {
         *commands = std::make_shared<logicalaccess::ISO7816ISO7816Commands>();
+    }
+}
+
+LLA_READERS_ISO7816_API void getNedapMobileAccessISO7816Commands(
+    std::shared_ptr<logicalaccess::Commands> *commands)
+{
+    if (commands != nullptr)
+    {
+        *commands = std::make_shared<logicalaccess::NedapMobileAccessISO7816Commands>();
     }
 }
 }

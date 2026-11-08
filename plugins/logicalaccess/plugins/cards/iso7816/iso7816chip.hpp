@@ -71,7 +71,7 @@ class LLA_CARDS_ISO7816_API ISO7816Chip : public Chip
      * \brief Get the ISO7816 commands.
      * \return The ISO7816 commands.
      */
-    std::shared_ptr<ISO7816Commands> getISO7816Commands() const
+    virtual std::shared_ptr<ISO7816Commands> getISO7816Commands() const
     {
         return std::dynamic_pointer_cast<ISO7816Commands>(getCommands());
     }

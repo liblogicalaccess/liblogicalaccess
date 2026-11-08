@@ -35,6 +35,7 @@ target_link_libraries(iso7816readers
         samavcards
         twiccards
         epasscards
+        nedapmobileaccesscards
 		yubikeycards
         logicalaccess)
 LLA_GENERATE_EXPORTS(LLA_READERS_ISO7816)

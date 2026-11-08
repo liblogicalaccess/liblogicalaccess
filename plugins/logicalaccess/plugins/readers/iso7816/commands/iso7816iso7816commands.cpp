@@ -128,6 +128,17 @@ void ISO7816ISO7816Commands::selectFile(unsigned char p1, unsigned char p2,
         static_cast<unsigned char>(data.size()), data);
 }
 
+ByteVector ISO7816ISO7816Commands::selectFileAndGetResponse(
+    unsigned char p1, unsigned char p2, const ByteVector &data)
+{
+    EXCEPTION_ASSERT_WITH_LOG(data.size() <= 0xff, LibLogicalAccessException,
+                              "ISO7816 select data exceeds short APDU limit.");
+    return getISO7816ReaderCardAdapter()
+        ->sendAPDUCommand(ISO7816_CLA_ISO_COMPATIBLE, ISO7816_INS_SELECT_FILE, p1, p2,
+                          static_cast<unsigned char>(data.size()), data, 0x00)
+        .getData();
+}
+
 ByteVector ISO7816ISO7816Commands::readRecords(unsigned short fid,
                                                unsigned char start_record,
                                                ISORecords record_number)

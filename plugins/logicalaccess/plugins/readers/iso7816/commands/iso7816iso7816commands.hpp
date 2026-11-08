@@ -139,6 +139,9 @@ class LLA_READERS_ISO7816_API ISO7816ISO7816Commands : public ISO7816Commands
      */
     void selectFile(unsigned char p1, unsigned char p2, const ByteVector &data) override;
 
+    ByteVector selectFileAndGetResponse(unsigned char p1, unsigned char p2,
+                                        const ByteVector &data);
+
     /**
      * \brief Read records.
      * \param fid The FID

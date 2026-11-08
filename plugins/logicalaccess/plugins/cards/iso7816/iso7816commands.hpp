@@ -40,7 +40,7 @@ typedef enum
     P2_LAST_RECORD     = 0x01,
     P2_NEXT_RECORD     = 0x02,
     P2_PREVIOUS_RECORD = 0x03,
-    // P2_RETURN_FCI		= 0x00,
+    P2_RETURN_FCI    = 0x00,
     P2_RETURN_FCP    = 0x04,
     P2_RETURN_FMD    = 0x08,
     P2_RETURN_NO_FCI = 0x0C

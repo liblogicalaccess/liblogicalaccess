@@ -23,6 +23,7 @@
 #include <logicalaccess/plugins/readers/iso7816/commands/desfireev3iso7816commands.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/duoxiso7816commands.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/epassiso7816commands.hpp>
+#include <logicalaccess/plugins/readers/iso7816/commands/nedapmobileaccessiso7816commands.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/yubikeyiso7816commands.hpp>
 #include <logicalaccess/plugins/readers/pcsc/commands/mifarepcsccommands.hpp>
 #include <logicalaccess/plugins/readers/pcsc/commands/mifarescmcommands.hpp>
@@ -66,6 +67,7 @@
 #include <logicalaccess/plugins/cards/prox/proxchip.hpp>
 #include <logicalaccess/plugins/cards/felica/felicachip.hpp>
 #include <logicalaccess/plugins/cards/epass/epasschip.hpp>
+#include <logicalaccess/plugins/cards/nedapmobileaccess/nedapmobileaccesschip.hpp>
 #include <logicalaccess/plugins/cards/topaz/topazchip.hpp>
 #include <logicalaccess/plugins/cards/generictag/generictagchip.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfireev2chip.hpp>
@@ -908,6 +910,13 @@ std::shared_ptr<Chip> PCSCReaderUnit::createChip(std::string type)
         {
             commands.reset(new TopazPCSCCommands());
         }
+    }
+    else if (type == CHIP_NEDAP_MOBILE_ACCESS)
+    {
+        commands = std::make_shared<NedapMobileAccessISO7816Commands>();
+        rca      = std::make_shared<ISO7816ReaderCardAdapter>();
+        rca->setDataTransport(getDefaultReaderCardAdapter()->getDataTransport());
+        resultChecker.reset(new DESFireISO7816ResultChecker());
     }
 
     if (type == CHIP_DESFIRE || type == CHIP_DESFIRE_EV1)
