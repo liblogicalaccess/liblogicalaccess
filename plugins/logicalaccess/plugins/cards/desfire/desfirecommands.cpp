@@ -6,6 +6,7 @@
 
 #include <logicalaccess/plugins/cards/desfire/desfirecommands.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfirechip.hpp>
+
 #include <cstring>
 
 namespace logicalaccess
@@ -16,39 +17,47 @@ DESFireCommands::~DESFireCommands()
 
 DESFireCommands::DataFileSetting DESFireCommands::FileSetting::getDataFile() const
 {
-    return this->type.dataFile;
+    return type.dataFile;
 }
 
-void DESFireCommands::FileSetting::setDataFile(
-    const DESFireCommands::DataFileSetting &settings)
+void DESFireCommands::FileSetting::setDataFile(const DESFireCommands::DataFileSetting &settings)
 {
-    this->type.dataFile = settings;
+    type.dataFile = settings;
 }
 
 DESFireCommands::ValueFileSetting DESFireCommands::FileSetting::getValueFile() const
 {
-    return this->type.valueFile;
+    return type.valueFile;
 }
 
-void DESFireCommands::FileSetting::setValueFile(
-    const DESFireCommands::ValueFileSetting &settings)
+void DESFireCommands::FileSetting::setValueFile(const DESFireCommands::ValueFileSetting &settings)
 {
-    this->type.valueFile = settings;
+    type.valueFile = settings;
 }
+
 DESFireCommands::RecordFileSetting DESFireCommands::FileSetting::getRecordFile() const
 {
-    return this->type.recordFile;
+    return type.recordFile;
 }
 
-void DESFireCommands::FileSetting::setRecordFile(
-    const DESFireCommands::RecordFileSetting &settings)
+void DESFireCommands::FileSetting::setRecordFile(const DESFireCommands::RecordFileSetting &settings)
 {
-    this->type.recordFile = settings;
+    type.recordFile = settings;
 }
 
 std::shared_ptr<DESFireChip> DESFireCommands::getDESFireChip() const
 {
     return std::dynamic_pointer_cast<DESFireChip>(getChip());
+}
+
+DESFireCommands::TransactionMacFileSetting DESFireCommands::FileSetting::getTransactionMacFile() const
+{
+    return type.transactionMacFile;
+}
+
+void DESFireCommands::FileSetting::setTransactionMacFile(const DESFireCommands::TransactionMacFileSetting &settings)
+{
+    type.transactionMacFile = settings;
 }
 
 void DESFireCommands::selectApplication(std::shared_ptr<DESFireLocation> location)

@@ -21,14 +21,38 @@ namespace logicalaccess
 {
 /**
  * \brief The cryptographic method.
+ * 
+ * DESFire EV1/EV2/EV3 use the DESFire software major version as their identifier.
+ * DUOX is a special case and uses its hardware major version (0xA0) to identify the DUOX cryptographic implementation.
  */
-typedef enum {
+enum CryptoMethod : std::uint8_t
+{
     CM_LEGACY   = 0x00, // D40
     CM_ISO      = 0x80, // ISO auth (flag)
     CM_EV1      = 0x01, // EV1
     CM_EV1_ISO  = CM_ISO | CM_EV1, // EV1 through mutual ISO auth
-    CM_EV2      = 0x02  // EV2
-} CryptoMethod;
+    CM_EV2      = 0x02, // EV2
+    CM_DUOX     = 0xA0  // DUOX, identified by hardware major version
+};
+
+/**
+ * \brief Returns whether the authentication method uses the EV2-compatible secure messaging path.
+ */
+[[nodiscard]] constexpr bool usesEV2Crypto(CryptoMethod method) noexcept
+{
+    switch (method)
+    {
+    case CryptoMethod::CM_EV2:
+    case CryptoMethod::CM_DUOX: return true;
+
+    case CryptoMethod::CM_LEGACY:
+    case CryptoMethod::CM_ISO:
+    case CryptoMethod::CM_EV1:
+    case CryptoMethod::CM_EV1_ISO: return false;
+    }
+
+    return false;
+}
 
 /**
  * \brief DESFire cryptographic functions.

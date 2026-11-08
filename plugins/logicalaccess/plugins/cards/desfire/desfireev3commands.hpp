@@ -6,7 +6,9 @@ namespace logicalaccess
 {
 #ifndef DFEV3_INS
 #define DFEV3_INS
+
 #define DFEV3_INS_GET_FILE_COUNTERS 0xF6
+
 #endif
 class DESFireEV3Chip;
 

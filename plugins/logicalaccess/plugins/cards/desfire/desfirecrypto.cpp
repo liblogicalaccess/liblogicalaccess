@@ -609,28 +609,30 @@ void DESFireCrypto::authenticate_PICC2(unsigned char keyno, const ByteVector &en
 void DESFireCrypto::getKey(std::shared_ptr<DESFireKey> key, ByteVector diversify,
                            ByteVector &keydiv)
 {
+    EXCEPTION_ASSERT_WITH_LOG(key != nullptr, LibLogicalAccessException, "Cannot retrieve key from a null DESFireKey.");
+
     LOG(LogLevel::INFOS) << "Init key from crypto with diversify set to: "
                          << BufferHelper::getHex(diversify) << ".";
 
     keydiv.clear();
-    if (key->getKeyDiversification() && diversify.size() != 0)
+
+    if (key->getKeyDiversification() && !diversify.empty())
     {
         LOG(LogLevel::INFOS) << "Use key diversification.";
         keydiv = key->getKeyDiversification()->getDiversifiedKey(key, diversify);
     }
+    else if (key->isEmpty())
+    {
+        keydiv.resize(key->getLength(), 0x00);
+    }
     else
     {
-        if (key->isEmpty())
-        {
-            keydiv.resize(key->getLength(), 0x00);
-        }
-        else
-        {
-            ByteVector keycipher = key->getData();
-            keydiv.insert(keydiv.end(), keycipher.begin(), keycipher.end());
-        }
+        keydiv = key->getData();
     }
-    if (key->getKeyType() != DF_KEY_AES)
+
+    const auto keyType = key->getKeyType();
+
+    if (keyType != DF_KEY_AES && keyType != DF_KEY_AES256)
         getKeyVersioned(key, keydiv);
 }
 
@@ -656,7 +658,7 @@ void DESFireCrypto::getKeyVersioned(std::shared_ptr<DESFireKey> key,
 
 void DESFireCrypto::selectApplication(size_t aid)
 {
-    d_currentAid = static_cast<int>(aid);
+    d_currentAid = static_cast<unsigned int>(aid);
 
     d_auth_method = CM_LEGACY;
     d_cipher.reset();

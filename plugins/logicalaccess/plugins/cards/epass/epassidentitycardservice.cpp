@@ -160,7 +160,7 @@ std::vector<ByteVector> EPassIdentityCardService::extractCertificatesFromMasterL
   tmp = TLV::parse_tlvs(tmp[0]->value(), i);
   tmp = TLV::parse_tlvs(tmp[1]->value(), i);
   for (size_t j = 0; j != tmp.size(); j++)
-    certificates.push_back(tmp[j]->getCompletTLV());
+    certificates.push_back(tmp[j]->getCompleteTLV());
   return certificates;
 }
 

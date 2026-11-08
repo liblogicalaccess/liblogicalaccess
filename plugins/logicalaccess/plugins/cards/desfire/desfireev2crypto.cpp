@@ -1,15 +1,22 @@
 #include <logicalaccess/plugins/cards/desfire/desfireev2crypto.hpp>
+
 #include <algorithm>
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <tuple>
+
 #include <logicalaccess/plugins/crypto/aes_helper.hpp>
 #include <logicalaccess/plugins/crypto/cmac.hpp>
 #include <logicalaccess/plugins/llacommon/logs.hpp>
 #include <logicalaccess/myexception.hpp>
-#include <cassert>
 #include <logicalaccess/plugins/cards/desfire/desfirecommands.hpp>
 #include <logicalaccess/plugins/crypto/aes_symmetric_key.hpp>
 #include <logicalaccess/plugins/crypto/aes_initialization_vector.hpp>
+#include <logicalaccess/plugins/crypto/aes_initialization_vector.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfireev2commands.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/samav2iso7816commands.hpp>
+#include <logicalaccess/plugins/crypto/secure_memory.hpp>
 
 namespace logicalaccess
 {
@@ -94,17 +101,14 @@ void DESFireEV2Crypto::sam_generateSessionKey(const ByteVector &rnda,
 
 ByteVector DESFireEV2Crypto::truncateMAC(const ByteVector &full_mac)
 {
-    assert(full_mac.size() % 2 == 0);
-    ByteVector truncated(full_mac.size() / 2);
-    unsigned char truncateCount = 0;
-    unsigned char count         = 1;
+    EXCEPTION_ASSERT_WITH_LOG(full_mac.size() % 2U == 0U,
+        LibLogicalAccessException, "DESFire EV2 : Unexpected AES-CMAC size.");
 
-    while (count < full_mac.size())
-    {
-        truncated[truncateCount] = full_mac[count];
-        count += 2;
-        ++truncateCount;
-    }
+    ByteVector truncated(full_mac.size() / 2U);
+
+    for (std::size_t i = 0U; i < truncated.size(); ++i)
+        truncated[i] = full_mac[(2U * i) + 1U];
+
     return truncated;
 }
 
@@ -118,14 +122,11 @@ ByteVector DESFireEV2Crypto::getIVEncrypt(bool cmdData)
     auto cipher = std::make_shared<openssl::AESCipher>(
         openssl::OpenSSLSymmetricCipher::ENC_MODE_ECB);
 
-    ByteVector cmdCtrVector, IVdata, IV;
-    const ByteVector labelRespData = {0x5A, 0xA5};
-    const ByteVector labelCmdData  = {0xA5, 0x5A};
+    ByteVector cmdCtrVector, IV;
+    //CmdData or RespData
+    const ByteVector label = cmdData ? ByteVector{0xA5, 0x5A} : ByteVector{0x5A, 0xA5};
 
-    if (cmdData)
-        IVdata = labelCmdData;
-    else
-        IVdata = labelRespData;
+    ByteVector IVdata = label;
 
     IVdata.insert(IVdata.end(), ti_.begin(), ti_.end()); // TI
     BufferHelper::setUInt16(cmdCtrVector, cmdctr_);
@@ -139,7 +140,7 @@ ByteVector DESFireEV2Crypto::getIVEncrypt(bool cmdData)
 
 ByteVector DESFireEV2Crypto::generateMAC(unsigned char cmd, const ByteVector &buf)
 {
-    if (d_auth_method != CryptoMethod::CM_EV2)
+    if (!usesEV2Crypto(d_auth_method))
         return DESFireCrypto::generateMAC(cmd, buf);
 
     ByteVector command, cmdCtrVector;
@@ -150,20 +151,20 @@ ByteVector DESFireEV2Crypto::generateMAC(unsigned char cmd, const ByteVector &bu
     do_mac.insert(do_mac.end(), ti_.begin(), ti_.end());                   // TI
     do_mac.insert(do_mac.end(), buf.begin(), buf.end());                   // CMD Data
 
-    auto m = openssl::CMACCrypto::cmac(d_macSessionKey, "aes", do_mac, {});
-    m = truncateMAC(m);
+    auto mac = openssl::CMACCrypto::cmac(d_macSessionKey, "aes", do_mac, {});
+    mac = truncateMAC(mac);
 
-    command.insert(command.end(), m.begin(), m.begin() + d_mac_size);
+    command.insert(command.end(), mac.begin(), mac.begin() + d_mac_size);
 
     return command;
 }
 
 bool DESFireEV2Crypto::verifyMAC(bool end, const ByteVector &data)
 {
-    if (d_auth_method != CryptoMethod::CM_EV2)
+    if (!usesEV2Crypto(d_auth_method))
         return DESFireCrypto::verifyMAC(end, data);
 
-    if (data.size() > 0)
+    if (!data.empty())
         d_buf.insert(d_buf.end(), data.begin(), data.end());
 
     if (!end)
@@ -172,105 +173,113 @@ bool DESFireEV2Crypto::verifyMAC(bool end, const ByteVector &data)
     LOG(LogLevel::INFOS) << "Running VerifyMAC on buffer: " << d_buf;
 
     if (d_buf.size() < d_mac_size)
-        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                 "verifyMAC buffer param is too small.");
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "verifyMAC buffer param is too small.");
 
-    ByteVector mac            = ByteVector(d_buf.end() - d_mac_size, d_buf.end());
-    const ByteVector respData = ByteVector(d_buf.begin(), d_buf.end() - d_mac_size);
+    const ByteVector mac(d_buf.end() - d_mac_size, d_buf.end());
+    const ByteVector respData(d_buf.begin(), d_buf.end() - d_mac_size);
     d_buf.clear();
 
     ++cmdctr_;
 
-    auto m = generateMAC(0x00, respData);
+    const auto expectedMac = generateMAC(0x00, respData);
 
-    if (!std::equal(m.begin(), m.begin() + d_mac_size, mac.begin()))
-        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException,
-                                 "verifyMAC command MAC answer has an unexpected value.");
+    if (!std::equal(expectedMac.begin(), expectedMac.begin() + d_mac_size, mac.begin()))
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "verifyMAC command MAC answer has an unexpected value.");
 
     return true;
 }
 
-ByteVector DESFireEV2Crypto::desfireEncrypt(const ByteVector &data,
-                                            const ByteVector &param, bool calccrc)
+ByteVector DESFireEV2Crypto::desfireEncrypt(const ByteVector &data, const ByteVector &param, bool calccrc)
 {
-    if (d_auth_method != CryptoMethod::CM_EV2)
+    if (!usesEV2Crypto(d_auth_method))
         return DESFireCrypto::desfireEncrypt(data, param, calccrc);
 
-    const auto IV = getIVEncrypt(true);
-
-    // Encrypt
-    const auto isokey = std::make_shared<openssl::AESSymmetricKey>(
-        openssl::AESSymmetricKey::createFromData(d_sessionKey));
-    const auto iv = std::make_shared<openssl::AESInitializationVector>(
-        openssl::AESInitializationVector::createFromData(IV));
-
     ByteVector encdata;
-    ByteVector dataCalc = data;
 
-    if (dataCalc.size() % d_cipher->getBlockSize() != 0)
+    // An empty command payload remains empty
+    // No padding and no AES encryption are performed
+    if (!data.empty())
     {
+        const auto IV = getIVEncrypt(true);
+
+        const auto isokey = std::make_shared<openssl::AESSymmetricKey>(
+            openssl::AESSymmetricKey::createFromData(d_sessionKey));
+        const auto iv = std::make_shared<openssl::AESInitializationVector>(
+            openssl::AESInitializationVector::createFromData(IV));
+
+        ByteVector dataCalc = data;
+
+        const std::size_t blockSize = d_cipher->getBlockSize();
+
         dataCalc.push_back(0x80);
-        if (dataCalc.size() % d_cipher->getBlockSize() != 0)
-            dataCalc.resize(
-                static_cast<unsigned char>(data.size() / d_cipher->getBlockSize() + 1) *
-                d_cipher->getBlockSize());
+
+        const std::size_t remainder = dataCalc.size() % blockSize;
+
+        if (remainder != 0)
+            dataCalc.resize(dataCalc.size() + (blockSize - remainder), 0x00);
+
+        d_cipher->cipher(dataCalc, encdata, *isokey, *iv, false);
     }
 
-    d_cipher->cipher(dataCalc, encdata, *isokey, *iv, false);
+    ByteVector macData = encdata;
 
-    ByteVector result = encdata;
     if (param.size() > 1)
-        encdata.insert(encdata.begin(), param.begin() + 1, param.end());
-    auto m = generateMAC(param[0], encdata);
-    result.insert(result.end(), m.begin(), m.end());
+        macData.insert(macData.begin(), param.begin() + 1, param.end());
+    const auto mac = generateMAC(param[0], macData);
+    ByteVector result = encdata;
+    result.insert(result.end(), mac.begin(), mac.end());
 
     return result;
 }
 
-ByteVector DESFireEV2Crypto::desfireDecrypt(size_t length)
+ByteVector DESFireEV2Crypto::desfireDecrypt(std::size_t length)
 {
-    if (d_auth_method != CryptoMethod::CM_EV2)
+    if (!usesEV2Crypto(d_auth_method))
         return DESFireCrypto::desfireDecrypt(length);
 
-    auto dd = d_buf;
-    verifyMAC(true, {});
+    const ByteVector response = d_buf;
 
+    EXCEPTION_ASSERT_WITH_LOG(response.size() >= d_mac_size,
+        LibLogicalAccessException, "DESFire EV2 : Response is shorter than the expected MAC.");
+
+    verifyMAC(true, ByteVector{}); // Verify the response MAC before decrypting its payload
+
+    const std::size_t encryptedLength = response.size() - d_mac_size;
+
+    if (encryptedLength == 0U) // MAC-only response
+        return ByteVector{};
+
+    const ByteVector encryptedData(response.begin(), response.begin() + encryptedLength);
     const auto IV = getIVEncrypt(false);
-
     // Decipher
     const auto isokey = std::make_shared<openssl::AESSymmetricKey>(
         openssl::AESSymmetricKey::createFromData(d_sessionKey));
     const auto iv = std::make_shared<openssl::AESInitializationVector>(
         openssl::AESInitializationVector::createFromData(IV));
-
     
     ByteVector data;
-    const auto encData = ByteVector(dd.begin(), dd.end() - d_mac_size);
-    if (encData.size() > 0)
+    d_cipher->decipher(encryptedData, data, *isokey, *iv, false);
+
+    if (length != 0U)
     {
-        d_cipher->decipher(encData, data, *isokey, *iv, false);
+        EXCEPTION_ASSERT_WITH_LOG(data.size() >= length,
+            LibLogicalAccessException, "DESFire EV2 : Decrypted buffer is smaller than the expected length.");
 
-        size_t ll = 0;
-        if (length == 0)
-        {
-            ll = data.size() - 1;
-            while (data[ll] == 0x00)
-            {
-                --ll;
-            }
-
-            EXCEPTION_ASSERT_WITH_LOG(data[ll] == 0x80, LibLogicalAccessException,
-                                    "Incorrect FLT result");
-        }
-        else
-        {
-            ll = length;
-        }
-
-        EXCEPTION_ASSERT_WITH_LOG (data.size() >= ll, LibLogicalAccessException,
-                               "Decrypted buffer is too small.");
-        data.resize(ll);
+        data.resize(length);
+        return data;
     }
+
+    // Remove ISO/IEC 7816-4 padding safely : trailing 0x00 bytes followed by a 0x80 marker.
+    std::size_t unpaddedLength = data.size();
+
+    while (unpaddedLength > 0U && data[unpaddedLength - 1U] == 0x00U)
+        --unpaddedLength;
+
+    EXCEPTION_ASSERT_WITH_LOG(unpaddedLength > 0U && data[unpaddedLength - 1U] == 0x80U,
+        LibLogicalAccessException, "DESFire EV2 : Invalid ISO/IEC 7816-4 padding.");
+
+    // Exclude the 0x80 marker and trailing zeros
+    data.resize(unpaddedLength - 1U);
 
     return data;
 }
@@ -282,11 +291,8 @@ ByteVector DESFireEV2Crypto::changeKey_PICC(unsigned char keyno,
                                             unsigned char keysetno)
 {
     const unsigned char keyno_only = static_cast<unsigned char>(keyno & 0x3F);
-
-    if (d_auth_method != CryptoMethod::CM_EV2 ||
-        (keyno_only == d_currentKeyNo && !keysetno)) // ChangeKeyEV2
-        return DESFireCrypto::changeKey_PICC(keyno, oldKeyDiversify, newkey,
-                                             newKeyDiversify, keysetno);
+    if (!usesEV2Crypto(d_auth_method) || (keyno_only == d_currentKeyNo && !keysetno)) // ChangeKeyEV2
+        return DESFireCrypto::changeKey_PICC(keyno, oldKeyDiversify, newkey, newKeyDiversify, keysetno);
 
     // We only handle when keys number are different here
     LOG(LogLevel::INFOS) << "Init change key on PICC...";
@@ -326,12 +332,12 @@ ByteVector DESFireEV2Crypto::changeKey_PICC(unsigned char keyno,
     return cryptogram;
 }
 
-void DESFireEV2Crypto::duplicateCurrentKeySet(uint8_t keySetNb)
+void DESFireEV2Crypto::duplicateCurrentKeySet(std::uint8_t keySetNb)
 {
     duplicateKeySet(0, keySetNb);
 }
 
-void DESFireEV2Crypto::setKeySetCryptoType(uint8_t keySetNb, DESFireKeyType cryptoMethod)
+void DESFireEV2Crypto::setKeySetCryptoType(std::uint8_t keySetNb, DESFireKeyType cryptoMethod)
 {
     for (auto &&key : d_keys)
     {
@@ -340,7 +346,7 @@ void DESFireEV2Crypto::setKeySetCryptoType(uint8_t keySetNb, DESFireKeyType cryp
     }
 }
 
-void DESFireEV2Crypto::duplicateKeySet(uint8_t keySetNbToDuplicate, uint8_t keySetNb)
+void DESFireEV2Crypto::duplicateKeySet(std::uint8_t keySetNbToDuplicate, std::uint8_t keySetNb)
 {
     uint8_t nbKeys = 0;
     for (auto &&key : d_keys)
@@ -361,4 +367,52 @@ void DESFireEV2Crypto::duplicateKeySet(uint8_t keySetNbToDuplicate, uint8_t keyS
             d_keys[std::make_tuple(d_currentAid, keySetNb, x)] = std::make_shared<DESFireKey>(*d_keys[oIndex]);
     }
 }
+
+void DESFireEV2Crypto::invalidateAuthentication()
+{
+    // Wipe authentication and session-sensitive material before releasing it
+    auto secureClear = [](ByteVector &v)
+    {
+        logicalaccess::security::secureZeroBuffer(v);
+        v.clear();
+    };
+
+    // Session keys and authentication key
+    secureClear(d_sessionKey);
+    secureClear(d_macSessionKey);
+    secureClear(d_authkey);
+
+    // Authentication nonces
+    secureClear(d_rndA);
+    secureClear(d_rndB);
+
+    // EV2 transaction state
+    secureClear(ti_);
+    cmdctr_ = 0;
+
+    // Secure-messaging and chaining state
+    secureClear(d_lastIV);
+    secureClear(d_last_left);
+
+    // Pending protocol data
+    secureClear(d_buf);
+
+    // No authenticated cipher remains.
+    d_cipher.reset();
+
+    // Return to the unauthenticated/default protocol state
+    d_auth_method  = CM_LEGACY;
+    d_currentKeyNo = 0;
+    d_mac_size     = 4;
+
+    // Keep d_currentAid and d_keys intact because it's selection state, not authentication state
+}
+
+void DESFireEV2Crypto::initializeSecureMessagingState()
+{
+    cmdctr_ = 0;
+    d_cipher.reset(new openssl::AESCipher());
+    d_mac_size = 8;
+}
+
 } // namespace logicalaccess

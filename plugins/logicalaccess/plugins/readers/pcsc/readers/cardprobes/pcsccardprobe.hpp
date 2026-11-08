@@ -8,6 +8,13 @@ namespace logicalaccess
 class LLA_READERS_PCSC_API PCSCCardProbe : public CardProbe
 {
   public:
+    struct DESFireVersionInfo
+    {
+        int hardwareMajorVersion = -1;
+        int softwareMajorVersion = -1;
+        ByteVector uid;
+    };
+
     explicit PCSCCardProbe(ReaderUnit *ru);
 
     bool is_desfire(ByteVector *uid = nullptr) override;
@@ -24,10 +31,13 @@ class LLA_READERS_PCSC_API PCSCCardProbe : public CardProbe
 
     bool has_desfire_random_uid(ByteVector *uid) override;
 
+    DESFireVersionInfo get_desfire_version();
+
   protected:
     void reset() const;
 
   private:
-    int get_desfire_version(ByteVector *uid = nullptr);
+    DESFireVersionInfo probe_desfire_version();
 };
-}
+
+} // namespace logicalaccess
