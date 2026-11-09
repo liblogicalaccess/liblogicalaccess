@@ -371,6 +371,14 @@ class LLA_READERS_ISO7816_API DUOXISO7816Commands : public DESFireEV3ISO7816Comm
 
       TransactionMACFileData readTransactionMacFile(unsigned char fileno) override;
 
+      ByteVector cryptoRequest(CryptoAction action, const ByteVector &commandData,
+                               EncryptionMode commMode = CM_ENCRYPT) override;
+
+      ByteVector cryptoRequestECCSign(ECCSignOperation operation, const ByteVector &inputData,
+                                      EncryptionMode commMode = CM_ENCRYPT, KeyNo keyNo = KeyNo()) override;
+
+      ByteVector cryptoRequestEcho(const ByteVector &additionalData, EncryptionMode commMode = CM_ENCRYPT) override;
+
   private:
     ISO7816Response sendDUOXGeneralAuthenticate(std::uint8_t p2, const ByteVector &data, std::uint16_t le);
 

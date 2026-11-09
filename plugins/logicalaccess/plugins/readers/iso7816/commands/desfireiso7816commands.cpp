@@ -4,7 +4,9 @@
  * \brief DESFire ISO7816 commands.
  */
 
+#include <algorithm>
 #include <cstddef>
+#include <iterator>
 
 #include <logicalaccess/plugins/readers/iso7816/commands/desfireiso7816commands.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfirechip.hpp>
@@ -17,7 +19,6 @@
 #include <logicalaccess/plugins/llacommon/settings.hpp>
 #include <logicalaccess/cards/computermemorykeystorage.hpp>
 #include <logicalaccess/dynlibrary/librarymanager.hpp>
-#include <algorithm>
 
 namespace logicalaccess
 {
@@ -98,6 +99,9 @@ std::uint32_t readUInt32LE(const ByteVector &data, std::size_t &offset)
 
 /**
  * \brief Store an unsigned 24-bit value in a three-byte little endian field.
+ * 
+ * \param destination Destination buffer (exactly 3 bytes).
+ * \param value Value to encode (0x000000 to 0xFFFFFF).
  */
 void writeUInt24LE(unsigned char (&destination)[3], const std::uint32_t value)
 {
@@ -1165,13 +1169,16 @@ void DESFireISO7816Commands::writeRecord(unsigned char fileno, unsigned int offs
                                          const ByteVector &data, EncryptionMode mode)
 {
     ByteVector parameters(7);
+
     parameters[0] = fileno;
-    parameters[1] = static_cast<unsigned char>(offset & 0xff);
-    parameters[2] = static_cast<unsigned char>(static_cast<unsigned short>(offset & 0xff00) >> 8);
-    parameters[3] = static_cast<unsigned char>(static_cast<unsigned int>(offset & 0xff0000) >> 16);
-    parameters[4] = static_cast<unsigned char>(data.size() & 0xff);
-    parameters[5] = static_cast<unsigned char>(static_cast<unsigned short>(data.size() & 0xff00) >> 8);
-    parameters[6] = static_cast<unsigned char>(static_cast<unsigned int>(data.size() & 0xff0000) >> 16);
+
+    unsigned char encoded[3];
+
+    writeUInt24LE(encoded, offset);
+    std::copy(std::begin(encoded), std::end(encoded), parameters.begin() + 1);
+
+    writeUInt24LE(encoded, static_cast<std::uint32_t>(data.size()));
+    std::copy(std::begin(encoded), std::end(encoded), parameters.begin() + 4);
 
     handleWriteData(DF_INS_WRITE_RECORD, parameters, data, mode);
 }
@@ -1179,21 +1186,21 @@ void DESFireISO7816Commands::writeRecord(unsigned char fileno, unsigned int offs
 ByteVector DESFireISO7816Commands::readRecords(unsigned char fileno, unsigned int offset,
                                                unsigned int length, EncryptionMode mode)
 {
-    ByteVector command, ret;
+    ByteVector command(7);
 
-    command.push_back(fileno);
-    command.push_back(static_cast<unsigned char>(offset & 0xff));
-    command.push_back(static_cast<unsigned char>(static_cast<unsigned short>(offset & 0xff00) >> 8));
-    command.push_back(static_cast<unsigned char>(static_cast<unsigned int>(offset & 0xff0000) >> 16));
-    command.push_back(static_cast<unsigned char>(length & 0xff));
-    command.push_back(static_cast<unsigned char>(static_cast<unsigned short>(length & 0xff00) >> 8));
-    command.push_back(static_cast<unsigned char>(static_cast<unsigned int>(length & 0xff0000) >> 16));
+    command[0] = fileno;
+
+    unsigned char encoded[3];
+
+    writeUInt24LE(encoded, offset);
+    std::copy(std::begin(encoded), std::end(encoded), command.begin() + 1);
+
+    writeUInt24LE(encoded, length);
+    std::copy(std::begin(encoded), std::end(encoded), command.begin() + 4);
 
     auto result = transmit(DF_INS_READ_RECORDS, command);
-    auto data = handleReadData(result.getSW2(), result.getData(), length, mode);
-    ret.insert(ret.end(), data.begin(), data.end());
 
-    return ret;
+    return handleReadData(result.getSW2(), result.getData(), length, mode);
 }
 
 void DESFireISO7816Commands::clearRecordFile(unsigned char fileno)
