@@ -418,6 +418,77 @@ unsigned char getTransactionMACKeyOption(const std::shared_ptr<DESFireKey> &key)
     return keySize == 16 ? duox::tmac::KEY_OPTION_AES128 : duox::tmac::KEY_OPTION_AES256;
 }
 
+// ---------------------------------------
+// CryptoRequest - Generic
+// ---------------------------------------
+
+constexpr std::uint8_t CRYPTO_REQUEST_COMMAND = 0x4C;
+
+constexpr std::uint8_t CRYPTO_ACTION_ECC_SIGN = 0x03;
+constexpr std::uint8_t CRYPTO_ACTION_ECHO     = 0xFD;
+
+constexpr std::size_t CRYPTO_MAX_COMMAND_DATA_SIZE = 0xFE;
+
+// ---------------------------------------
+// CryptoRequest - ECC Sign
+// ---------------------------------------
+
+constexpr std::uint8_t CRYPTO_INPUT_SOURCE_COMMAND_BUFFER = 0xF0;
+
+constexpr std::size_t CRYPTO_ECC_MAX_INPUT_SIZE = 0xEA;
+constexpr std::size_t CRYPTO_ECC_SHA256_SIZE    = 32;
+constexpr std::size_t CRYPTO_ECC_SIGNATURE_SIZE = 64;
+
+// ---------------------------------------
+// CryptoRequest - Echo
+// ---------------------------------------
+
+constexpr std::size_t CRYPTO_ECHO_MIN_SIZE = 1;
+constexpr std::size_t CRYPTO_ECHO_MAX_SIZE = 0xFE;
+
+// ---------------------------------------
+// ISO 7816 - APDU limits
+// ---------------------------------------
+
+constexpr std::size_t ISO7816_MAX_COMMAND_DATA_SIZE = 0xFF;
+
+// ---------------------------------------
+// Secure Messaging
+// ---------------------------------------
+
+constexpr std::size_t SECURE_MESSAGING_MAC_SIZE              = 8;
+constexpr std::size_t SECURE_MESSAGING_ENCRYPTION_BLOCK_SIZE = 16;
+
+// ---------------------------------------
+// CryptoRequest - Internal parameters
+// ---------------------------------------
+
+constexpr std::size_t CRYPTO_ACTION_SIZE = 1;
+
+constexpr std::size_t getMaxEchoPayloadSize(EncryptionMode commMode) noexcept
+{
+    switch (commMode)
+    {
+    case CM_PLAIN: return CRYPTO_ECHO_MAX_SIZE;
+
+    case CM_MAC:
+        return ISO7816_MAX_COMMAND_DATA_SIZE - CRYPTO_ACTION_SIZE - SECURE_MESSAGING_MAC_SIZE;
+
+    case CM_ENCRYPT:
+    {
+        constexpr std::size_t maxEncryptedSize = ((ISO7816_MAX_COMMAND_DATA_SIZE - SECURE_MESSAGING_MAC_SIZE) /
+             SECURE_MESSAGING_ENCRYPTION_BLOCK_SIZE) * SECURE_MESSAGING_ENCRYPTION_BLOCK_SIZE;
+
+        // ISO/IEC 9797-1 Method 2 always adds padding
+        constexpr std::size_t maxPlaintextSize = maxEncryptedSize - 1;
+
+        return maxPlaintextSize - CRYPTO_ACTION_SIZE;
+    }
+
+    default: return 0;
+    }
+}
+
 } // namespace
 
 // DUOXCommands and DESFireEV3ISO7816Commands both derive from DESFireEV3Commands
@@ -2569,6 +2640,180 @@ void DUOXISO7816Commands::authenticateEV2First(std::uint8_t targetedKeyNo, std::
         resetDUOXEV2AuthenticationState(duoxCrypto);
         throw;
     }
+}
+
+ByteVector DUOXISO7816Commands::cryptoRequest(CryptoAction action, const ByteVector &commandData,
+                                              EncryptionMode commMode)
+{
+    EXCEPTION_ASSERT_WITH_LOG(commandData.size() <= 0xFE,
+        LibLogicalAccessException, "CryptoRequest command data exceeds the maximum of 254 bytes.");
+
+    switch (action)
+    {
+    case CryptoAction::ECCSign:
+    case CryptoAction::Echo: break;
+
+    default:
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Unsupported CryptoRequest action.");
+    }
+
+    ByteVector command;
+    command.reserve(commandData.size() + 1);
+
+    command.push_back(static_cast<std::uint8_t>(action));
+    command.insert(command.end(), commandData.begin(), commandData.end());
+
+    const auto response = transmitDUOX(CRYPTO_REQUEST_COMMAND, {}, command, commMode);
+
+    checkSuccess(response, duox::status::DUOX_SUCCESS, __func__);
+
+    return response.getData();
+}
+
+ByteVector DUOXISO7816Commands::cryptoRequestECCSign(ECCSignOperation operation, const ByteVector &inputData,
+                                                     EncryptionMode commMode, KeyNo keyNo)
+{
+    // Validate operation
+    const auto operationValue = static_cast<std::uint8_t>(operation);
+
+    bool requiresKeyNo     = false;
+    bool requiresAlgorithm = false;
+    bool returnsSignature  = false;
+    bool requiresHash      = false;
+
+    switch (operation)
+    {
+    case ECCSignOperation::Initialize:
+        requiresKeyNo     = true;
+        requiresAlgorithm = true;
+        break;
+
+    case ECCSignOperation::Update: break;
+
+    case ECCSignOperation::Finalize:
+        returnsSignature = true;
+        break;
+
+    case ECCSignOperation::OneShot:
+        requiresKeyNo     = true;
+        requiresAlgorithm = true;
+        returnsSignature  = true;
+        break;
+
+    case ECCSignOperation::OneShotPrecomputedHash:
+        requiresKeyNo     = true;
+        requiresAlgorithm = true;
+        returnsSignature  = true;
+        requiresHash      = true;
+        break;
+
+    default:
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "Unsupported ECC Sign operation.");
+    }
+
+    // Validate input length
+    if (requiresHash)
+    {
+        EXCEPTION_ASSERT_WITH_LOG(inputData.size() == CRYPTO_ECC_SHA256_SIZE,
+            LibLogicalAccessException, "ECC Sign precomputed hash must contain exactly 32 bytes.");
+    }
+    else
+    {
+        EXCEPTION_ASSERT_WITH_LOG(inputData.size() <= CRYPTO_ECC_MAX_INPUT_SIZE,
+            LibLogicalAccessException, "ECC Sign input exceeds the maximum supported length of 234 bytes.");
+    }
+
+    // Validate key number only when the operation uses a key
+
+    EXCEPTION_ASSERT_WITH_LOG(requiresKeyNo == keyNo.hasValue, LibLogicalAccessException,
+        (requiresKeyNo ? "ECC Sign operation requires a key number." : "ECC Sign operation does not accept a key number."));
+
+    if (requiresKeyNo)
+    {
+        const auto chip = getDESFireChip();
+
+        EXCEPTION_ASSERT_WITH_LOG(chip != nullptr, LibLogicalAccessException,
+            "CryptoRequest ECC Sign requires an initialized DESFire chip.");
+
+        const auto crypto = chip->getCrypto();
+
+        EXCEPTION_ASSERT_WITH_LOG(crypto != nullptr, LibLogicalAccessException,
+            "CryptoRequest ECC Sign requires an initialized crypto context.");
+
+        const bool piccLevel = crypto->d_currentAid == duox::limits::PICC_LEVEL_AID;
+
+        const std::uint8_t maximumKeyNo = piccLevel ? 0x01 : 0x04;
+
+        EXCEPTION_ASSERT_WITH_LOG(keyNo.value <= maximumKeyNo, LibLogicalAccessException,
+            "Invalid ECC Sign key number " + byteToHex(keyNo.value) +
+                (piccLevel ? ". PICC-level key numbers must be 0 or 1."
+                           : ". Application-level key numbers must be between 0 and 4."));
+    }
+
+    const std::size_t commandDataSize = 1 +                           // Operation
+                                        (requiresAlgorithm ? 1 : 0) + // Algorithm
+                                        (requiresKeyNo ? 1 : 0) +     // KeyNo
+                                        1 +                           // InputSource
+                                        1 +                           // InputLen
+                                        inputData.size();
+
+    ByteVector commandData;
+    commandData.reserve(commandDataSize);
+
+    commandData.push_back(operationValue);
+    if (requiresAlgorithm)
+        commandData.push_back(static_cast<std::uint8_t>(ECCSignAlgorithm::ECDSA_SHA256));
+    if (requiresKeyNo)
+        commandData.push_back(keyNo.value);
+    commandData.push_back(CRYPTO_INPUT_SOURCE_COMMAND_BUFFER);
+    commandData.push_back(static_cast<std::uint8_t>(inputData.size()));
+    commandData.insert(commandData.end(), inputData.begin(), inputData.end());
+
+    // Execute cryptoRequest to add the ECC Sign action byte
+    const ByteVector response = cryptoRequest(CryptoAction::ECCSign, commandData, commMode);
+
+    // Validate operation-specific response
+    if (returnsSignature)
+    {
+        EXCEPTION_ASSERT_WITH_LOG(response.size() == CRYPTO_ECC_SIGNATURE_SIZE, LibLogicalAccessException,
+          "ECC Sign returned an invalid signature length. Expected: 64 bytes. Received : " +
+          std::to_string(response.size()) + " bytes.");
+    }
+    else
+    {
+        EXCEPTION_ASSERT_WITH_LOG(response.empty(), LibLogicalAccessException,
+            "ECC Sign returned unexpected response data for an operation that must not return a signature.");
+    }
+
+    return response;
+}
+
+ByteVector DUOXISO7816Commands::cryptoRequestEcho(const ByteVector &additionalData,
+                                                  EncryptionMode commMode)
+{
+    const std::size_t maxPayloadSize = getMaxEchoPayloadSize(commMode);
+
+    EXCEPTION_ASSERT_WITH_LOG(maxPayloadSize != 0,
+        LibLogicalAccessException, "Unsupported CryptoRequest Echo communication mode.");
+
+    EXCEPTION_ASSERT_WITH_LOG(additionalData.size() >= CRYPTO_ECHO_MIN_SIZE && additionalData.size() <= maxPayloadSize,
+        LibLogicalAccessException, "CryptoRequest Echo requires between " + std::to_string(CRYPTO_ECHO_MIN_SIZE) +
+        " and " + std::to_string(maxPayloadSize) + " additional bytes for the selected communication mode.");
+
+    const ByteVector response = cryptoRequest(CryptoAction::Echo, additionalData, commMode);
+
+    EXCEPTION_ASSERT_WITH_LOG(response.size() == additionalData.size() + 1,
+        LibLogicalAccessException, "CryptoRequest Echo returned an invalid response length.");
+
+    EXCEPTION_ASSERT_WITH_LOG(response.front() == static_cast<std::uint8_t>(CryptoAction::Echo),
+        LibLogicalAccessException, "CryptoRequest Echo returned an unexpected operation identifier.");
+
+    const auto echoedData = response.begin() + CRYPTO_ACTION_SIZE;
+
+    EXCEPTION_ASSERT_WITH_LOG(std::equal(echoedData, response.end(), additionalData.begin()),
+        LibLogicalAccessException, "CryptoRequest Echo returned data different from the supplied input.");
+
+    return ByteVector(echoedData, response.end());
 }
 
 // -------------------------------------------------------------------------

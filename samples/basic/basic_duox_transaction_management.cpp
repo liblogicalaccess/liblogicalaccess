@@ -126,7 +126,7 @@ EVPKeyPtr decodeDUOXPublicKey(const ByteVector &encodedPublicKey)
 // Configuration
 // ==============================================
 
-// WARNING: EraseCard permanently removes all applications and files.
+// WARNING : EraseCard permanently removes all applications and files.
 enum class DUOXCardPreparationMode
 {
     EraseCard,

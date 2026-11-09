@@ -169,6 +169,60 @@ struct DUOXTransactionMACFileOptions
 };
 
 /**
+ * \brief Optional ECC key number.
+ *
+ * Used to distinguish between an absent key number and key number 0.
+ * 
+ * \remarks This struct will be removed when std::optional becomes available.
+ */
+struct KeyNo
+{
+    std::uint8_t value;
+    bool hasValue;
+
+    KeyNo()
+        : value(0)
+        , hasValue(false)
+    {
+    }
+
+    explicit KeyNo(std::uint8_t v)
+        : value(v)
+        , hasValue(true)
+    {
+    }
+};
+
+/**
+ * \brief Supported CryptoRequest actions
+ */
+enum class CryptoAction : std::uint8_t
+{
+    ECCSign = 0x03,
+    Echo    = 0xFD
+};
+
+/**
+ * \brief Supported ECC signature operations
+ */
+enum class ECCSignOperation : std::uint8_t
+{
+    Initialize             = 0x01,
+    Update                 = 0x02,
+    Finalize               = 0x03,
+    OneShot                = 0x04,
+    OneShotPrecomputedHash = 0x05
+};
+
+/**
+ * \brief Supported ECC signature algorithms
+ */
+enum class ECCSignAlgorithm : std::uint8_t
+{
+    ECDSA_SHA256 = 0x00
+};
+
+/**
  * \brief Base commands class for DUOX cards
  *
  * DUOX is based on the DESFire EV3 command architecture. This class provides
@@ -413,6 +467,48 @@ class LLA_CARDS_DESFIRE_API DUOXCommands : public DESFireEV3Commands
      * \throws LibLogicalAccessException on card or transport failure.
      */
     virtual void abortTransaction() = 0;
+
+    /**
+     * \brief Executes a generic CryptoRequest command.
+     *
+     * \param action Crypto API action to execute.
+     * \param commandData Action-specific command data.
+     * \param commMode Communication mode configured for CryptoRequest.
+     *
+     * \return Card response data.
+     *
+     * \throws LibLogicalAccessException on invalid parameters, transport errors or unsuccessful card execution
+     */
+    virtual ByteVector cryptoRequest(CryptoAction action, const ByteVector &commandData,
+                                     EncryptionMode commMode = CM_ENCRYPT) = 0;
+
+    /**
+     * \brief Generates an ECC signature.
+     *
+     * Supports initialization, incremental data updates, finalization and one-shot signing of raw data
+     * or a precomputed SHA-256 hash.
+     *
+     * Key number and algorithm parameters are required only for initialization and one-shot operations.
+     *
+     * \param operation ECC signing operation.
+     * \param keyNo ECC private key number.
+     * \param inputData Raw data or SHA-256 hash.
+     * \param commMode CryptoRequest communication mode.
+     *
+     * \return Empty vector for Initialize/Update; 64 byte raw ECDSA signature for Finalize/OneShot
+     */
+    virtual ByteVector cryptoRequestECCSign(ECCSignOperation operation, const ByteVector &inputData,
+                                            EncryptionMode commMode = CM_ENCRYPT, KeyNo keyNo = KeyNo()) = 0;
+
+    /**
+     * \brief Echoes additional data through the Crypto API.
+     *
+     * \param additionalData Additional bytes to echo.
+     * \param commMode CryptoRequest communication mode.
+     *
+     * \return Echoed response data
+     */
+    virtual ByteVector cryptoRequestEcho(const ByteVector &additionalData, EncryptionMode commMode = CM_ENCRYPT) = 0;
 
 };
 

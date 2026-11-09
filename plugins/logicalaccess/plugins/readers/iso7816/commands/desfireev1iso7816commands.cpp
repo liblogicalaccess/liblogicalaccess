@@ -4,7 +4,9 @@
  * \brief DESFireEV1 ISO7816 commands.
  */
 
+#include <algorithm>
 #include <cstddef>
+#include <iterator>
 
 #include <logicalaccess/plugins/readers/iso7816/commands/desfireev1iso7816commands.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfirechip.hpp>
@@ -33,6 +35,25 @@
 
 namespace logicalaccess
 {
+
+namespace
+{
+
+/**
+ * \brief Store an unsigned 24-bit value in a three-byte little endian field.
+ *
+ * \param destination Destination buffer (exactly 3 bytes).
+ * \param value Value to encode (0x000000 to 0xFFFFFF).
+ */
+void writeUInt24LE(unsigned char (&destination)[3], const std::uint32_t value)
+{
+    destination[0] = static_cast<unsigned char>(value & 0xFFU);
+    destination[1] = static_cast<unsigned char>((value >> 8U) & 0xFFU);
+    destination[2] = static_cast<unsigned char>((value >> 16U) & 0xFFU);
+}
+
+}
+
 DESFireEV1ISO7816Commands::DESFireEV1ISO7816Commands()
     : DESFireISO7816Commands(CMD_DESFIREEV1ISO7816)
 {
@@ -1102,26 +1123,23 @@ ByteVector DESFireEV1ISO7816Commands::readData(unsigned char fileno, unsigned in
     return ret;
 }
 
-ByteVector DESFireEV1ISO7816Commands::readRecords(unsigned char fileno,
-                                                  unsigned int offset,
-                                                  unsigned int length,
-                                                  EncryptionMode mode)
+ByteVector DESFireEV1ISO7816Commands::readRecords(unsigned char fileno, unsigned int offset,
+                                                  unsigned int length, EncryptionMode mode)
 {
-    ByteVector command;
+    ByteVector command(7);
 
-    command.push_back(fileno);
-    command.push_back(static_cast<unsigned char>(offset & 0xff));
-    command.push_back(
-        static_cast<unsigned char>(static_cast<unsigned short>(offset & 0xff00) >> 8));
-    command.push_back(
-        static_cast<unsigned char>(static_cast<unsigned int>(offset & 0xff0000) >> 16));
-    command.push_back(static_cast<unsigned char>(length & 0xff));
-    command.push_back(
-        static_cast<unsigned char>(static_cast<unsigned short>(length & 0xff00) >> 8));
-    command.push_back(
-        static_cast<unsigned char>(static_cast<unsigned int>(length & 0xff0000) >> 16));
+    command[0] = fileno;
+
+    unsigned char encoded[3];
+
+    writeUInt24LE(encoded, offset);
+    std::copy(std::begin(encoded), std::end(encoded), command.begin() + 1);
+
+    writeUInt24LE(encoded, length);
+    std::copy(std::begin(encoded), std::end(encoded), command.begin() + 4);
 
     auto result = handleReadCmd(DF_INS_READ_RECORDS, command, mode);
+
     return handleReadData(result.getSW2(), result.getData(), 0, mode);
 }
 

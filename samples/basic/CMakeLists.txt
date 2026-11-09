@@ -82,6 +82,16 @@ target_link_libraries(basic_duox_transaction_management
         ${LIBLOGICALACCESS_COMMON_LIBRARIES}
 )
 
+# basic_duox_crypto_api
+add_executable(basic_duox_crypto_api
+    basic_duox_crypto_api.cpp
+)
+
+target_link_libraries(basic_duox_crypto_api
+    PRIVATE
+        ${LIBLOGICALACCESS_COMMON_LIBRARIES}
+)
+
 # basic_certificate
 add_executable(basic_certificate
     basic_certificate.cpp
@@ -122,6 +132,7 @@ install(
         basic_duox
         basic_duox_aes_authentication
         basic_duox_transaction_management
+        basic_duox_crypto_api
         basic_certificate
         basic_duoxecc
         basic_authenticate

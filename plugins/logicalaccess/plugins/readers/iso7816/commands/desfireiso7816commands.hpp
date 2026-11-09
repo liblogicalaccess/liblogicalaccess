@@ -256,7 +256,7 @@ class LLA_READERS_ISO7816_API DESFireISO7816Commands : public DESFireCommands
 
     /**
      * \brief Write record into a specific record file.
-     * \param fileno The file number
+     * \param fileNo The file number
      * \param offset The byte offset
      * \param length The length to write
      * \param data The data buffer
