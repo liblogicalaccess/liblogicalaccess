@@ -23,24 +23,6 @@ namespace logicalaccess
 namespace
 {
 
-/**
- * \brief Reset the EV2 authentication state after failure.
- * 
- * Authentication failures must never leave partially established secure messaging state in the crypto object.
- */
-void resetDUOXEV2AuthenticationState(const std::shared_ptr<DESFireEV2Crypto> &crypto)
-{
-    if (!crypto)
-        return;
-
-    security::secureZeroBuffer(crypto->d_sessionKey);
-    security::secureZeroBuffer(crypto->d_macSessionKey);
-
-    crypto->setTI(ByteVector());
-    crypto->setCmdCtr(0);
-    crypto->d_auth_method = CryptoMethod::CM_LEGACY;
-}
-
 std::size_t validateAESKey(const DESFireKey &key)
 {
     std::size_t expectedLength = 0U;
@@ -917,21 +899,8 @@ void DUOXISO7816Commands::authenticateEV2NonFirst(std::uint8_t keyno, std::share
         EXCEPTION_ASSERT_WITH_LOG(rndA.size() == duox::authentication::EV2_RANDOM_SIZE,
             LibLogicalAccessException, "Random generator returned an invalid RndA length.");
 
-        // RndB' = RndB rotated left by one byte
-        ByteVector rndBPrime = DUOXCrypto::rotateAuthenticationChallenge(rndB);
-        security::SecureZeroGuard rndBPrimeGuard{&rndBPrime};
-
-        // Part 2 data : RndA || RndB'
-        ByteVector challenge;
+        ByteVector challenge = DESFireEV2Crypto::get_challenge_response(rndB, rndA);
         security::SecureZeroGuard challengeGuard{&challenge};
-
-        challenge.reserve(duox::authentication::EV2_PART2_COMMAND_SIZE);
-        challenge.insert(challenge.end(), rndA.begin(), rndA.end());
-        challenge.insert(challenge.end(), rndBPrime.begin(), rndBPrime.end());
-
-        EXCEPTION_ASSERT_WITH_LOG(challenge.size() == duox::authentication::EV2_PART2_COMMAND_SIZE,
-            LibLogicalAccessException,
-            "Internal DUOX EV2 authentication error : Part 2 plaintext must contain exactly 32 bytes.");
 
         ByteVector encryptedChallenge = AESHelper::AESEncrypt(challenge, keyDiv, iv);
         security::SecureZeroGuard encryptedChallengeGuard{&encryptedChallenge};
@@ -959,15 +928,14 @@ void DUOXISO7816Commands::authenticateEV2NonFirst(std::uint8_t keyno, std::share
         EXCEPTION_ASSERT_WITH_LOG(rndAPrime == expectedRndAPrime,
             LibLogicalAccessException, "AuthenticateEV2NonFirst authentication failed : invalid RndA'.");
 
-        // Establish the EV2 secure-messaging session.
-        // Don't reset the existing TI or command counter on success !
-        duoxCrypto->generateSessionKey(keyDiv, rndA, rndB);
-        duoxCrypto->d_currentKeyNo = keyno;
+        auto sessionKeys = duoxCrypto->deriveSessionKeys(keyDiv, rndA, rndB);
+        security::SecureZeroGuard sessionGuard{&sessionKeys.first, &sessionKeys.second};
+        duoxCrypto->installNonFirstSession(sessionKeys, keyno);
         duoxCrypto->setKey(duoxCrypto->d_currentAid, 0, keyno, key);
     }
     catch (...)
     {
-        resetDUOXEV2AuthenticationState(duoxCrypto);
+        duoxCrypto->invalidateAuthentication();
         throw;
     }
 }
@@ -2439,55 +2407,6 @@ std::uint8_t DUOXISO7816Commands::buildEV2KeyNo(std::uint8_t targetedKeyNo, bool
     return keyNo;
 }
 
-ByteVector DUOXISO7816Commands::validateEV2Part2Response(
-    const ByteVector &response, const ByteVector &rndA, const ByteVector &expectedPCDCap2)
-{
-    EXCEPTION_ASSERT_WITH_LOG(response.size() == duox::authentication::EV2_PART2_RESPONSE_SIZE,
-        LibLogicalAccessException, "DUOX AuthenticateEV2First Part 2 decrypted response must contain exactly 32 bytes.");
-
-    EXCEPTION_ASSERT_WITH_LOG(rndA.size() == duox::authentication::EV2_RANDOM_SIZE,
-        LibLogicalAccessException, "DUOX AuthenticateEV2First validation requires a 16-byte RndA.");
-
-    EXCEPTION_ASSERT_WITH_LOG(expectedPCDCap2.size() <= duox::authentication::EV2_PCDCAP2_SIZE,
-        LibLogicalAccessException, "DUOX PCDcap2 must contain at most six bytes.");
-
-    const ByteVector expectedRndAPrime = DUOXCrypto::rotateAuthenticationChallenge(rndA);
-
-    const ByteVector receivedRndAPrime(response.begin() + duox::authentication::EV2_TI_SIZE,
-                                       response.begin() + duox::authentication::EV2_TI_SIZE +
-                                         duox::authentication::EV2_RANDOM_SIZE);
-
-    EXCEPTION_ASSERT_WITH_LOG(receivedRndAPrime == expectedRndAPrime, LibLogicalAccessException,
-        "DUOX AuthenticateEV2First failed: received RndA' does not match the expected rotated RndA.");
-
-    /*
-     * PDcap2 is supplied by the PICC.
-     * It' is 's not consumed by the command layer but it's part of the authenticated response
-     * and therefore deliberately parsed here rather than silently skipping six bytes.
-     */
-    const ByteVector piccCap2(response.begin() + duox::authentication::EV2_TI_SIZE + duox::authentication::EV2_RANDOM_SIZE,
-                              response.begin() + duox::authentication::EV2_TI_SIZE + duox::authentication::EV2_RANDOM_SIZE +
-                                  duox::authentication::EV2_PDCAP2_SIZE);
-
-    EXCEPTION_ASSERT_WITH_LOG(piccCap2.size() == duox::authentication::EV2_PDCAP2_SIZE,
-        LibLogicalAccessException, "DUOX AuthenticateEV2First returned an invalid PDcap2 length.");
-
-    ByteVector expectedAdjustedPCDCap2 = expectedPCDCap2;
-    expectedAdjustedPCDCap2.resize(duox::authentication::EV2_PCDCAP2_SIZE, static_cast<std::uint8_t>(0x00));
-
-    const ByteVector returnedPCDCap2(response.begin() + duox::authentication::EV2_TI_SIZE +
-                                       duox::authentication::EV2_RANDOM_SIZE + duox::authentication::EV2_PDCAP2_SIZE,
-                                     response.end());
-
-    EXCEPTION_ASSERT_WITH_LOG(returnedPCDCap2.size() == duox::authentication::EV2_PCDCAP2_SIZE,
-        LibLogicalAccessException, "DUOX AuthenticateEV2First returned an invalid PCDcap2 length.");
-
-    EXCEPTION_ASSERT_WITH_LOG(returnedPCDCap2 == expectedAdjustedPCDCap2, LibLogicalAccessException,
-        "DUOX AuthenticateEV2First returned PCDcap2 does not match the adjusted capabilities sent by the PCD.");
-
-    return ByteVector(response.begin(), response.begin() + duox::authentication::EV2_TI_SIZE);
-}
-
 void DUOXISO7816Commands::authenticateEV2First(std::uint8_t keyno, std::shared_ptr<DESFireKey> currentKey)
 {
     EXCEPTION_ASSERT_WITH_LOG((keyno & duox::authentication::KEYNO_RESERVED) == 0,
@@ -2503,7 +2422,6 @@ void DUOXISO7816Commands::authenticateEV2First(std::uint8_t targetedKeyNo, std::
                                                bool secondaryApplication, ByteVector pcdCap2)
 {
     constexpr std::size_t MAX_PCDCAP2_SIZE = 6;
-    constexpr std::uint8_t SW_SUCCESS      = 0x00;
 
     EXCEPTION_ASSERT_WITH_LOG(targetedKeyNo <= duox::authentication::KEYNO_MASK,
         LibLogicalAccessException, "DUOX EV2 AuthenticateEV2First targeted key number must be in the range 0x00..0x3F.");
@@ -2530,116 +2448,9 @@ void DUOXISO7816Commands::authenticateEV2First(std::uint8_t targetedKeyNo, std::
     EXCEPTION_ASSERT_WITH_LOG(key != nullptr,
         LibLogicalAccessException, "DUOX EV2 AuthenticateEV2First requires an authentication key.");
 
-    const std::size_t expectedKeyLength = validateAESKey(*key);
-
-    const auto lenCap = static_cast<std::uint8_t>(pcdCap2.size());
+    validateAESKey(*key);
     const auto keyNo  = buildEV2KeyNo(targetedKeyNo, secondaryApplication);
-
-    ByteVector keyData;
-    security::SecureZeroGuard keyDataGuard{&keyData};
-
-    try
-    {
-        const auto diversify = getKeyInformations(key, targetedKeyNo);
-        duoxCrypto->getKey(key, diversify, keyData);
-
-        EXCEPTION_ASSERT_WITH_LOG(keyData.size() == expectedKeyLength,
-            LibLogicalAccessException, "DUOX EV2 diversified authentication key has an invalid length.");
-
-        ByteVector part1Data;
-        part1Data.reserve(2U + pcdCap2.size());
-
-        part1Data.push_back(keyNo);
-        part1Data.push_back(lenCap);
-        if (!pcdCap2.empty())
-            part1Data.insert(part1Data.end(), pcdCap2.begin(), pcdCap2.end());
-
-        const auto part1Response = transmit_plain(duox::authentication::AUTHENTICATE_EV2_FIRST, part1Data);
-
-        EXCEPTION_ASSERT_WITH_LOG(part1Response.getSW2() == DF_INS_ADDITIONAL_FRAME,
-            LibLogicalAccessException, "DUOX AuthenticateEV2First Part 1 failed : expected status 0xAF.");
-
-        EXCEPTION_ASSERT_WITH_LOG(part1Response.getData().size() == duox::authentication::EV2_PART1_RESPONSE_SIZE,
-            LibLogicalAccessException,
-            "DUOX AuthenticateEV2First Part 1 returned an invalid response length; expected exactly 16 bytes.");
-
-        ByteVector rndB = AESHelper::AESDecrypt(part1Response.getData(), keyData, {});
-        security::SecureZeroGuard rndBGuard{&rndB};
-
-        EXCEPTION_ASSERT_WITH_LOG(rndB.size() == duox::authentication::EV2_RANDOM_SIZE,
-            LibLogicalAccessException, "DUOX AuthenticateEV2First Part 1 produced an invalid RndB.");
-
-        ByteVector rndA = RandomHelper::bytes(duox::authentication::EV2_RANDOM_SIZE);
-        security::SecureZeroGuard rndAGuard{&rndA};
-
-        EXCEPTION_ASSERT_WITH_LOG(rndA.size() == duox::authentication::EV2_RANDOM_SIZE,
-            LibLogicalAccessException, "DUOX EV2 random generator returned an invalid RndA length.");
-
-        ByteVector rndBPrime = DUOXCrypto::rotateAuthenticationChallenge(rndB);
-        security::SecureZeroGuard rndBPrimeGuard{&rndBPrime};
-
-        ByteVector part2Plaintext;
-        security::SecureZeroGuard part2PlaintextGuard{&part2Plaintext};
-        part2Plaintext.reserve(duox::authentication::EV2_RANDOM_SIZE * 2);
-
-        part2Plaintext.insert(part2Plaintext.end(), rndA.begin(), rndA.end());
-        part2Plaintext.insert(part2Plaintext.end(), rndBPrime.begin(), rndBPrime.end());
-
-        EXCEPTION_ASSERT_WITH_LOG(part2Plaintext.size() == duox::authentication::EV2_PART2_COMMAND_SIZE,
-            LibLogicalAccessException,
-            "Internal DUOX EV2 authentication error: Part 2 plaintext must contain exactly 32 bytes.");
-
-        ByteVector encryptedPart2 = AESHelper::AESEncrypt(part2Plaintext, keyData, {});
-        security::SecureZeroGuard encryptedPart2Guard{&encryptedPart2};
-
-        EXCEPTION_ASSERT_WITH_LOG(encryptedPart2.size() == duox::authentication::EV2_PART2_COMMAND_SIZE,
-            LibLogicalAccessException, "DUOX EV2 AuthenticateEV2First Part 2 encryption returned an invalid length.");
-
-        const auto part2Response = transmit_plain(DF_INS_ADDITIONAL_FRAME, encryptedPart2);
-
-        EXCEPTION_ASSERT_WITH_LOG(part2Response.getSW2() == SW_SUCCESS,
-            LibLogicalAccessException, "DUOX AuthenticateEV2First Part 2 failed: expected status 0x00.");
-
-        EXCEPTION_ASSERT_WITH_LOG(part2Response.getData().size() == duox::authentication::EV2_PART2_RESPONSE_SIZE,
-            LibLogicalAccessException,
-            "DUOX AuthenticateEV2First Part 2 returned an invalid response length; expected exactly 32 bytes.");
-
-        ByteVector decryptedResponse = AESHelper::AESDecrypt(part2Response.getData(), keyData, {});
-        security::SecureZeroGuard decryptedResponseGuard{&decryptedResponse};
-
-        EXCEPTION_ASSERT_WITH_LOG(decryptedResponse.size() == duox::authentication::EV2_PART2_RESPONSE_SIZE,
-            LibLogicalAccessException, "DUOX AuthenticateEV2First Part 2 decrypted response has an invalid length.");
-
-        const ByteVector ti = validateEV2Part2Response(decryptedResponse, rndA, pcdCap2);
-
-        EXCEPTION_ASSERT_WITH_LOG(ti.size() == duox::authentication::EV2_TI_SIZE,
-            LibLogicalAccessException, "DUOX AuthenticateEV2First returned an invalid transaction identifier.");
-
-        auto sessionKeys = duoxCrypto->deriveSessionKeys(keyData, rndA, rndB);
-        security::SecureZeroGuard sessionGuard{&sessionKeys.first, &sessionKeys.second};
-
-        EXCEPTION_ASSERT_WITH_LOG(sessionKeys.first.size() == expectedKeyLength,
-            LibLogicalAccessException, "DUOX EV2 authentication produced an invalid encryption session-key length.");
-
-        EXCEPTION_ASSERT_WITH_LOG(sessionKeys.second.size() == expectedKeyLength,
-            LibLogicalAccessException,"DUOX EV2 authentication produced an invalid MAC session-key length.");
-
-        duoxCrypto->initializeSecureMessagingState();
-
-        duoxCrypto->setTI(ti);
-        duoxCrypto->setCmdCtr(0);
-        duoxCrypto->d_sessionKey    = sessionKeys.first;
-        duoxCrypto->d_macSessionKey = sessionKeys.second;
-        duoxCrypto->d_auth_method   = CryptoMethod::CM_DUOX;
-        duoxCrypto->d_currentKeyNo  = targetedKeyNo;
-
-        duoxCrypto->setKey(duoxCrypto->d_currentAid, 0, targetedKeyNo, key);
-    }
-    catch (...)
-    {
-        resetDUOXEV2AuthenticationState(duoxCrypto);
-        throw;
-    }
+    authenticateEV2FirstImpl(keyNo, targetedKeyNo, std::move(key), pcdCap2, CM_DUOX, true);
 }
 
 ByteVector DUOXISO7816Commands::cryptoRequest(CryptoAction action, const ByteVector &commandData,

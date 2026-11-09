@@ -23,66 +23,198 @@ namespace logicalaccess
 ByteVector DESFireEV2Crypto::get_challenge_response(ByteVector rndb,
                                                     const ByteVector &rnda)
 {
+    EXCEPTION_ASSERT_WITH_LOG(rnda.size() == 16, LibLogicalAccessException,
+                              "EV2 RndA must contain exactly 16 bytes.");
+    EXCEPTION_ASSERT_WITH_LOG(rndb.size() == 16, LibLogicalAccessException,
+                              "EV2 RndB must contain exactly 16 bytes.");
+    security::SecureZeroGuard rndbGuard{&rndb};
     std::rotate(rndb.begin(), rndb.begin() + 1, rndb.end());
 
-    auto full = rnda;
+    ByteVector full;
+    full.reserve(32);
+    full.insert(full.end(), rnda.begin(), rnda.end());
     full.insert(full.end(), rndb.begin(), rndb.end());
     return full;
+}
+
+ByteVector DESFireEV2Crypto::rotateAuthenticationChallenge(const ByteVector &rnd)
+{
+    EXCEPTION_ASSERT_WITH_LOG(rnd.size() == 16, LibLogicalAccessException,
+                              "EV2 authentication challenge must contain exactly 16 bytes.");
+    ByteVector rotated = rnd;
+    std::rotate(rotated.begin(), rotated.begin() + 1, rotated.end());
+    return rotated;
+}
+
+DESFireEV2Crypto::AuthenticationResponse DESFireEV2Crypto::parseEV2FirstResponse(
+    const ByteVector &data, const ByteVector &rnda,
+    const ByteVector &expectedPCDCap2, bool validateCapabilities)
+{
+    EXCEPTION_ASSERT_WITH_LOG(data.size() == 32, LibLogicalAccessException,
+                              "EV2 First response must contain exactly 32 bytes.");
+    EXCEPTION_ASSERT_WITH_LOG(expectedPCDCap2.size() <= 6, LibLogicalAccessException,
+                              "EV2 PCDcap2 must contain at most six bytes.");
+
+    ByteVector expectedRndA = rotateAuthenticationChallenge(rnda);
+    security::SecureZeroGuard rndAGuard{&expectedRndA};
+    EXCEPTION_ASSERT_WITH_LOG(std::equal(expectedRndA.begin(), expectedRndA.end(), data.begin() + 4),
+                              LibLogicalAccessException, "EV2 authentication failed: invalid rotated RndA.");
+
+    AuthenticationResponse result{
+        ByteVector(data.begin(), data.begin() + 4),
+        ByteVector(data.begin() + 20, data.begin() + 26),
+        ByteVector(data.begin() + 26, data.end())};
+    if (validateCapabilities)
+    {
+        ByteVector adjustedCapabilities = expectedPCDCap2;
+        adjustedCapabilities.resize(6, 0);
+        EXCEPTION_ASSERT_WITH_LOG(result.pcdCap2 == adjustedCapabilities,
+                                  LibLogicalAccessException, "EV2 returned PCDcap2 does not match the sent capabilities.");
+    }
+    return result;
 }
 
 ByteVector DESFireEV2Crypto::auth_ev2_part2(const ByteVector &data,
                                             const ByteVector &rnda)
 {
-    auto TI    = ByteVector(data.begin(), data.begin() + 4);
-    auto rnda2 = ByteVector(data.begin() + 4, data.begin() + 20);
+    return parseEV2FirstResponse(data, rnda).ti;
+}
 
-    // We ignore the 6 + 6 bytes of PCD/PICC capabilities.
-    std::rotate(rnda2.rbegin(), rnda2.rbegin() + 1, rnda2.rend());
-    EXCEPTION_ASSERT_WITH_LOG(rnda == rnda2, LibLogicalAccessException,
-                              "RNDA and RNDA' don't match. The card may be invalid.");
+ByteVector DESFireEV2Crypto::buildKDFContext(const ByteVector &rnda, const ByteVector &rndb)
+{
+    EXCEPTION_ASSERT_WITH_LOG(rnda.size() == 16 && rndb.size() == 16, LibLogicalAccessException,
+                              "EV2 KDF requires two 16-byte authentication challenges.");
+    ByteVector context;
+    context.reserve(26);
+    context.insert(context.end(), rnda.begin(), rnda.begin() + 2);
+    for (std::size_t i = 0; i < 6; ++i)
+        context.push_back(static_cast<std::uint8_t>(rnda[2 + i] ^ rndb[i]));
+    context.insert(context.end(), rndb.begin() + 6, rndb.end());
+    context.insert(context.end(), rnda.begin() + 8, rnda.end());
+    return context;
+}
 
-    return TI;
+ByteVector DESFireEV2Crypto::buildKDFVector(std::uint8_t label0, std::uint8_t label1,
+                                          std::uint16_t counter, std::uint16_t length,
+                                          const ByteVector &context)
+{
+    ByteVector vector = {label0, label1,
+        static_cast<std::uint8_t>(counter >> 8U), static_cast<std::uint8_t>(counter & 0xFFU),
+        static_cast<std::uint8_t>(length >> 8U), static_cast<std::uint8_t>(length & 0xFFU)};
+    vector.reserve(32);
+    vector.insert(vector.end(), context.begin(), context.end());
+    return vector;
 }
 
 std::tuple<ByteVector, ByteVector> DESFireEV2Crypto::getSV(const ByteVector &rnda,
-                                                           const ByteVector &rndb)
+                                                        const ByteVector &rndb)
 {
-    ByteVector SV1, emptyIV(16), kdf_SV1_input = {0xA5, 0x5A, 0x00, 0x01, 0x00, 0x80},
-                                 kdf_SV2_input = {0x5A, 0xA5, 0x00, 0x01, 0x00, 0x80};
+    ByteVector context = buildKDFContext(rnda, rndb);
+    security::SecureZeroGuard contextGuard{&context};
+    return std::make_tuple(buildKDFVector(0xA5, 0x5A, 1, 128, context),
+                           buildKDFVector(0x5A, 0xA5, 1, 128, context));
+}
 
-
-    // SV1
-    SV1.insert(SV1.end(), rnda.begin(), rnda.begin() + 2);
-    SV1.insert(SV1.end(), rnda.begin() + 2, rnda.begin() + 8);
-
-    for (unsigned char x = 0; x <= 5; ++x)
+std::pair<ByteVector, ByteVector> DESFireEV2Crypto::deriveEV2SessionKeys(
+    const ByteVector &key, const ByteVector &rnda, const ByteVector &rndb)
+{
+    EXCEPTION_ASSERT_WITH_LOG(key.size() == 16 || key.size() == 32, LibLogicalAccessException,
+                              "EV2 KDF requires an AES-128 or AES-256 key.");
+    ByteVector context = buildKDFContext(rnda, rndb);
+    security::SecureZeroGuard contextGuard{&context};
+    const auto length = static_cast<std::uint16_t>(key.size() * 8);
+    std::pair<ByteVector, ByteVector> keys;
+    try
     {
-        SV1[x + 2] ^= rndb[x];
+        keys.first.reserve(key.size());
+        keys.second.reserve(key.size());
+        for (std::uint16_t counter = 1; counter <= key.size() / 16; ++counter)
+        {
+            ByteVector encVector = buildKDFVector(0xA5, 0x5A, counter, length, context);
+            security::SecureZeroGuard encVectorGuard{&encVector};
+            ByteVector macVector = buildKDFVector(0x5A, 0xA5, counter, length, context);
+            security::SecureZeroGuard macVectorGuard{&macVector};
+            ByteVector enc = openssl::CMACCrypto::cmac(key, "aes", encVector, {});
+            security::SecureZeroGuard encGuard{&enc};
+            ByteVector mac = openssl::CMACCrypto::cmac(key, "aes", macVector, {});
+            security::SecureZeroGuard macGuard{&mac};
+            EXCEPTION_ASSERT_WITH_LOG(enc.size() == 16 && mac.size() == 16, LibLogicalAccessException,
+                                      "EV2 KDF returned an invalid CMAC block length.");
+            keys.first.insert(keys.first.end(), enc.begin(), enc.end());
+            keys.second.insert(keys.second.end(), mac.begin(), mac.end());
+        }
+        return keys;
     }
-
-    SV1.insert(SV1.end(), rndb.begin() + 6, rndb.end());
-    SV1.insert(SV1.end(), rnda.begin() + 8, rnda.end());
-
-    // SV2
-    ByteVector SV2 = SV1;
-
-    SV1.insert(SV1.begin(), kdf_SV1_input.begin(), kdf_SV1_input.end());
-    SV2.insert(SV2.begin(), kdf_SV2_input.begin(), kdf_SV2_input.end());
-
-    return std::tuple<ByteVector, ByteVector>(SV1, SV2);
+    catch (...)
+    {
+        security::secureZeroBuffer(keys.first);
+        security::secureZeroBuffer(keys.second);
+        throw;
+    }
 }
 
 void DESFireEV2Crypto::generateSessionKey(const ByteVector &key_data,
                                           const ByteVector &rnda, const ByteVector &rndb)
 {
-    auto sv = getSV(rnda, rndb);
+    EXCEPTION_ASSERT_WITH_LOG(key_data.size() == 16, LibLogicalAccessException,
+                              "DESFire EV2 session-key generation requires an AES-128 key.");
+    auto keys = deriveEV2SessionKeys(key_data, rnda, rndb);
+    security::SecureZeroGuard keysGuard{&keys.first, &keys.second};
+    replaceSessionKeys(keys);
+    setCmdCtr(0);
+}
 
-    d_sessionKey    = openssl::CMACCrypto::cmac(key_data, "aes", std::get<0>(sv), {});
-    d_macSessionKey = openssl::CMACCrypto::cmac(key_data, "aes", std::get<1>(sv), {});
+void DESFireEV2Crypto::replaceSessionKeys(const std::pair<ByteVector, ByteVector> &keys)
+{
+    EXCEPTION_ASSERT_WITH_LOG((keys.first.size() == 16 || keys.first.size() == 32) &&
+                              keys.first.size() == keys.second.size(), LibLogicalAccessException,
+                              "EV2 session keys must have matching AES-128 or AES-256 lengths.");
+    ByteVector enc = keys.first;
+    security::SecureZeroGuard encGuard{&enc};
+    ByteVector mac = keys.second;
+    security::SecureZeroGuard macGuard{&mac};
+    auto cipher = std::make_shared<openssl::AESCipher>();
+    d_sessionKey.swap(enc);
+    d_macSessionKey.swap(mac);
+    d_cipher = std::move(cipher);
+    d_mac_size = 8;
+}
 
-    cmdctr_ = 0;
-    d_cipher.reset(new openssl::AESCipher());
-    d_mac_size   = 8;
+void DESFireEV2Crypto::installFirstSession(const std::pair<ByteVector, ByteVector> &keys,
+                                          const ByteVector &ti, CryptoMethod method, std::uint8_t keyno)
+{
+    EXCEPTION_ASSERT_WITH_LOG(ti.size() == 4 && usesEV2Crypto(method), LibLogicalAccessException,
+                              "EV2 First session requires a four-byte TI and EV2-compatible authentication mode.");
+    EXCEPTION_ASSERT_WITH_LOG(method != CM_EV2 || keys.first.size() == 16, LibLogicalAccessException,
+                              "DESFire EV2 sessions require AES-128 session keys.");
+    try
+    {
+        invalidateAuthentication();
+        replaceSessionKeys(keys);
+        setTI(ti);
+        d_auth_method = method;
+        d_currentKeyNo = keyno;
+    }
+    catch (...)
+    {
+        invalidateAuthentication();
+        throw;
+    }
+}
+
+void DESFireEV2Crypto::installNonFirstSession(const std::pair<ByteVector, ByteVector> &keys,
+                                             std::uint8_t keyno)
+{
+    EXCEPTION_ASSERT_WITH_LOG(usesEV2Crypto(d_auth_method) && ti_.size() == 4, LibLogicalAccessException,
+                              "EV2 NonFirst requires an active EV2-compatible session.");
+    replaceSessionKeys(keys);
+    security::secureZeroBuffer(d_lastIV);
+    d_lastIV.clear();
+    security::secureZeroBuffer(d_last_left);
+    d_last_left.clear();
+    security::secureZeroBuffer(d_buf);
+    d_buf.clear();
+    d_currentKeyNo = keyno;
 }
 
 void DESFireEV2Crypto::sam_generateSessionKey(const ByteVector &rnda,

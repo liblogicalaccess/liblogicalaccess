@@ -132,6 +132,10 @@ class LLA_READERS_ISO7816_API DUOXISO7816Commands : public DESFireEV3ISO7816Comm
 
     ByteVector exportKey(std::uint8_t keyNo, EncryptionMode commMode = CM_ENCRYPT) override;
 
+    /**
+     * \brief Replace AES-128/AES-256 session keys, preserving TI, command counter and authentication mode.
+     * A null key resolves the configured key. Exchange failures invalidate the complete session.
+     */
     void authenticateEV2NonFirst(std::uint8_t keyno, std::shared_ptr<DESFireKey> currentKey = nullptr) override;
 
     std::uint32_t freeMem() override;
@@ -162,6 +166,8 @@ class LLA_READERS_ISO7816_API DUOXISO7816Commands : public DESFireEV3ISO7816Comm
      * \brief DUOX-specific AuthenticateEV2First entry point.
      *
      * Complete KeyNo is constructed rather than requiring callers to manipulate protocol bit fields themselves.
+     * Uses the shared software EV2 handshake with AES-128/AES-256 keys and PCD capability echo validation.
+     * A key is required. Exchange failures invalidate the session; rejected preflight inputs do not.
      *
      * \param targetedKeyNo Target authentication key number, six bit value.
      * \param key Authentication key.
@@ -402,22 +408,6 @@ class LLA_READERS_ISO7816_API DUOXISO7816Commands : public DESFireEV3ISO7816Comm
     // ===========================================
     // DUOX EV2 authentication helpers
     // ===========================================
-
-    // TODO Move all of this later inside duoxcrypto file
-
-
-    /**
-     * \brief Validate the decrypted AuthenticateEV2FirstPart2 response.
-     *
-     * \param response Decrypted PICC response.
-     * \param rndA Original PCD challenge.
-     * \param expectedPCDCap2 PCD capabilities sent during Part 1.
-     *
-     * \return Transaction identifier.
-     */
-    static ByteVector validateEV2Part2Response(const ByteVector &response,
-                                                   const ByteVector &rndA,
-                                                   const ByteVector &expectedPCDCap2);
 
     /**
      * \brief Construct the protocol KeyNo byte.

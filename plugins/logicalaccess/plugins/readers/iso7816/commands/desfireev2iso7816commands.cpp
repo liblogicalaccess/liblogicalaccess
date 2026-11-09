@@ -12,6 +12,7 @@
 #include <algorithm>
 #include <logicalaccess/plugins/crypto/aes_helper.hpp>
 #include <logicalaccess/plugins/crypto/des_helper.hpp>
+#include <logicalaccess/plugins/crypto/secure_memory.hpp>
 #include <atomic>
 #include <logicalaccess/utils.hpp>
 #include <logicalaccess/plugins/llacommon/settings.hpp>
@@ -147,8 +148,12 @@ void DESFireEV2ISO7816Commands::authenticate(unsigned char keyno,
 void DESFireEV2ISO7816Commands::authenticateEV2First(
     uint8_t keyno, std::shared_ptr<DESFireKey> currentKey)
 {
-    auto crypto =
-        std::dynamic_pointer_cast<DESFireEV2Crypto>(getDESFireChip()->getCrypto());
+    const auto chip = getDESFireChip();
+    EXCEPTION_ASSERT_WITH_LOG(chip != nullptr, LibLogicalAccessException,
+                              "EV2 authentication requires an initialized DESFire chip.");
+    const auto crypto = std::dynamic_pointer_cast<DESFireEV2Crypto>(chip->getCrypto());
+    EXCEPTION_ASSERT_WITH_LOG(crypto != nullptr, LibLogicalAccessException,
+                              "EV2 authentication requires an EV2 crypto context.");
 
     if (!currentKey)
         currentKey = crypto->getDefaultKey(DF_KEY_AES);
@@ -156,39 +161,69 @@ void DESFireEV2ISO7816Commands::authenticateEV2First(
     EXCEPTION_ASSERT_WITH_LOG(
         currentKey && currentKey->getKeyType() == DESFireKeyType::DF_KEY_AES,
         LibLogicalAccessException, "Invalid key type: expected DF_KEY_AES");
-    ByteVector cmd = {keyno, 0}; // LenCap
+    EXCEPTION_ASSERT_WITH_LOG(currentKey->getLength() == DESFIRE_AES_KEY_SIZE,
+                              LibLogicalAccessException, "DESFire EV2 authentication requires an AES-128 key.");
+    authenticateEV2FirstImpl(keyno, keyno, std::make_shared<DESFireKey>(*currentKey),
+                             {}, CM_EV2, false);
+}
 
-    auto response = transmit_plain(DFEV2_INS_AUTHENTICATE_EV2_FIRST, cmd);
-    EXCEPTION_ASSERT_WITH_LOG(response.getData().size() > 0, LibLogicalAccessException,
-                              "Response is too short");
+void DESFireEV2ISO7816Commands::authenticateEV2FirstImpl(
+    std::uint8_t keyno, std::uint8_t targetedKeyNo, std::shared_ptr<DESFireKey> key,
+    const ByteVector &pcdCap2, CryptoMethod method, bool validateCapabilities)
+{
+    const auto chip = getDESFireChip();
+    EXCEPTION_ASSERT_WITH_LOG(chip != nullptr, LibLogicalAccessException,
+                              "EV2 authentication requires an initialized DESFire chip.");
+    const auto crypto = std::dynamic_pointer_cast<DESFireEV2Crypto>(chip->getCrypto());
+    EXCEPTION_ASSERT_WITH_LOG(crypto != nullptr && key != nullptr, LibLogicalAccessException,
+                              "EV2 authentication requires an EV2 crypto context and authentication key.");
+    EXCEPTION_ASSERT_WITH_LOG(pcdCap2.size() <= 6, LibLogicalAccessException,
+                              "EV2 PCDcap2 must contain at most six bytes.");
+    const auto diversify = getKeyInformations(key, targetedKeyNo);
+    ByteVector keyData;
+    security::SecureZeroGuard keyGuard{&keyData};
+    crypto->getKey(key, diversify, keyData);
+    EXCEPTION_ASSERT_WITH_LOG(keyData.size() == key->getLength(), LibLogicalAccessException,
+                              "EV2 diversified authentication key has an invalid length.");
 
-    ByteVector keydiv;
-    std::shared_ptr<DESFireKey> key = std::make_shared<DESFireKey>(*currentKey);
-    ByteVector diversify            = getKeyInformations(key, keyno);
-
-    crypto->getKey(key, diversify, keydiv);
-
-    auto key_data       = keydiv;
-    auto rnda           = RandomHelper::bytes(16);
-    auto rndb           = AESHelper::AESDecrypt(response.getData(), key_data, {});
-    auto challenge_resp = DESFireEV2Crypto::get_challenge_response(rndb, rnda);
-    challenge_resp      = AESHelper::AESEncrypt(challenge_resp, key_data, {});
-    response            = transmit_plain(DF_INS_ADDITIONAL_FRAME, challenge_resp);
-    EXCEPTION_ASSERT_WITH_LOG(response.getData().size() >= 32, LibLogicalAccessException,
-                              "Response is too short");
-    auto decdata = AESHelper::AESDecrypt(response.getData(), key_data, {});
-
-    // throw on error.
-    auto ti = DESFireEV2Crypto::auth_ev2_part2(decdata, rnda);
-
-    crypto->setTI(ti);
-    crypto->setCmdCtr(0);
-    crypto->generateSessionKey(key_data, rnda, rndb);
-
-    getDESFireChip()->getCrypto()->d_auth_method  = CryptoMethod::CM_EV2;
-    getDESFireChip()->getCrypto()->d_currentKeyNo = keyno;
-
-    crypto->setKey(crypto->d_currentAid, 0, keyno, key);
+    ByteVector command = {keyno, static_cast<std::uint8_t>(pcdCap2.size())};
+    command.insert(command.end(), pcdCap2.begin(), pcdCap2.end());
+    try
+    {
+        auto response = transmit_plain(DFEV2_INS_AUTHENTICATE_EV2_FIRST, command);
+        EXCEPTION_ASSERT_WITH_LOG(response.getSW1() == 0x91 && response.getSW2() == DF_INS_ADDITIONAL_FRAME,
+                                  LibLogicalAccessException, "EV2 First Part 1 expected status 0x91AF.");
+        EXCEPTION_ASSERT_WITH_LOG(response.getData().size() == 16, LibLogicalAccessException,
+                                  "EV2 First Part 1 must return exactly 16 bytes.");
+        ByteVector rndB = AESHelper::AESDecrypt(response.getData(), keyData, {});
+        security::SecureZeroGuard rndBGuard{&rndB};
+        ByteVector rndA = RandomHelper::bytes(16);
+        security::SecureZeroGuard rndAGuard{&rndA};
+        ByteVector challenge = DESFireEV2Crypto::get_challenge_response(rndB, rndA);
+        security::SecureZeroGuard challengeGuard{&challenge};
+        ByteVector encryptedChallenge = AESHelper::AESEncrypt(challenge, keyData, {});
+        security::SecureZeroGuard encryptedGuard{&encryptedChallenge};
+        EXCEPTION_ASSERT_WITH_LOG(encryptedChallenge.size() == 32, LibLogicalAccessException,
+                                  "EV2 First Part 2 challenge must contain exactly 32 bytes.");
+        response = transmit_plain(DF_INS_ADDITIONAL_FRAME, encryptedChallenge);
+        EXCEPTION_ASSERT_WITH_LOG(response.getSW1() == 0x91 && response.getSW2() == 0,
+                                  LibLogicalAccessException, "EV2 First Part 2 expected status 0x9100.");
+        EXCEPTION_ASSERT_WITH_LOG(response.getData().size() == 32, LibLogicalAccessException,
+                                  "EV2 First Part 2 must return exactly 32 bytes.");
+        ByteVector decryptedResponse = AESHelper::AESDecrypt(response.getData(), keyData, {});
+        security::SecureZeroGuard responseGuard{&decryptedResponse};
+        const auto authenticated = DESFireEV2Crypto::parseEV2FirstResponse(
+            decryptedResponse, rndA, pcdCap2, validateCapabilities);
+        auto keys = DESFireEV2Crypto::deriveEV2SessionKeys(keyData, rndA, rndB);
+        security::SecureZeroGuard sessionGuard{&keys.first, &keys.second};
+        crypto->installFirstSession(keys, authenticated.ti, method, targetedKeyNo);
+        crypto->setKey(crypto->d_currentAid, 0, targetedKeyNo, key);
+    }
+    catch (...)
+    {
+        crypto->invalidateAuthentication();
+        throw;
+    }
 }
 
 void DESFireEV2ISO7816Commands::sam_authenticateEV2First(uint8_t keyno,

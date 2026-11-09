@@ -2,6 +2,7 @@
 
 #include <logicalaccess/plugins/readers/iso7816/commands/desfireev1iso7816commands.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfireev2commands.hpp>
+#include <logicalaccess/plugins/cards/desfire/desfireev2crypto.hpp>
 #include <logicalaccess/plugins/readers/iso7816/commands/iso7816iso7816commands.hpp>
 
 #include <logicalaccess/plugins/cards/desfire/transactionmacinput.hpp>
@@ -29,6 +30,11 @@ class LLA_READERS_ISO7816_API DESFireEV2ISO7816Commands
     void changeKeyEV2(uint8_t keyset, uint8_t keyno,
                       std::shared_ptr<DESFireKey> key) override;
 
+    /**
+     * \brief Software EV2 First authentication using AES-128; a null key selects the default key.
+     * Requires exact 16/32-byte responses and native status words 0x91AF/0x9100.
+     * Exchange failures invalidate the session; rejected preflight inputs do not.
+     */
     void authenticateEV2First(uint8_t keyno, std::shared_ptr<DESFireKey> key) override;
 
     void sam_authenticateEV2First(uint8_t keyno,
@@ -203,6 +209,16 @@ class LLA_READERS_ISO7816_API DESFireEV2ISO7816Commands
     void clearRecordFile(unsigned char fileno) override;
 
   protected:
+    /**
+     * \brief Shared software EV2 First handshake after card-specific key validation.
+     * keyno is the wire KeyNo; targetedKeyNo identifies the key in the host key store.
+     * Failures during the exchange invalidate the authentication session.
+     */
+    void authenticateEV2FirstImpl(std::uint8_t keyno, std::uint8_t targetedKeyNo,
+                                  std::shared_ptr<DESFireKey> key,
+                                  const ByteVector &pcdCap2, CryptoMethod method,
+                                  bool validateCapabilities);
+
     /**
      * \brief Transmit a command.
      * \param cmd The command code.

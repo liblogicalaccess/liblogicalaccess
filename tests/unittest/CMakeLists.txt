@@ -50,3 +50,14 @@ add_gtest_test(test_asn1.cpp)
 add_gtest_test(test_nfc_data_management.cpp)
 add_gtest_test(test_transactionmaccrypto.cpp)
 add_gtest_test(test_transactionmacinput.cpp)
+add_gtest_test(test_ev2authentication.cpp)
+target_link_libraries(test_ev2authentication PRIVATE iso7816readers desfirecards)
+
+if (WIN32)
+    foreach(runtime_target logicalaccess llacommon logicalaccess-cryptolib
+            iso7816readers desfirecards iso7816cards samavcards twiccards epasscards yubikeycards)
+        add_custom_command(TARGET test_ev2authentication POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                $<TARGET_FILE:${runtime_target}> $<TARGET_FILE_DIR:test_ev2authentication>)
+    endforeach()
+endif ()
