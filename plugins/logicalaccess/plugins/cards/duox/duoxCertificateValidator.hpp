@@ -5,6 +5,7 @@
 #include <memory>
 #include <vector>
 
+#include <logicalaccess/plugins/cards/duox/duoxevcharging.hpp>
 #include <logicalaccess/plugins/cards/duox/duoxecc.hpp>
 #include <logicalaccess/plugins/cards/desfire/lla_cards_desfire_api.hpp>
 #include <logicalaccess/plugins/crypto/public_key.hpp>
@@ -12,6 +13,147 @@
 
 namespace logicalaccess
 {
+
+/**
+ * \brief Parsed EV Charging certificate.
+ *
+ * This structure contains untrusted data until certificate verification succeeds
+ */
+struct EVChargingCertificate
+{
+    /**
+     * \brief Raw certificate.
+     *
+     * Including outer 7F21 object
+     */
+    ByteVector rawData;
+
+    /**
+     * \brief Certificate serial number / UID encoding.
+     * 
+     * Extracted from TLV tag 0x93.
+     */
+    ByteVector uid;
+
+    /**
+     * \brief Certificate Authority identifier.
+     *
+     * Extracted from TLV tag 0x42.
+     */
+    ByteVector caId;
+
+    /**
+     * \brief Subject identifier.
+     *
+     * Extracted from TLV tag 0x5F20.
+     */
+    ByteVector subjectIdentifier;
+
+    /**
+     * \brief Key usage information.
+     *
+     * Extracted from TLV tag 0x95.
+     */
+    ByteVector keyUsage;
+
+    /**
+     * \brief Certificate effective date.
+     *
+     * Extracted from TLV tag 0x5F25.
+     * YYYYMMDD, four bytes.
+     */
+    ByteVector effectiveDate;
+
+    /**
+     * \brief Certificate expiration date.
+     *
+     * Extracted from TLV tag 0x5F24.
+     * YYYYMMDD, four bytes.
+     */
+    ByteVector expirationDate;
+
+    /**
+     * \brief CA Security Domain Image Number.
+     *
+     * Extracted from TLV tag 0x45.
+     */
+    std::uint8_t caSecurityDomainImageNumber = 0U;
+
+    /**
+     * \brief Raw public key data object.
+     *
+     * Extracted from TLV tag 0x7F49.
+     */
+    ByteVector publicKeyData;
+
+    /**
+     * \brief Uncompressed ECC public key.
+     *
+     * Extracted from TLV tag 0xB0
+     *
+     * Expected representation : 0x04 || X || Y
+     */
+    ByteVector publicKey;
+
+    /**
+     * \brief ECC key parameter reference.
+     *
+     * Extracted from TLV tag 0xF0
+     */
+    duox_ev_charging::EVChargingKeyParameterReference keyParameterReference =
+        duox_ev_charging::EVChargingKeyParameterReference::BrainpoolP256r1;
+
+    /**
+     * \brief Raw ECDSA certificate signature.
+     *
+     * Extracted from TLV tag 0x5F37.
+     *
+     * Representation : r || s
+     */
+    ByteVector signature;
+
+    /**
+     * \brief Exact byte sequence covered by the certificate signature.
+     *
+     * Includes the encoded TLVs from tag 0x93 through tag 0x7F49.
+     */
+    ByteVector signedData;
+
+    /**
+     * \brief Set only after successful verification.
+     */
+    bool signatureVerified = false;
+};
+
+/**
+ * \brief Calendar date used by EV Charging certificates.
+ *
+ * Certificate date encoding is YYYYMMDD in packed BCD :
+ *
+ * 20 26 01 02 = 2026-01-02
+ */
+struct EVChargingDate
+{
+    std::uint16_t year = 0U;
+    std::uint8_t month = 0U;
+    std::uint8_t day   = 0U;
+
+    bool operator==(const EVChargingDate &other) const
+    {
+        return year == other.year && month == other.month && day == other.day;
+    }
+
+    bool operator<(const EVChargingDate &other) const
+    {
+        if (year != other.year)
+            return year < other.year;
+
+        if (month != other.month)
+            return month < other.month;
+
+        return day < other.day;
+    }
+};
 
 namespace duox
 {

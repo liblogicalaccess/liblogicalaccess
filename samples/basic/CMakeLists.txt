@@ -1,7 +1,10 @@
 cmake_minimum_required(VERSION 3.10)
 project(basic LANGUAGES CXX)
 
+# ========================================
 # Common libraries
+# ========================================
+
 set(LIBLOGICALACCESS_COMMON_LIBRARIES
     logicalaccess
     iso7816cards
@@ -10,119 +13,46 @@ set(LIBLOGICALACCESS_COMMON_LIBRARIES
     pcscreaders
 )
 
-# basic
-add_executable(basic
-    basic.cpp
-)
+# ========================================
+# Executable creation helper
+# ========================================
 
-target_link_libraries(basic
-    PRIVATE
-        ${LIBLOGICALACCESS_COMMON_LIBRARIES}
-)
+function(add_basic_test name)
+    add_executable(${name} ${name}.cpp)
 
-# basic_pki
-add_executable(basic_pki
-    basic_pki.cpp
-)
+    target_link_libraries(${name}
+        PRIVATE
+            ${LIBLOGICALACCESS_COMMON_LIBRARIES}
+            ${ARGN}
+    )
+endfunction()
 
-target_link_libraries(basic_pki
-    PRIVATE
-        ${LIBLOGICALACCESS_COMMON_LIBRARIES}
-)
+# ========================================
+# Test suites
+# ========================================
 
-# basic_desfire_sam
-add_executable(basic_desfire_sam
-    basic_desfire_sam.cpp
-)
+add_basic_test(basic)
+add_basic_test(basic_pki)
+add_basic_test(basic_desfire_sam samavcards)
+add_basic_test(basic_samkeyentry samavcards)
 
-target_link_libraries(basic_desfire_sam
-    PRIVATE
-        ${LIBLOGICALACCESS_COMMON_LIBRARIES}
-        samavcards
-)
+add_basic_test(basic_duox)
+add_basic_test(basic_duox_aes_authentication)
+add_basic_test(basic_duox_transaction_management)
+add_basic_test(basic_duox_crypto_api)
+add_basic_test(basic_duox_ev_charging)
 
-# basic_samkeyentry
-add_executable(basic_samkeyentry
-    basic_samkeyentry.cpp
-)
+add_basic_test(basic_certificate)
+add_basic_test(basic_duoxecc)
+add_basic_test(basic_authenticate)
 
-target_link_libraries(basic_samkeyentry
-    PRIVATE
-        ${LIBLOGICALACCESS_COMMON_LIBRARIES}
-        samavcards
-)
+# Factory application is expected on MIFARE DUOX for EV Charging but not on Standard MIFARE DUOX
+# add_basic_test(basic_duox_ev_charging_readonly)
 
-# basic_duox
-add_executable(basic_duox
-    basic_duox.cpp
-)
-
-target_link_libraries(basic_duox
-    PRIVATE
-        ${LIBLOGICALACCESS_COMMON_LIBRARIES}
-)
-
-# basic_duox_aes_authentication
-add_executable(basic_duox_aes_authentication
-    basic_duox_aes_authentication.cpp
-)
-
-target_link_libraries(basic_duox_aes_authentication
-    PRIVATE
-        ${LIBLOGICALACCESS_COMMON_LIBRARIES}
-)
-
-# basic_duox_transaction_management
-add_executable(basic_duox_transaction_management
-    basic_duox_transaction_management.cpp
-)
-
-target_link_libraries(basic_duox_transaction_management
-    PRIVATE
-        ${LIBLOGICALACCESS_COMMON_LIBRARIES}
-)
-
-# basic_duox_crypto_api
-add_executable(basic_duox_crypto_api
-    basic_duox_crypto_api.cpp
-)
-
-target_link_libraries(basic_duox_crypto_api
-    PRIVATE
-        ${LIBLOGICALACCESS_COMMON_LIBRARIES}
-)
-
-# basic_certificate
-add_executable(basic_certificate
-    basic_certificate.cpp
-)
-
-target_link_libraries(basic_certificate
-    PRIVATE
-        ${LIBLOGICALACCESS_COMMON_LIBRARIES}
-)
-
-# basic_duoxecc
-add_executable(basic_duoxecc
-    basic_duoxecc.cpp
-)
-
-target_link_libraries(basic_duoxecc
-    PRIVATE
-        ${LIBLOGICALACCESS_COMMON_LIBRARIES}
-)
-
-# basic_authenticate
-add_executable(basic_authenticate
-    basic_authenticate.cpp
-)
-
-target_link_libraries(basic_authenticate
-    PRIVATE
-        ${LIBLOGICALACCESS_COMMON_LIBRARIES}
-)
-
+# ========================================
 # Installation
+# ========================================
+
 install(
     TARGETS
         basic
@@ -133,9 +63,12 @@ install(
         basic_duox_aes_authentication
         basic_duox_transaction_management
         basic_duox_crypto_api
+        basic_duox_ev_charging
+        # basic_duox_ev_charging_readonly
         basic_certificate
         basic_duoxecc
         basic_authenticate
+
     RUNTIME DESTINATION bin
     LIBRARY DESTINATION lib${LIB_SUFFIX}
     ARCHIVE DESTINATION lib${LIB_SUFFIX}

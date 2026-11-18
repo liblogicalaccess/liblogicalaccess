@@ -10,7 +10,7 @@
  *      - Finalize
  *      - OneShot
  *      - OneShotPrecomputedHash
- *  - CryptoRequest_Echo:
+ *  - CryptoRequest_Echo :
  *      - Minimum payload
  *      - Standard payload
  *      - Maximum payload
@@ -75,7 +75,7 @@ enum class DUOXCardPreparationMode
 
 // Dedicated test application
 // Reserve this AID exclusively for this sample
-constexpr std::uint32_t TEST_APPLICATION_AID = 0x123459;
+constexpr std::uint32_t TEST_APPLICATION_AID = 0x123456;
 
 // PICC configuration
 constexpr std::uint32_t PICC_LEVEL_AID = 0x000000;

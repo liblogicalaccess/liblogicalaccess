@@ -274,6 +274,8 @@ class LLA_READERS_ISO7816_API DUOXISO7816Commands : public DESFireEV3ISO7816Comm
 
     [[nodiscard]] bool verifyTransactionMAC(const TransactionMACFileData &committed) const override;
 
+    ByteVector getCardUID() override;
+
     /*
      * DESFire EV3 command interface.
      *
@@ -379,6 +381,18 @@ class LLA_READERS_ISO7816_API DUOXISO7816Commands : public DESFireEV3ISO7816Comm
 
       ByteVector cryptoRequestEcho(const ByteVector &additionalData, EncryptionMode commMode = CM_ENCRYPT) override;
 
+      ByteVector VDE_ReadData(duox_ev_charging::FileNo fileNo,
+                              duox_ev_charging::APDULengthFormat lengthFormat =
+                                  duox_ev_charging::APDULengthFormat::Short) override;
+
+      ByteVector VDE_ECDSASign(const ByteVector &challenge) override;
+
+      void VDE_WriteData(const ByteVector &data) override;
+
+      void VDE_LockData() override;
+
+      void setConfiguration(const duox::configuration::Payload &configuration, bool delegatedApplication = false) override;
+
   private:
     ISO7816Response sendDUOXGeneralAuthenticate(std::uint8_t p2, const ByteVector &data, std::uint16_t le);
 
@@ -396,6 +410,17 @@ class LLA_READERS_ISO7816_API DUOXISO7816Commands : public DESFireEV3ISO7816Comm
 
     ByteVector parseGeneralAuthenticateFinalResponse(const ByteVector &data);
 
+    /**
+     * \brief Validates an EV Charging ISO7816 response.
+     *
+     * \param response Complete response including SW1/SW2
+     * \param operation Operation name for diagnostics
+     *
+     * \return Response data
+     */
+    ByteVector extractEVChargingResponseData(const ISO7816Response &response, const char *operation) const;
+
+    void transmitVDEWriteData(duox_ev_charging::WriteDataOperation operation, const ByteVector &data);
 
     DUOXECCAuthenticationState d_duoxECCAuthentication;
 
