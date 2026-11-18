@@ -49,6 +49,80 @@ static std::uint32_t decodeU24(const unsigned char value[3])
            (static_cast<std::uint32_t>(value[2]) << 16U);
 }
 
+// ============================================================
+// GetCardUID response validation
+// ============================================================
+
+/**
+ * \brief Parses a GetCardUID response.
+ *
+ * Supported formats :
+ * (1) Legacy format : UID[7]
+ * (2) Explicit format :
+ *      UIDFormat[1] = 0x00,
+ *      UIDLength[1] = 0x04 or 0x0A,
+ *      UID[UIDLength]
+ * 
+ * Supported lengths :
+ *     EV2  : 7
+ *     EV3  : 4, 7, 10
+ *     DUOX : 7, 10
+ *
+ * \param responseData Decrypted and authenticated response payload
+ *
+ * \return UID without format metadata
+ *
+ * \throws LibLogicalAccessException if the response is malformed
+ */
+ByteVector parseGetCardUIDResponse(const ByteVector &responseData, bool allowFourByteUID, bool allowTenByteUID)
+{
+    constexpr std::uint8_t UID_FORMAT_STANDARD = 0x00U;
+
+    constexpr std::uint8_t UID_LENGTH_4_BYTES  = 0x04U;
+    constexpr std::uint8_t UID_LENGTH_10_BYTES = 0x0AU;
+
+    constexpr std::size_t LEGACY_UID_SIZE = 7U;
+    constexpr std::size_t UID_HEADER_SIZE = 2U;
+
+    // Legacy format : raw 7 byte UID
+    if (responseData.size() == LEGACY_UID_SIZE)
+        return responseData;
+
+    // Explicit UID descriptor
+    EXCEPTION_ASSERT_WITH_LOG(responseData.size() >= UID_HEADER_SIZE,
+        LibLogicalAccessException, "GetCardUID returned an incomplete UID descriptor.");
+
+    EXCEPTION_ASSERT_WITH_LOG(responseData[0] == UID_FORMAT_STANDARD,
+        LibLogicalAccessException, "GetCardUID returned an unsupported UID format.");
+
+    const std::uint8_t uidLength = responseData[1];
+
+    if (uidLength == UID_LENGTH_4_BYTES)
+    {
+        EXCEPTION_ASSERT_WITH_LOG(allowFourByteUID,
+            LibLogicalAccessException, "GetCardUID does not support 4 byte UIDs.");
+    }
+    else if (uidLength == UID_LENGTH_10_BYTES)
+    {
+        EXCEPTION_ASSERT_WITH_LOG(allowTenByteUID,
+            LibLogicalAccessException, "GetCardUID does not support 10 byte UIDs.");
+    }
+    else
+    {
+        THROW_EXCEPTION_WITH_LOG(LibLogicalAccessException, "GetCardUID returned an unsupported UID length.");
+    }
+
+    // Validate the complete response size.
+    const std::size_t expectedResponseSize = UID_HEADER_SIZE + static_cast<std::size_t>(uidLength);
+
+    EXCEPTION_ASSERT_WITH_LOG(responseData.size() == expectedResponseSize,
+        LibLogicalAccessException, "GetCardUID returned an inconsistent UID length. Expected " +
+            std::to_string(expectedResponseSize) + " bytes, received " + std::to_string(responseData.size()) + " bytes.");
+
+    // Extract UID without format metadata
+    return ByteVector(responseData.begin() + UID_HEADER_SIZE, responseData.end());
+}
+
 } // namespace
 
 DESFireEV2ISO7816Commands::DESFireEV2ISO7816Commands()
@@ -1334,6 +1408,24 @@ bool DESFireEV2ISO7816Commands::verifyTransactionMAC(const TransactionMACFileDat
     return DESFireTransactionMACCrypto::verifyTMV(
         transactionMACKey_, committed.tmc, transactionMACUID_,
         lastCommittedTransactionMACInput_, committed.tmv);
+}
+
+ByteVector DESFireEV2ISO7816Commands::getCardUIDWithPolicy(GetCardUIDPolicy policy)
+{
+    const bool allowFourByteUID = policy == GetCardUIDPolicy::DESFireEV3;
+    const bool allowTenByteUID = policy == GetCardUIDPolicy::DESFireEV3 || policy == GetCardUIDPolicy::DUOX;
+
+    const auto response = transmit_full(DFEV2_INS_GET_CARD_UID, ByteVector(), ByteVector());
+
+    EXCEPTION_ASSERT_WITH_LOG(response.getSW2() == 0x00U,
+        LibLogicalAccessException, "DESFire GetCardUID failed.");
+    
+    return parseGetCardUIDResponse(response.getData(), allowFourByteUID, allowTenByteUID);
+}
+
+ByteVector DESFireEV2ISO7816Commands::getCardUID()
+{
+    return getCardUIDWithPolicy(GetCardUIDPolicy::DESFireEV2);
 }
 
 void DESFireEV2ISO7816Commands::abortTransaction()

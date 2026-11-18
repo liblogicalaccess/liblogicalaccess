@@ -18,6 +18,7 @@ namespace logicalaccess
 #define DFEV2_INS
 #define DFEV2_INS_CHANGEKEY_EV2 0xC6
 #define DFEV2_INS_AUTHENTICATE_EV2_FIRST 0x71
+#define DFEV2_INS_GET_CARD_UID 0x51
 #define DFEV2_INS_INITIALIZEKEYSET 0x56
 #define DFEV2_INS_ROLLKEYSET 0x55
 #define DFEV2_INS_FINALIZEKEYSET 0x57
@@ -227,6 +228,21 @@ class LLA_CARDS_DESFIRE_API DESFireEV2Commands : public ICommands
     virtual ByteVector getTransactionMACInput() const = 0;
 
     [[nodiscard]] virtual bool verifyTransactionMAC(const TransactionMACFileData &committed) const = 0;
+
+    /**
+     * \brief Retrieves the card UID.
+     *
+     * Requires a successful authentication with a key authorized to perform this operation.
+     *
+     * Communication mode is always CommMode.Full.
+     * 
+     * Supported UID lengths depend on the DESFire generation.
+     *
+     * \return The card UID
+     *
+     * \throws LibLogicalAccessException if the command fails, authentication is insufficient, or invalid response format
+     */
+    virtual ByteVector getCardUID() = 0;
 
   private:
     std::shared_ptr<DESFireEV2Chip> getDESFireEV2Chip() const;

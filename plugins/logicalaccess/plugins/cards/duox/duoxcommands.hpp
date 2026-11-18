@@ -4,6 +4,8 @@
 #include <memory>
 #include <vector>
 
+#include <logicalaccess/plugins/cards/duox/duoxevcharging.hpp>
+#include <logicalaccess/plugins/cards/duox/duoxconfiguration.hpp>
 #include <logicalaccess/plugins/cards/desfire/desfireev3commands.hpp>
 #include <logicalaccess/plugins/cards/desfire/lla_cards_desfire_api.hpp>
 
@@ -257,9 +259,9 @@ class LLA_CARDS_DESFIRE_API DUOXCommands : public DESFireEV3Commands
      * \param keyNo Key number to manage
      * \param option Operation to perform
      * \param curveId Curve used by the key pair
-     * \param keyPolicy Two-byte DUOX key policy
+     * \param keyPolicy Two byte DUOX key policy
      * \param writeAccess Write access condition
-     * \param kucLimit Four-byte Key Usage Counter limit
+     * \param kucLimit Four byte Key Usage Counter limit
      * \param privateKey Private key to import. It is only used with ImportPrivateKey
      *
      * \return The generated public key for GenerateKeyPair. For the other operations, the response is empty
@@ -397,6 +399,8 @@ class LLA_CARDS_DESFIRE_API DUOXCommands : public DESFireEV3Commands
      * \brief Select a DUOX application by ISO DF name.
      * 
      * This is a convenience overload for ISOSelectFile using selection method P1 = 0x04
+     * 
+     * For EV Charging, the application is selected using its DF name "A0000008450000000000000000000001"
      *
      * \param dfName ISO/IEC 7816-4 DF name
      * \param returnFCI true to request FCI, false otherwise
@@ -509,6 +513,65 @@ class LLA_CARDS_DESFIRE_API DUOXCommands : public DESFireEV3Commands
      * \return Echoed response data
      */
     virtual ByteVector cryptoRequestEcho(const ByteVector &additionalData, EncryptionMode commMode = CM_ENCRYPT) = 0;
+
+    /**
+     * \brief Reads data from an EV Charging StandardDataFile.
+     *
+     * Supported file numbers :
+     * - 0x00: EV Charging certificate
+     * - 0x01: Additional EV Charging data
+     *
+     * \param fileNo Target EV Charging file number.
+     * \param lengthFormat APDU length encoding format.
+     *
+     * \return Complete file content.
+     */
+    virtual ByteVector VDE_ReadData(duox_ev_charging::FileNo fileNo,
+                                    duox_ev_charging::APDULengthFormat lengthFormat =
+                                        duox_ev_charging::APDULengthFormat::Short) = 0;
+
+    /**
+     * \brief Writes additional data to the EV Charging application.
+     *
+     * \param data Data to write.
+     * \param lengthFormat APDU length encoding format.
+     */
+    virtual void VDE_WriteData(const ByteVector &data) = 0;
+
+    /**
+     * \brief Signs a 32 byte challenge using the card's BrainpoolP256r1 private key.
+     * 
+     * The card uses its provisioned BrainpoolP256r1 private key (KeyID.ECCPrivateKey, KeyNo 0x00).
+     *
+     * The signature is returned in raw 64 byte r || s format.
+     *
+     * \param challenge Exactly 32 bytes of challenge data.
+     * \param lengthFormat APDU length encoding format.
+     * 
+     * \return 64 byte raw ECDSA signature (r || s)
+     */
+    virtual ByteVector VDE_ECDSASign(const ByteVector &challenge) = 0;
+
+    /**
+     * \brief Locks the EV Charging additional data file.
+     *
+     * This is the locking operation of VDE_WriteData, with P2 = 0x01.
+     * No data field is transmitted.
+     *
+     * Once successfully locked, further writes are prevented.
+     */
+    virtual void VDE_LockData() = 0;
+
+    /**
+     * \brief Updates DUOX PICC or application configuration.
+     *
+     * The communication mode is always CM_ENCRYPT.
+     *
+     * The configuration level is determined from the currently selected application.
+     *
+     * \param configuration Serialized configuration option and data
+     */
+    virtual void setConfiguration(const duox::configuration::Payload &configuration, bool delegatedApplication = false) = 0;
 
 };
 
