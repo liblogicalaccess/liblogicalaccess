@@ -420,7 +420,7 @@ class LLA_READERS_ISO7816_API DUOXISO7816Commands : public DESFireEV3ISO7816Comm
      */
     ByteVector extractEVChargingResponseData(const ISO7816Response &response, const char *operation) const;
 
-    void DUOXISO7816Commands::transmitVDEWriteData(duox_ev_charging::WriteDataOperation operation, const ByteVector &data);
+    void transmitVDEWriteData(duox_ev_charging::WriteDataOperation operation, const ByteVector &data);
 
     DUOXECCAuthenticationState d_duoxECCAuthentication;
 
