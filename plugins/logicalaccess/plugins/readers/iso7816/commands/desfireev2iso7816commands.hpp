@@ -11,6 +11,14 @@
 
 namespace logicalaccess
 {
+
+enum class GetCardUIDPolicy
+{
+    DESFireEV2,
+    DESFireEV3,
+    DUOX
+};
+
 #define CMD_DESFIREEV2ISO7816 "DESFireEV2ISO7816"
 
 class LLA_READERS_ISO7816_API DESFireEV2ISO7816Commands
@@ -181,6 +189,20 @@ class LLA_READERS_ISO7816_API DESFireEV2ISO7816Commands
     ByteVector getTransactionMACInput() const override;
 
     [[nodiscard]] bool verifyTransactionMAC(const TransactionMACFileData &committed) const override;
+
+    /**
+     * \brief Sends GetCardUID and parses its response according to the specified card-generation policy.
+     *
+     * The command is always transmitted using CommMode.Full.
+     */
+    ByteVector getCardUIDWithPolicy(GetCardUIDPolicy policy);
+
+    /**
+     * \brief Retrieves the complete card UID.
+     *
+     * \return UID bytes (4, 7 or 10 bytes)
+     */
+    ByteVector getCardUID() override;
 
     void abortTransaction() override;
 

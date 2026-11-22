@@ -449,6 +449,11 @@ bool DESFireEV3ISO7816Commands::verifyTransactionMAC(const TransactionMACFileDat
     return DESFireEV2ISO7816Commands::verifyTransactionMAC(committed);
 }
 
+ByteVector DESFireEV3ISO7816Commands::getCardUID()
+{
+    return getCardUIDWithPolicy(GetCardUIDPolicy::DESFireEV3);
+}
+
 ByteVector DESFireEV3ISO7816Commands::getFileCounters(unsigned char fileno)
 {
     ByteVector params;

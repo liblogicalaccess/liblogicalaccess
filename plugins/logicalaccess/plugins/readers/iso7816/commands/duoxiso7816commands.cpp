@@ -7,7 +7,7 @@
 #include <logicalaccess/plugins/crypto/lla_random.hpp>
 #include <logicalaccess/plugins/crypto/aes_helper.hpp>
 
-#include <sstream>
+#include <sstream> // TODO remove later
 #include <logicalaccess/plugins/crypto/x509V3Certificate.hpp>
 #include <limits>
 
@@ -577,7 +577,7 @@ ByteVector DUOXISO7816Commands::manageKeyPair(std::uint8_t keyNo, DUOXManageKeyP
     {
     case DUOXManageKeyPairOption::GenerateKeyPair:
         EXCEPTION_ASSERT_WITH_LOG(privateKey.empty(),
-            LibLogicalAccessException, "A private key must not be supplied for DUOX ManageKeyPair key-pair generation.");
+            LibLogicalAccessException, "A private key must not be supplied for DUOX ManageKeyPair key pair generation.");
         break;
 
     case DUOXManageKeyPairOption::ImportPrivateKey:
@@ -2816,6 +2816,191 @@ ByteVector DUOXISO7816Commands::cryptoRequestEcho(const ByteVector &additionalDa
     return ByteVector(echoedData, response.end());
 }
 
+ByteVector DUOXISO7816Commands::extractEVChargingResponseData(const ISO7816Response &response, const char *operation) const
+{
+    EXCEPTION_ASSERT_WITH_LOG(operation != nullptr,
+        LibLogicalAccessException, "EV Charging operation name cannot be null.");
+
+    const std::uint8_t sw1 = response.getSW1();
+    const std::uint8_t sw2 = response.getSW2();
+
+    if (sw1 != 0x90U || sw2 != 0x00U)
+    {
+        std::ostringstream message;
+
+        message << operation << " failed with ISO7816 status word 0x" << std::hex
+                << std::uppercase << static_cast<unsigned int>(sw1) << static_cast<unsigned int>(sw2) << ".";
+
+        throw LibLogicalAccessException(message.str());
+    }
+
+    return response.getData();
+}
+
+ByteVector DUOXISO7816Commands::VDE_ReadData(duox_ev_charging::FileNo fileNo,
+                                             duox_ev_charging::APDULengthFormat lengthFormat)
+{
+    const std::uint8_t p1 = [&]() -> std::uint8_t
+    {
+        switch (fileNo)
+        {
+        case duox_ev_charging::FileNo::Certificate: return 0x00U;
+
+        case duox_ev_charging::FileNo::AdditionalData: return 0x01U;
+
+        default: throw LibLogicalAccessException("Unsupported EV Charging file number.");
+        }
+    }();
+
+    auto adapter = getISO7816ReaderCardAdapter();
+
+    EXCEPTION_ASSERT_WITH_LOG(adapter != nullptr,
+        LibLogicalAccessException, "ISO7816 reader/card adapter is not initialized.");
+
+    ByteVector apdu;
+
+    if (lengthFormat == duox_ev_charging::APDULengthFormat::Short)
+    {
+        // Short case 2 APDU : CLA INS P1 P2 Le
+        apdu = {duox_ev_charging::protocol::CLA, duox_ev_charging::protocol::INS_READ_DATA,
+                p1, duox_ev_charging::protocol::READ_DATA_P2, 0x00U};
+    }
+    else if (lengthFormat == duox_ev_charging::APDULengthFormat::Extended)
+    {
+        // Extended case 2 APDU : CLA INS P1 P2 00 LeHi LeLo
+        apdu = {duox_ev_charging::protocol::CLA, duox_ev_charging::protocol::INS_READ_DATA,
+                p1, duox_ev_charging::protocol::READ_DATA_P2, 0x00U, 0x00U, 0x00U};
+    }
+    else
+    {
+        throw LibLogicalAccessException("Unsupported EV Charging APDU length format.");
+    }
+
+    const ISO7816Response response = adapter->sendAPDUCommand(apdu);
+
+    ByteVector data = extractEVChargingResponseData(response, __func__);
+
+    if (fileNo == duox_ev_charging::FileNo::Certificate)
+    {
+        EXCEPTION_ASSERT_WITH_LOG(data.size() == duox_ev_charging::protocol::UID7_CERTIFICATE_SIZE ||
+                                  data.size() == duox_ev_charging::protocol::UID10_CERTIFICATE_SIZE,
+            LibLogicalAccessException, "EV Charging certificate has an unexpected size.");
+    }
+    else
+    {
+        EXCEPTION_ASSERT_WITH_LOG(data.size() <= duox_ev_charging::protocol::ADDITIONAL_DATA_FILE_SIZE,
+            LibLogicalAccessException, "EV Charging additional data exceeds 1024 bytes.");
+    }
+
+    return data;
+}
+
+ByteVector DUOXISO7816Commands::VDE_ECDSASign(const ByteVector &challenge)
+{
+    DUOXCrypto::VDE_ValidateChallenge(challenge);
+
+    auto adapter = getISO7816ReaderCardAdapter();
+
+    EXCEPTION_ASSERT_WITH_LOG(adapter != nullptr,
+        LibLogicalAccessException, "ISO7816 reader/card adapter is not initialized.");
+
+    // Short case-4 APDU : CLA INS P1 P2 Lc Data Le
+    // Lc = 32 bytes (challenge)
+    // Le = 00 (maximum response length of 256 bytes)
+
+    const ISO7816Response response = adapter->sendAPDUCommand(
+        duox_ev_charging::protocol::CLA, duox_ev_charging::protocol::INS_ECDSA_SIGN,
+        duox_ev_charging::protocol::ECDSA_SIGN_P1,
+        duox_ev_charging::protocol::ECDSA_SIGN_P2,
+        static_cast<std::uint8_t>(challenge.size()), challenge, 0x00U);
+
+    ByteVector signature = extractEVChargingResponseData(response, __func__);
+
+    DUOXCrypto::VDE_ValidateSignature(signature);
+
+    return signature;
+}
+
+void DUOXISO7816Commands::VDE_WriteData(const ByteVector &data)
+{
+    EXCEPTION_ASSERT_WITH_LOG(!data.empty(),
+        LibLogicalAccessException, "EV Charging additional data cannot be empty.");
+
+    EXCEPTION_ASSERT_WITH_LOG(data.size() <= duox_ev_charging::protocol::ADDITIONAL_DATA_FILE_SIZE,
+        LibLogicalAccessException, "EV Charging additional data exceeds 1024 bytes.");
+
+    transmitVDEWriteData(duox_ev_charging::WriteDataOperation::Write, data);
+}
+
+void DUOXISO7816Commands::VDE_LockData()
+{
+    transmitVDEWriteData(duox_ev_charging::WriteDataOperation::Lock, {});
+}
+
+void DUOXISO7816Commands::transmitVDEWriteData(duox_ev_charging::WriteDataOperation operation, const ByteVector &data)
+{
+    const bool isWrite = operation == duox_ev_charging::WriteDataOperation::Write;
+
+    EXCEPTION_ASSERT_WITH_LOG(isWrite ? !data.empty() : data.empty(),
+        LibLogicalAccessException, "Invalid EV Charging write operation data.");
+
+    auto adapter = getISO7816ReaderCardAdapter();
+
+    EXCEPTION_ASSERT_WITH_LOG(adapter != nullptr,
+        LibLogicalAccessException, "ISO7816 reader/card adapter is not initialized.");
+
+    const auto cla = duox_ev_charging::protocol::CLA;
+    const auto ins = duox_ev_charging::protocol::INS_WRITE_DATA;
+    const auto p1  = duox_ev_charging::protocol::WRITE_DATA_P1;
+    const auto p2  = static_cast<std::uint8_t>(operation);
+
+    ISO7816Response response;
+
+    if (!isWrite)
+    {
+        // Short case-2 APDU : CLA INS P1 P2 Le
+        response = adapter->sendAPDUCommand(cla, ins, p1, p2, 0x00U);
+    }
+    else if (data.size() <= 0xFFU)
+    {
+        // Short case-4 APDU : CLA INS P1 P2 Lc Data Le
+        response = adapter->sendAPDUCommand(cla, ins, p1, p2, static_cast<std::uint8_t>(data.size()), data, 0x00U);
+    }
+    else
+    {
+        // Extended case-4 APDU : CLA INS P1 P2 00 LcHi LcLo Data LeHi LeLo
+        response = adapter->sendExtendedAPDUCommand(
+            cla, ins, p1, p2, static_cast<unsigned short>(data.size()), data, 0x0000U);
+    }
+
+    (void)extractEVChargingResponseData(response, __func__);
+}
+
+void DUOXISO7816Commands::setConfiguration(const duox::configuration::Payload &configuration, bool delegatedApplication)
+{
+    const auto chip = getDESFireChip();
+
+    EXCEPTION_ASSERT_WITH_LOG(chip != nullptr,
+        LibLogicalAccessException, "SetConfiguration requires an initialized DUOX card.");
+
+    const auto crypto = chip->getCrypto();
+
+    EXCEPTION_ASSERT_WITH_LOG(crypto != nullptr,
+        LibLogicalAccessException, "SetConfiguration requires an initialized crypto context.");
+
+    const duox::configuration::Level selectedLevel = crypto->d_currentAid == duox::limits::PICC_LEVEL_AID
+            ? duox::configuration::Level::PICC
+            : duox::configuration::Level::APPLICATION;
+
+    configuration.validate(selectedLevel, delegatedApplication);
+
+    const ByteVector params = {static_cast<std::uint8_t>(configuration.option)};
+
+    const auto response = transmitDUOX(DFEV1_INS_SET_CONFIGURATION, params, configuration.data, CM_ENCRYPT);
+
+    checkSuccess(response, duox::status::DUOX_SUCCESS, __func__);
+}
+
 // -------------------------------------------------------------------------
 // -------------------------------------------------------------------------
 // -------------------------------------------------------------------------
@@ -3238,6 +3423,11 @@ ByteVector DUOXISO7816Commands::getTransactionMACInput() const
 bool DUOXISO7816Commands::verifyTransactionMAC(const TransactionMACFileData &committed) const
 {
     return DESFireEV3ISO7816Commands::verifyTransactionMAC(committed);
+}
+
+ByteVector DUOXISO7816Commands::getCardUID()
+{
+    return getCardUIDWithPolicy(GetCardUIDPolicy::DUOX);
 }
 
 // -------------------------------------------------------------------------
