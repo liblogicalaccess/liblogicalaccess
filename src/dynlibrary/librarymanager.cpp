@@ -674,7 +674,7 @@ void LibraryManager::registerPlugin(const std::string &filename, const std::shar
 
     if (existing == libLoaded_.end())
     {
-        libLoaded_.try_emplace(filename, library);
+        libLoaded_.emplace(filename, library);
         return;
     }
 
