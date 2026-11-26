@@ -1,6 +1,7 @@
 #ifndef LIBRARYMANAGER_HPP__
 #define LIBRARYMANAGER_HPP__
 
+#include <functional>
 #include <map>
 #include <memory>
 #include <mutex>
@@ -8,6 +9,7 @@
 #include <unordered_map>
 #include <vector>
 
+#include <boost/filesystem/path.hpp>
 #include <logicalaccess/dynlibrary/idynlibrary.hpp>
 
 namespace logicalaccess
@@ -122,6 +124,13 @@ class LLA_CORE_API LibraryManager
     static void getAvailablePlugins(std::vector<std::string> &plugins, getobjectinfoat objectinfoptr);
 
   private:
+    // Internal helpers called while mutex_ is held by scanPlugins()
+    void scanPluginFolder(const std::string &folder);
+    void processPluginFile(const boost::filesystem::path &file);
+    bool isPluginCandidate(const boost::filesystem::path &file, const std::string &filename) const;
+    void loadPlugin(const boost::filesystem::path &file, const std::string &filename);
+    void registerPlugin(const std::string &filename, const std::shared_ptr<IDynLibrary> &library);
+
     mutable std::recursive_mutex mutex_;
 
     /**

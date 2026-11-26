@@ -101,7 +101,7 @@ std::shared_ptr<T> retainLibrary(const std::shared_ptr<T> &object, const std::sh
     {
         // Keep the library alive until after the plugin object is destroyed.
         std::shared_ptr<IDynLibrary> library;
-        std::shared_ptr<T> object;
+        std::shared_ptr<T> object; // library and object order matters : object must be destroyed before library is unloaded
 
         PluginObjectOwner(const std::shared_ptr<T> &obj, const std::shared_ptr<IDynLibrary> &lib)
             : library(lib)
@@ -110,7 +110,7 @@ std::shared_ptr<T> retainLibrary(const std::shared_ptr<T> &object, const std::sh
         }
     };
 
-    std::shared_ptr<PluginObjectOwner> owner(new PluginObjectOwner(object, library));
+    std::shared_ptr<PluginObjectOwner> owner = std::make_shared<PluginObjectOwner>(object, library);
 
     return std::shared_ptr<T>(owner, object.get());
 }
@@ -255,7 +255,7 @@ std::shared_ptr<ReaderProvider> LibraryManager::getReaderProvider(const std::str
 
     getprovider factory = toFunctionPointer<getprovider>(symbol);
 
-    invokePlugin(library->getName(), symbolName, [&]() { factory(&result); });
+    invokePlugin(library->getName(), symbolName, [&factory, &result]() { factory(&result); });
 
     if (!result)
         LOG(LogLevel::PLUGINS) << "Reader provider '" << readertype << "' returned no instance";
@@ -282,7 +282,7 @@ std::shared_ptr<Chip> LibraryManager::getCard(const std::string &cardtype)
 
     getcard factory = toFunctionPointer<getcard>(symbol);
 
-    invokePlugin(library->getName(), symbolName, [&]() { factory(&result); });
+    invokePlugin(library->getName(), symbolName, [&factory, &result]() { factory(&result); });
 
     if (!result)
         LOG(LogLevel::PLUGINS) << "Chip '" << cardtype << "' returned no instance";
@@ -309,7 +309,7 @@ std::shared_ptr<KeyDiversification> LibraryManager::getKeyDiversification(const 
 
     getdiversification factory = toFunctionPointer<getdiversification>(symbol);
 
-    invokePlugin(library->getName(), symbolName, [&]() { factory(&result); });
+    invokePlugin(library->getName(), symbolName, [&factory, &result]() { factory(&result); });
 
     if (!result)
         LOG(LogLevel::PLUGINS) << "Key diversification '" << keydivtype << "' returned no instance";
@@ -340,7 +340,7 @@ std::shared_ptr<Commands> LibraryManager::getCommands(const std::string &extende
 
     getcommands factory = toFunctionPointer<getcommands>(symbol);
 
-    invokePlugin(library->getName(), symbolName, [&]() { factory(&result); });
+    invokePlugin(library->getName(), symbolName, [&factory, &result]() { factory(&result); });
 
     if (!result)
         LOG(LogLevel::PLUGINS) << "Commands '" << extendedtype << "' returned no instance";
@@ -522,14 +522,14 @@ std::shared_ptr<ReaderUnit> LibraryManager::getReader(const std::string &readerN
         if (!library)
             continue;
 
-        typedef int (*ReaderFactory)(const std::string &, std::shared_ptr<ReaderUnit> &);
+        using ReaderFactory = int (*)(const std::string &, std::shared_ptr<ReaderUnit> &);
 
         ReaderFactory factory = resolveFunction<ReaderFactory>(library, "getReaderUnit");
 
         if (!factory)
             continue;
 
-        invokePlugin(entry.first, "getReaderUnit", [&]() { factory(readerName, result); });
+        invokePlugin(entry.first, "getReaderUnit", [&factory, &readerName, &result]() { factory(readerName, result); });
 
         if (result)
         {
@@ -551,117 +551,139 @@ void LibraryManager::scanPlugins()
 {
     std::lock_guard<std::recursive_mutex> lock(mutex_);
 
-    const std::string extension = EXTENSION_LIB;
-    Settings *setting           = Settings::getInstance();
+    const Settings *setting = Settings::getInstance();
 
     LOG(LogLevel::PLUGINS) << "Will scan " << setting->PluginFolders.size() << " folders.";
 
     for (const auto &folder : setting->PluginFolders)
+        scanPluginFolder(folder);
+}
+
+void LibraryManager::scanPluginFolder(const std::string &folder)
+{
+    const boost::filesystem::path pluginDir(folder);
+
+    boost::system::error_code ec;
+
+    const bool pathExists = boost::filesystem::exists(pluginDir, ec) && !ec;
+    const bool directoryExists = pathExists && boost::filesystem::is_directory(pluginDir, ec) && !ec;
+
+    if (!directoryExists)
     {
-        const boost::filesystem::path pluginDir(folder);
-
-        boost::system::error_code ec;
-
-        const bool directoryExists = boost::filesystem::exists(pluginDir, ec) && !ec &&
-                                     boost::filesystem::is_directory(pluginDir, ec) && !ec;
-
-        if (!directoryExists)
-        {
-            LOG(LogLevel::WARNINGS) << "Cannot find plug-in folder " << folder;
-            continue;
-        }
-
-        LOG(LogLevel::PLUGINS) << "Scanning library folder " << pluginDir.string() << " ...";
-
-        try
-        {
-            boost::filesystem::directory_iterator it(pluginDir);
-            const boost::filesystem::directory_iterator end;
-
-            for (; it != end; ++it)
-            {
-                const boost::filesystem::path &file = it->path();
-                const std::string filename          = file.filename().string();
-
-                LOG(LogLevel::PLUGINS) << "Checking library " << filename << "...";
-
-                try
-                {
-                    boost::system::error_code statusError;
-                    const boost::filesystem::file_status status = boost::filesystem::symlink_status(file, statusError);
-
-                    if (statusError)
-                    {
-                        LOG(LogLevel::PLUGINS) << "Cannot inspect plugin file " << filename << ": " << statusError.message();
-                        continue;
-                    }
-
-                    const bool isFile = boost::filesystem::is_regular_file(status) ||
-                                        boost::filesystem::is_symlink(status);
-
-                    const bool matchesName =
-                        hasEnding(filename, enumType[CARDS_TYPE] + extension) ||
-                        hasEnding(filename, enumType[READERS_TYPE] + extension) ||
-                        hasEnding(filename, enumType[UNIFIED_TYPE] + extension);
-
-                    if (!isFile || file.extension() != extension || !matchesName)
-                    {
-                        LOG(LogLevel::PLUGINS) << "File " << filename << " does not match expected filenames. Skipped.";
-                        continue;
-                    }
-
-                    /*
-                     * Load and validate before modifying the active registry.
-                     * Failing mustn't remove a previously loaded working library.
-                     */
-                    std::shared_ptr<IDynLibrary> library(newDynLibrary(file.string()));
-
-                    if (!library)
-                    {
-                        LOG(LogLevel::PLUGINS_ERROR) << "Failed to load library " << filename;
-                        continue;
-                    }
-
-                    // A valid plugin must expose its libraryname entry point before it can be registered.
-                    if (library->getSymbol(kLibraryNameEntry) == nullptr)
-                    {
-                        LOG(LogLevel::PLUGINS) << "Cannot find library entry point in " << filename << ". Skipped.";
-                        continue;
-                    }
-
-                    /*
-                     * Preserve original filename based replacement behavior.
-                     * Last successfully loaded library with same filename becomes the active library.
-                     */
-                    auto existing = libLoaded_.find(filename);
-
-                    if (existing != libLoaded_.end())
-                    {
-                        LOG(LogLevel::PLUGINS) << "Replacing previously loaded library " << filename;
-
-                        if (existing->second)
-                            retiredLibraries_.push_back(existing->second);
-
-                        existing->second = library;
-                    }
-                    else
-                    {
-                        libLoaded_.emplace(filename, library);
-                    }
-
-                    LOG(LogLevel::PLUGINS) << "Library " << filename << " loaded.";
-                }
-                catch (const std::exception &e)
-                {
-                    LOG(LogLevel::ERRORS) << "Error while handling " << filename << ": " << e.what();
-                }
-            }
-        }
-        catch (const std::exception &e)
-        {
-            LOG(LogLevel::ERRORS) << "Failed to iterate plug-in folder " << pluginDir.string() << ": " << e.what();
-        }
+        LOG(LogLevel::WARNINGS) << "Cannot find plug-in folder " << folder;
+        return;
     }
+
+    LOG(LogLevel::PLUGINS) << "Scanning library folder " << pluginDir.string() << " ...";
+
+    try
+    {
+        const boost::filesystem::directory_iterator end;
+
+        for (boost::filesystem::directory_iterator it(pluginDir); it != end; ++it)
+            processPluginFile(it->path());
+    }
+    catch (const std::exception &e)
+    {
+        LOG(LogLevel::ERRORS) << "Failed to iterate plug-in folder " << pluginDir.string() << ": " << e.what();
+    }
+}
+
+void LibraryManager::processPluginFile(const boost::filesystem::path &file)
+{
+    const std::string filename = file.filename().string();
+
+    LOG(LogLevel::PLUGINS) << "Checking library " << filename << "...";
+
+    try
+    {
+        if (!isPluginCandidate(file, filename))
+            return;
+
+        loadPlugin(file, filename);
+    }
+    catch (const std::exception &e)
+    {
+        LOG(LogLevel::ERRORS) << "Error while handling " << filename << ": " << e.what();
+    }
+}
+
+bool LibraryManager::isPluginCandidate(const boost::filesystem::path &file, const std::string &filename) const
+{
+    boost::system::error_code statusError;
+
+    const boost::filesystem::file_status status = boost::filesystem::symlink_status(file, statusError);
+
+    if (statusError)
+    {
+        LOG(LogLevel::PLUGINS) << "Cannot inspect plugin file " << filename << ": " << statusError.message();
+        return false;
+    }
+
+    const bool isFile = boost::filesystem::is_regular_file(status) || boost::filesystem::is_symlink(status);
+
+    const std::string extension = EXTENSION_LIB;
+
+    const bool matchesName = hasEnding(filename, enumType[CARDS_TYPE] + extension) ||
+                             hasEnding(filename, enumType[READERS_TYPE] + extension) ||
+                             hasEnding(filename, enumType[UNIFIED_TYPE] + extension);
+
+    if (!isFile || file.extension() != extension || !matchesName)
+    {
+        LOG(LogLevel::PLUGINS) << "File " << filename << " does not match expected filenames. Skipped.";
+        return false;
+    }
+
+    return true;
+}
+
+void LibraryManager::loadPlugin(const boost::filesystem::path &file,
+                                const std::string &filename)
+{
+    /*
+     * Load and validate before modifying the active registry.
+     * Failing mustn't remove a previously loaded working library.
+     */
+    std::shared_ptr<IDynLibrary> library(newDynLibrary(file.string()));
+
+    if (!library)
+    {
+        LOG(LogLevel::PLUGINS_ERROR) << "Failed to load library " << filename;
+        return;
+    }
+
+    // A valid plugin must expose its libraryname entry point before it can be registered.
+    if (library->getSymbol(kLibraryNameEntry) == nullptr)
+    {
+        LOG(LogLevel::PLUGINS) << "Cannot find library entry point in " << filename << ". Skipped.";
+        return;
+    }
+
+    registerPlugin(filename, library);
+
+    LOG(LogLevel::PLUGINS) << "Library " << filename << " loaded.";
+}
+
+void LibraryManager::registerPlugin(const std::string &filename, const std::shared_ptr<IDynLibrary> &library)
+{
+    /*
+     * Preserve original filename based replacement behavior.
+     * Last successfully loaded library with same filename becomes the active library.
+     */
+    auto existing = libLoaded_.find(filename);
+
+    if (existing == libLoaded_.end())
+    {
+        libLoaded_.try_emplace(filename, library);
+        return;
+    }
+
+    LOG(LogLevel::PLUGINS) << "Replacing previously loaded library " << filename;
+
+    if (existing->second)
+        retiredLibraries_.push_back(existing->second);
+
+    existing->second = library;
 }
 
 // ----------------------------------------
@@ -683,14 +705,14 @@ std::shared_ptr<CardService> LibraryManager::getCardService(std::shared_ptr<Chip
         if (!library)
             continue;
 
-        typedef int (*CardServiceFactory)(std::shared_ptr<Chip>, std::shared_ptr<CardService> &, CardServiceType);
+        using CardServiceFactory = int (*)(std::shared_ptr<Chip>, std::shared_ptr<CardService> &, CardServiceType);
 
         CardServiceFactory factory = resolveFunction<CardServiceFactory>(library, "getCardService");
 
         if (!factory)
             continue;
 
-        invokePlugin(entry.first, "getCardService", [&]() { factory(chip, result, type); });
+        invokePlugin(entry.first, "getCardService", [&factory, &chip, &result, type]() { factory(chip, result, type); });
 
         if (result)
             return retainLibrary(result, library);
@@ -720,14 +742,15 @@ ReaderServicePtr LibraryManager::getReaderService(ReaderUnitPtr reader, ReaderSe
         if (!library)
             continue;
 
-        typedef int (*ReaderServiceFactory)(ReaderUnitPtr, ReaderServicePtr &, ReaderServiceType);
+        using ReaderServiceFactory = int (*)(ReaderUnitPtr, ReaderServicePtr &, ReaderServiceType);
 
         ReaderServiceFactory factory = resolveFunction<ReaderServiceFactory>(library, "getReaderService");
 
         if (!factory)
             continue;
 
-        invokePlugin(entry.first, "getReaderService", [&]() { factory(reader, result, type); });
+        invokePlugin(entry.first, "getReaderService", [&factory, &reader, &result, type]()
+                     { factory(reader, result, type); });
 
         if (result)
             return retainLibrary(result, library);
@@ -766,14 +789,15 @@ std::shared_ptr<IAESCryptoService> LibraryManager::getPKCSAESCrypto(
         if (!library)
             continue;
 
-        typedef void (*PKCSAESCryptoFactory)(IAESCryptoServicePtr &, const std::string &);
+        using PKCSAESCryptoFactory = void (*)(IAESCryptoServicePtr &, const std::string &);
 
         PKCSAESCryptoFactory factory = resolveFunction<PKCSAESCryptoFactory>(library, "getPKCSAESCrypto");
 
         if (!factory)
             continue;
 
-        invokePlugin(entry.first, "getPKCSAESCrypto", [&]() { factory(pkcs_crypto, pkcs_library_shared_object_path); });
+        invokePlugin(entry.first, "getPKCSAESCrypto", [&factory, &pkcs_crypto, &pkcs_library_shared_object_path]()
+                     { factory(pkcs_crypto, pkcs_library_shared_object_path); });
 
         if (pkcs_crypto)
         {
