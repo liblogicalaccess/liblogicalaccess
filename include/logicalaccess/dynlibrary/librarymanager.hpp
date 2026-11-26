@@ -1,15 +1,18 @@
 #ifndef LIBRARYMANAGER_HPP__
 #define LIBRARYMANAGER_HPP__
 
-#include <string>
-#include <list>
-#include <unordered_map>
+#include <map>
+#include <memory>
 #include <mutex>
+#include <string>
+#include <unordered_map>
+#include <vector>
 
 #include <logicalaccess/dynlibrary/idynlibrary.hpp>
 
 namespace logicalaccess
 {
+
 class AccessControlCardService;
 
 class LLA_CORE_API LibraryManager
@@ -24,24 +27,42 @@ class LLA_CORE_API LibraryManager
 
   private:
     LibraryManager() = default;
-
     ~LibraryManager() = default;
 
-    static bool hasEnding(std::string const &fullString, std::string ending);
+    static bool hasEnding(const std::string &fullString, const std::string &ending);
+
+    /**
+     * \brief Finds a loaded library providing the requested symbol.
+     *
+     * The returned shared pointer keeps the library alive while the caller uses its symbol.
+     *
+     * Must be called while holding mutex_.
+     *
+     * \param fctname Symbol to find.
+     * \param libraryType Expected plugin category.
+     * \param symbol Receives the resolved symbol address.
+     * \return The library providing the symbol, or an empty pointer.
+     */
+    std::shared_ptr<IDynLibrary> findLibraryForSymbol(const std::string &fctname, LibraryType libraryType, void **symbol);
 
   public:
     static LibraryManager *getInstance();
 
+    /**
+     * \brief Retrieves a function address from a loaded plugin.
+     *
+     * The returned pointer remains valid while its library remains loaded.
+     * Replaced libs are retained until LibraryManager destruction because legacy API doesn't expose an ownership handle
+     */
     void *getFctFromName(const std::string &fctname, LibraryType libraryType);
 
     std::shared_ptr<ReaderProvider> getReaderProvider(const std::string &readertype);
 
     /**
-    * Attempt to find a suitable library that can build a ReaderUnit for
-    * a reader named `readerName`.
-    *
-    * Returns the allocated ReaderUnit object or NULL on failure.
-    */
+     * \brief Creates a ReaderUnit using an available reader plugin.
+     *
+     * Returns an empty pointer if no plugin can create the requested reader.
+     */
     std::shared_ptr<ReaderUnit> getReader(const std::string &readerName);
 
     std::shared_ptr<Chip> getCard(const std::string &cardtype);
@@ -49,19 +70,19 @@ class LLA_CORE_API LibraryManager
     std::shared_ptr<Commands> getCommands(const std::string &extendedtype);
 
     /**
-     * Retrieve an AESCryptoService backed by PKCS code.
+     * \brief Retrieves a PKCS-backed AES crypto service.
      *
-     * pkcs_library_shared_object_path is passed to our cppkcs library and will
-     * be used as the underlying PKCS library implementation.
+     * The PKCS library path is passed to the plugin implementation.
+     *
+     * Environment properties are temporarily configured during plugin initialization.
+     * Existing environment variables are not overwritten.
      */
-    std::shared_ptr<IAESCryptoService>
-    getPKCSAESCrypto(const std::string &pkcs_library_shared_object_path,
-                     const std::unordered_map<std::string, std::string> &pkcs_properties);
+    std::shared_ptr<IAESCryptoService> getPKCSAESCrypto(const std::string &pkcs_library_shared_object_path,
+                                                        const std::unordered_map<std::string, std::string> &pkcs_properties);
 
-    static std::shared_ptr<DataTransport>
-    getDataTransport(const std::string &transporttype);
-    std::shared_ptr<KeyDiversification>
-    getKeyDiversification(const std::string &keydivtype);
+    static std::shared_ptr<DataTransport> getDataTransport(const std::string &transporttype);
+
+    std::shared_ptr<KeyDiversification> getKeyDiversification(const std::string &keydivtype);
 
     /**
      * Retrieve a Service object for a given CardServiceType.
@@ -72,8 +93,7 @@ class LLA_CORE_API LibraryManager
      * Use case: Fetch an UIDChanger service from the LLA-NFC plugin for a
      * Mifare Classic card.
      */
-    std::shared_ptr<CardService> getCardService(std::shared_ptr<Chip> chip,
-                                                CardServiceType type);
+    std::shared_ptr<CardService> getCardService(std::shared_ptr<Chip> chip, CardServiceType type);
 
     /**
      * Retrieve a Service object for a given ReaderServiceType.
@@ -90,16 +110,37 @@ class LLA_CORE_API LibraryManager
 
     static std::vector<std::string> getAvailableDataTransports();
 
+    /**
+     * \brief Scans configured plugin folders and loads matching libraries.
+     *
+     * When two valid libraries have the same filename, last successfully loaded library replaces the previous active entry.
+     */
     void scanPlugins();
 
   protected:
     std::vector<std::string> getAvailablePlugins(LibraryType libraryType);
-    static void getAvailablePlugins(std::vector<std::string> &plugins,
-                                    getobjectinfoat objectinfoptr);
+    static void getAvailablePlugins(std::vector<std::string> &plugins, getobjectinfoat objectinfoptr);
 
   private:
     mutable std::recursive_mutex mutex_;
-    std::map<std::string, IDynLibrary *> libLoaded;
+
+    /**
+     * \brief Active plugin libraries, indexed by filename.
+     *
+     * Shared ownership ensures that plugin-created objects can keep their originating library loaded after a replacement.
+     */
+    std::map<std::string, std::shared_ptr<IDynLibrary>> libLoaded_;
+
+    /**
+     * \brief Previously replaced libraries.
+     *
+     * getFctFromName() exposes raw function pointers without an ownership handle.
+     * Retaining replaced libraries prevents those pointers from becoming invalid during the lifetime of LibraryManager.
+     *
+     * Plugin-created objects may independently extend library lifetimes.
+     */
+    std::vector<std::shared_ptr<IDynLibrary>> retiredLibraries_;
+
     static const std::string enumType[3];
 };
 }
